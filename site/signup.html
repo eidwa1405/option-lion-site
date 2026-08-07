@@ -161,6 +161,10 @@ function submitSignup(){
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
   }).then(function(){
+    fetch('/api/ref-track', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, plan: 'تجربة مجانية' })
+    }).catch(function(){});
     Paddle.Checkout.open({
       items: [{ priceId: getPriceFromURL(), quantity: 1 }],
       settings: { displayMode: 'overlay', variant: 'one-page', successUrl: location.origin + '/welcome.html?lang=ar&name=' + encodeURIComponent(name) + '&price=' + encodeURIComponent(getPriceFromURL()) + '&regdate=' + encodeURIComponent(new Date().toISOString()) + (refValid ? '&ref=' + encodeURIComponent(ref) : '') }

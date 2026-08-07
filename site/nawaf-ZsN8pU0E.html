@@ -91,7 +91,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <h3 style="margin:0 0 16px; color:#D4AF37;">👥 حالات اشتراك العملاء</h3>
     <input id="customerSearch" class="searchBox" placeholder="🔍 بحث بالاسم أو كود المسوّق أو الحالة..." oninput="filterCustomers()">
     <div id="expiryBanner" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
-    <table id="customersTable" style="font-size:13.5px;"><thead><tr><th>العميل</th><th>الباقة</th><th>الحالة</th><th>تاريخ الانتهاء</th><th></th></tr></thead><tbody></tbody></table>
+    <table id="customersTable" style="font-size:12.5px;"><thead><tr><th>الاسم</th><th>الجوال</th><th>تيليجرام</th><th>TradingView</th><th>الباقة</th><th>كود المسوّق</th><th>الحالة</th><th>تاريخ الانتهاء</th><th></th></tr></thead><tbody></tbody></table>
     <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-customers'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
   </div>
   </section>
@@ -293,6 +293,7 @@ function drawRevenueChart(monthly){
 }
 
 var STATUS_OPTIONS = [
+  ['pending_payment','لم يكمل السداد'],
   ['trial','فترة تجربة مجانية'],
   ['canceled','تم إلغاء الاشتراك'],
   ['renew_1m','تجديد شهر واحد'],
@@ -303,7 +304,7 @@ var STATUS_OPTIONS = [
 
 function loadCustomers(){
   var tb = document.querySelector('#customersTable tbody');
-  tb.innerHTML = '<tr><td colspan="4"><div class="skeleton"></div><div class="skeleton"></div></td></tr>';
+  tb.innerHTML = '<tr><td colspan="9"><div class="skeleton"></div><div class="skeleton"></div></td></tr>';
   authFetch('/api/admin-data?action=customers').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
     window._allCustomers = res.customers;
@@ -313,7 +314,7 @@ function loadCustomers(){
 
 function renderCustomers(list){
   var tb = document.querySelector('#customersTable tbody'); tb.innerHTML = '';
-  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="emptyState">لا يوجد عملاء مسجلون بعد</td></tr>'; document.getElementById('expiryBanner').style.display='none'; return; }
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="9" class="emptyState">لا يوجد عملاء مسجلون بعد</td></tr>'; document.getElementById('expiryBanner').style.display='none'; return; }
   var now = Date.now();
   var soonCount = 0;
   list.forEach(function(c){
@@ -323,6 +324,9 @@ function renderCustomers(list){
     var statusDot = '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#39FF14; box-shadow:0 0 8px #39FF14; margin-left:8px;"></span>';
     if (c.status === 'canceled') {
       statusDot = '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7a8296; margin-left:8px;"></span>';
+    }
+    if (c.status === 'pending_payment') {
+      statusDot = '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ffb400; box-shadow:0 0 8px #ffb400; margin-left:8px;"></span>';
     }
     if (c.expires_at) {
       var expDate = new Date(c.expires_at);
@@ -339,13 +343,18 @@ function renderCustomers(list){
     } else if (c.status !== 'canceled') {
       statusDot = '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7a8296; margin-left:8px;"></span>';
     }
-    var nameCell = '<div style="display:flex; align-items:center;">'+statusDot+'<div><div style="font-weight:800; color:#fff;">'+c.customer_name+'</div><div style="font-size:11.5px; color:#6b7488; margin-top:2px;">'+(c.ref_code?('كود: '+c.ref_code):'بدون كود مسوّق')+'</div></div></div>';
-    tr.innerHTML = '<td>'+nameCell+'</td><td>'+(c.plan||'-')+'</td>' +
-      '<td><select data-id="'+c.id+'" class="statusSel" style="padding:7px; border-radius:7px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25); font-size:12.5px;">'+opts+'</select></td>' +
+    var nameCell = '<div style="display:flex; align-items:center;">'+statusDot+'<div style="font-weight:800; color:#fff;">'+c.customer_name+'</div></div>';
+    tr.innerHTML = '<td>'+nameCell+'</td>' +
+      '<td style="direction:ltr; text-align:left;">'+(c.phone||'-')+'</td>' +
+      '<td style="direction:ltr; text-align:left;">'+(c.telegram||'-')+'</td>' +
+      '<td style="direction:ltr; text-align:left;">'+(c.tradingview||'-')+'</td>' +
+      '<td>'+(c.plan||'-')+'</td>' +
+      '<td>'+(c.ref_code||'-')+'</td>' +
+      '<td><select data-id="'+c.id+'" class="statusSel" style="padding:7px; border-radius:7px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25); font-size:12px;">'+opts+'</select></td>' +
       '<td>'+expiryTxt+'</td>' +
       '<td style="display:flex; gap:6px; flex-wrap:wrap;">' +
         '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="saveStatus('+c.id+')">حفظ</button>' +
-        '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="openCustomerModal('+c.id+')">📋 التفاصيل</button>' +
+        '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="openCustomerModal('+c.id+')">📋 تعديل</button>' +
       '</td>';
     tb.appendChild(tr);
   });
@@ -427,7 +436,7 @@ function exportCustomerPdf(id){
 function filterCustomers(){
   var q = document.getElementById('customerSearch').value.trim().toLowerCase();
   var list = (window._allCustomers||[]).filter(function(c){
-    return c.customer_name.toLowerCase().indexOf(q)!==-1 || (c.status||'').toLowerCase().indexOf(q)!==-1 || (c.ref_code||'').toLowerCase().indexOf(q)!==-1;
+    return c.customer_name.toLowerCase().indexOf(q)!==-1 || (c.status||'').toLowerCase().indexOf(q)!==-1 || (c.ref_code||'').toLowerCase().indexOf(q)!==-1 || (c.phone||'').toLowerCase().indexOf(q)!==-1 || (c.telegram||'').toLowerCase().indexOf(q)!==-1 || (c.tradingview||'').toLowerCase().indexOf(q)!==-1;
   });
   renderCustomers(list);
 }

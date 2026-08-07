@@ -85,9 +85,7 @@ function fmtDate(d){
   document.getElementById('backHome').href = t.home;
 
   var refCode = qs('ref');
-  if (refCode) {
-    fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: refCode, customerName: name }) }).catch(function(){});
-  }
+  fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ activate: true, customerName: name }) }).catch(function(){});
   if (lang !== 'ar') {
     document.getElementById('rowPlan').style.flexDirection='row';
     document.querySelectorAll('#root [style*="text-align:right"]').forEach(function(el){ el.style.textAlign='left'; });
