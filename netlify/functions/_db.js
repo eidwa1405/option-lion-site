@@ -74,6 +74,11 @@ async function ensureTables() {
     details TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS check_attempts (
+    id SERIAL PRIMARY KEY,
+    ip TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
   await sql`CREATE TABLE IF NOT EXISTS pending_reviews (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
