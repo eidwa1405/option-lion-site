@@ -78,6 +78,13 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
+    if (event.httpMethod === 'POST' && action === 'delete-customer') {
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`DELETE FROM subscriptions WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('delete-customer', ${'حذف عميل #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'customers') {
       const rows = await sql`SELECT id, customer_name, ref_code, status, expires_at, phone, telegram, tradingview, plan, updated_at, created_at FROM subscriptions ORDER BY created_at DESC LIMIT 200`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customers: rows }) };

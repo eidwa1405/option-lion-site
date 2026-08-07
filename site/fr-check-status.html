@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de" dir="ltr">
+<html lang="fr" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mein Abonnementstatus — Option Lion</title>
+<title>Statut de mon Abonnement — Option Lion</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -22,14 +22,14 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
 <div class="card">
   <div style="text-align:center; margin-bottom:24px;">
     <div style="font-size:30px; margin-bottom:8px;">⚜</div>
-    <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">Überprüfen Sie Ihren Abonnementstatus</h1>
-    <p style="font-size:13px; color:#aab3c5; margin:0;">Geben Sie die Telefonnummer oder das Telegram-Konto ein, das Sie bei der Anmeldung verwendet haben</p>
+    <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">Vérifiez le Statut de votre Abonnement</h1>
+    <p style="font-size:13px; color:#aab3c5; margin:0;">Entrez le numéro de téléphone et le compte TradingView utilisés lors de l'inscription</p>
   </div>
-  <input id="tv2" placeholder="TradingView Username" style="margin-bottom:14px;">
-  <input id="q" placeholder="z.B. @username oder 966501234567">
-  <button onclick="checkStatus()">Jetzt prüfen</button>
+  <input id="tv2" placeholder="Nom d'utilisateur TradingView" style="margin-bottom:14px;">
+  <input id="q" placeholder="ex : 966501234567">
+  <button onclick="checkStatus()">Vérifier Maintenant</button>
   <div id="result" style="margin-top:20px; display:none;"></div>
-  <div id="notFound" style="display:none; color:#ff9b9b; font-size:13.5px; text-align:center; margin-top:16px;">Kein passendes Abonnement gefunden. Überprüfen Sie Ihre Daten oder kontaktieren Sie den Support.</div>
+  <div id="notFound" style="display:none; color:#ff9b9b; font-size:13.5px; text-align:center; margin-top:16px;">Aucun abonnement correspondant trouvé. Vérifiez vos informations ou contactez le support.</div>
 </div>
 <script>
 function playClickSound(){
@@ -57,13 +57,13 @@ function checkStatus(){
     document.getElementById('notFound').style.display = 'none';
     if (!res.ok || !res.customer) { document.getElementById('notFound').style.display = 'block'; return; }
     var c = res.customer;
-    var statusLabels = {"pending_payment":"Zahlung nicht abgeschlossen","trial":"Kostenlose Testphase","canceled":"Storniert","renew_1m":"Monatsabonnent","renew_3m":"3-Monats-Abonnent","renew_6m":"6-Monats-Abonnent","renew_1y":"Jahresabonnent"};
-    var expiry = c.expires_at ? new Date(c.expires_at).toLocaleString('de-DE') : '-';
+    var statusLabels = {"pending_payment":"Paiement Non Complété","trial":"Essai Gratuit","canceled":"Annulé","renew_1m":"Abonné Mensuel","renew_3m":"Abonné 3 Mois","renew_6m":"Abonné 6 Mois","renew_1y":"Abonné Annuel"};
+    var expiry = c.expires_at ? new Date(c.expires_at).toLocaleString('fr-FR') : '-';
     document.getElementById('result').innerHTML =
-      '<div class="row"><span>Name</span><span>'+c.customer_name+'</span></div>' +
-      '<div class="row"><span>Status</span><span>'+(statusLabels[c.status]||c.status)+'</span></div>' +
-      '<div class="row"><span>Paket</span><span>'+(c.plan||'-')+'</span></div>' +
-      '<div class="row"><span>Ablaufdatum</span><span>'+expiry+'</span></div>';
+      '<div class="row"><span>Nom</span><span>'+c.customer_name+'</span></div>' +
+      '<div class="row"><span>Statut</span><span>'+(statusLabels[c.status]||c.status)+'</span></div>' +
+      '<div class="row"><span>Forfait</span><span>'+(c.plan||'-')+'</span></div>' +
+      '<div class="row"><span>Date d'Expiration</span><span>'+expiry+'</span></div>';
     document.getElementById('result').style.display = 'block';
   }).catch(function(){ document.getElementById('notFound').style.display = 'block'; });
 }

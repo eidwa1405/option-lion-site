@@ -25,6 +25,7 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
     <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">Abonelik Durumunuzu Kontrol Edin</h1>
     <p style="font-size:13px; color:#aab3c5; margin:0;">Kayıt sırasında kullandığınız telefon numarasını veya Telegram hesabını girin</p>
   </div>
+  <input id="tv2" placeholder="TradingView Username" style="margin-bottom:14px;">
   <input id="q" placeholder="örn: @username veya 966501234567">
   <button onclick="checkStatus()">Şimdi Kontrol Et</button>
   <div id="result" style="margin-top:20px; display:none;"></div>
@@ -49,8 +50,9 @@ function playClickSound(){
 function checkStatus(){
   playClickSound();
   var q = document.getElementById('q').value.trim();
-  if (!q) return;
-  fetch('/api/customer-status?q=' + encodeURIComponent(q)).then(function(r){return r.json();}).then(function(res){
+  var tv = document.getElementById('tv2').value.trim();
+  if (!q || !tv) { document.getElementById('result').style.display='none'; document.getElementById('notFound').style.display='block'; return; }
+  fetch('/api/customer-status?q=' + encodeURIComponent(q) + '&tv=' + encodeURIComponent(tv)).then(function(r){return r.json();}).then(function(res){
     document.getElementById('result').style.display = 'none';
     document.getElementById('notFound').style.display = 'none';
     if (!res.ok || !res.customer) { document.getElementById('notFound').style.display = 'block'; return; }

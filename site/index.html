@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>أسد الأوبشن — منظومة الذكاء التداولي المتكاملة</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
 @keyframes glow { 0%,100% { filter:drop-shadow(0 0 10px rgba(212,175,55,.35)); } 50% { filter:drop-shadow(0 0 26px rgba(212,175,55,.75)); } }
@@ -71,7 +71,7 @@ trackEvent('pageview');
     <a href="./booklet.html" target="_blank" style="font-size:13px; font-weight:700; color:#c9d2e3;">تحميل الشرح PDF</a>
     <div style="position:relative;" id="langdd_ar_index">
       <button onclick="var m=document.getElementById('langdd_ar_index_menu'); m.style.display = m.style.display==='block' ? 'none' : 'block';" style="display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; color:#8a93a8; border:1px solid #2a3348; padding:5px 11px; border-radius:20px; background:transparent; cursor:pointer; font-family:inherit;">AR <span style="font-size:9px;">▾</span></button>
-      <div id="langdd_ar_index_menu" style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:140px; z-index:100;"><a href="./option-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">English</a><a href="./tr-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Türkçe</a><a href="./es-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Español</a><a href="./pt-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Português</a><a href="./de-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Deutsch</a></div>
+      <div id="langdd_ar_index_menu" style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:140px; z-index:100;"><a href="./option-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">English</a><a href="./tr-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Türkçe</a><a href="./es-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Español</a><a href="./pt-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Português</a><a href="./de-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Deutsch</a><a href="./fr-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Français</a></div>
     </div>
     <script>
     document.addEventListener('click', function(e){
@@ -80,6 +80,7 @@ trackEvent('pageview');
       if (wrap && menu && !wrap.contains(e.target)) menu.style.display = 'none';
     });
     </script>
+    <a href="./check-status.html" style="font-size:12.5px; font-weight:800; color:#D4AF37; border:1px solid rgba(212,175,55,.35); padding:7px 16px; border-radius:20px; white-space:nowrap;">🔍 تحقق من اشتراكك</a>
     <a href="./signup.html" onclick="trackEvent('click_join')" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">انضم معنا</a>
   </div>
 </nav>
@@ -111,7 +112,7 @@ trackEvent('pageview');
     </p>
     <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
       <a href="./signup.html" onclick="trackEvent('click_join')" style="font-weight:900; font-size:16px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:15px 34px; border-radius:30px; box-shadow:0 10px 30px rgba(212,175,55,.35);">انضم معنا ⚜</a>
-      <a href="./system.html" style="font-weight:700; font-size:16px; color:#e9edf5; border:1.5px solid #2a3348; padding:14px 30px; border-radius:30px;">استكشف المنظومة</a>
+      <a href="./system.html" style="font-weight:700; font-size:16px; color:#e9edf5; border:1.5px solid rgba(212,175,55,.4); background:rgba(212,175,55,.05); padding:14px 30px; border-radius:30px;">استكشف المنظومة</a>
     </div>
     <p style="font-size:13.5px; color:#8a93a8; margin:22px 0 0;">لا تحتاج خبرة تحليل فني — قرار واضح، تنبيهات فورية، و<a href="./booklet.html" target="_blank" style="color:#D4AF37; text-decoration:underline;">كتيب شرح واحد</a> يكفيك</p>
   </div>
@@ -184,7 +185,8 @@ trackEvent('pageview');
   </div>
   <p style="font-size:12.5px; color:#6b7488; max-width:520px; margin:0 auto 18px; line-height:1.8;">المحتوى المقدَّم لأغراض تعليمية وتحليلية فقط، ولا يُعد توصية استثمارية. التداول ينطوي على مخاطر.</p>
   <div style="font-size:12.5px; color:#4d5468;">© 2026 أسد الأوبشن ⚜ جميع الحقوق محفوظة</div>
-<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#ar-section'); return false;" style="color:#8a93a8;">الشروط والأحكام</a><a href="#" onclick="openLegalModal('./privacy.html#ar-section'); return false;" style="color:#8a93a8;">سياسة الخصوصية</a><a href="#" onclick="openLegalModal('./refund.html#ar-section'); return false;" style="color:#8a93a8;">سياسة الاسترجاع</a><a href="./check-status.html" style="color:#8a93a8;">تحقق من اشتراكك</a></div>
+<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#ar-section'); return false;" style="color:#8a93a8;">الشروط والأحكام</a><a href="#" onclick="openLegalModal('./privacy.html#ar-section'); return false;" style="color:#8a93a8;">سياسة الخصوصية</a><a href="#" onclick="openLegalModal('./refund.html#ar-section'); return false;" style="color:#8a93a8;">سياسة الاسترجاع</a></div>
+  <div style="text-align:center; margin-top:6px;"><a href="./check-status.html" style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:800; color:#D4AF37; border:1px solid rgba(212,175,55,.35); padding:9px 20px; border-radius:22px;">🔍 تحقق من حالة اشتراكك</a></div>
 </footer>
 
 </div>

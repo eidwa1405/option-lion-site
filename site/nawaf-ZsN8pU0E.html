@@ -408,6 +408,7 @@ function renderCustomers(list){
       '<td style="display:flex; gap:6px; flex-wrap:wrap;">' +
         '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="saveStatus('+c.id+')">حفظ</button>' +
         '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="openCustomerModal('+c.id+')">📋 تعديل</button>' +
+        '<button class="btn-red" style="padding:6px 12px; font-size:11.5px;" onclick="deleteCustomer('+c.id+')">🗑 حذف</button>' +
       '</td>';
     tb.appendChild(tr);
   });
@@ -554,6 +555,12 @@ function saveStatus(id){
   var sel = document.querySelector('.statusSel[data-id="'+id+'"]');
   authFetch('/api/admin-data?action=update-status', { method:'POST', body: JSON.stringify({id, status: sel.value}) })
     .then(function(r){return r.json();}).then(function(){ loadCustomers(); loadAffiliates(); });
+}
+
+function deleteCustomer(id){
+  if (!confirm('هل تريد حذف هذا العميل نهائياً؟')) return;
+  authFetch('/api/admin-data?action=delete-customer', { method:'POST', body: JSON.stringify({id}) })
+    .then(function(r){return r.json();}).then(function(){ loadCustomers(); });
 }
 
 function loadAffiliates(){
