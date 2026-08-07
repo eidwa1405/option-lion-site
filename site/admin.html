@@ -59,7 +59,7 @@ th{color:#D4AF37; font-size:12px;}
 
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">🤝 أداء سفراء أسد الأوبشن</h3>
-    <table id="affiliatesTable"><thead><tr><th>الحالة</th><th>الاسم</th><th>الكود</th><th>الدولة</th><th>عدد التجديدات</th><th>إجمالي العمولة</th><th></th></tr></thead><tbody></tbody></table>
+    <table id="affiliatesTable"><thead><tr><th>الحالة</th><th>الاسم</th><th>الكود</th><th>الدولة</th><th>عدد التجديدات</th><th>إجمالي العمولة</th><th>الاتفاقية</th><th></th></tr></thead><tbody></tbody></table>
   </div>
 
   <div class="card" style="margin-bottom:24px;">
@@ -189,7 +189,9 @@ function loadAffiliates(){
       var dot = a.active ? '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#39FF14;"></span>' : '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7a8296;"></span>';
       var reactivateBtn = a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>';
       tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
-        '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td><td>'+reactivateBtn+'</td>';
+        '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td>' +
+        '<td><button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="downloadAgreement(\''+a.code+'\')">📄 تحميل</button></td>' +
+        '<td>'+reactivateBtn+'</td>';
       tb.appendChild(tr);
     });
   });
@@ -198,6 +200,41 @@ function loadAffiliates(){
 function reactivateAffiliate(code){
   authFetch('/api/admin-data?action=reactivate-affiliate', { method:'POST', body: JSON.stringify({code}) })
     .then(function(r){return r.json();}).then(function(){ loadAffiliates(); });
+}
+
+function downloadAgreement(code){
+  authFetch('/api/admin-data?action=affiliate-detail&code=' + encodeURIComponent(code)).then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) { alert(res.error || 'تعذر جلب البيانات'); return; }
+    var a = res.affiliate;
+    var acceptedDate = a.agreement_accepted_at ? new Date(a.agreement_accepted_at).toLocaleString('ar-SA') : '-';
+    var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>اتفاقية سفير - ' + a.name + '</title>' +
+      '<style>body{font-family:Tajawal,Arial,sans-serif; padding:40px; color:#111; max-width:750px; margin:0 auto;} h1{color:#8a6d1f; font-size:22px; border-bottom:2px solid #D4AF37; padding-bottom:12px;} table{width:100%; border-collapse:collapse; margin:20px 0;} td{padding:8px 10px; border-bottom:1px solid #ddd; font-size:14px;} td:first-child{font-weight:800; color:#555; width:180px;} .terms p{font-size:13.5px; line-height:1.9; margin:8px 0;} .sig{margin-top:30px;} .sig img{max-width:300px; border:1px solid #ccc; border-radius:6px; background:#fff;} .sig-label{font-size:12px; color:#777; margin-top:6px;}</style></head><body>' +
+      '<h1>⚜ اتفاقية سفير أسد الأوبشن</h1>' +
+      '<table>' +
+      '<tr><td>الاسم المستعار</td><td>' + (a.name||'-') + '</td></tr>' +
+      '<tr><td>الاسم القانوني</td><td>' + (a.legal_name||'-') + '</td></tr>' +
+      '<tr><td>الدولة / المدينة</td><td>' + (a.country||'-') + ' / ' + (a.city||'-') + '</td></tr>' +
+      '<tr><td>البريد الإلكتروني</td><td>' + (a.email||'-') + '</td></tr>' +
+      '<tr><td>رقم الجوال</td><td>' + (a.phone||'-') + '</td></tr>' +
+      '<tr><td>حساب تيليجرام</td><td>' + (a.telegram||'-') + '</td></tr>' +
+      '<tr><td>كود السفير</td><td>' + (a.code||'-') + '</td></tr>' +
+      '<tr><td>رقم الحساب البنكي</td><td>' + (a.bank_account||'-') + '</td></tr>' +
+      '<tr><td>تاريخ الموافقة</td><td>' + acceptedDate + '</td></tr>' +
+      '</table>' +
+      '<div class="terms"><h3>بنود الاتفاقية</h3>' +
+      '<p>1. يحصل السفير على عمولة ثابتة قدرها 4$ عن كل عملية تجديد اشتراك فعلي مدفوع عبر كوده، ولا تُحتسب عن فترات التجربة المجانية.</p>' +
+      '<p>2. يقرّ السفير بأن جميع البيانات المُدخلة صحيحة ودقيقة، وأن حسابه شخصي وغير قابل للتحويل.</p>' +
+      '<p>3. يلتزم بعدم استخدام أساليب ترويج مضللة أو مخالفة للأنظمة.</p>' +
+      '<p>4. تحتفظ الإدارة بحق تعليق أو إلغاء أي كود سفير مخالف لهذه الاتفاقية.</p>' +
+      '<p>5. تُصرف العمولات وفق رقم الحساب البنكي المسجّل.</p>' +
+      '<p>6. بالموافقة، يقرّ السفير بقراءتها وفهمها والالتزام الكامل ببنودها.</p></div>' +
+      '<div class="sig"><div class="sig-label">توقيع السفير:</div>' + (a.signature_data ? '<img src="' + a.signature_data + '">' : '<p>لا يوجد توقيع مسجل</p>') + '</div>' +
+      '<script>window.onload=function(){setTimeout(function(){window.print();},400);};</script>' +
+      '</body></html>';
+    var w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+  });
 }
 
 function changePassword(){

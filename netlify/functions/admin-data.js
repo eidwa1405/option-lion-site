@@ -114,6 +114,13 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
+    if (event.httpMethod === 'GET' && action === 'affiliate-detail') {
+      const code = (event.queryStringParameters && event.queryStringParameters.code || '').toUpperCase();
+      const rows = await sql`SELECT * FROM affiliates WHERE code = ${code}`;
+      if (rows.length === 0) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, affiliate: rows[0] }) };
+    }
+
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };
   } catch (e) {
     return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: String(e) }) };
