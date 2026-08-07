@@ -398,7 +398,7 @@ function downloadAgreement(code){
       '<p>5. تُصرف العمولات وفق رقم الحساب البنكي المسجّل.</p>' +
       '<p>6. بالموافقة، يقرّ السفير بقراءتها وفهمها والالتزام الكامل ببنودها.</p></div>' +
       '<div class="sig"><div class="sig-label">توقيع السفير:</div>' + (a.signature_data ? '<img src="' + a.signature_data + '">' : '<p>لا يوجد توقيع مسجل</p>') + '</div>' +
-      '<script>window.onload=function(){setTimeout(function(){window.print();},400);};</script>' +
+      '<' + 'script>window.onload=function(){setTimeout(function(){window.print();},400);};</' + 'script>' +
       '</body></html>';
     var w = window.open('', '_blank');
     w.document.write(html);
