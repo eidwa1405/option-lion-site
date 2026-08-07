@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة التحكم — أسد الأوبشن</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh;}
+.card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:16px; padding:22px;}
+input,button{font-family:inherit;}
+input{width:100%; padding:11px 14px; border-radius:9px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.3); color:#fff; font-size:14px;}
+input:focus{outline:none; border-color:#D4AF37;}
+button{cursor:pointer; border:none; border-radius:9px; padding:11px 18px; font-weight:800; font-size:13.5px;}
+.btn-gold{background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18;}
+.btn-red{background:rgba(255,60,60,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.4);}
+table{width:100%; border-collapse:collapse; font-size:13.5px;}
+th,td{padding:9px 10px; text-align:right; border-bottom:1px solid rgba(255,255,255,.08);}
+th{color:#D4AF37; font-size:12px;}
+.stat{background:rgba(212,175,55,.08); border:1px solid rgba(212,175,55,.25); border-radius:14px; padding:18px; text-align:center;}
+.stat .num{font-size:28px; font-weight:900; color:#fff;}
+.stat .lbl{font-size:12px; color:#aab3c5; margin-top:4px;}
+</style>
+</head>
+<body>
+
+<div id="loginView" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;">
+  <div class="card" style="max-width:360px; width:100%;">
+    <h2 style="margin:0 0 18px; text-align:center; color:#D4AF37;">دخول لوحة التحكم</h2>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <input id="loginUser" placeholder="اسم المستخدم">
+      <input id="loginPass" type="password" placeholder="كلمة المرور">
+      <div id="loginErr" style="display:none; color:#ff9b9b; font-size:13px; text-align:center;"></div>
+      <button class="btn-gold" onclick="doLogin()">دخول</button>
+    </div>
+  </div>
+</div>
+
+<div id="dashView" style="display:none; max-width:1200px; margin:0 auto; padding:30px 20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; flex-wrap:wrap; gap:10px;">
+    <h1 style="margin:0; font-size:22px; color:#D4AF37;">⚜ لوحة تحكم أسد الأوبشن</h1>
+    <button class="btn-red" onclick="logout()">تسجيل خروج</button>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:30px;" id="statsGrid"></div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">💰 أسعار الباقات</h3>
+    <table id="pricesTable"><thead><tr><th>الاسم</th><th>السعر ($)</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">👥 حالات اشتراك العملاء</h3>
+    <table id="customersTable"><thead><tr><th>الاسم</th><th>كود المسوّق</th><th>الحالة</th><th></th></tr></thead><tbody></tbody></table>
+    <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-customers'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🤝 أداء سفراء أسد الأوبشن</h3>
+    <table id="affiliatesTable"><thead><tr><th>الحالة</th><th>الاسم</th><th>الكود</th><th>الدولة</th><th>عدد التجديدات</th><th>إجمالي العمولة</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🏷️ أكواد سفراء أسد الأوبشن</h3>
+    <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+      <input id="newRefCode" placeholder="الكود (مثال: LION10)" style="flex:1; min-width:140px;">
+      <input id="newRefOwner" placeholder="اسم السفير" style="flex:1; min-width:140px;">
+      <button class="btn-gold" onclick="addRefCode()">إضافة</button>
+    </div>
+    <table id="refTable"><thead><tr><th>الكود</th><th>المسوّق</th><th>مرات الاستخدام</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+    <div class="card">
+      <h3 style="margin:0 0 16px; color:#D4AF37;">🌐 الزيارات حسب اللغة</h3>
+      <table id="langTable"><thead><tr><th>اللغة</th><th>زيارات</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 16px; color:#D4AF37;">📄 أكثر الصفحات زيارة</h3>
+      <table id="pageTable"><thead><tr><th>الصفحة</th><th>زيارات</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🕓 آخر الأحداث</h3>
+    <table id="eventsTable"><thead><tr><th>النوع</th><th>الصفحة</th><th>اللغة</th><th>الوقت</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div class="card" style="margin-top:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🔑 تغيير كلمة مرور لوحة التحكم</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <input id="newPassword" type="password" placeholder="كلمة المرور الجديدة" style="flex:1; min-width:200px;">
+      <button class="btn-gold" onclick="changePassword()">تحديث كلمة المرور</button>
+    </div>
+    <div id="passMsg" style="margin-top:10px; font-size:13px;"></div>
+  </div>
+</div>
+
+<script>
+var TOKEN_KEY = 'aou_admin_token';
+
+function doLogin(){
+  var username = document.getElementById('loginUser').value.trim();
+  var password = document.getElementById('loginPass').value;
+  fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password}) })
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if (res.ok) {
+        sessionStorage.setItem(TOKEN_KEY, res.token);
+        showDash();
+      } else {
+        var e = document.getElementById('loginErr');
+        e.textContent = res.error || 'خطأ في الدخول';
+        e.style.display = 'block';
+      }
+    }).catch(function(){ alert('تعذّر الاتصال بالخادم'); });
+}
+
+function logout(){
+  sessionStorage.removeItem(TOKEN_KEY);
+  document.getElementById('dashView').style.display = 'none';
+  document.getElementById('loginView').style.display = 'flex';
+}
+
+function authFetch(url, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, { 'X-Admin-Token': sessionStorage.getItem(TOKEN_KEY) || '' });
+  return fetch(url, opts);
+}
+
+function showDash(){
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('dashView').style.display = 'block';
+  loadOverview();
+}
+
+function loadOverview(){
+  authFetch('/api/admin-data?action=overview').then(function(r){ return r.json(); }).then(function(res){
+    if (!res.ok) { logout(); return; }
+    renderStats(res);
+    renderPrices(res.prices);
+    renderRefCodes(res.refCodes);
+    renderLangTable(res.viewsByLang);
+    renderPageTable(res.viewsByPage);
+    renderEvents(res.recentEvents);
+  });
+  loadCustomers();
+  loadAffiliates();
+}
+
+var STATUS_OPTIONS = [
+  ['trial','فترة تجربة مجانية'],
+  ['canceled','تم إلغاء الاشتراك'],
+  ['renew_1m','تجديد شهر واحد'],
+  ['renew_3m','تجديد 3 أشهر'],
+  ['renew_6m','تجديد 6 أشهر'],
+  ['renew_1y','تجديد سنة كاملة']
+];
+
+function loadCustomers(){
+  authFetch('/api/admin-data?action=customers').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var tb = document.querySelector('#customersTable tbody'); tb.innerHTML = '';
+    res.customers.forEach(function(c){
+      var opts = STATUS_OPTIONS.map(function(o){ return '<option value="'+o[0]+'"'+(o[0]===c.status?' selected':'')+'>'+o[1]+'</option>'; }).join('');
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+c.customer_name+'</td><td>'+(c.ref_code||'-')+'</td>' +
+        '<td><select data-id="'+c.id+'" class="statusSel" style="padding:7px; border-radius:7px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">'+opts+'</select></td>' +
+        '<td><button class="btn-gold" onclick="saveStatus('+c.id+')">حفظ</button></td>';
+      tb.appendChild(tr);
+    });
+  });
+}
+
+function saveStatus(id){
+  var sel = document.querySelector('.statusSel[data-id="'+id+'"]');
+  authFetch('/api/admin-data?action=update-status', { method:'POST', body: JSON.stringify({id, status: sel.value}) })
+    .then(function(r){return r.json();}).then(function(){ loadCustomers(); loadAffiliates(); });
+}
+
+function loadAffiliates(){
+  authFetch('/api/admin-data?action=affiliates').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var tb = document.querySelector('#affiliatesTable tbody'); tb.innerHTML = '';
+    res.affiliates.forEach(function(a){
+      var tr = document.createElement('tr');
+      var dot = a.active ? '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#39FF14;"></span>' : '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7a8296;"></span>';
+      var reactivateBtn = a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>';
+      tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
+        '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td><td>'+reactivateBtn+'</td>';
+      tb.appendChild(tr);
+    });
+  });
+}
+
+function reactivateAffiliate(code){
+  authFetch('/api/admin-data?action=reactivate-affiliate', { method:'POST', body: JSON.stringify({code}) })
+    .then(function(r){return r.json();}).then(function(){ loadAffiliates(); });
+}
+
+function changePassword(){
+  var val = document.getElementById('newPassword').value;
+  var msg = document.getElementById('passMsg');
+  if (!val || val.length < 6) { msg.style.color = '#ff9b9b'; msg.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; return; }
+  authFetch('/api/admin-data?action=change-password', { method:'POST', body: JSON.stringify({newPassword: val}) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (res.ok) {
+        msg.style.color = '#39FF14'; msg.textContent = 'تم تحديث كلمة المرور بنجاح — استخدمها في الدخول القادم.';
+        document.getElementById('newPassword').value = '';
+      } else {
+        msg.style.color = '#ff9b9b'; msg.textContent = res.error || 'حدث خطأ';
+      }
+    });
+}
+
+function renderStats(res){
+  var conv = res.totalClicks > 0 ? ((res.totalClicks/Math.max(res.totalViews,1))*100).toFixed(1) : '0';
+  document.getElementById('statsGrid').innerHTML =
+    '<div class="stat"><div class="num">'+res.totalViews+'</div><div class="lbl">إجمالي الزيارات</div></div>' +
+    '<div class="stat"><div class="num">'+res.totalClicks+'</div><div class="lbl">نقرات «انضم للنخبة»</div></div>' +
+    '<div class="stat"><div class="num">'+conv+'%</div><div class="lbl">نسبة التحويل</div></div>' +
+    '<div class="stat"><div class="num">'+res.refCodes.length+'</div><div class="lbl">عدد سفراء أسد الأوبشن</div></div>';
+}
+
+function renderPrices(prices){
+  var tb = document.querySelector('#pricesTable tbody'); tb.innerHTML = '';
+  prices.forEach(function(p){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><input value="'+p.label+'" style="width:120px;" data-id="'+p.id+'" class="lblInput"></td>' +
+      '<td><input type="number" value="'+p.amount+'" style="width:90px;" data-id="'+p.id+'" class="amtInput"></td>' +
+      '<td><button class="btn-gold" data-id="'+p.id+'" onclick="savePrice(this)">حفظ</button></td>';
+    tb.appendChild(tr);
+  });
+}
+
+function savePrice(btn){
+  var id = btn.getAttribute('data-id');
+  var label = document.querySelector('.lblInput[data-id="'+id+'"]').value;
+  var amount = document.querySelector('.amtInput[data-id="'+id+'"]').value;
+  authFetch('/api/admin-data?action=update-price', { method:'POST', body: JSON.stringify({id,label,amount}) })
+    .then(function(r){return r.json();}).then(function(){ loadOverview(); });
+}
+
+function renderRefCodes(codes){
+  var tb = document.querySelector('#refTable tbody'); tb.innerHTML = '';
+  codes.forEach(function(c){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+c.code+'</td><td>'+(c.owner_name||'-')+'</td><td style="font-weight:900; color:#39FF14;">'+c.uses+'</td>' +
+      '<td><button class="btn-red" onclick="deleteRefCode(\''+c.code+'\')">حذف</button></td>';
+    tb.appendChild(tr);
+  });
+}
+
+function addRefCode(){
+  var code = document.getElementById('newRefCode').value;
+  var owner_name = document.getElementById('newRefOwner').value;
+  if (!code.trim()) return;
+  authFetch('/api/admin-data?action=add-ref-code', { method:'POST', body: JSON.stringify({code, owner_name}) })
+    .then(function(r){return r.json();}).then(function(){
+      document.getElementById('newRefCode').value=''; document.getElementById('newRefOwner').value='';
+      loadOverview();
+    });
+}
+
+function deleteRefCode(code){
+  authFetch('/api/admin-data?action=delete-ref-code', { method:'POST', body: JSON.stringify({code}) })
+    .then(function(r){return r.json();}).then(function(){ loadOverview(); });
+}
+
+function renderLangTable(rows){
+  var tb = document.querySelector('#langTable tbody'); tb.innerHTML = '';
+  rows.forEach(function(r){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+(r.lang||'-')+'</td><td>'+r.c+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function renderPageTable(rows){
+  var tb = document.querySelector('#pageTable tbody'); tb.innerHTML = '';
+  rows.forEach(function(r){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+(r.page||'-')+'</td><td>'+r.c+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function renderEvents(rows){
+  var tb = document.querySelector('#eventsTable tbody'); tb.innerHTML = '';
+  rows.forEach(function(r){
+    var tr = document.createElement('tr');
+    var time = new Date(r.created_at).toLocaleString('ar-SA');
+    tr.innerHTML = '<td>'+r.type+'</td><td>'+(r.page||'-')+'</td><td>'+(r.lang||'-')+'</td><td>'+time+'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+(function(){
+  if (sessionStorage.getItem(TOKEN_KEY)) { showDash(); }
+})();
+</script>
+</body>
+</html>
