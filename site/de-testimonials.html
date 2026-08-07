@@ -75,6 +75,54 @@ a:hover { color:#f0cf6c; }
       <div class="card"><div style="color:#D4AF37; font-size:20px; margin-bottom:12px;">❝</div><p style="font-size:14.5px; line-height:1.9; color:#c2cadb; margin:0 0 20px;">Solides System, die vier Werkzeuge ergänzen sich wirklich, statt sich zu überschneiden.</p><div><div style="font-weight:800; font-size:13.5px; color:#fff;">Bilal Ahmed</div><div style="font-size:12px; color:#8a93a8;">Lahore, Pakistan</div></div></div>
     </div>
   </div>
+
+    <div id="dynamicReviews" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-top:20px;"></div>
+    <div id="reviewFormCard" style="max-width:560px; margin:50px auto 0; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:30px 26px;">
+      <h3 style="color:#fff; font-size:19px; margin:0 0 18px; text-align:center;">Teilen Sie Ihre Bewertung</h3>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div><label style="display:block; font-size:12px; color:#D4AF37; font-weight:700; margin-bottom:6px;">Name</label><input id="rv_name" placeholder="Ihr Name" style="width:100%; box-sizing:border-box; padding:11px 14px; border-radius:9px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14px; font-family:inherit;"></div>
+        <div><label style="display:block; font-size:12px; color:#D4AF37; font-weight:700; margin-bottom:6px;">Nationalität</label><select id="rv_nat" style="width:100%; box-sizing:border-box; padding:11px 14px; border-radius:9px; border:1px solid rgba(212,175,55,.2); background:#10141f; color:#fff; font-size:14px; font-family:inherit;"><option value="Saudi-Arabien">Saudi-Arabien</option><option value="VAE">VAE</option><option value="Kuwait">Kuwait</option><option value="Katar">Katar</option><option value="Bahrain">Bahrain</option><option value="Oman">Oman</option><option value="Ägypten">Ägypten</option><option value="Jordanien">Jordanien</option><option value="Libanon">Libanon</option><option value="Irak">Irak</option><option value="Marokko">Marokko</option><option value="Algerien">Algerien</option><option value="Tunesien">Tunesien</option><option value="Libyen">Libyen</option><option value="Sudan">Sudan</option><option value="Jemen">Jemen</option><option value="Palästina">Palästina</option><option value="Syrien">Syrien</option><option value="Türkei">Türkei</option><option value="Deutschland">Deutschland</option><option value="Frankreich">Frankreich</option><option value="Spanien">Spanien</option><option value="Portugal">Portugal</option><option value="Vereinigtes Königreich">Vereinigtes Königreich</option><option value="USA">USA</option><option value="Kanada">Kanada</option><option value="Australien">Australien</option><option value="Malaysia">Malaysia</option><option value="Indonesien">Indonesien</option><option value="Pakistan">Pakistan</option><option value="Indien">Indien</option><option value="Andere">Andere</option></select></div>
+        <div><label style="display:block; font-size:12px; color:#D4AF37; font-weight:700; margin-bottom:6px;">Stadt</label><input id="rv_city" placeholder="Ihre Stadt" style="width:100%; box-sizing:border-box; padding:11px 14px; border-radius:9px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14px; font-family:inherit;"></div>
+        <div><label style="display:block; font-size:12px; color:#D4AF37; font-weight:700; margin-bottom:6px;">Ihre Bewertung des Systems</label><textarea id="rv_text" placeholder="Teilen Sie Ihre Erfahrung mit Option Lion..." rows="4" style="width:100%; box-sizing:border-box; padding:11px 14px; border-radius:9px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14px; font-family:inherit; resize:vertical;"></textarea></div>
+        <div id="rv_err" style="display:none; color:#ff9b9b; font-size:12.5px; text-align:center;"></div>
+        <button onclick="submitReview()" style="margin-top:6px; padding:13px; border:none; border-radius:10px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:14.5px; font-family:inherit; cursor:pointer;">Bewertung senden</button>
+      </div>
+      <div id="rv_thanks" style="display:none; text-align:center; padding:10px 0;">
+        <div style="font-size:32px; margin-bottom:10px;">✅</div>
+        <p style="color:#c2cadb; font-size:14px; line-height:1.8; margin:0;">Danke! Ihre Bewertung wird geprüft und nach Genehmigung veröffentlicht.</p>
+      </div>
+    </div>
+    <script>
+    function playClickSound(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator();var g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(880,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(440,ctx.currentTime+0.08);g.gain.setValueAtTime(0.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.1);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.1);}catch(e){}}
+    function submitReview(){
+      playClickSound();
+      var name = document.getElementById('rv_name').value.trim();
+      var nationality = document.getElementById('rv_nat').value;
+      var city = document.getElementById('rv_city').value.trim();
+      var review_text = document.getElementById('rv_text').value.trim();
+      var err = document.getElementById('rv_err');
+      if (!name || !review_text) { err.textContent = 'Name / Ihre Bewertung des Systems'; err.style.display='block'; return; }
+      err.style.display='none';
+      fetch('/api/submit-review', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name, nationality, city, review_text, lang:'de'}) })
+        .then(function(r){return r.json();}).then(function(res){
+          if (res.ok) {
+            document.querySelectorAll('#reviewFormCard > div').forEach(function(d){ if(d.id!=='rv_thanks') d.style.display='none'; });
+            document.getElementById('rv_thanks').style.display='block';
+          } else { err.textContent = res.error||'Error'; err.style.display='block'; }
+        }).catch(function(){ err.textContent='Network error'; err.style.display='block'; });
+    }
+    fetch('/api/public-reviews?lang=de').then(function(r){return r.json();}).then(function(res){
+      if (!res.ok || !res.reviews.length) return;
+      var wrap = document.getElementById('dynamicReviews');
+      res.reviews.forEach(function(rv){
+        var div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = '<div style="color:#D4AF37; font-size:20px; margin-bottom:12px;">❝</div><p style="font-size:14.5px; line-height:1.9; color:#c2cadb; margin:0 0 20px;">'+rv.review_text+'</p><div><div style="font-weight:800; font-size:13.5px; color:#fff;">'+rv.name+'</div><div style="font-size:12px; color:#8a93a8;">'+[rv.city,rv.nationality].filter(Boolean).join('، ')+'</div></div>';
+        wrap.appendChild(div);
+      });
+    }).catch(function(){});
+    </script>
+  
 </section>
 
 <footer style="padding:44px clamp(20px,6vw,64px) 34px; border-top:1px solid rgba(255,255,255,.08); text-align:center;">

@@ -146,6 +146,13 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
   </section>
 
+  <section class="panel" data-panel="reviews">
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">💬 آراء العملاء بانتظار الموافقة</h3>
+    <div id="reviewsList"></div>
+  </div>
+  </section>
+
   <section class="panel" data-panel="settings">
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">👤 تغيير اسم المستخدم</h3>
@@ -182,6 +189,7 @@ var NAV_ITEMS = [
   ['traffic','🌐 الزيارات'],
   ['events','🕓 الأحداث'],
   ['audit','📜 سجل التدقيق'],
+  ['reviews','💬 آراء العملاء'],
   ['settings','🔑 الإعدادات']
 ];
 
@@ -201,6 +209,34 @@ function showPanel(name){
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===name); });
   document.querySelectorAll('.navBtn').forEach(function(b, i){ b.classList.toggle('active', NAV_ITEMS[i][0]===name); });
   if (name === 'audit') loadAuditLog();
+  if (name === 'reviews') loadPendingReviews();
+}
+
+function loadPendingReviews(){
+  var el = document.getElementById('reviewsList');
+  el.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  authFetch('/api/admin-data?action=pending-reviews').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    if (!res.reviews.length) { el.innerHTML = '<div class="emptyState">لا توجد آراء بانتظار الموافقة</div>'; return; }
+    el.innerHTML = '';
+    res.reviews.forEach(function(rv){
+      var div = document.createElement('div');
+      div.style.cssText = 'background:rgba(255,255,255,.03); border:1px solid rgba(212,175,55,.15); border-radius:12px; padding:16px; margin-bottom:12px;';
+      div.innerHTML =
+        '<div style="font-size:11px; color:#8a93a8; margin-bottom:6px;">اللغة: '+rv.lang+'</div>' +
+        '<p style="font-size:14px; color:#e9edf5; line-height:1.8; margin:0 0 10px;">"'+rv.review_text+'"</p>' +
+        '<div style="font-size:13px; color:#D4AF37; font-weight:800;">'+rv.name+'</div>' +
+        '<div style="font-size:12px; color:#8a93a8; margin-bottom:12px;">'+(rv.city||'')+(rv.city&&rv.nationality?'، ':'')+(rv.nationality||'')+'</div>' +
+        '<div style="display:flex; gap:8px;"><button class="btn-gold" style="padding:7px 16px; font-size:12.5px;" onclick="reviewAction('+rv.id+',\'approve\')">✅ موافقة</button>' +
+        '<button class="btn-red" style="padding:7px 16px; font-size:12.5px;" onclick="reviewAction('+rv.id+',\'reject\')">❌ رفض</button></div>';
+      el.appendChild(div);
+    });
+  });
+}
+
+function reviewAction(id, action){
+  authFetch('/api/admin-data?action=' + action + '-review', { method:'POST', body: JSON.stringify({id}) })
+    .then(function(r){return r.json();}).then(function(){ loadPendingReviews(); });
 }
 
 function playClickSound(){
@@ -387,17 +423,20 @@ function renderCustomers(list){
 function openAddCustomerModal(){
   var m = document.getElementById('customerModal');
   var opts = STATUS_OPTIONS.map(function(o){ return '<option value="'+o[0]+'">'+o[1]+'</option>'; }).join('');
+  var now = new Date();
+  var nowLocal = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + 'T' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
   m.innerHTML =
     '<div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; max-width:480px; width:100%; padding:26px;">' +
     '<h3 style="color:#D4AF37; margin:0 0 18px; font-size:17px;">➕ إضافة عميل</h3>' +
     '<div style="display:flex; flex-direction:column; gap:12px; font-size:13.5px;">' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الاسم</label><input id="ac_name" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
-      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">رقم الجوال</label><input id="ac_phone" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الباقة</label><select id="ac_plan" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff;"><option value="">— اختر —</option><option value="شهر واحد">شهر واحد</option><option value="3 أشهر">3 أشهر</option><option value="6 أشهر">6 أشهر</option><option value="سنة كاملة">سنة كاملة</option></select></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">رقم الجوال</label><div style="display:flex; gap:6px;"><select id="ac_cc" style="flex:0 0 90px; box-sizing:border-box; padding:10px 6px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff; font-size:12.5px;"></select><input id="ac_phone" style="flex:1; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب تيليجرام</label><input id="ac_tg" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب TradingView</label><input id="ac_tv" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
-      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الباقة</label><input id="ac_plan" placeholder="مثال: تجربة مجانية / 3 أشهر" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">كود المسوّق (اختياري)</label><input id="ac_ref" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حالة الاشتراك</label><select id="ac_status" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff;">'+opts+'</select></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">تاريخ ووقت الانتهاء</label><input id="ac_expires" type="datetime-local" value="'+nowLocal+'" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
     '</div>' +
     '<div id="acErr" style="display:none; color:#ff9b9b; font-size:12.5px; margin-top:12px;"></div>' +
     '<div style="display:flex; gap:10px; margin-top:22px;">' +
@@ -406,6 +445,10 @@ function openAddCustomerModal(){
     '<button style="width:100%; margin-top:10px; padding:10px; border:none; border-radius:10px; background:rgba(255,255,255,.06); color:#c9cddb; font-weight:700; cursor:pointer;" onclick="document.getElementById(\'customerModal\').style.display=\'none\'">إلغاء</button>' +
     '</div>';
   m.style.display = 'flex';
+  var ccSel = document.getElementById('ac_cc');
+  var CC_LIST = [["+966","🇸🇦"],["+971","🇦🇪"],["+965","🇰🇼"],["+974","🇶🇦"],["+973","🇧🇭"],["+968","🇴🇲"],["+20","🇪🇬"],["+962","🇯🇴"],["+961","🇱🇧"],["+964","🇮🇶"],["+212","🇲🇦"],["+213","🇩🇿"],["+90","🇹🇷"],["+49","🇩🇪"],["+33","🇫🇷"],["+34","🇪🇸"],["+351","🇵🇹"],["+44","🇬🇧"],["+1","🇺🇸"]];
+  CC_LIST.forEach(function(c){ var o=document.createElement('option'); o.value=c[0]; o.textContent=c[1]+' '+c[0]; ccSel.appendChild(o); });
+  ccSel.value = '+966';
 }
 
 function submitAddCustomer(){
@@ -414,12 +457,13 @@ function submitAddCustomer(){
   if (!name) { err.textContent = 'الاسم مطلوب'; err.style.display = 'block'; return; }
   var body = {
     customer_name: name,
-    phone: document.getElementById('ac_phone').value.trim(),
+    phone: document.getElementById('ac_cc').value + document.getElementById('ac_phone').value.trim(),
     telegram: document.getElementById('ac_tg').value.trim(),
     tradingview: document.getElementById('ac_tv').value.trim(),
     plan: document.getElementById('ac_plan').value.trim(),
     ref_code: document.getElementById('ac_ref').value.trim(),
-    status: document.getElementById('ac_status').value
+    status: document.getElementById('ac_status').value,
+    expires_at: document.getElementById('ac_expires').value ? new Date(document.getElementById('ac_expires').value).toISOString() : null
   };
   authFetch('/api/admin-data?action=add-customer', { method:'POST', body: JSON.stringify(body) })
     .then(function(r){return r.json();}).then(function(res){

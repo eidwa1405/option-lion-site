@@ -11,11 +11,15 @@
 body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
 a{color:#D4AF37;}
 .card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:34px 30px; max-width:440px; width:100%;}
-input{width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left; margin-bottom:14px;}
-input:focus{outline:none; border-color:#D4AF37;}
+label{display:block; font-size:12px; color:#8a93a8; margin-bottom:6px;}
+input,select{width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; font-family:inherit;}
+input:focus,select:focus{outline:none; border-color:#D4AF37;}
+select option{background:#10141f;}
+.field{margin-bottom:14px;}
 button{width:100%; padding:14px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15px; font-family:inherit; cursor:pointer;}
 .row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.08); font-size:14px;}
 .row span:first-child{color:#8a93a8;}
+.or{text-align:center; font-size:12px; color:#6b7488; margin:6px 0 14px;}
 </style>
 </head>
 <body>
@@ -23,9 +27,20 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
   <div style="text-align:center; margin-bottom:24px;">
     <div style="font-size:30px; margin-bottom:8px;">⚜</div>
     <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">تحقق من حالة اشتراكك</h1>
-    <p style="font-size:13px; color:#aab3c5; margin:0;">أدخل رقم الجوال أو حساب تيليجرام المستخدم عند التسجيل</p>
+    <p style="font-size:13px; color:#aab3c5; margin:0;">أدخل رقم الجوال أو حساب TradingView المستخدم عند التسجيل</p>
   </div>
-  <input id="q" placeholder="مثال: @username أو 966501234567">
+  <div class="field">
+    <label>رقم الجوال</label>
+    <div style="display:flex; gap:8px;">
+      <select id="cc" style="flex:0 0 110px;"></select>
+      <input id="phone" type="tel" style="flex:1; direction:ltr; text-align:left;">
+    </div>
+  </div>
+  <div class="or">— أو —</div>
+  <div class="field">
+    <label>حساب TradingView</label>
+    <input id="tv" placeholder="TradingView Username" style="direction:ltr; text-align:left;">
+  </div>
   <button onclick="checkStatus()">تحقق الآن</button>
   <div id="result" style="margin-top:20px; display:none;"></div>
   <div id="notFound" style="display:none; color:#ff9b9b; font-size:13.5px; text-align:center; margin-top:16px;">لم يتم العثور على اشتراك مطابق. تحقق من البيانات أو تواصل مع الدعم.</div>
@@ -46,16 +61,26 @@ function playClickSound(){
   } catch(e){}
 }
 
+var CC_LIST = [["+966","🇸🇦"],["+971","🇦🇪"],["+965","🇰🇼"],["+974","🇶🇦"],["+973","🇧🇭"],["+968","🇴🇲"],["+20","🇪🇬"],["+962","🇯🇴"],["+961","🇱🇧"],["+964","🇮🇶"],["+212","🇲🇦"],["+213","🇩🇿"],["+90","🇹🇷"],["+49","🇩🇪"],["+33","🇫🇷"],["+34","🇪🇸"],["+351","🇵🇹"],["+44","🇬🇧"],["+1","🇺🇸"]];
+(function(){
+  var sel = document.getElementById('cc');
+  CC_LIST.forEach(function(c){ var o=document.createElement('option'); o.value=c[0]; o.textContent=c[1]+' '+c[0]; sel.appendChild(o); });
+  sel.value = '+966';
+})();
+
 function checkStatus(){
   playClickSound();
-  var q = document.getElementById('q').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var cc = document.getElementById('cc').value;
+  var tv = document.getElementById('tv').value.trim();
+  var q = tv || (phone ? (cc + phone) : '');
   if (!q) return;
   fetch('/api/customer-status?q=' + encodeURIComponent(q)).then(function(r){return r.json();}).then(function(res){
     document.getElementById('result').style.display = 'none';
     document.getElementById('notFound').style.display = 'none';
     if (!res.ok || !res.customer) { document.getElementById('notFound').style.display = 'block'; return; }
     var c = res.customer;
-    var statusLabels = {"pending_payment":"لم يكمل السداد","trial":"فترة تجربة مجانية","canceled":"ملغي","renew_1m":"مشترك شهري","renew_3m":"مشترك 3 أشهر","renew_6m":"مشترك 6 أشهر","renew_1y":"مشترك سنوي"};
+    var statusLabels = {pending_payment:'لم يكمل السداد', trial:'فترة تجربة مجانية', canceled:'ملغي', renew_1m:'مشترك شهري', renew_3m:'مشترك 3 أشهر', renew_6m:'مشترك 6 أشهر', renew_1y:'مشترك سنوي'};
     var expiry = c.expires_at ? new Date(c.expires_at).toLocaleString('ar-SA') : '-';
     document.getElementById('result').innerHTML =
       '<div class="row"><span>الاسم</span><span>'+c.customer_name+'</span></div>' +
