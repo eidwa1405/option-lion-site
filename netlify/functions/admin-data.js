@@ -66,8 +66,14 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'GET' && action === 'customers') {
-      const rows = await sql`SELECT id, customer_name, ref_code, status, updated_at, created_at FROM subscriptions ORDER BY created_at DESC LIMIT 200`;
+      const rows = await sql`SELECT id, customer_name, ref_code, status, expires_at, phone, telegram, tradingview, plan, updated_at, created_at FROM subscriptions ORDER BY created_at DESC LIMIT 200`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customers: rows }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'update-customer-info') {
+      const { id, phone, telegram, tradingview, plan } = JSON.parse(event.body || '{}');
+      await sql`UPDATE subscriptions SET phone = ${phone||''}, telegram = ${telegram||''}, tradingview = ${tradingview||''}, plan = ${plan||''}, updated_at = now() WHERE id = ${id}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'update-status') {
@@ -75,7 +81,10 @@ exports.handler = async (event) => {
       const rows = await sql`SELECT * FROM subscriptions WHERE id = ${id}`;
       if (rows.length === 0) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
       const row = rows[0];
-      await sql`UPDATE subscriptions SET status = ${status}, updated_at = now() WHERE id = ${id}`;
+      const durationDays = { trial: 14, renew_1m: 30, renew_3m: 90, renew_6m: 180, renew_1y: 365, canceled: null };
+      const days = durationDays[status];
+      const newExpiry = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+      await sql`UPDATE subscriptions SET status = ${status}, expires_at = ${newExpiry}, updated_at = now() WHERE id = ${id}`;
       if (status && status.indexOf('renew_') === 0 && row.status !== status) {
         if (row.ref_code) {
           await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount) VALUES (${row.ref_code}, ${row.customer_name}, ${plan || status}, 4)`;
@@ -110,10 +119,10 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'GET' && action === 'export-customers') {
-      const rows = await sql`SELECT customer_name, ref_code, status, created_at FROM subscriptions ORDER BY created_at DESC`;
-      let csv = 'الاسم,كود المسوق,الحالة,تاريخ التسجيل\n';
+      const rows = await sql`SELECT customer_name, ref_code, status, expires_at, phone, telegram, tradingview, plan, created_at FROM subscriptions ORDER BY created_at DESC`;
+      let csv = 'الاسم,كود المسوق,الحالة,تاريخ الانتهاء,الجوال,تيليجرام,TradingView,الباقة,تاريخ التسجيل\n';
       rows.forEach(function(r){
-        csv += '"'+(r.customer_name||'')+'","'+(r.ref_code||'')+'","'+(r.status||'')+'","'+new Date(r.created_at).toISOString()+'"\n';
+        csv += '"'+(r.customer_name||'')+'","'+(r.ref_code||'')+'","'+(r.status||'')+'","'+(r.expires_at?new Date(r.expires_at).toISOString():'')+'","'+(r.phone||'')+'","'+(r.telegram||'')+'","'+(r.tradingview||'')+'","'+(r.plan||'')+'","'+new Date(r.created_at).toISOString()+'"\n';
       });
       return { statusCode: 200, headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename=customers.csv' }, body: csv };
     }

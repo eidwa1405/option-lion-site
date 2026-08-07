@@ -43,9 +43,15 @@ async function ensureTables() {
     customer_name TEXT NOT NULL,
     ref_code TEXT,
     status TEXT NOT NULL DEFAULT 'trial',
+    expires_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS phone TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS telegram TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS tradingview TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan TEXT`;
   await sql`CREATE TABLE IF NOT EXISTS commission_log (
     id SERIAL PRIMARY KEY,
     ref_code TEXT NOT NULL,
