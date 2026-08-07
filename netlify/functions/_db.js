@@ -74,6 +74,16 @@ async function ensureTables() {
     details TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS pending_reviews (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    nationality TEXT,
+    city TEXT,
+    review_text TEXT NOT NULL,
+    lang TEXT NOT NULL DEFAULT 'ar',
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
   await sql`CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY,
     type TEXT NOT NULL,

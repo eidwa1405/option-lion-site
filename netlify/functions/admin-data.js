@@ -66,11 +66,11 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'POST' && action === 'add-customer') {
-      const { customer_name, phone, telegram, tradingview, plan, ref_code, status } = JSON.parse(event.body || '{}');
+      const { customer_name, phone, telegram, tradingview, plan, ref_code, status, expires_at } = JSON.parse(event.body || '{}');
       if (!customer_name || !customer_name.trim()) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الاسم مطلوب' }) };
       const durationDays = { trial: 14, renew_1m: 30, renew_3m: 90, renew_6m: 180, renew_1y: 365 };
       const days = durationDays[status];
-      const expiresAt = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+      const expiresAt = expires_at ? new Date(expires_at).toISOString() : (days ? new Date(Date.now() + days * 86400000).toISOString() : null);
       const code = ref_code ? String(ref_code).trim().toUpperCase() : null;
       await sql`INSERT INTO subscriptions (customer_name, ref_code, status, expires_at, phone, telegram, tradingview, plan)
         VALUES (${customer_name.trim()}, ${code}, ${status || 'pending_payment'}, ${expiresAt}, ${phone||''}, ${telegram||''}, ${tradingview||''}, ${plan||''})`;
@@ -187,6 +187,25 @@ exports.handler = async (event) => {
         GROUP BY month ORDER BY month ASC`;
       const totalAll = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS total FROM revenue_log`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, monthly: rows, totalAll: totalAll[0].total }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'pending-reviews') {
+      const rows = await sql`SELECT * FROM pending_reviews WHERE status = 'pending' ORDER BY created_at ASC`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, reviews: rows }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'approve-review') {
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`UPDATE pending_reviews SET status = 'approved' WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('approve-review', ${'اعتماد رأي #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'reject-review') {
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`UPDATE pending_reviews SET status = 'rejected' WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('reject-review', ${'رفض رأي #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };
