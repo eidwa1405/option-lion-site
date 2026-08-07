@@ -54,6 +54,19 @@ async function ensureTables() {
     amount NUMERIC NOT NULL DEFAULT 4,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS revenue_log (
+    id SERIAL PRIMARY KEY,
+    customer_name TEXT,
+    plan TEXT,
+    amount NUMERIC NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS audit_log (
+    id SERIAL PRIMARY KEY,
+    action TEXT NOT NULL,
+    details TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
   await sql`CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY,
     type TEXT NOT NULL,
@@ -69,6 +82,10 @@ async function ensureTables() {
   const passRow = await sql`SELECT value FROM admin_settings WHERE key = 'admin_password'`;
   if (passRow.length === 0) {
     await sql`INSERT INTO admin_settings (key, value) VALUES ('admin_password', 'A.e.e.s1405@')`;
+  }
+  const userRow = await sql`SELECT value FROM admin_settings WHERE key = 'admin_username'`;
+  if (userRow.length === 0) {
+    await sql`INSERT INTO admin_settings (key, value) VALUES ('admin_username', 'admin')`;
   }
   const priceCount = await sql`SELECT COUNT(*)::int AS c FROM prices`;
   if (priceCount[0].c === 0) {

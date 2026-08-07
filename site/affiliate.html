@@ -248,7 +248,7 @@ function getPos(e){
   var clientY = e.touches ? e.touches[0].clientY : e.clientY;
   return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
 }
-function startDraw(e){ drawing = true; hasSignature = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }
+function startDraw(e){ drawing = true; hasSignature = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); updateSubmitState(); }
 function moveDraw(e){ if(!drawing) return; var p = getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }
 function endDraw(){ drawing = false; }
 canvas.addEventListener('mousedown', startDraw);
@@ -257,7 +257,23 @@ window.addEventListener('mouseup', endDraw);
 canvas.addEventListener('touchstart', startDraw, {passive:false});
 canvas.addEventListener('touchmove', moveDraw, {passive:false});
 canvas.addEventListener('touchend', endDraw);
-function clearSignature(){ ctx.clearRect(0,0,canvas.width,canvas.height); hasSignature = false; }
+function updateSubmitState(){
+  var btn = document.getElementById('btnSubmit');
+  var agreed = document.getElementById('f_agree').checked;
+  if (agreed && hasSignature) {
+    btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+  } else {
+    btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed';
+  }
+}
+document.getElementById('f_agree').addEventListener('change', updateSubmitState);
+canvas.addEventListener('mouseup', updateSubmitState);
+canvas.addEventListener('touchend', updateSubmitState);
+document.getElementById('btnSubmit').disabled = true;
+document.getElementById('btnSubmit').style.opacity = '.5';
+document.getElementById('btnSubmit').style.cursor = 'not-allowed';
+
+function clearSignature(){ ctx.clearRect(0,0,canvas.width,canvas.height); hasSignature = false; updateSubmitState(); }
 
 var codeCheckTimer;
 document.getElementById('f_code').addEventListener('input', function(){

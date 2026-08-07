@@ -45,6 +45,7 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && action === 'update-price') {
       const { id, label, amount } = JSON.parse(event.body || '{}');
       await sql`UPDATE prices SET label = ${label}, amount = ${amount} WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('update-price', ${'الباقة ' + id + ' → ' + label + ' ($' + amount + ')'})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
@@ -53,12 +54,14 @@ exports.handler = async (event) => {
       const cleanCode = String(code || '').trim().toUpperCase();
       if (!cleanCode) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الكود فارغ' }) };
       await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${cleanCode}, ${owner_name || ''}) ON CONFLICT (code) DO NOTHING`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('add-ref-code', ${'إضافة كود ' + cleanCode})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'delete-ref-code') {
       const { code } = JSON.parse(event.body || '{}');
       await sql`DELETE FROM ref_codes WHERE code = ${String(code || '').toUpperCase()}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('delete-ref-code', ${'حذف كود ' + code})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
@@ -73,9 +76,19 @@ exports.handler = async (event) => {
       if (rows.length === 0) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
       const row = rows[0];
       await sql`UPDATE subscriptions SET status = ${status}, updated_at = now() WHERE id = ${id}`;
-      if (status && status.indexOf('renew_') === 0 && row.status !== status && row.ref_code) {
-        await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount) VALUES (${row.ref_code}, ${row.customer_name}, ${plan || status}, 4)`;
+      if (status && status.indexOf('renew_') === 0 && row.status !== status) {
+        if (row.ref_code) {
+          await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount) VALUES (${row.ref_code}, ${row.customer_name}, ${plan || status}, 4)`;
+        }
+        const planMap = { renew_1m: 'monthly', renew_3m: '3months', renew_6m: '6months', renew_1y: 'yearly' };
+        const priceId = planMap[status];
+        if (priceId) {
+          const priceRows = await sql`SELECT amount FROM prices WHERE id = ${priceId}`;
+          const amount = priceRows.length ? priceRows[0].amount : 0;
+          await sql`INSERT INTO revenue_log (customer_name, plan, amount) VALUES (${row.customer_name}, ${status}, ${amount})`;
+        }
       }
+      await sql`INSERT INTO audit_log (action, details) VALUES ('update-status', ${'العميل ' + row.customer_name + ' → ' + status})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
@@ -105,6 +118,22 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename=customers.csv' }, body: csv };
     }
 
+    if (event.httpMethod === 'GET' && action === 'export-affiliates') {
+      const rows = await sql`SELECT a.name, a.legal_name, a.code, a.country, a.city, a.email, a.phone, a.telegram, a.bank_account, a.active,
+        COALESCE(SUM(c.amount),0)::numeric AS total_commission, COUNT(c.id)::int AS renewals
+        FROM affiliates a LEFT JOIN commission_log c ON c.ref_code = a.code GROUP BY a.code ORDER BY total_commission DESC`;
+      let csv = 'الاسم,الاسم القانوني,الكود,الدولة,المدينة,البريد,الجوال,تيليجرام,الحساب البنكي,نشط,عدد التجديدات,إجمالي العمولة\n';
+      rows.forEach(function(r){
+        csv += '"'+(r.name||'')+'","'+(r.legal_name||'')+'","'+(r.code||'')+'","'+(r.country||'')+'","'+(r.city||'')+'","'+(r.email||'')+'","'+(r.phone||'')+'","'+(r.telegram||'')+'","'+(r.bank_account||'')+'","'+(r.active?'نعم':'لا')+'","'+r.renewals+'","'+r.total_commission+'"\n';
+      });
+      return { statusCode: 200, headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename=affiliates.csv' }, body: csv };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'audit-log') {
+      const rows = await sql`SELECT action, details, created_at FROM audit_log ORDER BY created_at DESC LIMIT 100`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, logs: rows }) };
+    }
+
     if (event.httpMethod === 'POST' && action === 'change-password') {
       const { newPassword } = JSON.parse(event.body || '{}');
       if (!newPassword || newPassword.length < 6) {
@@ -114,11 +143,28 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
+    if (event.httpMethod === 'POST' && action === 'change-username') {
+      const { newUsername } = JSON.parse(event.body || '{}');
+      if (!newUsername || newUsername.trim().length < 3) {
+        return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل' }) };
+      }
+      await sql`UPDATE admin_settings SET value = ${newUsername.trim()} WHERE key = 'admin_username'`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'affiliate-detail') {
       const code = (event.queryStringParameters && event.queryStringParameters.code || '').toUpperCase();
       const rows = await sql`SELECT * FROM affiliates WHERE code = ${code}`;
       if (rows.length === 0) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, affiliate: rows[0] }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'revenue') {
+      const rows = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, SUM(amount)::numeric AS total
+        FROM revenue_log WHERE created_at > now() - interval '12 months'
+        GROUP BY month ORDER BY month ASC`;
+      const totalAll = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS total FROM revenue_log`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, monthly: rows, totalAll: totalAll[0].total }) };
     }
 
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };

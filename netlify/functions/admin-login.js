@@ -9,7 +9,8 @@ exports.handler = async (event) => {
     await ensureTables();
     const sql = getSql();
     const { username, password } = JSON.parse(event.body || '{}');
-    const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+    const userRow = await sql`SELECT value FROM admin_settings WHERE key = 'admin_username'`;
+    const ADMIN_USER = userRow.length ? userRow[0].value : (process.env.ADMIN_USER || 'admin');
     const row = await sql`SELECT value FROM admin_settings WHERE key = 'admin_password'`;
     const ADMIN_PASS = row.length ? row[0].value : 'A.e.e.s1405@';
     if (username === ADMIN_USER && password === ADMIN_PASS) {
