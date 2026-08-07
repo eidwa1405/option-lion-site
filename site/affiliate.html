@@ -285,7 +285,23 @@ document.getElementById('f_code').addEventListener('input', function(){
   codeCheckTimer = setTimeout(function(){ status.textContent = '⏳'; }, 100);
 });
 
+function playClickSound(){
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+    g.gain.setValueAtTime(0.12, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.1);
+  } catch(e){}
+}
+
 function submitAffiliate(){
+  playClickSound();
   var t = T[currentLang];
   var name = document.getElementById('f_name').value.trim();
   var legalName = document.getElementById('f_legal_name').value.trim();

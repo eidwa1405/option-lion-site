@@ -175,6 +175,9 @@ function submitSignup(){
     alert('Failed to send, please try again.');
   });
 }
+
+function qsRef(){ var m = location.search.match(/[?&]ref=([^&]*)/); return m ? decodeURIComponent(m[1]) : ''; }
+(function(){ var r = qsRef(); if (r) { document.getElementById('su_ref').value = r; checkRefCode(); } })();
 </script>
 
 <div id="legalModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">

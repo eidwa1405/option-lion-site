@@ -90,6 +90,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">👥 حالات اشتراك العملاء</h3>
     <input id="customerSearch" class="searchBox" placeholder="🔍 بحث بالاسم أو كود المسوّق أو الحالة..." oninput="filterCustomers()">
+    <button class="btn-gold" style="margin-bottom:16px;" onclick="openAddCustomerModal()">➕ إضافة عميل</button>
     <div id="expiryBanner" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
     <table id="customersTable" style="font-size:12.5px;"><thead><tr><th>الاسم</th><th>الجوال</th><th>تيليجرام</th><th>TradingView</th><th>الباقة</th><th>كود المسوّق</th><th>الحالة</th><th>تاريخ الانتهاء</th><th></th></tr></thead><tbody></tbody></table>
     <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-customers'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
@@ -202,7 +203,23 @@ function showPanel(name){
   if (name === 'audit') loadAuditLog();
 }
 
+function playClickSound(){
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+    g.gain.setValueAtTime(0.12, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.1);
+  } catch(e){}
+}
+
 function doLogin(){
+  playClickSound();
   var username = document.getElementById('loginUser').value.trim();
   var password = document.getElementById('loginPass').value;
   fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password}) })
@@ -365,6 +382,54 @@ function renderCustomers(list){
   } else {
     banner.style.display = 'none';
   }
+}
+
+function openAddCustomerModal(){
+  var m = document.getElementById('customerModal');
+  var opts = STATUS_OPTIONS.map(function(o){ return '<option value="'+o[0]+'">'+o[1]+'</option>'; }).join('');
+  m.innerHTML =
+    '<div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; max-width:480px; width:100%; padding:26px;">' +
+    '<h3 style="color:#D4AF37; margin:0 0 18px; font-size:17px;">➕ إضافة عميل</h3>' +
+    '<div style="display:flex; flex-direction:column; gap:12px; font-size:13.5px;">' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الاسم</label><input id="ac_name" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">رقم الجوال</label><input id="ac_phone" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب تيليجرام</label><input id="ac_tg" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب TradingView</label><input id="ac_tv" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الباقة</label><input id="ac_plan" placeholder="مثال: تجربة مجانية / 3 أشهر" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">كود المسوّق (اختياري)</label><input id="ac_ref" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حالة الاشتراك</label><select id="ac_status" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff;">'+opts+'</select></div>' +
+    '</div>' +
+    '<div id="acErr" style="display:none; color:#ff9b9b; font-size:12.5px; margin-top:12px;"></div>' +
+    '<div style="display:flex; gap:10px; margin-top:22px;">' +
+      '<button class="btn-gold" style="flex:1;" onclick="submitAddCustomer()">💾 إضافة العميل</button>' +
+    '</div>' +
+    '<button style="width:100%; margin-top:10px; padding:10px; border:none; border-radius:10px; background:rgba(255,255,255,.06); color:#c9cddb; font-weight:700; cursor:pointer;" onclick="document.getElementById(\'customerModal\').style.display=\'none\'">إلغاء</button>' +
+    '</div>';
+  m.style.display = 'flex';
+}
+
+function submitAddCustomer(){
+  var name = document.getElementById('ac_name').value.trim();
+  var err = document.getElementById('acErr');
+  if (!name) { err.textContent = 'الاسم مطلوب'; err.style.display = 'block'; return; }
+  var body = {
+    customer_name: name,
+    phone: document.getElementById('ac_phone').value.trim(),
+    telegram: document.getElementById('ac_tg').value.trim(),
+    tradingview: document.getElementById('ac_tv').value.trim(),
+    plan: document.getElementById('ac_plan').value.trim(),
+    ref_code: document.getElementById('ac_ref').value.trim(),
+    status: document.getElementById('ac_status').value
+  };
+  authFetch('/api/admin-data?action=add-customer', { method:'POST', body: JSON.stringify(body) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (res.ok) {
+        document.getElementById('customerModal').style.display = 'none';
+        loadCustomers();
+      } else {
+        err.textContent = res.error || 'حدث خطأ'; err.style.display = 'block';
+      }
+    });
 }
 
 function openCustomerModal(id){

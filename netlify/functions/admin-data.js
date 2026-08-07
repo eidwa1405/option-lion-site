@@ -65,6 +65,19 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
+    if (event.httpMethod === 'POST' && action === 'add-customer') {
+      const { customer_name, phone, telegram, tradingview, plan, ref_code, status } = JSON.parse(event.body || '{}');
+      if (!customer_name || !customer_name.trim()) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الاسم مطلوب' }) };
+      const durationDays = { trial: 14, renew_1m: 30, renew_3m: 90, renew_6m: 180, renew_1y: 365 };
+      const days = durationDays[status];
+      const expiresAt = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+      const code = ref_code ? String(ref_code).trim().toUpperCase() : null;
+      await sql`INSERT INTO subscriptions (customer_name, ref_code, status, expires_at, phone, telegram, tradingview, plan)
+        VALUES (${customer_name.trim()}, ${code}, ${status || 'pending_payment'}, ${expiresAt}, ${phone||''}, ${telegram||''}, ${tradingview||''}, ${plan||''})`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('add-customer', ${'إضافة عميل يدوياً: ' + customer_name})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'customers') {
       const rows = await sql`SELECT id, customer_name, ref_code, status, expires_at, phone, telegram, tradingview, plan, updated_at, created_at FROM subscriptions ORDER BY created_at DESC LIMIT 200`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customers: rows }) };
@@ -84,7 +97,7 @@ exports.handler = async (event) => {
       const durationDays = { trial: 14, renew_1m: 30, renew_3m: 90, renew_6m: 180, renew_1y: 365, canceled: null };
       const days = durationDays[status];
       const newExpiry = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
-      await sql`UPDATE subscriptions SET status = ${status}, expires_at = ${newExpiry}, updated_at = now() WHERE id = ${id}`;
+      await sql`UPDATE subscriptions SET status = ${status}, expires_at = ${newExpiry}, notified_48h = false, updated_at = now() WHERE id = ${id}`;
       if (status && status.indexOf('renew_') === 0 && row.status !== status) {
         if (row.ref_code) {
           await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount) VALUES (${row.ref_code}, ${row.customer_name}, ${plan || status}, 4)`;

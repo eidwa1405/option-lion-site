@@ -52,6 +52,7 @@ async function ensureTables() {
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS telegram TEXT`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS tradingview TEXT`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS notified_48h BOOLEAN DEFAULT FALSE`;
   await sql`CREATE TABLE IF NOT EXISTS commission_log (
     id SERIAL PRIMARY KEY,
     ref_code TEXT NOT NULL,
