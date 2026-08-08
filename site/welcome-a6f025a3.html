@@ -13,8 +13,7 @@ a{color:#D4AF37;}
 </head>
 <body>
 <div id="root" style="max-width:520px; text-align:center;">
-  <img src="assets/lion-logo.jpg" alt="Option Lion" style="width:76px; height:76px; border-radius:50%; border:2px solid #D4AF37; box-shadow:0 0 24px rgba(212,175,55,.4); margin-bottom:14px; object-fit:cover;">
-  <div style="font-size:34px; margin-bottom:10px;">✅</div>
+  <div style="font-size:50px; margin-bottom:16px;">✅</div>
   <h1 id="h1" style="font-size:28px; margin:0 0 10px;">مرحباً بك في أسد الأوبشن</h1>
   <p id="hello" style="color:#D4AF37; font-weight:800; font-size:17px; margin:0 0 22px;"></p>
 
@@ -86,9 +85,7 @@ function fmtDate(d){
   document.getElementById('backHome').href = t.home;
 
   var refCode = qs('ref');
-  if (refCode) {
-    fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: refCode, customerName: name }) }).catch(function(){});
-  }
+  fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ activate: true, customerName: name, lang: lang }) }).catch(function(){});
   if (lang !== 'ar') {
     document.getElementById('rowPlan').style.flexDirection='row';
     document.querySelectorAll('#root [style*="text-align:right"]').forEach(function(el){ el.style.textAlign='left'; });
