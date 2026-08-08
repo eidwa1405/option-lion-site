@@ -201,10 +201,8 @@ exports.handler = async (event) => {
       const cleanCode = String(code).trim().toUpperCase();
       const exists = await sql`SELECT 1 FROM affiliates WHERE code = ${cleanCode}`;
       if (exists.length) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الكود مستخدم بالفعل' }) };
-      const bcrypt = require('bcryptjs');
-      const hash = password ? await bcrypt.hash(password, 10) : null;
-      await sql`INSERT INTO affiliates (name, legal_name, country, city, email, password_hash, age, phone, telegram, code, bank_account, active, approved_at)
-        VALUES (${name}, ${legalName||''}, ${country||''}, ${city||''}, ${email||''}, ${hash}, ${age||null}, ${phone||''}, ${telegram||''}, ${cleanCode}, ${bankAccount||''}, true, now())`;
+      await sql`INSERT INTO affiliates (name, legal_name, country, city, email, password, login_username, age, phone, telegram, code, bank_account, active, approved_at)
+        VALUES (${name}, ${legalName||''}, ${country||''}, ${city||''}, ${email||''}, ${password||''}, ${cleanCode}, ${age||null}, ${phone||''}, ${telegram||''}, ${cleanCode}, ${bankAccount||''}, true, now())`;
       await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${cleanCode}, ${name}) ON CONFLICT (code) DO NOTHING`;
       await sql`INSERT INTO audit_log (action, details) VALUES ('add-affiliate', ${'إضافة سفير يدوياً: ' + name + ' (' + cleanCode + ')'})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
@@ -215,9 +213,7 @@ exports.handler = async (event) => {
       const cleanCode = String(code||'').trim().toUpperCase();
       if (!name || !cleanCode) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الاسم والكود مطلوبان' }) };
       if (password) {
-        const bcrypt = require('bcryptjs');
-        const hash = await bcrypt.hash(password, 10);
-        await sql`UPDATE affiliates SET name=${name}, legal_name=${legalName||''}, country=${country||''}, city=${city||''}, email=${email||''}, password_hash=${hash}, age=${age||null}, phone=${phone||''}, telegram=${telegram||''}, bank_account=${bankAccount||''} WHERE code=${cleanCode}`;
+        await sql`UPDATE affiliates SET name=${name}, legal_name=${legalName||''}, country=${country||''}, city=${city||''}, email=${email||''}, password=${password}, age=${age||null}, phone=${phone||''}, telegram=${telegram||''}, bank_account=${bankAccount||''} WHERE code=${cleanCode}`;
       } else {
         await sql`UPDATE affiliates SET name=${name}, legal_name=${legalName||''}, country=${country||''}, city=${city||''}, email=${email||''}, age=${age||null}, phone=${phone||''}, telegram=${telegram||''}, bank_account=${bankAccount||''} WHERE code=${cleanCode}`;
       }

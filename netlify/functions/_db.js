@@ -95,6 +95,9 @@ async function ensureTables() {
       ('6months','6 أشهر',179,'pri_01kyhen533mmstsyr1gf81qb94'),
       ('yearly','سنوي',299,'pri_01kyherxxbtt9kvb0hgevs3h3n')`;
   }
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS login_username TEXT`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS password TEXT`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ`;
 }
 
 module.exports = { getSql, ensureTables };

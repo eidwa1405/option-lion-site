@@ -3,7 +3,6 @@
   "private": true,
   "dependencies": {
     "nodemailer": "^6.9.14",
-    "@netlify/neon": "^0.1.0",
-    "bcryptjs": "^2.4.3"
+    "@netlify/neon": "^0.1.0"
   }
 }
