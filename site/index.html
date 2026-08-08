@@ -63,12 +63,24 @@ trackEvent('pageview');
   <div style="display:flex; align-items:center; gap:clamp(10px,2.5vw,22px); flex-wrap:wrap; justify-content:flex-end; row-gap:8px;">
     <a href="./index.html" style="font-size:13px; font-weight:700; color:#D4AF37;">الرئيسية</a>
     <a href="./system.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">المنظومة</a>
-    <a href="./results.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">النتائج</a>
-    <a href="./testimonials.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">آراء</a>
     <a href="./pricing.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">الأسعار</a>
-    <a href="./faq.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">الأسئلة</a>
     <a href="./signup.html" onclick="trackEvent('click_join')" style="font-size:13px; font-weight:700; color:#c9d2e3;">الاشتراك</a>
-    <a href="./booklet.html" target="_blank" style="font-size:13px; font-weight:700; color:#c9d2e3;">تحميل الشرح PDF</a>
+    <div style="position:relative;" id="moredd_ar_index">
+      <button onclick="var m=document.getElementById('moredd_ar_index_menu'); m.style.display = m.style.display==='block' ? 'none' : 'block';" style="display:flex; align-items:center; gap:5px; font-size:13px; font-weight:700; color:#c9d2e3; border:none; background:transparent; cursor:pointer; font-family:inherit; padding:0;">المزيد <span style="font-size:9px;">▾</span></button>
+      <div id="moredd_ar_index_menu" style="display:none; position:absolute; top:calc(100% + 8px); right:0; background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:150px; z-index:100;">
+        <a href="./results.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">النتائج</a>
+        <a href="./testimonials.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">آراء</a>
+        <a href="./faq.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">الأسئلة</a>
+        <a href="./booklet.html" target="_blank" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">تحميل الشرح PDF</a>
+      </div>
+    </div>
+    <script>
+    document.addEventListener('click', function(e){
+      var wrap = document.getElementById('moredd_ar_index');
+      var menu = document.getElementById('moredd_ar_index_menu');
+      if (wrap && menu && !wrap.contains(e.target)) menu.style.display = 'none';
+    });
+    </script>
     <div style="position:relative;" id="langdd_ar_index">
       <button onclick="var m=document.getElementById('langdd_ar_index_menu'); m.style.display = m.style.display==='block' ? 'none' : 'block';" style="display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; color:#8a93a8; border:1px solid #2a3348; padding:5px 11px; border-radius:20px; background:transparent; cursor:pointer; font-family:inherit;">AR <span style="font-size:9px;">▾</span></button>
       <div id="langdd_ar_index_menu" style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:140px; z-index:100;"><a href="./option-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">English</a><a href="./tr-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Türkçe</a><a href="./es-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Español</a><a href="./pt-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Português</a><a href="./de-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Deutsch</a><a href="./fr-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Français</a></div>
@@ -96,14 +108,15 @@ trackEvent('pageview');
 })();
 </script>
 
+<div style="background:linear-gradient(90deg,rgba(212,175,55,.15),rgba(212,175,55,.05),rgba(212,175,55,.15)); border-bottom:1px solid rgba(212,175,55,.25); padding:10px clamp(16px,5vw,64px); text-align:center;">
+  <p style="margin:0; font-size:13px; font-weight:800; color:#f0e6c8; letter-spacing:.3px;">⚜ 4 أدوات متكاملة &nbsp;·&nbsp; تنبيه واحد موحّد بدل الشتات &nbsp;·&nbsp; تجربة مجانية 14 يوم بلا التزام</p>
+</div>
+
 <section style="position:relative; padding:clamp(70px,10vw,140px) clamp(20px,6vw,64px) clamp(60px,8vw,110px); text-align:center;">
   <div style="position:absolute; top:10%; right:6%; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(212,175,55,.18),transparent 70%); filter:blur(10px); animation:drift 12s ease-in-out infinite;"></div>
   <div style="position:absolute; bottom:5%; left:8%; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,rgba(30,58,110,.5),transparent 70%); filter:blur(10px); animation:drift 14s ease-in-out infinite reverse;"></div>
 
   <div style="position:relative; max-width:900px; margin:0 auto;">
-    <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(212,175,55,.1); border:1px solid rgba(212,175,55,.35); padding:7px 18px; border-radius:30px; font-size:13px; font-weight:700; color:#e8cf85; margin-bottom:28px;">
-      <span>⚜</span><span>منظومة تداول متكاملة — 4 مؤشرات و32 وحدة تحليلية</span>
-    </div>
     <h1 style="font-size:clamp(38px,6.5vw,74px); font-weight:900; line-height:1.15; margin:0 0 20px; color:#fff;">
       اقرأ السوق بعين <span style="background:linear-gradient(120deg,#D4AF37,#f7e39a,#D4AF37); background-size:300% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:shimmer 4s linear infinite;">أسد الأوبشن</span>
     </h1>
@@ -117,11 +130,11 @@ trackEvent('pageview');
     <p style="font-size:13.5px; color:#8a93a8; margin:22px 0 0;">لا تحتاج خبرة تحليل فني — قرار واضح، تنبيهات فورية، و<a href="./booklet.html" target="_blank" style="color:#D4AF37; text-decoration:underline;">كتيب شرح واحد</a> يكفيك</p>
   </div>
 
-  <div style="position:relative; display:flex; justify-content:center; gap:clamp(24px,6vw,72px); flex-wrap:wrap; margin-top:clamp(56px,8vw,90px); padding-top:36px; border-top:1px solid rgba(255,255,255,.08); max-width:820px; margin-inline:auto;">
-    <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">4</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">مؤشرات</div></div>
-    <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">8</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">فريمات متزامنة</div></div>
-    <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">24/7</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">مراقبة لحظية</div></div>
-    <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">32</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">وحدات تحليلية</div></div>
+  <div style="position:relative; display:flex; justify-content:center; gap:clamp(20px,5vw,56px); flex-wrap:wrap; margin-top:clamp(40px,6vw,64px); padding-top:26px; border-top:1px solid rgba(255,255,255,.08); max-width:820px; margin-inline:auto;">
+    <div style="text-align:center;"><div style="font-size:clamp(22px,3vw,30px); font-weight:900; color:#D4AF37;">4</div><div style="font-size:12px; color:#8a93a8; margin-top:2px;">مؤشرات</div></div>
+    <div style="text-align:center;"><div style="font-size:clamp(22px,3vw,30px); font-weight:900; color:#D4AF37;">8</div><div style="font-size:12px; color:#8a93a8; margin-top:2px;">فريمات متزامنة</div></div>
+    <div style="text-align:center;"><div style="font-size:clamp(22px,3vw,30px); font-weight:900; color:#D4AF37;">24/7</div><div style="font-size:12px; color:#8a93a8; margin-top:2px;">مراقبة لحظية</div></div>
+    <div style="text-align:center;"><div style="font-size:clamp(22px,3vw,30px); font-weight:900; color:#D4AF37;">32</div><div style="font-size:12px; color:#8a93a8; margin-top:2px;">وحدات تحليلية</div></div>
   </div>
 </section>
 
@@ -149,21 +162,36 @@ trackEvent('pageview');
     <div style="flex:1 1 380px; min-width:300px;">
       <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">الفكرة</div>
       <h2 style="font-size:clamp(26px,3.5vw,38px); font-weight:900; color:#fff; margin:0 0 18px; line-height:1.3;">لا مؤشر واحد يكفي — فجمعنا أربعة</h2>
-      <p style="font-size:15.5px; line-height:2; color:#aab3c5; margin:0 0 16px;">أسد الأوبشن، البايفت الذكي، سلطان الأثرياء، وقرار الملك — 4 مؤشرات متكاملة تضم 32 أداة تحليل فني، كل واحدة تراقب زاوية مختلفة من السوق: الاتجاه، الزخم، السيولة، ومناطق الدعم والمقاومة — وتتوافق معاً لتعطيك صورة أوضح بدل إشارة معزولة قد تخدعك.</p>
-      <p style="font-size:15.5px; line-height:2; color:#aab3c5; margin:0;">كل وحدة تُفعّل أو تُعطّل من الإعدادات، فتبني تجربة القراءة التي تناسب أسلوبك أنت — لا ضجيج، لا تعقيد أكثر من اللازم.</p>
+      <p style="font-size:15.5px; line-height:2; color:#aab3c5; margin:0 0 20px;">أسد الأوبشن، البايفت الذكي، سلطان الأثرياء، وقرار الملك — 4 مؤشرات متكاملة تضم 32 أداة تحليل فني، كل واحدة تراقب زاوية مختلفة من السوق: الاتجاه، الزخم، السيولة، ومناطق الدعم والمقاومة — وتتوافق معاً لتعطيك صورة أوضح بدل إشارة معزولة قد تخدعك. كل وحدة تُفعّل أو تُعطّل من الإعدادات، فتبني تجربة القراءة التي تناسب أسلوبك أنت.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px;">
+        <div class="card" style="padding:16px;"><div style="font-weight:800; font-size:13px; color:#fff;">① الاتجاه والزخم</div></div>
+        <div class="card" style="padding:16px;"><div style="font-weight:800; font-size:13px; color:#fff;">② الدعوم والمقاومات</div></div>
+        <div class="card" style="padding:16px;"><div style="font-weight:800; font-size:13px; color:#fff;">③ السيولة والتوافق</div></div>
+      </div>
     </div>
   </div>
 </section>
 
-<section style="padding:clamp(40px,6vw,64px) clamp(20px,6vw,64px);">
-  <div style="max-width:1000px; margin:0 auto; text-align:center;">
-    <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">استراتيجية التكامل</div>
-    <h2 style="font-size:clamp(24px,3.2vw,34px); font-weight:900; color:#fff; margin:0 0 18px;">الأدوات الثلاث تكمل بعضها، لا تعمل كل واحدة بمعزل</h2>
-    <p style="font-size:15px; line-height:2; color:#aab3c5; max-width:720px; margin:0 auto 34px;">دمج منظومة أسد الأوبشن (الاتجاه والزخم) مع البايفت الذكي (الدعوم والمقاومات) وسلطان الأثرياء (السيولة والتوافق الخفي) يعطيك أعلى درجة توافق ممكنة بين ثلاث زوايا مختلفة للسوق قبل اتخاذ القرار. لا توجد أداة أو استراتيجية تضمن نجاحاً مؤكداً — التداول يظل احتمالاً يحمل مخاطرة دائماً، وهذا التكامل يقلل الاعتماد على إشارة معزولة فقط.</p>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; max-width:820px; margin:0 auto;">
-      <div class="card" style="padding:20px;"><div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:6px;">① الاتجاه والزخم</div><div style="font-size:12.5px; color:#8a93a8;">منظومة أسد الأوبشن</div></div>
-      <div class="card" style="padding:20px;"><div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:6px;">② الدعوم والمقاومات</div><div style="font-size:12.5px; color:#8a93a8;">البايفت الذكي</div></div>
-      <div class="card" style="padding:20px;"><div style="font-weight:800; font-size:14px; color:#fff; margin-bottom:6px;">③ السيولة والتوافق</div><div style="font-size:12.5px; color:#8a93a8;">سلطان الأثرياء</div></div>
+<section style="padding:clamp(50px,8vw,90px) clamp(20px,6vw,64px);">
+  <div style="max-width:900px; margin:0 auto; text-align:center;">
+    <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">كيف تبدأ؟</div>
+    <h2 style="font-size:clamp(24px,3.2vw,34px); font-weight:900; color:#fff; margin:0 0 40px;">ثلاث خطوات فقط، بلا تعقيد</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:22px;">
+      <div class="card" style="padding:28px 22px; text-align:center;">
+        <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:18px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">1</div>
+        <div style="font-weight:800; font-size:15.5px; color:#fff; margin-bottom:8px;">سجّل مجاناً</div>
+        <div style="font-size:13.5px; color:#8a93a8; line-height:1.8;">أنشئ حسابك وابدأ تجربة مجانية 14 يوماً بلا أي التزام دفع.</div>
+      </div>
+      <div class="card" style="padding:28px 22px; text-align:center;">
+        <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:18px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">2</div>
+        <div style="font-weight:800; font-size:15.5px; color:#fff; margin-bottom:8px;">فعّل الأدوات على TradingView</div>
+        <div style="font-size:13.5px; color:#8a93a8; line-height:1.8;">فريقنا يمنحك الوصول للأدوات الأربعة على حسابك خلال دقائق.</div>
+      </div>
+      <div class="card" style="padding:28px 22px; text-align:center;">
+        <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:18px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">3</div>
+        <div style="font-weight:800; font-size:15.5px; color:#fff; margin-bottom:8px;">انتظر التنبيه وتداول بثقة</div>
+        <div style="font-size:13.5px; color:#8a93a8; line-height:1.8;">لا تحليل يدوي مطلوب — التنبيهات تصلك جاهزة عند توافق الأدوات.</div>
+      </div>
     </div>
   </div>
 </section>

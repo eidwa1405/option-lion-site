@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;}
-body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh;}
+body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh; font-size:13.5px;}
 .card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:16px; padding:22px;}
 input,button{font-family:inherit;}
 input{width:100%; padding:11px 14px; border-radius:9px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.3); color:#fff; font-size:14px;}
@@ -92,8 +92,25 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <input id="customerSearch" class="searchBox" placeholder="🔍 بحث بالاسم أو كود المسوّق أو الحالة..." oninput="filterCustomers()">
     <button class="btn-gold" style="margin-bottom:16px;" onclick="openAddCustomerModal()">➕ إضافة عميل</button>
     <div id="expiryBanner" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
-    <table id="customersTable" style="font-size:12.5px;"><thead><tr><th>الاسم</th><th>الجوال</th><th>تيليجرام</th><th>TradingView</th><th>الباقة</th><th>كود المسوّق</th><th>الحالة</th><th>تاريخ الانتهاء</th><th></th></tr></thead><tbody></tbody></table>
+    <table id="customersTable" style="font-size:12.5px;"><thead><tr><th>الاسم</th><th>رقم العميل</th><th>البريد</th><th>الجوال</th><th>تيليجرام</th><th>TradingView</th><th>الباقة</th><th>كود المسوّق</th><th>الحالة</th><th>تاريخ الانتهاء</th><th></th></tr></thead><tbody></tbody></table>
     <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-customers'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
+  </div>
+  </section>
+
+  <section class="panel" data-panel="broadcast">
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📧 مراسلة العملاء بالبريد الإلكتروني</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُرسل الرسالة لجميع العملاء الذين لديهم بريد إلكتروني محفوظ في قاعدة البيانات، بنفس النسق الموحّد (الهيدر والشعار والتذييل).</p>
+    <div style="margin-bottom:14px;">
+      <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">الموضوع</label>
+      <input id="bc_subject" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">نص الرسالة</label>
+      <textarea id="bc_message" rows="8" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25); font-family:inherit; resize:vertical;"></textarea>
+    </div>
+    <button class="btn-gold" onclick="sendBroadcast()">📨 إرسال للجميع</button>
+    <div id="bc_result" style="margin-top:14px; font-size:13px; color:#8a93a8;"></div>
   </div>
   </section>
 
@@ -184,6 +201,7 @@ var NAV_ITEMS = [
   ['revenue','💵 الإيرادات'],
   ['prices','💰 الأسعار'],
   ['customers','👥 حالات الاشتراك'],
+  ['broadcast','📧 مراسلة العملاء'],
   ['affiliates','🤝 أداء السفراء'],
   ['refcodes','🏷️ أكواد السفراء'],
   ['traffic','🌐 الزيارات'],
@@ -357,7 +375,7 @@ var STATUS_OPTIONS = [
 
 function loadCustomers(){
   var tb = document.querySelector('#customersTable tbody');
-  tb.innerHTML = '<tr><td colspan="9"><div class="skeleton"></div><div class="skeleton"></div></td></tr>';
+  tb.innerHTML = '<tr><td colspan="10"><div class="skeleton"></div><div class="skeleton"></div></td></tr>';
   authFetch('/api/admin-data?action=customers').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
     window._allCustomers = res.customers;
@@ -398,6 +416,8 @@ function renderCustomers(list){
     }
     var nameCell = '<div style="display:flex; align-items:center;">'+statusDot+'<div style="font-weight:800; color:#fff;">'+c.customer_name+'</div></div>';
     tr.innerHTML = '<td>'+nameCell+'</td>' +
+      '<td style="direction:ltr; text-align:left; font-family:monospace;">'+(c.customer_id||'-')+'</td>' +
+      '<td style="direction:ltr; text-align:left;">'+(c.email||'-')+'</td>' +
       '<td style="direction:ltr; text-align:left;">'+(c.phone||'-')+'</td>' +
       '<td style="direction:ltr; text-align:left;">'+(c.telegram||'-')+'</td>' +
       '<td style="direction:ltr; text-align:left;">'+(c.tradingview||'-')+'</td>' +
@@ -408,6 +428,7 @@ function renderCustomers(list){
       '<td style="display:flex; gap:6px; flex-wrap:wrap;">' +
         '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="saveStatus('+c.id+')">حفظ</button>' +
         '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="openCustomerModal('+c.id+')">📋 تعديل</button>' +
+        '<button class="btn-gold" style="padding:6px 12px; font-size:11.5px;" onclick="sendActivationEmail('+c.id+')">✉️ إرسال تفعيل الاشتراك</button>' +
         '<button class="btn-red" style="padding:6px 12px; font-size:11.5px;" onclick="deleteCustomer('+c.id+')">🗑 حذف</button>' +
       '</td>';
     tb.appendChild(tr);
@@ -551,6 +572,26 @@ function filterCustomers(){
   renderCustomers(list);
 }
 
+function sendActivationEmail(id){
+  authFetch('/api/admin-data?action=send-activation-email', { method:'POST', body: JSON.stringify({ id: id }) })
+    .then(function(r){return r.json();}).then(function(res){
+      alert(res.ok ? '✅ تم إرسال بريد التفعيل بنجاح' : '❌ ' + (res.error || 'فشل الإرسال'));
+    });
+}
+
+function sendBroadcast(){
+  var subject = document.getElementById('bc_subject').value.trim();
+  var message = document.getElementById('bc_message').value.trim();
+  var resultEl = document.getElementById('bc_result');
+  if (!subject || !message) { resultEl.textContent = '⚠️ الموضوع والرسالة مطلوبان'; return; }
+  if (!confirm('تأكيد إرسال الرسالة لجميع العملاء المسجَّلين ببريد؟')) return;
+  resultEl.textContent = 'جارِ الإرسال...';
+  authFetch('/api/admin-data?action=broadcast-email', { method:'POST', body: JSON.stringify({ subject: subject, message: message }) })
+    .then(function(r){return r.json();}).then(function(res){
+      resultEl.textContent = res.ok ? ('✅ تم الإرسال إلى ' + res.sent + ' من أصل ' + res.total + ' عميل') : ('❌ ' + (res.error||'فشل'));
+    });
+}
+
 function saveStatus(id){
   var sel = document.querySelector('.statusSel[data-id="'+id+'"]');
   authFetch('/api/admin-data?action=update-status', { method:'POST', body: JSON.stringify({id, status: sel.value}) })
@@ -574,22 +615,39 @@ function loadAffiliates(){
     res.affiliates.forEach(function(a){
       if (!a.active) inactiveCount++;
       var tr = document.createElement('tr');
-      var dot = a.active ? '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#39FF14;"></span>' : '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7a8296;"></span>';
-      var reactivateBtn = a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>';
-      tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
+      var pending = !a.approved_at;
+      var dot = pending
+        ? '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ffb400; box-shadow:0 0 8px #ffb400;"></span>'
+        : (a.active ? '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#39FF14;"></span>' : '<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7a8296;"></span>');
+      var actionBtn = pending
+        ? '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="approveAffiliate(\''+a.code+'\')">✅ تفعيل</button>'
+        : (a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>');
+      tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td style="direction:ltr; text-align:left; font-family:monospace;">'+(a.login_username||a.code)+'</td><td style="direction:ltr; text-align:left; font-family:monospace;">'+(a.password||'-')+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
         '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td>' +
         '<td><button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="downloadAgreement(\''+a.code+'\')">📄 تحميل</button></td>' +
-        '<td>'+reactivateBtn+'</td>';
+        '<td>'+actionBtn+'</td>';
       tb.appendChild(tr);
     });
     var banner = document.getElementById('inactiveBanner');
-    if (inactiveCount > 0) {
+    var pendingCount = res.affiliates.filter(function(a){ return !a.approved_at; }).length;
+    if (pendingCount > 0) {
       banner.style.display = 'block';
+      banner.style.background = 'rgba(212,175,55,.1)'; banner.style.borderColor='rgba(212,175,55,.4)'; banner.style.color='#f0cf6c';
+      banner.textContent = '⏳ يوجد ' + pendingCount + ' طلب سفير جديد بانتظار المراجعة والتفعيل.';
+    } else if (inactiveCount > 0) {
+      banner.style.display = 'block';
+      banner.style.background = 'rgba(255,180,60,.1)'; banner.style.borderColor='rgba(255,180,60,.4)'; banner.style.color='#ffcf8a';
       banner.textContent = '⚠️ يوجد ' + inactiveCount + ' سفير/سفراء معطلون تلقائياً يحتاجون مراجعة.';
     } else {
       banner.style.display = 'none';
     }
   });
+}
+
+function approveAffiliate(code){
+  if (!confirm('تأكيد تفعيل هذا السفير؟ سيصله بريد إلكتروني بتفعيل كوده.')) return;
+  authFetch('/api/admin-data?action=approve-affiliate', { method:'POST', body: JSON.stringify({code}) })
+    .then(function(r){return r.json();}).then(function(){ loadAffiliates(); });
 }
 
 function reactivateAffiliate(code){
@@ -603,7 +661,7 @@ function downloadAgreement(code){
     var a = res.affiliate;
     var acceptedDate = a.agreement_accepted_at ? new Date(a.agreement_accepted_at).toLocaleString('ar-SA') : '-';
     var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>اتفاقية سفير - ' + a.name + '</title>' +
-      '<style>body{font-family:Tajawal,Arial,sans-serif; padding:40px; color:#111; max-width:750px; margin:0 auto;} h1{color:#8a6d1f; font-size:22px; border-bottom:2px solid #D4AF37; padding-bottom:12px;} table{width:100%; border-collapse:collapse; margin:20px 0;} td{padding:8px 10px; border-bottom:1px solid #ddd; font-size:14px;} td:first-child{font-weight:800; color:#555; width:180px;} .terms p{font-size:13.5px; line-height:1.9; margin:8px 0;} .sig{margin-top:30px;} .sig img{max-width:300px; border:1px solid #ccc; border-radius:6px; background:#fff;} .sig-label{font-size:12px; color:#777; margin-top:6px;}</style></head><body>' +
+      '<style>@page{size:A4; margin:18mm;} body{font-family:Tajawal,Arial,sans-serif; padding:0; color:#111; max-width:750px; margin:0 auto;} h1{color:#8a6d1f; font-size:22px; border-bottom:2px solid #D4AF37; padding-bottom:12px;} table{width:100%; border-collapse:collapse; margin:20px 0;} td{padding:8px 10px; border-bottom:1px solid #ddd; font-size:14px;} td:first-child{font-weight:800; color:#555; width:180px;} .terms p{font-size:13.5px; line-height:1.9; margin:8px 0;} .sig{margin-top:30px;} .sig img{max-width:300px; border:1px solid #ccc; border-radius:6px; background:#fff;} .sig-label{font-size:12px; color:#777; margin-top:6px;}</style></head><body>' +
       '<h1>⚜ اتفاقية سفير أسد الأوبشن</h1>' +
       '<table>' +
       '<tr><td>الاسم المستعار</td><td>' + (a.name||'-') + '</td></tr>' +
