@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="pageTitle">دخول السفير — أسد الأوبشن</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+.card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:34px 30px; max-width:400px; width:100%;}
+label{display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;}
+input{width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; margin-bottom:16px; font-family:inherit;}
+button{width:100%; padding:14px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15px; cursor:pointer;}
+#err{display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:600; padding:12px 16px; border-radius:10px; text-align:center; margin-bottom:16px;}
+.langDD{position:relative; display:block; margin-bottom:20px; text-align:center;}
+.langDDBtn{display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:20px; font-size:13px; font-weight:700; background:rgba(255,255,255,.06); color:#c9cddb; border:1px solid rgba(255,255,255,.15); cursor:pointer; font-family:inherit;}
+.langDDMenu{display:none; position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%); background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:160px; z-index:100;}
+.langDDMenu.open{display:block;}
+.langDDMenu button{display:flex; align-items:center; gap:10px; width:100%; padding:9px 14px; font-size:13px; font-weight:600; color:#c9cddb; background:transparent; border:none; cursor:pointer; text-align:right; border-radius:8px; font-family:inherit;}
+.langDDMenu button:hover{background:rgba(212,175,55,.12);}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="langDD" id="langDD">
+    <button class="langDDBtn" onclick="toggleLangDD()"><span id="langDDFlag">🇸🇦</span> <span id="langDDLabel">العربية</span> <span style="font-size:9px;">▾</span></button>
+    <div class="langDDMenu" id="langDDMenu">
+      <button onclick="setLang('ar'); toggleLangDD(false);">🇸🇦 العربية</button>
+      <button onclick="setLang('en'); toggleLangDD(false);">🇬🇧 English</button>
+      <button onclick="setLang('de'); toggleLangDD(false);">🇩🇪 Deutsch</button>
+      <button onclick="setLang('es'); toggleLangDD(false);">🇪🇸 Español</button>
+      <button onclick="setLang('pt'); toggleLangDD(false);">🇵🇹 Português</button>
+      <button onclick="setLang('tr'); toggleLangDD(false);">🇹🇷 Türkçe</button>
+      <button onclick="setLang('fr'); toggleLangDD(false);">🇫🇷 Français</button>
+    </div>
+  </div>
+  <div style="text-align:center; margin-bottom:24px;">
+    <div style="font-size:32px; margin-bottom:8px;">⚜</div>
+    <h1 id="h_title" style="font-size:20px; color:#fff; margin:0;"></h1>
+  </div>
+  <div id="err"></div>
+  <label id="l_username"></label>
+  <input id="code" style="direction:ltr; text-align:left;">
+  <label id="l_password"></label>
+  <input id="password" type="password">
+  <button id="btnLogin" onclick="doLogin()"></button>
+</div>
+<script>
+var T = {
+  ar:{dir:'rtl',flag:'🇸🇦',label:'العربية',title:'لوحة تحكم السفير',username:'اسم المستخدم',password:'كلمة المرور',login:'دخول',err:'تعذر الاتصال بالخادم'},
+  en:{dir:'ltr',flag:'🇬🇧',label:'English',title:'Ambassador Dashboard',username:'Username',password:'Password',login:'Login',err:'Could not connect to the server'},
+  de:{dir:'ltr',flag:'🇩🇪',label:'Deutsch',title:'Botschafter-Dashboard',username:'Benutzername',password:'Passwort',login:'Anmelden',err:'Verbindung zum Server fehlgeschlagen'},
+  es:{dir:'ltr',flag:'🇪🇸',label:'Español',title:'Panel del Embajador',username:'Usuario',password:'Contraseña',login:'Iniciar sesión',err:'No se pudo conectar al servidor'},
+  pt:{dir:'ltr',flag:'🇵🇹',label:'Português',title:'Painel do Embaixador',username:'Usuário',password:'Senha',login:'Entrar',err:'Não foi possível conectar ao servidor'},
+  tr:{dir:'ltr',flag:'🇹🇷',label:'Türkçe',title:'Elçi Panosu',username:'Kullanıcı Adı',password:'Şifre',login:'Giriş Yap',err:'Sunucuya bağlanılamadı'},
+  fr:{dir:'ltr',flag:'🇫🇷',label:'Français',title:'Tableau de Bord Ambassadeur',username:'Nom d\'utilisateur',password:'Mot de passe',login:'Connexion',err:'Impossible de se connecter au serveur'}
+};
+var currentLang = localStorage.getItem('aff_lang') || 'ar';
+function setLang(code){
+  currentLang = code;
+  localStorage.setItem('aff_lang', code);
+  var t = T[code];
+  document.getElementById('htmlRoot').lang = code;
+  document.getElementById('htmlRoot').dir = t.dir;
+  document.getElementById('pageTitle').textContent = t.title;
+  document.getElementById('h_title').textContent = t.title;
+  document.getElementById('l_username').textContent = t.username;
+  document.getElementById('l_password').textContent = t.password;
+  document.getElementById('btnLogin').textContent = t.login;
+  document.getElementById('langDDFlag').textContent = t.flag;
+  document.getElementById('langDDLabel').textContent = t.label;
+}
+function toggleLangDD(force){
+  var menu = document.getElementById('langDDMenu');
+  if (typeof force === 'boolean') { menu.classList.toggle('open', force); return; }
+  menu.classList.toggle('open');
+}
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('langDD');
+  if (wrap && !wrap.contains(e.target)) toggleLangDD(false);
+});
+setLang(currentLang);
+
+function doLogin(){
+  var code = document.getElementById('code').value.trim();
+  var password = document.getElementById('password').value;
+  var err = document.getElementById('err');
+  err.style.display = 'none';
+  fetch('/api/affiliate-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: code, password }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+      if (res.ok) {
+        sessionStorage.setItem('aff_token', res.token);
+        sessionStorage.setItem('aff_code', res.code);
+        location.href = './affiliate-dashboard.html';
+      } else {
+        err.textContent = res.error || T[currentLang].err;
+        err.style.display = 'block';
+      }
+    }).catch(function(){ err.textContent = T[currentLang].err; err.style.display = 'block'; });
+}
+</script>
+</body>
+</html>
