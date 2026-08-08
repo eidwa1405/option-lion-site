@@ -101,7 +101,7 @@ exports.handler = async (event) => {
       await sql`INSERT INTO admin_settings (key, value) VALUES (${'activation_req_' + affiliate.code}, ${new Date().toISOString()})
         ON CONFLICT (key) DO UPDATE SET value = ${new Date().toISOString()}`;
       await sql`INSERT INTO audit_log (action, details) VALUES ('affiliate-activation-request', ${'طلب تنشيط من السفير: ' + affiliate.code + ' (' + affiliate.name + ')'})`;
-      await sendMail('oponlio@hotmail.com', 'طلب تنشيط حساب سفير ⚜ ' + affiliate.code, 'طلب تنشيط', 'السفير <b>' + affiliate.name + '</b> (الكود: ' + affiliate.code + ') طلب إعادة تنشيط حسابه المجمّد من لوحة تحكمه.', 'ar');
+      await sendMail('opon.netlify@gmail.com', 'طلب تنشيط حساب سفير ⚜ ' + affiliate.code, 'طلب تنشيط', 'السفير <b>' + affiliate.name + '</b> (الكود: ' + affiliate.code + ') طلب إعادة تنشيط حسابه المجمّد من لوحة تحكمه.', 'ar');
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 

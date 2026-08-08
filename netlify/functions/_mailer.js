@@ -1,18 +1,17 @@
-// أداة إرسال بريد موحّدة عبر SMTP (حساب Outlook/Hotmail الرسمي لأسد الأوبشن)
+// أداة إرسال بريد موحّدة عبر SMTP (حساب Gmail الرسمي لأسد الأوبشن)
 const nodemailer = require('nodemailer');
 
-const SMTP_USER = process.env.SMTP_USER || 'oponlio@hotmail.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'stcuewhcgycaovdo';
+const SMTP_USER = process.env.SMTP_USER || 'opon.netlify@gmail.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'bdqoxxskjxwcdpuo';
 
 let transporter;
 function getTransporter() {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      host: 'smtp.office365.com',
-      port: 587,
-      secure: false,
-      auth: { user: SMTP_USER, pass: SMTP_PASS },
-      tls: { ciphers: 'TLSv1.2' }
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: { user: SMTP_USER, pass: SMTP_PASS }
     });
   }
   return transporter;
