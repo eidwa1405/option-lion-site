@@ -13,6 +13,7 @@ exports.handler = async (event) => {
     const code = String(b.code || '').trim().toUpperCase();
     if (!code) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الكود مطلوب' }) };
     if (!b.agreementAccepted) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'يجب الموافقة على الاتفاقية' }) };
+    if (!b.password || String(b.password).length < 6) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' }) };
 
     const existing = await sql`SELECT code FROM affiliates WHERE code = ${code}`;
     if (existing.length > 0) {
@@ -36,10 +37,10 @@ exports.handler = async (event) => {
       }
     }
 
-    await sql`INSERT INTO affiliates (code, name, legal_name, country, city, email, age, phone, telegram, bank_account, agreement_accepted_at, signature_data)
-      VALUES (${code}, ${b.name||''}, ${b.legalName||''}, ${b.country||''}, ${b.city||''}, ${b.email||''}, ${b.age?parseInt(b.age):null}, ${b.phone||''}, ${b.telegram||''}, ${b.bankAccount||''}, now(), ${b.signature||null})`;
-    // نضيف الكود أيضاً في جدول ref_codes حتى يعمل عند التسجيل
-    await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${code}, ${b.name||''}) ON CONFLICT (code) DO NOTHING`;
+    const loginUsername = code;
+    await sql`INSERT INTO affiliates (code, name, legal_name, country, city, email, age, phone, telegram, bank_account, agreement_accepted_at, signature_data, active, password, login_username)
+      VALUES (${code}, ${b.name||''}, ${b.legalName||''}, ${b.country||''}, ${b.city||''}, ${b.email||''}, ${b.age?parseInt(b.age):null}, ${b.phone||''}, ${b.telegram||''}, ${b.bankAccount||''}, now(), ${b.signature||null}, false, ${String(b.password)}, ${loginUsername})`;
+    // لا نضيف الكود إلى ref_codes إلا بعد اعتماد الإدارة له
 
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
   } catch (e) {
