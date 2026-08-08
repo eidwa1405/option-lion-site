@@ -68,7 +68,7 @@ exports.handler = async (event) => {
       }
 
       if (newStatus) {
-        await sql`UPDATE subscriptions SET status = ${newStatus}, expires_at = ${expiresAt}, notified_48h = false, updated_at = now() WHERE id = ${matchRow.id}`;
+        await sql`UPDATE subscriptions SET status = ${newStatus}, expires_at = ${expiresAt}, notified_48h = false, aff_reminder_48h_sent = false, aff_reminder_12h_sent = false, updated_at = now() WHERE id = ${matchRow.id}`;
         await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-webhook', ${'Paddle event ' + eventType + ' -> ' + newStatus + ' for customer #' + matchRow.id})`;
       }
     } else {

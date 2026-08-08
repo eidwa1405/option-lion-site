@@ -38,6 +38,9 @@ async function ensureTables() {
     active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS login_username TEXT`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS password TEXT`;
   await sql`CREATE TABLE IF NOT EXISTS subscriptions (
     id SERIAL PRIMARY KEY,
     customer_name TEXT NOT NULL,
@@ -53,6 +56,18 @@ async function ensureTables() {
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS tradingview TEXT`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan TEXT`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS notified_48h BOOLEAN DEFAULT FALSE`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS email TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS customer_id TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS reminder_sent BOOLEAN DEFAULT FALSE`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS reminder_stage INTEGER DEFAULT 0`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS welcome_sent BOOLEAN DEFAULT FALSE`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS lang TEXT DEFAULT 'ar'`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS aff_reminder_48h_sent BOOLEAN DEFAULT FALSE`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS aff_reminder_12h_sent BOOLEAN DEFAULT FALSE`;
+  const counterRow = await sql`SELECT value FROM admin_settings WHERE key = 'customer_id_counter'`;
+  if (counterRow.length === 0) {
+    await sql`INSERT INTO admin_settings (key, value) VALUES ('customer_id_counter', '620')`;
+  }
   await sql`CREATE TABLE IF NOT EXISTS commission_log (
     id SERIAL PRIMARY KEY,
     ref_code TEXT NOT NULL,
