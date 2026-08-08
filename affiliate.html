@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="pageTitle">سجّل كسفير أسد الأوبشن</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Tajawal','Inter',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh; padding:30px 16px;}
+a{color:#D4AF37;}
+.wrap{max-width:560px; margin:0 auto;}
+.card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:30px;}
+label{display:block; font-size:12.5px; font-weight:700; color:#D4AF37; letter-spacing:.5px; margin-bottom:7px; text-transform:uppercase;}
+input,select{width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; font-family:inherit;}
+input:focus,select:focus{outline:none; border-color:#D4AF37;}
+.field{margin-bottom:16px;}
+select option{background:#10141f;}
+button{width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer;}
+.langBar{display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:22px;}
+.langBtn{width:auto; padding:7px 12px; border-radius:20px; font-size:12.5px; font-weight:700; background:rgba(255,255,255,.06); color:#c9cddb; border:1px solid rgba(255,255,255,.1); cursor:pointer;}
+.langBtn.active{background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border-color:transparent;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langBar" id="langBar"></div>
+  <div style="text-align:center; margin-bottom:26px;">
+    <div style="font-size:32px; margin-bottom:8px;">⚜</div>
+    <h1 id="h_title" style="font-size:24px; color:#fff; margin:0 0 8px;"></h1>
+    <p id="h_sub" style="font-size:13.5px; color:#aab3c5; margin:0;"></p>
+  </div>
+  <div class="card" id="formCard">
+    <div class="field"><label id="l_name"></label><input id="f_name" required></div>
+    <div class="field"><label id="l_legal_name"></label><input id="f_legal_name" required></div>
+    <div class="field"><label id="l_country"></label><select id="f_country"></select></div>
+    <div class="field"><label id="l_city"></label><input id="f_city" required></div>
+    <div class="field"><label id="l_email"></label><input id="f_email" type="email" required></div>
+    <div class="field"><label id="l_age"></label><input id="f_age" type="number" min="16" max="99" required></div>
+    <div class="field"><label id="l_phone"></label>
+      <div style="display:flex; gap:8px;">
+        <select id="f_cc" style="flex:0 0 100px;"></select>
+        <input id="f_phone" type="tel" required style="flex:1; direction:ltr; text-align:left;">
+      </div>
+    </div>
+    <div class="field"><label id="l_tg"></label><input id="f_tg" placeholder="@username" required style="direction:ltr; text-align:left;"></div>
+    <div class="field">
+      <label id="l_code"></label>
+      <div style="position:relative;">
+        <input id="f_code" placeholder="AHMED20" style="direction:ltr; text-align:left; padding-left:38px;" required>
+        <span id="codeStatus" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:15px;"></span>
+      </div>
+      <p id="l_code_hint" style="font-size:11.5px; color:#6b7488; margin:6px 0 0;"></p>
+    </div>
+    <div class="field"><label id="l_bank"></label><input id="f_bank" style="direction:ltr; text-align:left;" required><p id="l_bank_hint" style="font-size:11.5px; color:#6b7488; margin:6px 0 0;"></p></div>
+    <div class="field" style="display:flex; align-items:flex-start; gap:10px; background:rgba(0,0,0,.2); padding:14px; border-radius:10px;">
+      <input id="f_agree" type="checkbox" style="width:auto; margin-top:3px;">
+      <label id="l_agree" for="f_agree" style="text-transform:none; font-size:13px; color:#c9cddb; font-weight:500; margin:0;"></label>
+    </div>
+    <div class="field">
+      <label id="l_sig"></label>
+      <canvas id="sigPad" width="500" height="150" style="width:100%; height:150px; background:#fff; border-radius:10px; touch-action:none; cursor:crosshair;"></canvas>
+      <button type="button" id="btnClearSig" onclick="clearSignature()" style="width:auto; background:rgba(255,255,255,.08); color:#c9cddb; font-weight:700; font-size:12px; padding:7px 14px; margin-top:8px;"></button>
+    </div>
+    <div id="formErr" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:600; padding:12px 16px; border-radius:10px; text-align:center; margin-bottom:16px;"></div>
+    <button id="btnSubmit" onclick="submitAffiliate()"></button>
+  </div>
+  <div class="card" id="thanksCard" style="display:none; text-align:center;">
+    <div style="font-size:42px; margin-bottom:14px;">✅</div>
+    <h3 id="l_thanks_title" style="color:#fff; margin:0 0 10px;"></h3>
+    <p id="l_thanks_body" style="color:#aab3c5; font-size:14px; line-height:1.8;"></p>
+  </div>
+</div>
+
+<div id="agreementModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:999; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; max-width:600px; width:100%; max-height:80vh; overflow:auto; padding:28px;">
+    <h3 id="l_agreement_title" style="color:#D4AF37; margin:0 0 16px;"></h3>
+    <div id="l_agreement_body" style="font-size:13.5px; line-height:2; color:#c9cddb;"></div>
+    <button onclick="document.getElementById('agreementModal').style.display='none';" id="l_close" style="margin-top:20px; width:100%; padding:13px; border:none; border-radius:10px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; cursor:pointer;"></button>
+  </div>
+</div>
+
+<script>
+var LANGS = [
+  {code:'ar', flag:'🇸🇦', dir:'rtl'},
+  {code:'en', flag:'🇬🇧', dir:'ltr'},
+  {code:'de', flag:'🇩🇪', dir:'ltr'},
+  {code:'es', flag:'🇪🇸', dir:'ltr'},
+  {code:'pt', flag:'🇵🇹', dir:'ltr'},
+  {code:'tr', flag:'🇹🇷', dir:'ltr'},
+  {code:'fr', flag:'🇫🇷', dir:'ltr'}
+];
+
+var T = {
+ar: {
+  title:'سجّل كسفير أسد الأوبشن', sub:'اربح 4$ عمولة ثابتة عن كل تجديد اشتراك فعلي عبر كودك',
+  name:'الاسم المستعار (المعروف)', legalName:'الاسم الكامل حسب الهوية/جواز السفر', country:'الدولة', city:'المدينة', email:'البريد الإلكتروني', age:'العمر',
+  phone:'رقم الجوال', tg:'حساب تيليجرام', code:'كود التسويق الخاص بك', codeHint:'اختر كوداً غير مستخدم من سفير آخر — سنتحقق تلقائياً.',
+  bank:'رقم الحساب البنكي (IBAN أو رقم حساب)', bankHint:'IBAN معتمد في السعودية وأغلب الدول — إن لم يكن متوفراً لديك اكتب رقم حسابك البنكي العادي.',
+  agreePrefix:'أقرّ بأنني اطّلعت على', agreeLink:'اتفاقية سفراء أسد الأوبشن', agreeSuffix:'وأوافق على جميع بنودها وتعهداتها.',
+  sig:'التوقيع (ارسم بإصبعك أو الماوس)', clearSig:'مسح التوقيع', submit:'تسجيل كسفير',
+  thanksTitle:'تم تسجيلك بنجاح', thanksBody:function(code){return 'كودك <b style="color:#D4AF37;">'+code+'</b> جاهز الآن — شاركه مع عملائك واحصل على 4$ عن كل اشتراك فعلي يتجدد عبره.';},
+  agreementTitle:'اتفاقية سفراء أسد الأوبشن',
+  agreementBody:'<p>1. يحصل السفير على عمولة ثابتة قدرها 4$ عن كل عملية تجديد اشتراك فعلي مدفوع عبر كوده، ولا تُحتسب عن فترات التجربة المجانية.</p><p>2. يقرّ السفير بأن جميع البيانات المُدخلة صحيحة ودقيقة، وأن حسابه شخصي وغير قابل للتحويل.</p><p>3. يلتزم بعدم استخدام أساليب ترويج مضللة أو مخالفة للأنظمة.</p><p>4. تحتفظ الإدارة بحق تعليق أو إلغاء أي كود سفير مخالف لهذه الاتفاقية.</p><p>5. تُصرف العمولات وفق رقم الحساب البنكي المسجّل.</p><p>6. بالموافقة، يقرّ السفير بقراءتها وفهمها والالتزام الكامل ببنودها.</p>',
+  close:'إغلاق', requiredErr:'يرجى تعبئة جميع الحقول.', agreeErr:'يجب الموافقة على الاتفاقية أولاً.', sigErr:'يرجى التوقيع في الخانة المخصصة قبل الإرسال.', serverErr:'تعذّر الاتصال بالخادم.'
+},
+en: {
+  title:'Register as an Option Lion Ambassador', sub:'Earn a fixed $4 commission for every real subscription renewal through your code',
+  name:'Display Name', legalName:'Full Legal Name (ID/Passport)', country:'Country', city:'City', email:'Email', age:'Age',
+  phone:'Phone Number', tg:'Telegram Account', code:'Your Referral Code', codeHint:'Choose a code not used by another ambassador — we\'ll check automatically.',
+  bank:'Bank Account Number (IBAN or account no.)', bankHint:'IBAN is common in Saudi Arabia and most countries — if unavailable, enter your regular bank account number.',
+  agreePrefix:'I confirm I have read the', agreeLink:'Option Lion Ambassador Agreement', agreeSuffix:'and agree to all its terms.',
+  sig:'Signature (draw with finger or mouse)', clearSig:'Clear Signature', submit:'Register as Ambassador',
+  thanksTitle:'Registered Successfully', thanksBody:function(code){return 'Your code <b style="color:#D4AF37;">'+code+'</b> is ready — share it and earn $4 for every real renewal.';},
+  agreementTitle:'Option Lion Ambassador Agreement',
+  agreementBody:'<p>1. The ambassador earns a fixed $4 commission per real paid renewal through their code; free trial periods do not count.</p><p>2. The ambassador confirms all submitted data is accurate and that the account is personal, non-transferable.</p><p>3. The ambassador must not use misleading or non-compliant promotion methods.</p><p>4. Management reserves the right to suspend or cancel any code violating this agreement.</p><p>5. Commissions are paid to the registered bank account.</p><p>6. By agreeing, the ambassador confirms reading, understanding, and fully complying with these terms.</p>',
+  close:'Close', requiredErr:'Please fill in all fields.', agreeErr:'You must agree to the agreement first.', sigErr:'Please sign in the box before submitting.', serverErr:'Could not connect to the server.'
+},
+de: {
+  title:'Als Option Lion Botschafter registrieren', sub:'Verdienen Sie 4$ feste Provision für jede echte Abo-Verlängerung über Ihren Code',
+  name:'Anzeigename', legalName:'Vollständiger Name (Ausweis/Reisepass)', country:'Land', city:'Stadt', email:'E-Mail', age:'Alter',
+  phone:'Telefonnummer', tg:'Telegram-Konto', code:'Ihr Empfehlungscode', codeHint:'Wählen Sie einen Code, der von keinem anderen Botschafter verwendet wird — wir prüfen automatisch.',
+  bank:'Bankkontonummer (IBAN oder Kontonummer)', bankHint:'IBAN ist in Saudi-Arabien und den meisten Ländern üblich — falls nicht verfügbar, geben Sie Ihre normale Kontonummer ein.',
+  agreePrefix:'Ich bestätige, dass ich die', agreeLink:'Option Lion Botschaftervereinbarung', agreeSuffix:'gelesen habe und allen Bedingungen zustimme.',
+  sig:'Unterschrift (mit Finger oder Maus zeichnen)', clearSig:'Unterschrift löschen', submit:'Als Botschafter registrieren',
+  thanksTitle:'Erfolgreich registriert', thanksBody:function(code){return 'Ihr Code <b style="color:#D4AF37;">'+code+'</b> ist bereit — teilen Sie ihn und verdienen Sie 4$ pro echter Verlängerung.';},
+  agreementTitle:'Option Lion Botschaftervereinbarung',
+  agreementBody:'<p>1. Der Botschafter erhält eine feste Provision von 4$ pro echter bezahlter Verlängerung über seinen Code; kostenlose Testphasen zählen nicht.</p><p>2. Der Botschafter bestätigt, dass alle Angaben korrekt sind und das Konto persönlich und nicht übertragbar ist.</p><p>3. Der Botschafter darf keine irreführenden oder regelwidrigen Werbemethoden verwenden.</p><p>4. Die Verwaltung behält sich das Recht vor, jeden gegen diese Vereinbarung verstoßenden Code zu sperren oder zu löschen.</p><p>5. Provisionen werden auf das registrierte Bankkonto ausgezahlt.</p><p>6. Mit der Zustimmung bestätigt der Botschafter, die Bedingungen gelesen, verstanden und vollständig eingehalten zu haben.</p>',
+  close:'Schließen', requiredErr:'Bitte füllen Sie alle Felder aus.', agreeErr:'Sie müssen der Vereinbarung zustimmen.', sigErr:'Bitte unterschreiben Sie vor dem Absenden.', serverErr:'Verbindung zum Server fehlgeschlagen.'
+},
+es: {
+  title:'Regístrate como Embajador de Option Lion', sub:'Gana una comisión fija de 4$ por cada renovación real de suscripción a través de tu código',
+  name:'Nombre a mostrar', legalName:'Nombre legal completo (DNI/Pasaporte)', country:'País', city:'Ciudad', email:'Correo electrónico', age:'Edad',
+  phone:'Número de teléfono', tg:'Cuenta de Telegram', code:'Tu código de referido', codeHint:'Elige un código no usado por otro embajador — lo verificaremos automáticamente.',
+  bank:'Número de cuenta bancaria (IBAN o número de cuenta)', bankHint:'El IBAN es común en Arabia Saudita y la mayoría de países — si no tienes uno, ingresa tu número de cuenta normal.',
+  agreePrefix:'Confirmo que he leído el', agreeLink:'Acuerdo de Embajadores de Option Lion', agreeSuffix:'y acepto todos sus términos.',
+  sig:'Firma (dibuja con el dedo o el ratón)', clearSig:'Borrar firma', submit:'Registrarme como Embajador',
+  thanksTitle:'Registro exitoso', thanksBody:function(code){return 'Tu código <b style="color:#D4AF37;">'+code+'</b> ya está listo — compártelo y gana 4$ por cada renovación real.';},
+  agreementTitle:'Acuerdo de Embajadores de Option Lion',
+  agreementBody:'<p>1. El embajador gana una comisión fija de 4$ por cada renovación real pagada a través de su código; los períodos de prueba gratuitos no cuentan.</p><p>2. El embajador confirma que todos los datos enviados son precisos y que la cuenta es personal e intransferible.</p><p>3. El embajador no debe usar métodos de promoción engañosos o no conformes.</p><p>4. La administración se reserva el derecho de suspender o cancelar cualquier código que viole este acuerdo.</p><p>5. Las comisiones se pagan a la cuenta bancaria registrada.</p><p>6. Al aceptar, el embajador confirma haber leído, entendido y cumplido plenamente estos términos.</p>',
+  close:'Cerrar', requiredErr:'Por favor completa todos los campos.', agreeErr:'Debes aceptar el acuerdo primero.', sigErr:'Por favor firma en el recuadro antes de enviar.', serverErr:'No se pudo conectar con el servidor.'
+},
+pt: {
+  title:'Registre-se como Embaixador da Option Lion', sub:'Ganhe uma comissão fixa de 4$ por cada renovação real de assinatura através do seu código',
+  name:'Nome de exibição', legalName:'Nome legal completo (RG/Passaporte)', country:'País', city:'Cidade', email:'E-mail', age:'Idade',
+  phone:'Número de telefone', tg:'Conta do Telegram', code:'Seu código de indicação', codeHint:'Escolha um código não usado por outro embaixador — verificaremos automaticamente.',
+  bank:'Número da conta bancária (IBAN ou número de conta)', bankHint:'IBAN é comum na Arábia Saudita e na maioria dos países — se não tiver, insira o número da sua conta bancária normal.',
+  agreePrefix:'Confirmo que li o', agreeLink:'Acordo de Embaixadores da Option Lion', agreeSuffix:'e concordo com todos os seus termos.',
+  sig:'Assinatura (desenhe com o dedo ou mouse)', clearSig:'Limpar assinatura', submit:'Registrar como Embaixador',
+  thanksTitle:'Registrado com sucesso', thanksBody:function(code){return 'Seu código <b style="color:#D4AF37;">'+code+'</b> está pronto — compartilhe e ganhe 4$ por cada renovação real.';},
+  agreementTitle:'Acordo de Embaixadores da Option Lion',
+  agreementBody:'<p>1. O embaixador ganha uma comissão fixa de 4$ por cada renovação real paga através do seu código; períodos de teste gratuito não contam.</p><p>2. O embaixador confirma que todos os dados enviados são precisos e que a conta é pessoal e intransferível.</p><p>3. O embaixador não deve usar métodos de promoção enganosos ou não conformes.</p><p>4. A administração se reserva o direito de suspender ou cancelar qualquer código que viole este acordo.</p><p>5. As comissões são pagas na conta bancária registrada.</p><p>6. Ao concordar, o embaixador confirma ter lido, entendido e cumprido totalmente estes termos.</p>',
+  close:'Fechar', requiredErr:'Por favor preencha todos os campos.', agreeErr:'Você deve concordar com o acordo primeiro.', sigErr:'Por favor assine na caixa antes de enviar.', serverErr:'Não foi possível conectar ao servidor.'
+},
+tr: {
+  title:'Option Lion Elçisi Olarak Kaydolun', sub:'Kodunuz üzerinden yapılan her gerçek abonelik yenilemesi için sabit 4$ komisyon kazanın',
+  name:'Görünen Ad', legalName:'Kimlik/Pasaporta Göre Tam Ad', country:'Ülke', city:'Şehir', email:'E-posta', age:'Yaş',
+  phone:'Telefon Numarası', tg:'Telegram Hesabı', code:'Yönlendirme Kodunuz', codeHint:'Başka bir elçi tarafından kullanılmayan bir kod seçin — otomatik olarak kontrol edeceğiz.',
+  bank:'Banka Hesap Numarası (IBAN veya hesap no.)', bankHint:'IBAN Suudi Arabistan ve çoğu ülkede yaygındır — yoksa normal banka hesap numaranızı girin.',
+  agreePrefix:'Okuduğumu onaylıyorum:', agreeLink:'Option Lion Elçi Sözleşmesi', agreeSuffix:'ve tüm şartlarını kabul ediyorum.',
+  sig:'İmza (parmak veya fare ile çizin)', clearSig:'İmzayı Temizle', submit:'Elçi Olarak Kaydol',
+  thanksTitle:'Başarıyla Kaydedildi', thanksBody:function(code){return 'Kodunuz <b style="color:#D4AF37;">'+code+'</b> hazır — paylaşın ve her gerçek yenileme için 4$ kazanın.';},
+  agreementTitle:'Option Lion Elçi Sözleşmesi',
+  agreementBody:'<p>1. Elçi, kodu üzerinden yapılan her gerçek ücretli yenileme için sabit 4$ komisyon kazanır; ücretsiz deneme süreleri sayılmaz.</p><p>2. Elçi, gönderilen tüm verilerin doğru olduğunu ve hesabın kişisel ve devredilemez olduğunu onaylar.</p><p>3. Elçi, yanıltıcı veya kurallara aykırı tanıtım yöntemleri kullanmamalıdır.</p><p>4. Yönetim, bu sözleşmeyi ihlal eden herhangi bir kodu askıya alma veya iptal etme hakkını saklı tutar.</p><p>5. Komisyonlar kayıtlı banka hesabına ödenir.</p><p>6. Kabul ederek, elçi bu şartları okuduğunu, anladığını ve tamamen uyduğunu onaylar.</p>',
+  close:'Kapat', requiredErr:'Lütfen tüm alanları doldurun.', agreeErr:'Önce sözleşmeyi kabul etmelisiniz.', sigErr:'Göndermeden önce lütfen kutuya imza atın.', serverErr:'Sunucuya bağlanılamadı.'
+},
+fr: {
+  title:'Inscrivez-vous comme Ambassadeur Option Lion', sub:'Gagnez une commission fixe de 4$ pour chaque renouvellement d\'abonnement réel via votre code',
+  name:'Nom d\'affichage', legalName:'Nom légal complet (Carte d\'identité/Passeport)', country:'Pays', city:'Ville', email:'E-mail', age:'Âge',
+  phone:'Numéro de téléphone', tg:'Compte Telegram', code:'Votre code de parrainage', codeHint:'Choisissez un code non utilisé par un autre ambassadeur — nous vérifierons automatiquement.',
+  bank:'Numéro de compte bancaire (IBAN ou numéro de compte)', bankHint:'L\'IBAN est courant en Arabie Saoudite et dans la plupart des pays — sinon, indiquez votre numéro de compte bancaire habituel.',
+  agreePrefix:'Je confirme avoir lu le', agreeLink:'Accord des Ambassadeurs Option Lion', agreeSuffix:'et j\'accepte toutes ses conditions.',
+  sig:'Signature (dessinez avec le doigt ou la souris)', clearSig:'Effacer la signature', submit:'S\'inscrire comme Ambassadeur',
+  thanksTitle:'Inscription réussie', thanksBody:function(code){return 'Votre code <b style="color:#D4AF37;">'+code+'</b> est prêt — partagez-le et gagnez 4$ pour chaque renouvellement réel.';},
+  agreementTitle:'Accord des Ambassadeurs Option Lion',
+  agreementBody:'<p>1. L\'ambassadeur gagne une commission fixe de 4$ pour chaque renouvellement réel payé via son code ; les périodes d\'essai gratuites ne comptent pas.</p><p>2. L\'ambassadeur confirme que toutes les données soumises sont exactes et que le compte est personnel et non transférable.</p><p>3. L\'ambassadeur ne doit pas utiliser de méthodes de promotion trompeuses ou non conformes.</p><p>4. La direction se réserve le droit de suspendre ou d\'annuler tout code violant cet accord.</p><p>5. Les commissions sont versées sur le compte bancaire enregistré.</p><p>6. En acceptant, l\'ambassadeur confirme avoir lu, compris et pleinement respecté ces conditions.</p>',
+  close:'Fermer', requiredErr:'Veuillez remplir tous les champs.', agreeErr:'Vous devez d\'abord accepter l\'accord.', sigErr:'Veuillez signer dans la case avant d\'envoyer.', serverErr:'Impossible de se connecter au serveur.'
+}
+};
+
+var COUNTRIES = ["السعودية","الإمارات","الكويت","قطر","البحرين","عمان","مصر","الأردن","لبنان","العراق","المغرب","الجزائر","تونس","ليبيا","السودان","اليمن","فلسطين","سوريا","تركيا","ألمانيا","فرنسا","إسبانيا","البرتغال","بريطانيا","الولايات المتحدة","كندا","أستراليا","ماليزيا","إندونيسيا","باكستان","الهند","أخرى"];
+var CC = [["+966","🇸🇦"],["+971","🇦🇪"],["+965","🇰🇼"],["+974","🇶🇦"],["+973","🇧🇭"],["+968","🇴🇲"],["+20","🇪🇬"],["+962","🇯🇴"],["+961","🇱🇧"],["+964","🇮🇶"],["+212","🇲🇦"],["+213","🇩🇿"],["+216","🇹🇳"],["+218","🇱🇾"],["+90","🇹🇷"],["+49","🇩🇪"],["+33","🇫🇷"],["+34","🇪🇸"],["+351","🇵🇹"],["+44","🇬🇧"],["+1","🇺🇸"]];
+
+var currentLang = 'ar';
+
+function buildLangBar(){
+  var bar = document.getElementById('langBar');
+  bar.innerHTML = '';
+  LANGS.forEach(function(l){
+    var btn = document.createElement('button');
+    btn.className = 'langBtn' + (l.code===currentLang ? ' active' : '');
+    btn.textContent = l.flag;
+    btn.onclick = function(){ setLang(l.code); };
+    bar.appendChild(btn);
+  });
+}
+
+function setLang(code){
+  currentLang = code;
+  var t = T[code];
+  var langObj = LANGS.find(function(l){ return l.code === code; });
+  document.getElementById('htmlRoot').lang = code;
+  document.getElementById('htmlRoot').dir = langObj.dir;
+  document.getElementById('pageTitle').textContent = t.title;
+  document.getElementById('h_title').textContent = t.title;
+  document.getElementById('h_sub').textContent = t.sub;
+  document.getElementById('l_name').textContent = t.name;
+  document.getElementById('l_legal_name').textContent = t.legalName;
+  document.getElementById('l_country').textContent = t.country;
+  document.getElementById('l_city').textContent = t.city;
+  document.getElementById('l_email').textContent = t.email;
+  document.getElementById('l_age').textContent = t.age;
+  document.getElementById('l_phone').textContent = t.phone;
+  document.getElementById('l_tg').textContent = t.tg;
+  document.getElementById('l_code').textContent = t.code;
+  document.getElementById('l_code_hint').textContent = t.codeHint;
+  document.getElementById('l_bank').textContent = t.bank;
+  document.getElementById('l_bank_hint').textContent = t.bankHint;
+  document.getElementById('l_agree').innerHTML = t.agreePrefix + ' <a href="#" onclick="document.getElementById(\'agreementModal\').style.display=\'flex\'; return false;">' + t.agreeLink + '</a> ' + t.agreeSuffix;
+  document.getElementById('l_sig').textContent = t.sig;
+  document.getElementById('btnClearSig').textContent = t.clearSig;
+  document.getElementById('btnSubmit').textContent = t.submit;
+  document.getElementById('l_thanks_title').textContent = t.thanksTitle;
+  document.getElementById('l_agreement_title').textContent = t.agreementTitle;
+  document.getElementById('l_agreement_body').innerHTML = t.agreementBody;
+  document.getElementById('l_close').textContent = t.close;
+  buildLangBar();
+}
+
+(function(){
+  var cSel = document.getElementById('f_country');
+  COUNTRIES.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; cSel.appendChild(o); });
+  var ccSel = document.getElementById('f_cc');
+  CC.forEach(function(c){ var o=document.createElement('option'); o.value=c[0]; o.textContent=c[1]+' '+c[0]; ccSel.appendChild(o); });
+  setLang('ar');
+})();
+
+// ── لوحة التوقيع ──
+var canvas = document.getElementById('sigPad');
+var ctx = canvas.getContext('2d');
+ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.strokeStyle = '#0b1220';
+var drawing = false, hasSignature = false;
+function getPos(e){
+  var rect = canvas.getBoundingClientRect();
+  var scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+}
+function startDraw(e){ drawing = true; hasSignature = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); updateSubmitState(); }
+function moveDraw(e){ if(!drawing) return; var p = getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }
+function endDraw(){ drawing = false; }
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', moveDraw);
+window.addEventListener('mouseup', endDraw);
+canvas.addEventListener('touchstart', startDraw, {passive:false});
+canvas.addEventListener('touchmove', moveDraw, {passive:false});
+canvas.addEventListener('touchend', endDraw);
+function updateSubmitState(){
+  var btn = document.getElementById('btnSubmit');
+  var agreed = document.getElementById('f_agree').checked;
+  if (agreed && hasSignature) {
+    btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+  } else {
+    btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed';
+  }
+}
+document.getElementById('f_agree').addEventListener('change', updateSubmitState);
+canvas.addEventListener('mouseup', updateSubmitState);
+canvas.addEventListener('touchend', updateSubmitState);
+document.getElementById('btnSubmit').disabled = true;
+document.getElementById('btnSubmit').style.opacity = '.5';
+document.getElementById('btnSubmit').style.cursor = 'not-allowed';
+
+function clearSignature(){ ctx.clearRect(0,0,canvas.width,canvas.height); hasSignature = false; updateSubmitState(); }
+
+var codeCheckTimer;
+document.getElementById('f_code').addEventListener('input', function(){
+  clearTimeout(codeCheckTimer);
+  var val = this.value.trim();
+  var status = document.getElementById('codeStatus');
+  status.textContent = '';
+  if (!val) return;
+  codeCheckTimer = setTimeout(function(){ status.textContent = '⏳'; }, 100);
+});
+
+function submitAffiliate(){
+  var t = T[currentLang];
+  var name = document.getElementById('f_name').value.trim();
+  var legalName = document.getElementById('f_legal_name').value.trim();
+  var country = document.getElementById('f_country').value;
+  var city = document.getElementById('f_city').value.trim();
+  var email = document.getElementById('f_email').value.trim();
+  var age = document.getElementById('f_age').value;
+  var cc = document.getElementById('f_cc').value;
+  var phone = document.getElementById('f_phone').value.trim();
+  var telegram = document.getElementById('f_tg').value.trim();
+  var code = document.getElementById('f_code').value.trim().toUpperCase();
+  var bankAccount = document.getElementById('f_bank').value.trim();
+  var agree = document.getElementById('f_agree').checked;
+  var errEl = document.getElementById('formErr');
+
+  if (!name || !legalName || !city || !email || !age || !phone || !telegram || !code || !bankAccount) {
+    errEl.textContent = t.requiredErr; errEl.style.display = 'block'; return;
+  }
+  if (!agree) { errEl.textContent = t.agreeErr; errEl.style.display = 'block'; return; }
+  if (!hasSignature) { errEl.textContent = t.sigErr; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  var signature = canvas.toDataURL('image/png');
+
+  fetch('/api/affiliate-register', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ name, legalName, country, city, email, age, phone: cc+phone, telegram, code, bankAccount, agreementAccepted: true, signature: signature })
+  }).then(function(r){ return r.json(); }).then(function(res){
+    if (res.ok) {
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('thanksCard').style.display = 'block';
+      document.getElementById('l_thanks_body').innerHTML = t.thanksBody(code);
+    } else {
+      var errorMsg = res.error || t.serverErr;
+      errorMsg = errorMsg.replace('@option_lion', '<a href="https://t.me/option_lion" target="_blank" style="color:#D4AF37; font-weight:800;">@option_lion</a>');
+      errEl.innerHTML = errorMsg;
+      errEl.style.display = 'block';
+    }
+  }).catch(function(){
+    errEl.textContent = t.serverErr; errEl.style.display = 'block';
+  });
+}
+</script>
+</body>
+</html>
