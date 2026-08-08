@@ -71,14 +71,26 @@ td{padding:10px; border-bottom:1px solid rgba(255,255,255,.06);}
   </div>
 
   <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
       <h3 id="gaugeTitle" style="color:#D4AF37; margin:0;"></h3>
-      <span id="gaugeLabel" style="font-size:13px; font-weight:800; color:#39FF14;"></span>
     </div>
-    <div style="background:rgba(0,0,0,.3); border-radius:20px; height:16px; overflow:hidden; position:relative;">
-      <div id="gaugeBar" style="height:100%; background:linear-gradient(90deg,#D4AF37,#39FF14); border-radius:20px; width:0%; transition:width .6s;"></div>
+    <div style="display:flex; justify-content:center;">
+      <svg id="gaugeSvg" viewBox="0 0 220 130" style="width:100%; max-width:320px;">
+        <path d="M 15 115 A 95 95 0 0 1 205 115" fill="none" stroke="#1a2030" stroke-width="16" stroke-linecap="round"/>
+        <path id="gaugeArc" d="M 15 115 A 95 95 0 0 1 205 115" fill="none" stroke="url(#gaugeGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="298" stroke-dashoffset="298"/>
+        <defs>
+          <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#D4AF37"/>
+            <stop offset="100%" stop-color="#39FF14"/>
+          </linearGradient>
+        </defs>
+        <g id="gaugeTicks"></g>
+        <line id="gaugeNeedle" x1="110" y1="115" x2="110" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round" style="transform-origin:110px 115px; transition:transform .8s cubic-bezier(.34,1.56,.64,1);"/>
+        <circle cx="110" cy="115" r="8" fill="#D4AF37"/>
+        <text x="110" y="108" text-anchor="middle" font-size="22" font-weight="900" fill="#fff" id="gaugeFloorNum">$4</text>
+      </svg>
     </div>
-    <div id="gaugeHint" style="font-size:12.5px; color:#8a93a8; margin-top:8px;"></div>
+    <div id="gaugeHint" style="font-size:12.5px; color:#8a93a8; margin-top:6px; text-align:center;"></div>
   </div>
 
   <div class="card" style="text-align:center;">
@@ -312,16 +324,20 @@ function renderProfile(res){
   for (var ti = tiers.length - 1; ti >= 0; ti--) { if (cc >= tiers[ti]) { tierIdx = ti; break; } }
   var currentFloor = tierFloor[tierIdx];
   var nextThreshold = tiers[tierIdx + 1];
-  document.getElementById('gaugeLabel').textContent = t.gaugeFloorLabel + currentFloor;
+  document.getElementById('gaugeFloorNum').textContent = '$' + currentFloor;
+  var pct;
   if (nextThreshold) {
     var prevThreshold = tiers[tierIdx];
-    var pct = Math.min(100, ((cc - prevThreshold) / (nextThreshold - prevThreshold)) * 100);
-    document.getElementById('gaugeBar').style.width = pct + '%';
+    pct = Math.min(100, ((cc - prevThreshold) / (nextThreshold - prevThreshold)) * 100);
     document.getElementById('gaugeHint').textContent = t.gaugeRemain(nextThreshold - cc, tierFloor[tierIdx+1]);
   } else {
-    document.getElementById('gaugeBar').style.width = '100%';
+    pct = 100;
     document.getElementById('gaugeHint').textContent = t.gaugeMax;
   }
+  var angle = -90 + (pct/100)*180;
+  document.getElementById('gaugeNeedle').style.transform = 'rotate(' + angle + 'deg)';
+  var arcLen = 298;
+  document.getElementById('gaugeArc').style.strokeDashoffset = arcLen - (pct/100)*arcLen;
 
   var perfBadgeEl = document.getElementById('perfBadge');
   var perfHintEl = document.getElementById('perfHint');

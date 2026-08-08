@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr" id="top">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FWQZ4B4CBD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FWQZ4B4CBD');
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ — Option Lion</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+@keyframes glow { 0%,100% { filter:drop-shadow(0 0 10px rgba(212,175,55,.35)); } 50% { filter:drop-shadow(0 0 26px rgba(212,175,55,.75)); } }
+@keyframes shimmer { 0% { background-position:-400px 0; } 100% { background-position:400px 0; } }
+@keyframes drift { 0% { transform:translate(0,0) rotate(0deg); } 50% { transform:translate(30px,20px) rotate(-6deg); } 100% { transform:translate(0,0) rotate(0deg); } }
+body { margin:0; direction:ltr; font-family:'Inter', sans-serif; background:#070d18; color:#e9edf5; }
+a { color:#D4AF37; text-decoration:none; }
+a:hover { color:#f0cf6c; }
+::selection { background:#D4AF37; color:#070d18; }
+.card { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:26px 22px; }
+.faq-item { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden; }
+.faq-q { padding:18px 22px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; gap:12px; }
+.faq-a { padding:0 22px 20px; font-size:14px; line-height:1.9; color:#aab3c5; display:none; }
+.faq-item.open .faq-a { display:block; }
+.faq-icon { color:#D4AF37; font-size:18px; flex-shrink:0; transition:transform .2s; }
+.faq-item.open .faq-icon { transform:rotate(45deg); }
+</style>
+</head>
+<body>
+
+<div id="themeRoot" style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 20% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 100% 10%, rgba(30,58,110,.5), transparent 60%), #070d18;">
+<script>
+(function(){
+  var presets = [
+    'hue-rotate(0deg) saturate(1) brightness(1)',
+    'hue-rotate(45deg) saturate(1.05) brightness(1.02)',
+    'hue-rotate(-40deg) saturate(1.1) brightness(1)',
+    'hue-rotate(90deg) saturate(0.9) brightness(1.03)',
+    'hue-rotate(180deg) saturate(0.85) brightness(1)',
+    'hue-rotate(-90deg) saturate(1.15) brightness(0.98)'
+  ];
+  var idx = Math.floor(Date.now() / (8 * 60 * 60 * 1000)) % presets.length;
+  var root = document.getElementById('themeRoot');
+  if (root) root.style.filter = presets[idx];
+})();
+</script>
+
+<nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; row-gap:10px; flex-wrap:wrap; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
+  <a href="./tr-lion.html" style="display:flex; align-items:center; gap:10px;">
+    <img src="assets/lion-logo.jpg" alt="Option Lion" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37; animation:glow 3.5s ease-in-out infinite;">
+    <span style="font-weight:900; font-size:18px; letter-spacing:.5px; color:#f4f0e4;">Option Lion</span>
+  </a>
+  <div style="display:flex; align-items:center; gap:clamp(8px,2vw,16px); flex-wrap:wrap; justify-content:flex-end; row-gap:8px;">
+    <a href="./tr-lion.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Ana Sayfa</a>
+    <a href="./tr-system.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Sistem</a>
+    <a href="./tr-results.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Sonuçlar</a>
+    <a href="./tr-testimonials.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Yorumlar</a>
+    <a href="./tr-pricing.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Fiyatlandırma</a>
+    <a href="./tr-faq.html" style="font-size:13px; font-weight:700; color:#D4AF37;">SSS</a>
+    <a href="./tr-signup.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Abonelik</a>
+    <a href="./booklet.html" target="_blank" style="font-size:13px; font-weight:700; color:#c9d2e3;">Kılavuzu İndir (PDF)</a>
+    <div style="position:relative;" id="langdd_tr_faq">
+      <button onclick="var m=document.getElementById('langdd_tr_faq_menu'); m.style.display = m.style.display==='block' ? 'none' : 'block';" style="display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; color:#8a93a8; border:1px solid #2a3348; padding:5px 11px; border-radius:20px; background:transparent; cursor:pointer; font-family:inherit;">TR <span style="font-size:9px;">▾</span></button>
+      <div id="langdd_tr_faq_menu" style="display:none; position:absolute; top:calc(100% + 8px); right:0; background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:140px; z-index:100;"><a href="./index.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">العربية</a><a href="./option-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">English</a><a href="./es-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Español</a><a href="./pt-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Português</a><a href="./de-lion.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Deutsch</a></div>
+    </div>
+    <script>
+    document.addEventListener('click', function(e){
+      var wrap = document.getElementById('langdd_tr_faq');
+      var menu = document.getElementById('langdd_tr_faq_menu');
+      if (wrap && menu && !wrap.contains(e.target)) menu.style.display = 'none';
+    });
+    </script>
+    <a href="./tr-signup.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">Şimdi Katıl</a>
+  </div>
+</nav>
+
+<a href="#top" id="backToTop" style="position:fixed; bottom:24px; right:24px; z-index:60; width:48px; height:48px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(212,175,55,.4); font-size:20px; color:#070d18; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;">↑</a>
+<script>
+(function(){
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 500) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+    else { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
+  });
+})();
+</script>
+
+<section style="padding:clamp(50px,8vw,100px) clamp(20px,6vw,64px);">
+  <div style="max-width:820px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:44px;"><div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">SSS</div><h1 style="font-size:clamp(28px,3.8vw,38px); font-weight:900; color:#fff; margin:0;">Katılmadan önce</h1></div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div class="faq-item open"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Sistemi kullanmak için önceden deneyime ihtiyacım var mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Hayır, ancak görsel karmaşayı önlemek için diğer modülleri etkinleştirmeden önce onları okumakta ustalaşana kadar iki veya üç modülle başlamanız önerilir.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Her piyasada çalışır mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, TradingView'da bulunan herhangi bir sembolde (hisse senetleri, endeksler, forex, emtialar, kripto) ve herhangi bir zaman diliminde çalışır.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Otomatik tavsiyeler verir mi?</span><span class="faq-icon">+</span></div><div class="faq-a">Hayır, sistem kararınızı destekleyen bir analiz ve okuma aracıdır — tavsiye veya otomatik yürütme değildir. Karar ve risk her zaman size aittir.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Göstergeyi nasıl alırım?</span><span class="faq-icon">+</span></div><div class="faq-a">Sayfanın üstündeki düğmeden kaydolun, erişim bağlantısını ve göstergeyi TradingView'a ekleme talimatlarını alacaksınız.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Gelecekte güncellemeler var mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, sistem sürekli geliştirilir ve güncellemeler ile yeni modüller otomatik olarak size ulaşır.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Ücretli bir TradingView planına ihtiyacım var mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Sadece davetiye kodlu (invite-only) betikleri destekleyen bir plana ihtiyacınız var, bu TradingView'ın temel ücretli planlarında bile mevcuttur.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Birden fazla cihazda kullanabilir miyim?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, erişim TradingView hesabınıza bağlıdır, bu yüzden oturum açtığınız herhangi bir cihazdan açabilirsiniz.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Mobil uygulamada çalışır mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, TradingView mobil uygulamasında web sürümündeki gibi çalışır.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Uyarılar var mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, neredeyse her modül, TradingView'ın "Uyarı Oluştur" menüsünden etkinleştirebileceğiniz bağımsız uyarı koşulları taşır.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Gösterge grafiği yavaşlatır mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Hayır, modüller TradingView'ın maksimum çizim sınırının altında kalmak için hesaplanmış çizim limitleriyle (çizgiler, etiketler, tablolar) oluşturulmuştur.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Renkleri ve ayarları değiştirebilir miyim?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, neredeyse her renk ve ayar, zevkinize ve okuma tarzınıza uyacak şekilde göstergenin ayarlar menüsünden değiştirilebilir.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">İstediğim zaman iptal edebilir miyim?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, abonelik esnektir ve uzun vadeli bir taahhüt yoktur — istediğiniz zaman durdurun veya yenileyin.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Yeni traderları destekliyor musunuz?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, sitedeki eğitim akademisi, üç aracın her bölümünü yeni başlayanlar için adım adım açıklar.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Vadeli işlemlerde ve forex'te çalışır mı?</span><span class="faq-icon">+</span></div><div class="faq-a">Evet, sembol TradingView'da yeterli fiyat ve hacim verisiyle mevcut olduğu sürece, gösterge istisnasız üzerinde çalışır.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Sinyaller "repaint" yapmıyor mu?</span><span class="faq-icon">+</span></div><div class="faq-a">Çoğu modül, herhangi bir sinyal veya uyarı vermeden önce onaylanmış bir mum kapanışı üzerine kuruludur ve bu, buna dayanan her modülde (Kalkan modülü gibi) açıkça belirtilir.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Aboneliğimi bir arkadaşımla paylaşabilir miyim?</span><span class="faq-icon">+</span></div><div class="faq-a">Erişim kişiseldir ve yalnızca kendi TradingView hesabınıza bağlıdır, üçüncü bir tarafla paylaşılamaz.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Verilerim ve işlem geçmişim güvende mi?</span><span class="faq-icon">+</span></div><div class="faq-a">Gösterge tamamen kendi TradingView hesabınızda çalışır ve portföyünüze, işlemlerinize veya herhangi bir kişisel veriye asla erişmeyiz.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Üç araç arasındaki fark nedir?</span><span class="faq-icon">+</span></div><div class="faq-a">Option Lion trend ve momentumu okur, Smart Pivot destek/direnci haritalar ve Empire of the Wealthy likidite ve gizli uyumu okur — yukarıdaki "Sistem" sayfasına bakın.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Canlı bire bir eğitim düzenleyebilir misiniz?</span><span class="faq-icon">+</span></div><div class="faq-a">Detayları görüşmek için bize ulaşın — müsaitlik mevcut talebe bağlıdır.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Ücretsiz deneme banka kartı gerektirir mi?</span><span class="faq-icon">+</span></div><div class="faq-a">Hayır, 14 günlük ücretsiz deneme herhangi bir ödeme bilgisi gerekmeden hemen başlar.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:15px; color:#fff;">Teknik bir sorunla karşılaşırsam ne yapmalıyım?</span><span class="faq-icon">+</span></div><div class="faq-a">Doğrudan bize ulaşın, en kısa sürede yardımcı olacağız.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:44px clamp(20px,6vw,64px) 34px; border-top:1px solid rgba(255,255,255,.08); text-align:center;">
+  <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px;">
+    <img src="assets/lion-logo.jpg" alt="Option Lion" style="width:30px; height:30px; border-radius:50%; object-fit:cover; border:1px solid #D4AF37;">
+    <span style="font-weight:900; color:#f4f0e4;">Option Lion</span>
+  </div>
+  <p style="font-size:12.5px; color:#6b7488; max-width:520px; margin:0 auto 18px; line-height:1.8;">İçerik yalnızca eğitim ve analiz amaçlıdır ve yatırım tavsiyesi teşkil etmez. İşlem yapmak risk içerir.</p>
+  <div style="font-size:12.5px; color:#4d5468;">© 2026 Option Lion ⚜ Tüm hakları saklıdır</div>
+<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#tr-section'); return false;" style="color:#8a93a8;">Kullanım Şartları</a><a href="#" onclick="openLegalModal('./privacy.html#tr-section'); return false;" style="color:#8a93a8;">Gizlilik Politikası</a><a href="#" onclick="openLegalModal('./refund.html#tr-section'); return false;" style="color:#8a93a8;">İade Politikası</a></div>
+</footer>
+
+</div>
+
+<div id="legalModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; width:100%; max-width:720px; height:80vh; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.6); overflow:hidden;">
+    <button onclick="document.getElementById('legalModalOverlay').style.display='none';" style="position:absolute; top:12px; right:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:none; background:rgba(255,255,255,.08); color:#fff; font-size:18px; cursor:pointer; line-height:1;">×</button>
+    <iframe id="legalModalFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+  </div>
+</div>
+<script>
+function openLegalModal(url){
+  document.getElementById('legalModalFrame').src = url;
+  document.getElementById('legalModalOverlay').style.display = 'flex';
+}
+document.addEventListener('click', function(e){
+  if (e.target && e.target.id === 'legalModalOverlay') e.target.style.display = 'none';
+});
+</script>
+</body>
+</html>
