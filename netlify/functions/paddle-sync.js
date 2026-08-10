@@ -1,7 +1,7 @@
 // مزامنة يدوية مع Paddle API — يسحب آخر المعاملات ويحدّث حالات الاشتراك المطابقة
 const { getSql, ensureTables } = require('./_db');
 
-const PADDLE_API_KEY = process.env.PADDLE_API_KEY || '';
+const PADDLE_API_KEY = (process.env.PADDLE_API_KEY || '').trim();
 const PADDLE_API_BASE = process.env.PADDLE_SANDBOX === 'true' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
 
 function computeStatusAndExpiry(interval, frequency) {
