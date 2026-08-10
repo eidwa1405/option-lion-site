@@ -23,6 +23,17 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'مفتاح Paddle API غير مُعرَّف (PADDLE_API_KEY) في متغيرات البيئة' }) };
   }
 
+  if (event.queryStringParameters && event.queryStringParameters.debug === '1') {
+    return { statusCode: 200, headers, body: JSON.stringify({
+      ok: true,
+      keyLength: PADDLE_API_KEY.length,
+      startsWithPdlLive: PADDLE_API_KEY.startsWith('pdl_live_apikey_'),
+      first10: PADDLE_API_KEY.slice(0,10),
+      last6: PADDLE_API_KEY.slice(-6),
+      charCodes: [PADDLE_API_KEY.charCodeAt(0), PADDLE_API_KEY.charCodeAt(PADDLE_API_KEY.length-1)]
+    }) };
+  }
+
   try {
     await ensureTables();
     const sql = getSql();
