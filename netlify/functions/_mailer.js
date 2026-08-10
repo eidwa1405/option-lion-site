@@ -1,4 +1,4 @@
-// أداة إرسال بريد موحّدة عبر SMTP (حساب Gmail الرسمي لأسد الأوبشن)
+// أداة إرسال بريد موحّدة عبر SMTP (حساب Gmail الرسمي لO P N LIO)
 const nodemailer = require('nodemailer');
 
 const SMTP_USER = process.env.SMTP_USER || 'opon.netlify@gmail.com';
@@ -63,15 +63,15 @@ function emailShell(lang, titleHtml, bodyHtml) {
     <tr><td align="center">
       <table role="presentation" width="560" style="max-width:92%;background:linear-gradient(160deg,rgba(212,175,55,.08),rgba(255,255,255,.02));border:1px solid rgba(212,175,55,.3);border-radius:18px;overflow:hidden;">
         <tr><td style="background:#070d18;padding:26px 30px;text-align:center;border-bottom:1px solid rgba(212,175,55,.25);">
-          <img src="${BRAND.logo}" width="52" height="52" style="border-radius:50%;border:2px solid ${BRAND.gold};" alt="أسد الأوبشن">
-          <div style="color:#f4f0e4;font-weight:900;font-size:17px;margin-top:10px;letter-spacing:.5px;">أسد الأوبشن ⚜ Option Lion</div>
+          <img src="${BRAND.logo}" width="52" height="52" style="border-radius:50%;border:2px solid ${BRAND.gold};" alt="O P N LIO">
+          <div style="color:#f4f0e4;font-weight:900;font-size:17px;margin-top:10px;letter-spacing:.5px;">O P N LIO ⚜</div>
         </tr></td></tr>
         <tr><td style="padding:32px 30px;color:#e9edf5;">
           <h2 style="color:${BRAND.gold};font-size:20px;margin:0 0 16px;">${titleHtml}</h2>
           <div style="font-size:14.5px;line-height:1.9;color:#c9d2e3;">${bodyHtml}</div>
         </td></tr>
         <tr><td style="background:#070d18;padding:20px 30px;text-align:center;border-top:1px solid rgba(255,255,255,.08);">
-          <div style="font-size:12px;color:#6b7488;">© 2026 أسد الأوبشن ⚜ Option Lion — جميع الحقوق محفوظة</div>
+          <div style="font-size:12px;color:#6b7488;">© 2026 O P N LIO ⚜ — جميع الحقوق محفوظة</div>
         </td></tr>
       </table>
     </td></tr>
@@ -84,7 +84,7 @@ async function sendMail(to, subject, titleHtml, bodyHtml, lang) {
   const html = emailShell(lang || 'ar', titleHtml, bodyHtml);
   try {
     await getTransporter().sendMail({
-      from: '"أسد الأوبشن ⚜ Option Lion" <' + SMTP_USER + '>',
+      from: '"أو بي إن ليو O P N LIO ⚜" <' + SMTP_USER + '>',
       to, subject, html
     });
     return { ok: true };

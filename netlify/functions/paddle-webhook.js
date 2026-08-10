@@ -1,6 +1,9 @@
 // يستقبل إشعارات Paddle Webhooks ويحدّث حالة الاشتراك تلقائياً بقاعدة البيانات
 const crypto = require('crypto');
 const { getSql, ensureTables } = require('./_db');
+const { sendMail } = require('./_mailer');
+
+const ADMIN_ALERT_EMAIL = process.env.ADMIN_EMAIL || process.env.SMTP_USER || '';
 
 const PADDLE_WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET || '';
 
@@ -35,6 +38,27 @@ exports.handler = async (event) => {
     await ensureTables();
     const sql = getSql();
 
+    if (eventType === 'transaction.refunded' || eventType === 'adjustment.created' || eventType === 'transaction.payment_failed') {
+      const custData = data.custom_data || (data.transaction && data.transaction.custom_data) || {};
+      const refundCustomerName = custData.customerName || null;
+      let refundMatch = null;
+      if (refundCustomerName) {
+        const rows = await sql`SELECT id, ref_code, customer_name FROM subscriptions WHERE customer_name = ${refundCustomerName} ORDER BY created_at DESC LIMIT 1`;
+        if (rows.length) refundMatch = rows[0];
+      }
+      if (refundMatch && refundMatch.ref_code) {
+        const lastCommission = await sql`SELECT id, amount, floor_amount, bonus_amount FROM commission_log WHERE ref_code = ${refundMatch.ref_code} AND customer_name = ${refundMatch.customer_name} ORDER BY created_at DESC LIMIT 1`;
+        if (lastCommission.length) {
+          const c = lastCommission[0];
+          await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount, floor_amount, bonus_amount) VALUES (${refundMatch.ref_code}, ${refundMatch.customer_name}, ${'استرجاع Paddle'}, ${-c.amount}, ${-c.floor_amount}, ${-c.bonus_amount})`;
+          await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-refund-clawback', ${'تم عكس عمولة $' + c.amount + ' للسفير ' + refundMatch.ref_code + ' بسبب استرجاع Paddle (' + eventType + ')'})`;
+        }
+      } else {
+        await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES (${eventType||''}, ${null}, ${refundCustomerName||null}, ${JSON.stringify(payload)})`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, refundHandled: true }) };
+    }
+
     // نحاول مطابقة العميل عبر البريد أو الاسم المخزن في custom_data إن وُجد
     const customerEmail = (data.customer && data.customer.email) || (data.customer_email) || null;
     const customData = data.custom_data || {};
@@ -68,11 +92,20 @@ exports.handler = async (event) => {
       }
 
       if (newStatus) {
-        await sql`UPDATE subscriptions SET status = ${newStatus}, expires_at = ${expiresAt}, notified_48h = false, aff_reminder_48h_sent = false, aff_reminder_12h_sent = false, updated_at = now() WHERE id = ${matchRow.id}`;
+        const txId = data.id || (data.transaction_id) || null;
+        const amountRaw = (data.details && data.details.totals && data.details.totals.total) || (data.items && data.items[0] && data.items[0].price && data.items[0].price.unit_price && data.items[0].price.unit_price.amount) || null;
+        const amount = amountRaw ? (parseFloat(amountRaw) / 100) : null;
+        await sql`UPDATE subscriptions SET status = ${newStatus}, expires_at = ${expiresAt}, notified_48h = false, aff_reminder_48h_sent = false, aff_reminder_12h_sent = false, paddle_transaction_id = ${txId}, paddle_amount = ${amount}, last_status_source = 'paddle', updated_at = now() WHERE id = ${matchRow.id}`;
         await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-webhook', ${'Paddle event ' + eventType + ' -> ' + newStatus + ' for customer #' + matchRow.id})`;
       }
     } else {
       await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-webhook-unmatched', ${'Event ' + eventType + ' received, no matching customer found'})`;
+      await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES (${eventType||''}, ${customerEmail||null}, ${customerName||null}, ${JSON.stringify(payload)})`;
+      if (ADMIN_ALERT_EMAIL) {
+        try {
+          await sendMail(ADMIN_ALERT_EMAIL, '⚠️ عملية دفع Paddle غير مطابقة — O P N LIO', 'تنبيه', '<div dir="rtl">وصلت عملية دفع من Paddle (نوع: <b>' + (eventType||'-') + '</b>) ولم يتم مطابقتها مع أي عميل مسجّل.<br><br>البريد: ' + (customerEmail||'-') + '<br>الاسم: ' + (customerName||'-') + '<br><br>راجع لوحة التحكم → العملاء → بانر التنبيه لحل الحالة.</div>', 'ar');
+        } catch (mailErr) {}
+      }
     }
 
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };

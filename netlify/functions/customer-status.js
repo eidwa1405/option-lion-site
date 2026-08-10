@@ -1,4 +1,4 @@
-// يبحث عن حالة اشتراك عميل برقم الجوال أو حساب تيليجرام — عام بدون تسجيل دخول
+// يبحث عن حالة اشتراك عميل برقم العميل وحساب TradingView معاً (تطابق حرفي تام) — عام بدون تسجيل دخول
 const { getSql, ensureTables } = require('./_db');
 
 exports.handler = async (event) => {
@@ -13,13 +13,12 @@ exports.handler = async (event) => {
       return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'too many attempts, try later' }) };
     }
     await sql`INSERT INTO check_attempts (ip) VALUES (${ip})`;
-    const q = String((event.queryStringParameters && event.queryStringParameters.q) || '').trim();
+    const cid = String((event.queryStringParameters && event.queryStringParameters.q) || '').trim();
     const tv = String((event.queryStringParameters && event.queryStringParameters.tv) || '').trim();
-    if (!q || !tv) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'both fields required' }) };
-    const cleanPhone = q.replace(/^@/, '');
+    if (!cid || !tv) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'both fields required' }) };
     const cleanTv = tv.replace(/^@/, '');
     const rows = await sql`SELECT customer_name, status, plan, expires_at FROM subscriptions
-      WHERE phone ILIKE ${'%' + cleanPhone + '%'} AND tradingview ILIKE ${'%' + cleanTv + '%'}
+      WHERE customer_id = ${cid} AND tradingview = ${cleanTv}
       ORDER BY created_at DESC LIMIT 1`;
     if (rows.length === 0) return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customer: null }) };
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customer: rows[0] }) };

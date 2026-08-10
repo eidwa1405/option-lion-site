@@ -2,6 +2,7 @@
 const crypto = require('crypto');
 const { getSql, ensureTables } = require('./_db');
 const { sendMail } = require('./_mailer');
+const { hashPassword } = require('./_auth');
 
 async function checkAffiliateToken(event, sql) {
   const token = event.headers['x-affiliate-token'] || event.headers['X-Affiliate-Token'];
@@ -27,6 +28,11 @@ exports.handler = async (event) => {
     if (!affiliate) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح — سجّل الدخول مرة أخرى' }) };
 
     const action = event.queryStringParameters && event.queryStringParameters.action;
+
+    if (event.httpMethod === 'GET' && action === 'my-payouts') {
+      const items = await sql`SELECT i.amount, i.floor_amount, i.bonus_amount, r.month, r.id AS run_id FROM payout_items i JOIN payout_runs r ON r.id = i.run_id WHERE i.ref_code = ${affiliate.code} ORDER BY r.month DESC`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items }) };
+    }
 
     if (event.httpMethod === 'GET' && action === 'profile') {
       const customers = await sql`SELECT s.id, s.customer_name, s.status, s.plan, s.expires_at, s.created_at, s.aff_reminder_48h_sent, s.aff_reminder_12h_sent,
@@ -58,7 +64,10 @@ exports.handler = async (event) => {
         bank_account: affiliate.bank_account, agreement_accepted_at: affiliate.agreement_accepted_at, signature_data: affiliate.signature_data,
         login_username: affiliate.login_username || affiliate.code, active: affiliate.active
       };
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, affiliate: safeAffiliate, customers: customersOut, totalCommission: totalCommission[0].total, customerCount: customers.length, monthly }) };
+      const activeCampaign = await sql`SELECT name, boost_amount, cap_override, ends_at FROM boost_campaigns
+        WHERE now() BETWEEN starts_at AND ends_at AND (target = 'all' OR ${affiliate.code} = ANY(target_codes))
+        ORDER BY boost_amount DESC LIMIT 1`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, affiliate: safeAffiliate, customers: customersOut, totalCommission: totalCommission[0].total, customerCount: customers.length, monthly, activeCampaign: activeCampaign.length ? activeCampaign[0] : null }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'send-customer-reminder') {
@@ -76,13 +85,13 @@ exports.handler = async (event) => {
       const hoursRounded = Math.max(1, Math.round(hoursLeft));
       const lang = c.lang === 'en' ? 'en' : 'ar';
       const T = {
-        ar: { subject: 'تذكير: اشتراكك في أسد الأوبشن ينتهي قريباً ⚜', hi: 'لا تفوّت استمرارية أدواتك',
-          body: `مرحباً <b>${c.customer_name}</b> 👋<br><br>باقي على انتهاء اشتراكك في أسد الأوبشن حوالي <b style="color:#ff9b9b;">${hoursRounded} ساعة</b> فقط.<br><br>
-            لا تدع أدواتك المتكاملة (منظومة أسد الأوبشن، امبراطورية الأثرياء، Smart Pivot، King's Call) تتوقف عن خدمتك — جدّد اشتراكك الآن واستمر بالاستفادة من التحليل اللحظي والتنبيهات الذكية.<br><br>
+        ar: { subject: 'تذكير: اشتراكك في O P N LIO ينتهي قريباً ⚜', hi: 'لا تفوّت استمرارية أدواتك',
+          body: `مرحباً <b>${c.customer_name}</b> 👋<br><br>باقي على انتهاء اشتراكك في O P N LIO حوالي <b style="color:#ff9b9b;">${hoursRounded} ساعة</b> فقط.<br><br>
+            لا تدع أدواتك المتكاملة (منظومة O P N LIO، امبراطورية الأثرياء، Smart Pivot، King's Call) تتوقف عن خدمتك — جدّد اشتراكك الآن واستمر بالاستفادة من التحليل اللحظي والتنبيهات الذكية.<br><br>
             <a href="https://opon.netlify.app/signup.html" style="display:inline-block;background:linear-gradient(120deg,#D4AF37,#f0cf6c);color:#070d18;font-weight:900;padding:12px 26px;border-radius:10px;text-decoration:none;">تجديد الاشتراك الآن</a>` },
-        en: { subject: 'Reminder: Your Option Lion subscription is expiring soon ⚜', hi: "Don't lose access to your tools",
-          body: `Hi <b>${c.customer_name}</b> 👋<br><br>Your Option Lion subscription expires in about <b style="color:#ff9b9b;">${hoursRounded} hours</b>.<br><br>
-            Don't let your integrated tools (Option Lion System, Empire of the Wealthy, Smart Pivot, King's Call) stop serving you — renew now and keep benefiting from real-time analysis and smart alerts.<br><br>
+        en: { subject: 'Reminder: Your O P N LIO subscription is expiring soon ⚜', hi: "Don't lose access to your tools",
+          body: `Hi <b>${c.customer_name}</b> 👋<br><br>Your O P N LIO subscription expires in about <b style="color:#ff9b9b;">${hoursRounded} hours</b>.<br><br>
+            Don't let your integrated tools (O P N LIO System, Empire of the Wealthy, Smart Pivot, King's Call) stop serving you — renew now and keep benefiting from real-time analysis and smart alerts.<br><br>
             <a href="https://opon.netlify.app/en-signup.html" style="display:inline-block;background:linear-gradient(120deg,#D4AF37,#f0cf6c);color:#070d18;font-weight:900;padding:12px 26px;border-radius:10px;text-decoration:none;">Renew Now</a>` }
       };
       const t = T[lang];
@@ -114,7 +123,7 @@ exports.handler = async (event) => {
         await sql`UPDATE affiliates SET login_username = ${cleanUsername} WHERE code = ${affiliate.code}`;
       }
       if (newPassword && newPassword.length >= 6) {
-        await sql`UPDATE affiliates SET password = ${newPassword} WHERE code = ${affiliate.code}`;
+        await sql`UPDATE affiliates SET password = ${hashPassword(newPassword)} WHERE code = ${affiliate.code}`;
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
