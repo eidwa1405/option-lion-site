@@ -24,14 +24,19 @@ exports.handler = async (event) => {
   }
 
   if (event.queryStringParameters && event.queryStringParameters.debug === '1') {
+    let badChars = [];
+    for (let i = 0; i < PADDLE_API_KEY.length; i++) {
+      const c = PADDLE_API_KEY.charCodeAt(i);
+      if (c < 33 || c > 126) badChars.push({ pos: i, code: c });
+    }
     const testRes = await fetch(`${PADDLE_API_BASE}/event-types`, { headers: { Authorization: `Bearer ${PADDLE_API_KEY}` } });
     const testBody = await testRes.text();
     return { statusCode: 200, headers, body: JSON.stringify({
       ok: true,
       keyLength: PADDLE_API_KEY.length,
       startsWithPdlLive: PADDLE_API_KEY.startsWith('pdl_live_apikey_'),
-      first10: PADDLE_API_KEY.slice(0,10),
-      last6: PADDLE_API_KEY.slice(-6),
+      fullKeyJSON: JSON.stringify(PADDLE_API_KEY),
+      badChars,
       apiBase: PADDLE_API_BASE,
       testStatus: testRes.status,
       testBody: testBody.slice(0, 400)
