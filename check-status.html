@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحقق من اشتراكك — O P N  LIO</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh;}
+a{color:#D4AF37; text-decoration:none;}
+.wrap{position:relative; overflow:hidden; background:radial-gradient(1100px 650px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 20%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;}
+.card{background:linear-gradient(160deg,rgba(212,175,55,.08),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.28); border-radius:22px; padding:40px 34px; max-width:460px; width:100%; box-shadow:0 30px 70px rgba(0,0,0,.45);}
+label{display:block; font-size:12.5px; font-weight:800; color:#D4AF37; letter-spacing:.5px; margin-bottom:8px; text-transform:uppercase;}
+input,select{width:100%; box-sizing:border-box; padding:14px 16px; border-radius:12px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.28); color:#fff; font-size:14.5px; font-family:inherit;}
+input:focus,select:focus{outline:none; border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,.15);}
+select option{background:#10141f;}
+.field{margin-bottom:18px;}
+button{width:100%; padding:15px; border:none; border-radius:14px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer; box-shadow:0 8px 24px rgba(212,175,55,.3); transition:filter .2s;}
+button:hover{filter:brightness(1.06);}
+.statusBadge{display:inline-flex; align-items:center; gap:8px; padding:8px 18px; border-radius:30px; font-weight:900; font-size:14px; margin-bottom:18px;}
+.statusBadge.active{background:rgba(57,255,20,.12); color:#39FF14; border:1px solid rgba(57,255,20,.4);}
+.statusBadge.warn{background:rgba(255,180,60,.12); color:#ffcf8a; border:1px solid rgba(255,180,60,.4);}
+.statusBadge.expired{background:rgba(122,130,150,.15); color:#aab3c5; border:1px solid rgba(122,130,150,.4);}
+.row{display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.08); font-size:14.5px;}
+.row:last-child{border-bottom:none;}
+.row span:first-child{color:#8a93a8; font-weight:600;}
+.row span:last-child{font-weight:800; color:#fff;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card" id="formCard">
+  <div style="text-align:center; margin-bottom:30px;">
+    <div style="font-size:36px; margin-bottom:10px; filter:drop-shadow(0 0 12px rgba(212,175,55,.4));">⚜</div>
+    <h1 style="font-size:22px; color:#fff; margin:0 0 8px; font-weight:900;">تحقق من حالة اشتراكك</h1>
+    <p style="font-size:13.5px; color:#aab3c5; margin:0; line-height:1.8;">أدخل رقم عميلك (المرسَل إليك بالبريد عند التفعيل) وحساب TradingView معاً لعرض حالة اشتراكك فوراً</p>
+  </div>
+  <div class="field">
+    <label>🆔 رقم العميل</label>
+    <input id="cid" placeholder="مثال: sa1234567" style="direction:ltr; text-align:left;">
+  </div>
+  <div class="field">
+    <label>📊 حساب TradingView</label>
+    <input id="tv" placeholder="اسم المستخدم بدون @" style="direction:ltr; text-align:left;">
+  </div>
+  <button onclick="checkStatus()">🔍 تحقق الآن</button>
+  <div id="notFound" style="display:none; margin-top:18px; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.35); color:#ff9b9b; font-size:13px; font-weight:600; padding:14px 16px; border-radius:12px; text-align:center; line-height:1.7;"></div>
+  <div style="text-align:center; margin-top:22px;"><a href="./ar-lion.html" style="font-size:13px; font-weight:700;">↩ الرجوع للرئيسية</a></div>
+</div>
+
+<div class="card" id="resultCard" style="display:none; text-align:center;">
+  <div id="badgeWrap" style="text-align:center;"></div>
+  <h2 id="resName" style="font-size:19px; color:#fff; margin:0 0 22px; font-weight:900;"></h2>
+  <div style="text-align:right;">
+    <div class="row"><span>الباقة</span><span id="resPlan"></span></div>
+    <div class="row"><span>تاريخ الانتهاء</span><span id="resExpiry"></span></div>
+  </div>
+  <button style="margin-top:24px; background:rgba(255,255,255,.06); color:#c9cddb; box-shadow:none;" onclick="resetForm()">↩ تحقق من اشتراك آخر</button>
+  <div style="text-align:center; margin-top:16px;"><a href="./ar-lion.html" style="font-size:13px; font-weight:700;">↩ الرجوع للرئيسية</a></div>
+</div>
+</div>
+
+<script>
+function playClickSound(){
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+    g.gain.setValueAtTime(0.12, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.1);
+  } catch(e){}
+}
+
+var CC_LIST = [["+966","🇸🇦"],["+971","🇦🇪"],["+965","🇰🇼"],["+974","🇶🇦"],["+973","🇧🇭"],["+968","🇴🇲"],["+20","🇪🇬"],["+962","🇯🇴"],["+961","🇱🇧"],["+964","🇮🇶"],["+212","🇲🇦"],["+213","🇩🇿"],["+90","🇹🇷"],["+49","🇩🇪"],["+33","🇫🇷"],["+34","🇪🇸"],["+351","🇵🇹"],["+44","🇬🇧"],["+1","🇺🇸"]];
+
+var STATUS_LABELS = {pending_payment:'لم يكمل السداد', trial:'فترة تجربة مجانية', canceled:'ملغي', renew_1m:'مشترك شهري', renew_3m:'مشترك 3 أشهر', renew_6m:'مشترك 6 أشهر', renew_1y:'مشترك سنوي'};
+
+function resetForm(){
+  document.getElementById('formCard').style.display = 'block';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('notFound').style.display = 'none';
+}
+
+function checkStatus(){
+  playClickSound();
+  var cid = document.getElementById('cid').value.trim();
+  var tv = document.getElementById('tv').value.trim();
+  var notFound = document.getElementById('notFound');
+  notFound.style.display = 'none';
+  if (!cid || !tv) {
+    notFound.textContent = 'يرجى إدخال رقم العميل وحساب TradingView معاً.';
+    notFound.style.display = 'block';
+    return;
+  }
+  fetch('/api/customer-status?q=' + encodeURIComponent(cid) + '&tv=' + encodeURIComponent(tv)).then(function(r){
+    if (r.status === 429) { notFound.textContent = 'عدد المحاولات كثير جداً، حاول بعد قليل.'; notFound.style.display='block'; return Promise.reject(); }
+    return r.json();
+  }).then(function(res){
+    if (!res.ok || !res.customer) {
+      notFound.textContent = 'لم يتم العثور على اشتراك مطابق. تحقق من البيانات أو تواصل مع الدعم عبر تيليجرام.';
+      notFound.style.display = 'block';
+      return;
+    }
+    var c = res.customer;
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('resName').textContent = c.customer_name;
+    document.getElementById('resPlan').textContent = c.plan || '—';
+
+    var now = Date.now();
+    var badgeClass = 'expired', badgeText = '⚪ غير نشط', expiryTxt = '—';
+    if (c.expires_at) {
+      var expDate = new Date(c.expires_at);
+      var hoursLeft = (expDate.getTime() - now) / 3600000;
+      expiryTxt = expDate.toLocaleDateString('ar-SA') + ' — ' + expDate.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+      if (hoursLeft > 48) { badgeClass = 'active'; badgeText = '🟢 اشتراك نشط'; }
+      else if (hoursLeft > 0) { badgeClass = 'warn'; badgeText = '⏰ ينتهي قريباً'; }
+      else { badgeClass = 'expired'; badgeText = '⚪ منتهي'; }
+    }
+    if (c.status === 'canceled') { badgeClass = 'expired'; badgeText = '⚪ ملغي'; }
+    document.getElementById('badgeWrap').innerHTML = '<div class="statusBadge ' + badgeClass + '">' + badgeText + '</div>';
+    document.getElementById('resExpiry').textContent = expiryTxt;
+  }).catch(function(){
+    if (!notFound.textContent) { notFound.textContent = 'تعذّر الاتصال بالخادم، حاول مرة أخرى.'; notFound.style.display = 'block'; }
+  });
+}
+</script>
+</body>
+</html>
