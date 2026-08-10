@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تحقق من اشتراكك — أسد الأوبشن</title>
+<title>تحقق من اشتراكك — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -35,14 +35,11 @@ button:hover{filter:brightness(1.06);}
   <div style="text-align:center; margin-bottom:30px;">
     <div style="font-size:36px; margin-bottom:10px; filter:drop-shadow(0 0 12px rgba(212,175,55,.4));">⚜</div>
     <h1 style="font-size:22px; color:#fff; margin:0 0 8px; font-weight:900;">تحقق من حالة اشتراكك</h1>
-    <p style="font-size:13.5px; color:#aab3c5; margin:0; line-height:1.8;">أدخل رقم الجوال وحساب TradingView الذي سجّلت بهما معاً لعرض حالة اشتراكك فوراً</p>
+    <p style="font-size:13.5px; color:#aab3c5; margin:0; line-height:1.8;">أدخل رقم عميلك (المرسَل إليك بالبريد عند التفعيل) وحساب TradingView معاً لعرض حالة اشتراكك فوراً</p>
   </div>
   <div class="field">
-    <label>📱 رقم الجوال</label>
-    <div style="display:flex; gap:8px;">
-      <select id="cc" style="flex:0 0 108px;"></select>
-      <input id="phone" type="tel" placeholder="5XXXXXXXX" style="flex:1; direction:ltr; text-align:left;">
-    </div>
+    <label>🆔 رقم العميل</label>
+    <input id="cid" placeholder="مثال: sa1234567" style="direction:ltr; text-align:left;">
   </div>
   <div class="field">
     <label>📊 حساب TradingView</label>
@@ -50,7 +47,7 @@ button:hover{filter:brightness(1.06);}
   </div>
   <button onclick="checkStatus()">🔍 تحقق الآن</button>
   <div id="notFound" style="display:none; margin-top:18px; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.35); color:#ff9b9b; font-size:13px; font-weight:600; padding:14px 16px; border-radius:12px; text-align:center; line-height:1.7;"></div>
-  <div style="text-align:center; margin-top:22px;"><a href="./index.html" style="font-size:13px; font-weight:700;">↩ الرجوع للرئيسية</a></div>
+  <div style="text-align:center; margin-top:22px;"><a href="./ar-lion.html" style="font-size:13px; font-weight:700;">↩ الرجوع للرئيسية</a></div>
 </div>
 
 <div class="card" id="resultCard" style="display:none; text-align:center;">
@@ -61,7 +58,7 @@ button:hover{filter:brightness(1.06);}
     <div class="row"><span>تاريخ الانتهاء</span><span id="resExpiry"></span></div>
   </div>
   <button style="margin-top:24px; background:rgba(255,255,255,.06); color:#c9cddb; box-shadow:none;" onclick="resetForm()">↩ تحقق من اشتراك آخر</button>
-  <div style="text-align:center; margin-top:16px;"><a href="./index.html" style="font-size:13px; font-weight:700;">↩ الرجوع للرئيسية</a></div>
+  <div style="text-align:center; margin-top:16px;"><a href="./ar-lion.html" style="font-size:13px; font-weight:700;">↩ الرجوع للرئيسية</a></div>
 </div>
 </div>
 
@@ -82,11 +79,6 @@ function playClickSound(){
 }
 
 var CC_LIST = [["+966","🇸🇦"],["+971","🇦🇪"],["+965","🇰🇼"],["+974","🇶🇦"],["+973","🇧🇭"],["+968","🇴🇲"],["+20","🇪🇬"],["+962","🇯🇴"],["+961","🇱🇧"],["+964","🇮🇶"],["+212","🇲🇦"],["+213","🇩🇿"],["+90","🇹🇷"],["+49","🇩🇪"],["+33","🇫🇷"],["+34","🇪🇸"],["+351","🇵🇹"],["+44","🇬🇧"],["+1","🇺🇸"]];
-(function(){
-  var sel = document.getElementById('cc');
-  CC_LIST.forEach(function(c){ var o=document.createElement('option'); o.value=c[0]; o.textContent=c[1]+' '+c[0]; sel.appendChild(o); });
-  sel.value = '+966';
-})();
 
 var STATUS_LABELS = {pending_payment:'لم يكمل السداد', trial:'فترة تجربة مجانية', canceled:'ملغي', renew_1m:'مشترك شهري', renew_3m:'مشترك 3 أشهر', renew_6m:'مشترك 6 أشهر', renew_1y:'مشترك سنوي'};
 
@@ -98,18 +90,16 @@ function resetForm(){
 
 function checkStatus(){
   playClickSound();
-  var phone = document.getElementById('phone').value.trim();
-  var cc = document.getElementById('cc').value;
+  var cid = document.getElementById('cid').value.trim();
   var tv = document.getElementById('tv').value.trim();
   var notFound = document.getElementById('notFound');
   notFound.style.display = 'none';
-  if (!phone || !tv) {
-    notFound.textContent = 'يرجى إدخال رقم الجوال وحساب TradingView معاً.';
+  if (!cid || !tv) {
+    notFound.textContent = 'يرجى إدخال رقم العميل وحساب TradingView معاً.';
     notFound.style.display = 'block';
     return;
   }
-  var q = cc + phone;
-  fetch('/api/customer-status?q=' + encodeURIComponent(q) + '&tv=' + encodeURIComponent(tv)).then(function(r){
+  fetch('/api/customer-status?q=' + encodeURIComponent(cid) + '&tv=' + encodeURIComponent(tv)).then(function(r){
     if (r.status === 429) { notFound.textContent = 'عدد المحاولات كثير جداً، حاول بعد قليل.'; notFound.style.display='block'; return Promise.reject(); }
     return r.json();
   }).then(function(res){

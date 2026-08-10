@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de" dir="ltr">
+<html lang="es" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mein Abonnementstatus — O P N  LIO</title>
+<title>Estado de mi Suscripción — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -22,14 +22,14 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
 <div class="card">
   <div style="text-align:center; margin-bottom:24px;">
     <div style="font-size:30px; margin-bottom:8px;">⚜</div>
-    <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">Überprüfen Sie Ihren Abonnementstatus</h1>
-    <p style="font-size:13px; color:#aab3c5; margin:0;">Geben Sie Ihre Kunden-ID ein (die Sie per E-Mail bei der Aktivierung erhalten haben)</p>
+    <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">Verifica el Estado de tu Suscripción</h1>
+    <p style="font-size:13px; color:#aab3c5; margin:0;">Ingresa tu ID de Cliente (enviado por correo al activarse)</p>
   </div>
   <input id="tv2" placeholder="TradingView Username" style="margin-bottom:14px;">
-  <input id="q" placeholder="Kunden-ID (z.B. sa1234567)">
-  <button onclick="checkStatus()">Jetzt prüfen</button>
+  <input id="q" placeholder="ID de Cliente (ej. sa1234567)">
+  <button onclick="checkStatus()">Verificar Ahora</button>
   <div id="result" style="margin-top:20px; display:none;"></div>
-  <div id="notFound" style="display:none; color:#ff9b9b; font-size:13.5px; text-align:center; margin-top:16px;">Kein passendes Abonnement gefunden. Überprüfen Sie Ihre Daten oder kontaktieren Sie den Support.</div>
+  <div id="notFound" style="display:none; color:#ff9b9b; font-size:13.5px; text-align:center; margin-top:16px;">No se encontró una suscripción coincidente. Verifica tus datos o contacta soporte.</div>
 </div>
 <script>
 function playClickSound(){
@@ -57,13 +57,13 @@ function checkStatus(){
     document.getElementById('notFound').style.display = 'none';
     if (!res.ok || !res.customer) { document.getElementById('notFound').style.display = 'block'; return; }
     var c = res.customer;
-    var statusLabels = {"pending_payment":"Zahlung nicht abgeschlossen","trial":"Kostenlose Testphase","canceled":"Storniert","renew_1m":"Monatsabonnent","renew_3m":"3-Monats-Abonnent","renew_6m":"6-Monats-Abonnent","renew_1y":"Jahresabonnent"};
-    var expiry = c.expires_at ? new Date(c.expires_at).toLocaleString('de-DE') : '-';
+    var statusLabels = {"pending_payment":"Pago No Completado","trial":"Prueba Gratuita","canceled":"Cancelado","renew_1m":"Suscriptor Mensual","renew_3m":"Suscriptor 3 Meses","renew_6m":"Suscriptor 6 Meses","renew_1y":"Suscriptor Anual"};
+    var expiry = c.expires_at ? new Date(c.expires_at).toLocaleString('es-ES') : '-';
     document.getElementById('result').innerHTML =
-      '<div class="row"><span>Name</span><span>'+c.customer_name+'</span></div>' +
-      '<div class="row"><span>Status</span><span>'+(statusLabels[c.status]||c.status)+'</span></div>' +
-      '<div class="row"><span>Paket</span><span>'+(c.plan||'-')+'</span></div>' +
-      '<div class="row"><span>Ablaufdatum</span><span>'+expiry+'</span></div>';
+      '<div class="row"><span>Nombre</span><span>'+c.customer_name+'</span></div>' +
+      '<div class="row"><span>Estado</span><span>'+(statusLabels[c.status]||c.status)+'</span></div>' +
+      '<div class="row"><span>Plan</span><span>'+(c.plan||'-')+'</span></div>' +
+      '<div class="row"><span>Fecha de Vencimiento</span><span>'+expiry+'</span></div>';
     document.getElementById('result').style.display = 'block';
   }).catch(function(){ document.getElementById('notFound').style.display = 'block'; });
 }

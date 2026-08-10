@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réclamations, Suggestions et Contact — O P N  LIO</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh;}
+a{color:#D4AF37; text-decoration:none;}
+.wrap{position:relative; overflow:hidden; background:radial-gradient(1100px 650px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 20%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh; padding:40px 20px; display:flex; align-items:center; justify-content:center;}
+.card{background:linear-gradient(160deg,rgba(212,175,55,.08),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.28); border-radius:22px; padding:38px 32px; max-width:560px; width:100%; box-shadow:0 30px 70px rgba(0,0,0,.45);}
+label{display:block; font-size:12.5px; font-weight:800; color:#D4AF37; letter-spacing:.5px; margin-bottom:8px; text-transform:uppercase;}
+input,select,textarea{width:100%; box-sizing:border-box; padding:13px 16px; border-radius:12px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.28); color:#fff; font-size:14.5px; font-family:inherit;}
+textarea{resize:vertical; min-height:110px;}
+input:focus,select:focus,textarea:focus{outline:none; border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,.15);}
+select option{background:#10141f;}
+.field{margin-bottom:16px;}
+button{width:100%; padding:15px; border:none; border-radius:14px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer; box-shadow:0 8px 24px rgba(212,175,55,.3);}
+.contactRow{display:flex; gap:14px; justify-content:center; margin-top:22px; flex-wrap:wrap; font-size:13px;}
+.contactRow a{border:1px solid rgba(212,175,55,.3); padding:9px 18px; border-radius:22px; font-weight:700;}
+.ticketBox{background:rgba(57,255,20,.08); border:1px solid rgba(57,255,20,.35); border-radius:14px; padding:20px; text-align:center; margin-top:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card" id="formCard">
+  <div style="text-align:center; margin-bottom:26px;">
+    <div style="font-size:34px; margin-bottom:8px;">📨</div>
+    <h1 style="font-size:21px; color:#fff; margin:0 0 8px; font-weight:900;">Réclamations, Suggestions et Contact</h1>
+    <p style="font-size:13px; color:#aab3c5; margin:0;">Nous répondons à toutes les demandes par e-mail dans les plus brefs délais</p>
+  </div>
+  <div class="field"><label>📋 Type de Demande</label>
+    <select id="tk_type">
+      <option value="Problème Technique">Problème Technique</option>
+      <option value="Problème de Facturation">Problème de Facturation</option>
+      <option value="Réclamation sur un Ambassadeur">Réclamation sur un Ambassadeur</option>
+      <option value="Suggestion">Suggestion</option>
+      <option value="Demande Générale">Demande Générale</option>
+    </select>
+  </div>
+  <div class="field"><label>👤 Nom</label><input id="tk_name"></div>
+  <div class="field"><label>📧 E-mail</label><input id="tk_email" type="email" style="direction:ltr; text-align:left;"></div>
+  <div class="field"><label>🆔 ID Client ou Code Ambassadeur (facultatif)</label><input id="tk_linked" style="direction:ltr; text-align:left;"></div>
+  <div class="field"><label>⚡ Priorité</label>
+    <select id="tk_priority">
+      <option value="normal">Normal</option>
+      <option value="urgent">Urgent</option>
+    </select>
+  </div>
+  <div class="field"><label>📝 Description</label><textarea id="tk_message"></textarea></div>
+  <button onclick="submitTicket()">📨 Envoyer</button>
+  <div id="tk_error" style="display:none; margin-top:14px; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.35); color:#ff9b9b; font-size:13px; font-weight:600; padding:12px 16px; border-radius:12px; text-align:center;"></div>
+  <div class="contactRow">
+    <a href="mailto:opon.netlify@gmail.com">📧 opon.netlify@gmail.com</a>
+    <a href="./fr-check-status.html">🔍 Vérifiez votre Abonnement</a>
+  </div>
+  <div style="text-align:center; margin-top:16px;"><a href="./fr-lion.html" style="font-size:13px; font-weight:700;">↩ Retour à l'Accueil</a></div>
+</div>
+<div class="card" id="thanksCard" style="display:none; text-align:center;">
+  <div style="font-size:40px; margin-bottom:10px;">✅</div>
+  <h2 style="font-size:19px; color:#fff; margin:0 0 14px;">Votre demande a été reçue</h2>
+  <div class="ticketBox">
+    <div style="font-size:12.5px; color:#8a93a8; margin-bottom:6px;">Votre Numéro de Référence</div>
+    <div id="tk_refNumber" style="font-size:22px; font-weight:900; color:#39FF14; letter-spacing:1px;"></div>
+  </div>
+  <p style="font-size:13px; color:#aab3c5; margin-top:16px;">Vous recevrez une réponse par e-mail. Conservez le numéro de référence.</p>
+  <div style="text-align:center; margin-top:16px;"><a href="./fr-lion.html" style="font-size:13px; font-weight:700;">↩ Retour à l'Accueil</a></div>
+</div>
+</div>
+<script>
+function submitTicket(){
+  var name = document.getElementById('tk_name').value.trim();
+  var email = document.getElementById('tk_email').value.trim().toLowerCase();
+  var message = document.getElementById('tk_message').value.trim();
+  var errEl = document.getElementById('tk_error');
+  errEl.style.display = 'none';
+  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) { errEl.textContent = "Veuillez entrer un e-mail valide."; errEl.style.display = 'block'; return; }
+  if (!message) { errEl.textContent = "Veuillez écrire une description."; errEl.style.display = 'block'; return; }
+  var payload = { ticketType: document.getElementById('tk_type').value, name: name, email: email, linkedId: document.getElementById('tk_linked').value.trim(), priority: document.getElementById('tk_priority').value, message: message };
+  fetch('/api/submit-ticket', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) { errEl.textContent = res.error || "Une erreur est survenue, veuillez réessayer."; errEl.style.display = 'block'; return; }
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('thanksCard').style.display = 'block';
+      document.getElementById('tk_refNumber').textContent = res.refNumber;
+    }).catch(function(){ errEl.textContent = "Impossible de se connecter au serveur."; errEl.style.display = 'block'; });
+}
+</script>
+</body>
+</html>

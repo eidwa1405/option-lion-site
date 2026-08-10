@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>لوحة التحكم — أسد الأوبشن</title>
+<title>لوحة التحكم — O P N  LIO</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;}
@@ -51,15 +51,26 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <h2 style="margin:0 0 18px; text-align:center; color:#D4AF37;">دخول لوحة التحكم</h2>
     <div style="display:flex; flex-direction:column; gap:12px;">
       <input id="loginUser" placeholder="اسم المستخدم">
-      <input id="loginPass" type="password" placeholder="كلمة المرور">
+      <div style="position:relative;"><input id="loginPass" type="password" placeholder="كلمة المرور" style="width:100%; box-sizing:border-box; padding-left:38px;"><span onclick="var i=document.getElementById('loginPass'); i.type = i.type==='password'?'text':'password'; this.textContent = i.type==='password'?'👁️':'🙈';" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px;">👁️</span></div>
       <div id="loginErr" style="display:none; color:#ff9b9b; font-size:13px; text-align:center;"></div>
       <button class="btn-gold" onclick="doLogin()">دخول</button>
+      <div style="text-align:center; margin-top:12px;"><a href="#" onclick="doAdminForgotPassword(); return false;" style="color:#D4AF37; font-size:13px; font-weight:700;">نسيت كلمة المرور؟</a></div>
     </div>
   </div>
 </div>
 
 <div id="dashView" style="display:none; min-height:100vh;">
-  <div style="display:flex; min-height:100vh;">
+  <div style="position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:12px; padding:14px 24px; background:#0B0B0F; border-bottom:1px solid rgba(212,175,55,.2);">
+    <img src="assets/lion-logo.jpg" alt="O P N  LIO" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
+    <span style="font-weight:900; font-size:17px; letter-spacing:.5px; color:#f4f0e4;">O P N  LIO — لوحة تحكم الإدارة</span>
+    <div style="margin-right:auto; position:relative;" id="bellWrap">
+      <button onclick="toggleBellMenu()" style="background:transparent; border:none; cursor:pointer; font-size:22px; position:relative; color:#f4f0e4;">🔔
+        <span id="bellBadge" style="display:none; position:absolute; top:-4px; left:-6px; background:#ff3b3b; color:#fff; font-size:10.5px; font-weight:900; border-radius:10px; padding:1px 5px; min-width:16px; text-align:center;">0</span>
+      </button>
+      <div id="bellMenu" style="display:none; position:absolute; top:calc(100% + 8px); left:0; width:300px; max-height:360px; overflow-y:auto; background:#12151d; border:1px solid rgba(212,175,55,.3); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.5); z-index:100;"></div>
+    </div>
+  </div>
+  <div style="display:flex; min-height:calc(100vh - 65px);">
     <nav style="width:230px; flex:0 0 230px; background:rgba(255,255,255,.03); border-left:1px solid rgba(212,175,55,.15); padding:24px 14px; position:sticky; top:0; height:100vh; overflow-y:auto;">
       <h1 style="margin:0 0 24px; font-size:17px; color:#D4AF37; text-align:center;">⚜ لوحة التحكم</h1>
       <div id="navList" style="display:flex; flex-direction:column; gap:4px;"></div>
@@ -93,14 +104,46 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <button class="btn-gold" style="margin-bottom:16px;" onclick="openAddCustomerModal()">➕ إضافة عميل</button>
     <div id="expiryBanner" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
     <table id="customersTable" style="font-size:12.5px;"><thead><tr><th>الاسم</th><th>رقم العميل</th><th>البريد</th><th>الجوال</th><th>تيليجرام</th><th>TradingView</th><th>الباقة</th><th>كود المسوّق</th><th>الحالة</th><th>تاريخ الانتهاء</th><th></th></tr></thead><tbody></tbody></table>
+    <button class="btn-gold" style="margin-top:14px;" onclick="syncPaddleNow(false)">🔄 مزامنة مع Paddle الآن</button>
+    <span id="paddleSyncResult" style="margin-right:12px; font-size:12.5px; color:#8a93a8;"></span>
     <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-customers'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
   </div>
   </section>
 
   <section class="panel" data-panel="broadcast">
   <div class="card" style="margin-bottom:24px;">
-    <h3 style="margin:0 0 16px; color:#D4AF37;">📧 مراسلة العملاء بالبريد الإلكتروني</h3>
-    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُرسل الرسالة لجميع العملاء الذين لديهم بريد إلكتروني محفوظ في قاعدة البيانات، بنفس النسق الموحّد (الهيدر والشعار والتذييل).</p>
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📧 مراسلة العملاء والسفراء بالبريد الإلكتروني</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُرسل الرسالة لكل من لديه بريد إلكتروني محفوظ في الفئة المختارة، بنفس النسق الموحّد (الهيدر والشعار والتذييل).</p>
+    <div style="margin-bottom:14px;">
+      <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">المرسَل إليهم</label>
+      <select id="bc_audience" onchange="onAudienceChange()" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">
+        <option value="customers">👥 العملاء</option>
+        <option value="affiliates">🤝 السفراء</option>
+      </select>
+    </div>
+    <div id="bc_aff_list" style="display:none; margin-bottom:14px; max-height:220px; overflow-y:auto; background:#10141f; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;">
+      <label style="display:flex; align-items:center; gap:8px; padding:6px 4px; font-weight:800; color:#D4AF37; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:6px;"><input type="checkbox" id="bc_aff_all" onchange="toggleAllAff()"> الكل</label>
+      <div id="bc_aff_items"></div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">قوالب جاهزة</label>
+      <select id="bc_template" onchange="applyBroadcastTemplate()" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">
+        <option value="">— اختر قالباً (اختياري) —</option>
+        <option value="commission_update">📊 تحديث نظام العمولات</option>
+        <option value="expired_customer">⏳ عملاء منتهية اشتراكاتهم</option>
+        <option value="motivation_campaign">🔥 حملة تحفيزية</option>
+        <option value="payout_notice">💸 إشعار دفعة عمولات</option>
+        <option value="low_perf_warning">⚠️ تنبيه أداء ضعيف / تجميد حساب</option>
+        <option value="new_feature">✨ إطلاق ميزة جديدة بلوحة تحكم السفير</option>
+        <option value="marketing_materials">🎨 مواد تسويقية جاهزة</option>
+        <option value="policy_change">📜 تحديث في الاتفاقية أو السياسات</option>
+        <option value="promo_code_expiry">⏳ اقتراب انتهاء كود خصم خاص</option>
+        <option value="exclusive_offer">🎁 عرض حصري لعملاء السفراء</option>
+        <option value="feedback_survey">📝 استبيان رضا وملاحظات</option>
+        <option value="boost_campaign">🚀 حملة تحفيزية (رفع عمولة مؤقت)</option>
+        <option value="golden_campaign">🏆 حملة ذهبية (رفع عمولة استثنائي)</option>
+      </select>
+    </div>
     <div style="margin-bottom:14px;">
       <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">الموضوع</label>
       <input id="bc_subject" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">
@@ -109,31 +152,56 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
       <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">نص الرسالة</label>
       <textarea id="bc_message" rows="8" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25); font-family:inherit; resize:vertical;"></textarea>
     </div>
-    <button class="btn-gold" onclick="sendBroadcast()">📨 إرسال للجميع</button>
+    <button class="btn-gold" onclick="translateBroadcast()">🌐 ترجم</button>
+    <button class="btn-gold" onclick="sendBroadcast()">📨 إرسال</button>
+    <div id="bc_translations_preview" style="margin-top:14px; display:flex; flex-direction:column; gap:10px;"></div>
     <div id="bc_result" style="margin-top:14px; font-size:13px; color:#8a93a8;"></div>
   </div>
   </section>
 
   <section class="panel" data-panel="affiliates">
   <div class="card" style="margin-bottom:24px;">
-    <h3 style="margin:0 0 16px; color:#D4AF37;">🤝 أداء سفراء أسد الأوبشن</h3>
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🤝 أداء سفراء O P N  LIO</h3>
     <div id="inactiveBanner" style="display:none; background:rgba(255,180,60,.1); border:1px solid rgba(255,180,60,.4); color:#ffcf8a; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
-    <table id="affiliatesTable"><thead><tr><th>الحالة</th><th>الاسم</th><th>الكود</th><th>الدولة</th><th>عدد التجديدات</th><th>إجمالي العمولة</th><th>الاتفاقية</th><th></th></tr></thead><tbody></tbody></table>
+    <table id="affiliatesTable"><thead><tr><th>الحالة</th><th>الاسم</th><th>الكود</th><th>الدولة</th><th>عدد التجديدات</th><th>إجمالي العمولة</th><th>تقرير</th><th>الاتفاقية</th><th></th></tr></thead><tbody></tbody></table>
     <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-affiliates'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
   </div>
   </section>
 
   <section class="panel" data-panel="refcodes">
   <div class="card" style="margin-bottom:24px;">
-    <h3 style="margin:0 0 16px; color:#D4AF37;">🏷️ أكواد سفراء أسد الأوبشن</h3>
-    <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
-      <input id="newRefCode" placeholder="الكود (مثال: LION10)" style="flex:1; min-width:140px;">
-      <input id="newRefOwner" placeholder="اسم السفير" style="flex:1; min-width:140px;">
-      <button class="btn-gold" onclick="addRefCode()">إضافة</button>
-    </div>
-    <table id="refTable"><thead><tr><th>الكود</th><th>المسوّق</th><th>مرات الاستخدام</th><th></th></tr></thead><tbody></tbody></table>
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🧑‍💼 السفراء</h3>
+    <button class="btn-gold" style="margin-bottom:14px;" onclick="document.getElementById('addAffModal').style.display='flex'">➕ إضافة سفير جديد</button>
+    <table id="refTable"><thead><tr><th>الاسم</th><th>الكود</th><th>مرات الاستخدام</th><th></th></tr></thead><tbody></tbody></table>
   </div>
   </section>
+
+  <div id="addAffModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; padding:20px;">
+    <div class="card" style="max-width:520px; width:100%; max-height:88vh; overflow-y:auto;">
+      <h3 style="margin:0 0 16px; color:#D4AF37;">➕ إضافة سفير جديد</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <input id="af_name" placeholder="الاسم المستعار" oninput="this.value=this.value.replace(/[^a-zA-Zء-ي\s]/g,'');">
+        <input id="af_legal_name" placeholder="الاسم الكامل حسب الهوية/جواز السفر" oninput="this.value=this.value.replace(/[^a-zA-Zء-ي\s]/g,'');">
+        <select id="af_country"></select>
+        <input id="af_city" placeholder="المدينة">
+        <input id="af_email" type="email" placeholder="البريد الإلكتروني">
+        <input id="af_password" type="password" placeholder="كلمة المرور (لدخول لوحة تحكمه)">
+        <input id="af_age" type="number" placeholder="العمر">
+        <div style="display:flex; gap:8px;">
+          <select id="af_cc" style="flex:0 0 100px;"></select>
+          <input id="af_phone" type="tel" placeholder="رقم الجوال" style="flex:1; direction:ltr; text-align:left;">
+        </div>
+        <input id="af_telegram" placeholder="حساب تيليجرام (بدون @)" oninput="this.value=this.value.replace(/^@+/,\'\').toLowerCase();">
+        <input id="af_code" placeholder="كود التسويق (مثال: LION10)" style="direction:ltr; text-align:left;">
+        <input id="af_bank" placeholder="رقم الحساب البنكي (IBAN)">
+      </div>
+      <div id="addAffError" style="color:#ff6b6b; font-size:13px; margin-top:10px; display:none;"></div>
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button class="btn-gold" style="flex:1;" onclick="submitAddAffiliate()">حفظ</button>
+        <button style="flex:1; background:rgba(255,255,255,.08); color:#c9d2e3; border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:12px; cursor:pointer;" onclick="document.getElementById('addAffModal').style.display='none'">إلغاء</button>
+      </div>
+    </div>
+  </div>
 
   <section class="panel" data-panel="traffic">
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
@@ -170,6 +238,99 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
   </section>
 
+  <section class="panel" data-panel="analytics">
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📈 لوحة القرارات — نظرة تحليلية شاملة</h3>
+    <div id="analyticsSummary" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px;"></div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+    <div class="card">
+      <h3 style="margin:0 0 14px; color:#D4AF37; font-size:15px;">👥 نمو المشتركين الجدد شهرياً</h3>
+      <canvas id="signupsChart" width="500" height="220" style="width:100%; height:220px;"></canvas>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 14px; color:#D4AF37; font-size:15px;">🤝 نمو عدد السفراء شهرياً</h3>
+      <canvas id="affGrowthChart" width="500" height="220" style="width:100%; height:220px;"></canvas>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+    <div class="card">
+      <h3 style="margin:0 0 14px; color:#D4AF37; font-size:15px;">📊 توزيع حالات الاشتراك</h3>
+      <div id="statusDistChart"></div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 14px; color:#D4AF37; font-size:15px;">🏆 أفضل 5 سفراء بالعمولة</h3>
+      <div id="topAffChart"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 14px; color:#D4AF37; font-size:15px;">⚠️ الإلغاءات شهرياً — مؤشر رضا العملاء</h3>
+    <canvas id="cancelChart" width="900" height="200" style="width:100%; height:200px;"></canvas>
+  </div>
+  </section>
+
+  <section class="panel" data-panel="campaigns">
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🚀 حملة تحفيزية جديدة</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">ترفع عمولة العمليات التي تحدث خلال الفترة المحددة فقط (لا تؤثر على عمليات سابقة أو لاحقة خارج الفترة). الحد الأقصى الافتراضي 9$ إلا إذا حددت حداً ذهبياً أعلى.</p>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <input id="cmp_name" placeholder="اسم الحملة (مثال: حملة نهاية الأسبوع)">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <select id="cmp_boost" style="flex:1; min-width:160px;">
+          <option value="1">+1$</option>
+          <option value="2">+2$</option>
+          <option value="3">+3$</option>
+          <option value="4">+4$</option>
+          <option value="5">+5$</option>
+          <option value="10">🏆 ذهبية +10$</option>
+          <option value="15">🏆 ذهبية +15$</option>
+        </select>
+        <select id="cmp_cap" style="flex:1; min-width:160px;">
+          <option value="">حد أقصى عادي (9$)</option>
+          <option value="12">حد ذهبي 12$</option>
+          <option value="15">حد ذهبي 15$</option>
+          <option value="20">حد ذهبي 20$</option>
+        </select>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;"><label style="display:block; font-size:12px; color:#8a93a8; margin-bottom:5px;">البداية</label><input id="cmp_start" type="datetime-local" style="width:100%;"></div>
+        <div style="flex:1; min-width:200px;"><label style="display:block; font-size:12px; color:#8a93a8; margin-bottom:5px;">النهاية</label><input id="cmp_end" type="datetime-local" style="width:100%;"></div>
+      </div>
+      <select id="cmp_target" onchange="onCampaignTargetChange()">
+        <option value="all">🌍 جميع السفراء</option>
+        <option value="specific">🎯 سفراء محددون</option>
+      </select>
+      <div id="cmp_target_list" style="display:none; max-height:200px; overflow-y:auto; background:#10141f; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;"></div>
+    </div>
+    <div id="cmp_error" style="color:#ff6b6b; font-size:13px; margin-top:10px; display:none;"></div>
+    <button class="btn-gold" style="margin-top:14px;" onclick="createCampaign()">🚀 إطلاق الحملة</button>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📋 الحملات</h3>
+    <table id="campaignsTable"><thead><tr><th>الاسم</th><th>الزيادة</th><th>الحد الأقصى</th><th>الفئة</th><th>البداية</th><th>النهاية</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+  </section>
+
+  <section class="panel" data-panel="payouts">
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">💸 الصرف</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُولَّد دفعة الصرف تلقائياً في الساعة 00:00 من أول كل شهر ميلادي لعمولات الشهر المنتهي. تقدر أيضاً تولّدها يدوياً إذا احتجت.</p>
+    <button class="btn-gold" onclick="generatePayoutNow()">⚡ توليد دفعة الشهر السابق الآن</button>
+    <span id="payoutGenResult" style="margin-right:12px; font-size:12.5px; color:#8a93a8;"></span>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📋 دفعات الصرف</h3>
+    <table id="payoutRunsTable"><thead><tr><th>الشهر</th><th>عدد السفراء</th><th>الإجمالي</th><th>تاريخ التوليد</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+  </section>
+
+  <section class="panel" data-panel="tickets">
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📨 الشكاوى والاستفسارات</h3>
+    <table id="ticketsTable"><thead><tr><th>الرقم</th><th>النوع</th><th>الاسم</th><th>البريد</th><th>الرسالة</th><th>الحالة</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+  </section>
+
   <section class="panel" data-panel="settings">
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">👤 تغيير اسم المستخدم</h3>
@@ -183,9 +344,19 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <h3 style="margin:0 0 16px; color:#D4AF37;">🔑 تغيير كلمة مرور لوحة التحكم</h3>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <input id="newPassword" type="password" placeholder="كلمة المرور الجديدة" style="flex:1; min-width:200px;">
+      <span onclick="var i=document.getElementById('newPassword'); i.type = i.type==='password'?'text':'password'; this.textContent = i.type==='password'?'👁️':'🙈';" style="cursor:pointer; font-size:18px; display:flex; align-items:center;">👁️</span>
       <button class="btn-gold" onclick="changePassword()">تحديث كلمة المرور</button>
     </div>
     <div id="passMsg" style="margin-top:10px; font-size:13px;"></div>
+  </div>
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">💾 نسخة احتياطية من قاعدة البيانات</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 14px;">يُصدَّر ملف JSON واحد يحتوي كل بيانات العملاء والسفراء والعمولات والأسعار والحملات والصرف.</p>
+    <button class="btn-gold" onclick="downloadBackup()">⬇ تحميل نسخة احتياطية الآن</button>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">🐞 سجل الأخطاء التقنية</h3>
+    <table id="errorLogTable"><thead><tr><th>النوع</th><th>التفاصيل</th><th>الوقت</th></tr></thead><tbody></tbody></table>
   </div>
   </section>
 
@@ -195,6 +366,82 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
 
 <script>
 var TOKEN_KEY = 'aou_admin_token';
+var heartbeatInterval = null;
+function startHeartbeat(){
+  if (heartbeatInterval) clearInterval(heartbeatInterval);
+  heartbeatInterval = setInterval(function(){
+    authFetch('/api/admin-data?action=heartbeat').then(function(r){
+      if (r.status === 401) {
+        clearInterval(heartbeatInterval);
+        alert('⚠️ تم تسجيل الدخول من جهاز آخر أو انتهت صلاحية الجلسة — سيتم تسجيل خروجك.');
+        sessionStorage.removeItem(TOKEN_KEY);
+        document.getElementById('dashView').style.display = 'none';
+        document.getElementById('loginView').style.display = 'flex';
+      }
+    }).catch(function(){});
+  }, 5 * 60 * 1000);
+}
+
+var lastNotifCount = 0;
+var notifInterval = null;
+var notifData = { newCustomers: [], newAffiliates: [] };
+function playNotifSound(){
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1180].forEach(function(freq, i){
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      o.connect(g); g.connect(ctx.destination);
+      var t = ctx.currentTime + i*0.14;
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.exponentialRampToValueAtTime(0.22, t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.28);
+      o.start(t); o.stop(t+0.3);
+    });
+  } catch(e){}
+}
+function fetchNotifications(playSoundIfNew){
+  authFetch('/api/admin-data?action=notifications').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    notifData.newCustomers = res.newCustomers || [];
+    notifData.newAffiliates = res.newAffiliates || [];
+    var badge = document.getElementById('bellBadge');
+    if (res.count > 0) { badge.style.display = 'block'; badge.textContent = res.count; }
+    else { badge.style.display = 'none'; }
+    if (playSoundIfNew && res.count > lastNotifCount) playNotifSound();
+    lastNotifCount = res.count;
+    renderBellMenu();
+  }).catch(function(){});
+}
+function startNotifications(){
+  fetchNotifications(false);
+  if (notifInterval) clearInterval(notifInterval);
+  notifInterval = setInterval(function(){ fetchNotifications(true); }, 60 * 1000);
+}
+function renderBellMenu(){
+  var menu = document.getElementById('bellMenu');
+  var items = [];
+  notifData.newCustomers.forEach(function(c){ items.push({ label: '👤 عميل جديد: ' + c.customer_name, panel:'customers', ts:c.created_at }); });
+  notifData.newAffiliates.forEach(function(a){ items.push({ label: '🤝 سفير جديد بانتظار التفعيل: ' + a.name, panel:'affiliates', ts:a.created_at }); });
+  if (!items.length) { menu.innerHTML = '<div style="padding:16px; font-size:13px; color:#6b7488; text-align:center;">لا إشعارات جديدة</div>'; return; }
+  items.sort(function(a,b){ return new Date(b.ts) - new Date(a.ts); });
+  menu.innerHTML = items.map(function(it){
+    return '<div onclick="goToNotification(\''+it.panel+'\')" style="padding:11px 14px; font-size:12.5px; border-bottom:1px solid rgba(255,255,255,.06); cursor:pointer; color:#e9edf5;" onmouseover="this.style.background=\'rgba(212,175,55,.1)\'" onmouseout="this.style.background=\'transparent\'">'+it.label+'</div>';
+  }).join('');
+}
+function toggleBellMenu(){
+  var m = document.getElementById('bellMenu');
+  m.style.display = m.style.display === 'block' ? 'none' : 'block';
+}
+function goToNotification(panel){
+  document.getElementById('bellMenu').style.display = 'none';
+  showPanel(panel);
+  document.querySelectorAll('.navBtn').forEach(function(b,i){ if (NAV_ITEMS[i][0]===panel) b.click(); });
+}
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('bellWrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('bellMenu').style.display = 'none';
+});
 
 var NAV_ITEMS = [
   ['overview','📊 نظرة عامة'],
@@ -208,6 +455,10 @@ var NAV_ITEMS = [
   ['events','🕓 الأحداث'],
   ['audit','📜 سجل التدقيق'],
   ['reviews','💬 آراء العملاء'],
+  ['analytics','📈 لوحة القرارات'],
+  ['campaigns','🚀 حملات تحفيزية'],
+  ['payouts','💸 الصرف'],
+  ['tickets','📨 الشكاوى والاستفسارات'],
   ['settings','🔑 الإعدادات']
 ];
 
@@ -228,6 +479,11 @@ function showPanel(name){
   document.querySelectorAll('.navBtn').forEach(function(b, i){ b.classList.toggle('active', NAV_ITEMS[i][0]===name); });
   if (name === 'audit') loadAuditLog();
   if (name === 'reviews') loadPendingReviews();
+  if (name === 'analytics') loadAnalytics();
+  if (name === 'campaigns') loadCampaigns();
+  if (name === 'payouts') loadPayoutRuns();
+  if (name === 'tickets') loadTickets();
+  if (name === 'settings') loadErrorLog();
 }
 
 function loadPendingReviews(){
@@ -272,6 +528,13 @@ function playClickSound(){
   } catch(e){}
 }
 
+function doAdminForgotPassword(){
+  if (!confirm('سيتم إرسال بيانات دخول جديدة إلى بريد الإدارة المسجّل. متابعة؟')) return;
+  fetch('/api/admin-forgot-password', { method:'POST' }).then(function(r){return r.json();}).then(function(res){
+    alert(res.ok ? '✅ تم إرسال بيانات الدخول الجديدة إلى البريد.' : '❌ ' + (res.error||'فشل الإرسال'));
+  }).catch(function(){ alert('❌ تعذر الاتصال بالخادم'); });
+}
+
 function doLogin(){
   playClickSound();
   var username = document.getElementById('loginUser').value.trim();
@@ -282,6 +545,8 @@ function doLogin(){
       if (res.ok) {
         sessionStorage.setItem(TOKEN_KEY, res.token);
         showDash();
+        startHeartbeat();
+        startNotifications();
       } else {
         var e = document.getElementById('loginErr');
         e.textContent = res.error || 'خطأ في الدخول';
@@ -291,6 +556,7 @@ function doLogin(){
 }
 
 function logout(){
+  authFetch('/api/admin-data?action=logout', { method: 'POST' }).catch(function(){});
   sessionStorage.removeItem(TOKEN_KEY);
   document.getElementById('dashView').style.display = 'none';
   document.getElementById('loginView').style.display = 'flex';
@@ -308,6 +574,92 @@ function showDash(){
   buildNav();
   showPanel('overview');
   loadOverview();
+  syncPaddleNow(true);
+}
+
+function generatePayoutNow(){
+  var resultEl = document.getElementById('payoutGenResult');
+  if (!confirm('توليد دفعة صرف الشهر السابق الآن؟')) return;
+  resultEl.textContent = 'جارِ التوليد...';
+  authFetch('/api/admin-data?action=generate-payout-now', { method:'POST', body: JSON.stringify({}) })
+    .then(function(r){return r.json();}).then(function(res){
+      resultEl.textContent = res.ok ? ('✅ تم توليد دفعة ' + res.month + ' لـ' + res.count + ' سفير') : ('❌ ' + (res.error||'فشل'));
+      if (res.ok) loadPayoutRuns();
+    });
+}
+
+function loadPayoutRuns(){
+  authFetch('/api/admin-data?action=payout-runs').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var tb = document.querySelector('#payoutRunsTable tbody'); tb.innerHTML = '';
+    if (!res.runs.length) { tb.innerHTML = '<tr><td colspan="5" class="emptyState">لا توجد دفعات صرف بعد</td></tr>'; return; }
+    res.runs.forEach(function(r){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+r.month+'</td><td>'+r.affiliate_count+'</td><td style="font-weight:900; color:#39FF14;">$'+parseFloat(r.total).toFixed(0)+'</td>' +
+        '<td style="font-size:11.5px;">'+new Date(r.created_at).toLocaleString('ar-SA')+'</td>' +
+        '<td><button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="downloadPayoutPdf('+r.id+',\''+r.month+'\')">📄 تحميل PDF</button></td>';
+      tb.appendChild(tr);
+    });
+  });
+}
+
+function downloadPayoutPdf(runId, month){
+  authFetch('/api/admin-data?action=payout-run-detail&runId=' + runId).then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) { alert('تعذر جلب البيانات'); return; }
+    var rowsHtml = res.items.map(function(it){
+      return '<tr><td>'+it.name+'</td><td>'+(it.legal_name||'-')+'</td><td style="direction:ltr; text-align:left;">'+(it.bank_account||'-')+'</td><td style="font-weight:800;">$'+parseFloat(it.amount).toFixed(2)+'</td></tr>';
+    }).join('');
+    var total = res.items.reduce(function(s,it){ return s + parseFloat(it.amount); }, 0);
+    var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>دفعة صرف ' + month + '</title>' +
+      '<style>@page{size:A4; margin:16mm;} body{font-family:Tajawal,Arial,sans-serif; color:#111;} h1{color:#8a6d1f; border-bottom:2px solid #D4AF37; padding-bottom:10px; font-size:20px;} table{width:100%; border-collapse:collapse; margin-top:16px;} th,td{padding:8px 10px; border-bottom:1px solid #ddd; font-size:13px; text-align:right;} th{background:#f5eecb; color:#5a4700;} tfoot td{font-weight:900; font-size:15px;}</style></head><body>' +
+      '<h1>⚜ دفعة صرف سفراء O P N  LIO — ' + month + '</h1>' +
+      '<table><thead><tr><th>الاسم</th><th>الاسم حسب الهوية</th><th>الحساب البنكي</th><th>المبلغ المستحق</th></tr></thead><tbody>' + rowsHtml + '</tbody>' +
+      '<tfoot><tr><td colspan="3">الإجمالي</td><td>$' + total.toFixed(2) + '</td></tr></tfoot></table>' +
+      '<' + 'script>window.onload=function(){setTimeout(function(){window.print();},400);};</' + 'script>' +
+      '</body></html>';
+    var w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+  });
+}
+
+function loadTickets(){
+  authFetch('/api/admin-data?action=tickets').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var tb = document.querySelector('#ticketsTable tbody'); tb.innerHTML = '';
+    if (!res.tickets.length) { tb.innerHTML = '<tr><td colspan="7" class="emptyState">لا توجد طلبات بعد</td></tr>'; return; }
+    res.tickets.forEach(function(t){
+      var tr = document.createElement('tr');
+      var statusColor = t.status === 'resolved' ? '#39FF14' : (t.priority === 'urgent' ? '#ff4d4d' : '#ffb400');
+      tr.innerHTML = '<td style="font-family:monospace;">'+t.ref_number+'</td><td>'+t.ticket_type+'</td><td>'+(t.name||'-')+'</td><td style="direction:ltr; text-align:left;">'+t.email+'</td>' +
+        '<td style="max-width:220px; font-size:11.5px;">'+t.message.slice(0,80)+'</td>' +
+        '<td style="color:'+statusColor+'; font-weight:800;">'+(t.status==='resolved'?'✅ تم الرد':'⏳ قيد المراجعة')+'</td>' +
+        '<td><button class="btn-gold" style="padding:6px 10px; font-size:12px;" onclick="replyTicket('+t.id+')">✉️ رد</button></td>';
+      tb.appendChild(tr);
+    });
+  });
+}
+
+function replyTicket(id){
+  var reply = prompt('اكتب ردّك على هذا الطلب:');
+  if (!reply) return;
+  authFetch('/api/admin-data?action=reply-ticket', { method:'POST', body: JSON.stringify({id, reply, status:'resolved'}) })
+    .then(function(r){return r.json();}).then(function(){ loadTickets(); });
+}
+
+function syncPaddleNow(silent){
+  var resultEl = document.getElementById('paddleSyncResult');
+  if (!silent && resultEl) resultEl.textContent = 'جارِ المزامنة مع Paddle...';
+  fetch('/api/paddle-sync', { method:'POST', headers:{'Content-Type':'application/json','x-admin-token': sessionStorage.getItem(TOKEN_KEY)} })
+    .then(function(r){return r.json();}).then(function(res){
+      if (!resultEl) return;
+      if (res.ok) {
+        resultEl.textContent = '✅ تمت المزامنة: ' + res.matched + ' مطابق من أصل ' + res.total + ' معاملة (آخر 30 يوم).';
+        loadCustomers();
+      } else if (!silent) {
+        resultEl.textContent = '❌ ' + (res.error || 'فشلت المزامنة');
+      }
+    }).catch(function(){ if (!silent && resultEl) resultEl.textContent = '❌ تعذر الاتصال بالخادم'; });
 }
 
 function loadOverview(){
@@ -451,11 +803,12 @@ function openAddCustomerModal(){
     '<div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; max-width:480px; width:100%; padding:26px;">' +
     '<h3 style="color:#D4AF37; margin:0 0 18px; font-size:17px;">➕ إضافة عميل</h3>' +
     '<div style="display:flex; flex-direction:column; gap:12px; font-size:13.5px;">' +
-      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الاسم</label><input id="ac_name" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الاسم</label><input id="ac_name" oninput="this.value=this.value.replace(/[^a-zA-Zء-ي\\s]/g,\'\');" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">البريد الإلكتروني</label><input id="ac_email" type="email" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">الباقة</label><select id="ac_plan" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff;"><option value="">— اختر —</option><option value="شهر واحد">شهر واحد</option><option value="3 أشهر">3 أشهر</option><option value="6 أشهر">6 أشهر</option><option value="سنة كاملة">سنة كاملة</option></select></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">رقم الجوال</label><div style="display:flex; gap:6px;"><select id="ac_cc" style="flex:0 0 90px; box-sizing:border-box; padding:10px 6px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff; font-size:12.5px;"></select><input id="ac_phone" style="flex:1; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div></div>' +
-      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب تيليجرام</label><input id="ac_tg" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
-      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب TradingView</label><input id="ac_tv" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب تيليجرام</label><input id="ac_tg" oninput="this.value=this.value.replace(/^@+/,\'\').toLowerCase();" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
+      '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حساب TradingView</label><input id="ac_tv" oninput="this.value=this.value.replace(/^@+/,\'\').toLowerCase();" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">كود المسوّق (اختياري)</label><input id="ac_ref" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff; direction:ltr; text-align:left;"></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">حالة الاشتراك</label><select id="ac_status" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:#10141f; border:1px solid rgba(212,175,55,.2); color:#fff;">'+opts+'</select></div>' +
       '<div><label style="display:block; color:#8a93a8; font-size:12px; margin-bottom:5px;">تاريخ ووقت الانتهاء</label><input id="ac_expires" type="datetime-local" value="'+nowLocal+'" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:rgba(0,0,0,.3); border:1px solid rgba(212,175,55,.2); color:#fff;"></div>' +
@@ -479,6 +832,7 @@ function submitAddCustomer(){
   if (!name) { err.textContent = 'الاسم مطلوب'; err.style.display = 'block'; return; }
   var body = {
     customer_name: name,
+    email: document.getElementById('ac_email').value.trim(),
     phone: document.getElementById('ac_cc').value + document.getElementById('ac_phone').value.trim(),
     telegram: document.getElementById('ac_tg').value.trim(),
     tradingview: document.getElementById('ac_tv').value.trim(),
@@ -546,7 +900,7 @@ function exportCustomerPdf(id){
   var expiryTxt = c.expires_at ? new Date(c.expires_at).toLocaleDateString('ar-SA') : '-';
   var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>بيانات عميل - ' + c.customer_name + '</title>' +
     '<style>body{font-family:Tajawal,Arial,sans-serif; padding:40px; color:#111; max-width:650px; margin:0 auto;} h1{color:#8a6d1f; font-size:22px; border-bottom:2px solid #D4AF37; padding-bottom:12px;} table{width:100%; border-collapse:collapse; margin:20px 0;} td{padding:9px 10px; border-bottom:1px solid #ddd; font-size:14px;} td:first-child{font-weight:800; color:#555; width:180px;}</style></head><body>' +
-    '<h1>⚜ بيانات عميل — أسد الأوبشن</h1>' +
+    '<h1>⚜ بيانات عميل — O P N  LIO</h1>' +
     '<table>' +
     '<tr><td>الاسم</td><td>' + (c.customer_name||'-') + '</td></tr>' +
     '<tr><td>رقم الجوال</td><td>' + (phone||'-') + '</td></tr>' +
@@ -579,16 +933,142 @@ function sendActivationEmail(id){
     });
 }
 
+function onAudienceChange(){
+  var audience = document.getElementById('bc_audience').value;
+  var listEl = document.getElementById('bc_aff_list');
+  if (audience === 'affiliates') {
+    listEl.style.display = 'block';
+    loadAffiliateCheckboxList();
+  } else {
+    listEl.style.display = 'none';
+  }
+}
+
+function loadAffiliateCheckboxList(){
+  authFetch('/api/admin-data?action=overview').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var itemsEl = document.getElementById('bc_aff_items');
+    itemsEl.innerHTML = (res.affiliates||[]).map(function(a){
+      return '<label style="display:flex; align-items:center; gap:8px; padding:5px 4px; font-size:13px; color:#c9d2e3;"><input type="checkbox" class="bc_aff_item" value="'+a.code+'"> '+a.name+' ('+a.code+')</label>';
+    }).join('') || '<p style="color:#6b7488; font-size:12.5px;">لا يوجد سفراء بعد.</p>';
+  });
+}
+
+function toggleAllAff(){
+  var checked = document.getElementById('bc_aff_all').checked;
+  document.querySelectorAll('.bc_aff_item').forEach(function(cb){ cb.checked = checked; });
+}
+
+var BC_TEMPLATES = {
+  commission_update: {
+    subject: '📊 تحديث في نظام عمولات سفراء O P N  LIO',
+    body: 'مرحباً بك 👋\n\nنود إعلامك بتحديث في نظام حساب العمولات الخاص بسفراء O P N  LIO ⚜\n\nتفاصيل التحديث:\n[اكتب هنا تفاصيل التحديث]\n\nهذا التحديث يهدف لمكافأتك بشكل أفضل على جهودك المستمرة معنا.\n\nلأي استفسار، فريق الدعم جاهز دائماً لخدمتك.'
+  },
+  motivation_campaign: {
+    subject: '🔥 حملة تحفيزية جديدة لسفراء O P N  LIO',
+    body: 'مرحباً بك 👋\n\nأطلقنا حملة تحفيزية جديدة لسفرائنا المميزين!\n\nتفاصيل الحملة:\n[اكتب هنا تفاصيل الحملة والمدة والمكافآت]\n\nهذه فرصتك لتعزيز أداءك ومضاعفة عمولاتك خلال هذه الفترة المحدودة.\n\nنراك في القمة! 🏆'
+  },
+  payout_notice: {
+    subject: '💸 إشعار صرف عمولات السفراء',
+    body: 'مرحباً بك 👋\n\nنود إعلامك بأن دفعة عمولاتك عن الفترة المنتهية قد تم صرفها بنجاح.\n\nتفاصيل الدفعة:\n[اكتب هنا المبلغ والفترة وطريقة التحويل]\n\nشكراً لجهودك المستمرة معنا، ونتطلع لاستمرار شراكتنا.'
+  },
+  low_perf_warning: {
+    subject: '⚠️ تنبيه بخصوص نشاط حسابك كسفير',
+    body: 'مرحباً بك 👋\n\nلاحظنا عدم وجود نشاط ملموس على حسابك كسفير خلال الفترة الأخيرة.\n\nنود تذكيرك بأن استمرار الحساب نشطاً يتطلب جلب عملاء بشكل دوري، وفقاً لاتفاقية السفراء الموقعة.\n\nإذا كنت بحاجة لأي دعم أو مواد تسويقية إضافية، فريقنا جاهز لمساعدتك.\n\nنأمل رؤية نشاط منك قريباً قبل مراجعة حالة الحساب.'
+  },  new_feature: {
+    subject: '✨ ميزة جديدة في لوحة تحكم السفير',
+    body: 'مرحباً بك 👋\n\nأضفنا ميزة جديدة إلى لوحة تحكم السفراء لتحسين تجربتك ومتابعة أدائك بشكل أفضل!\n\nتفاصيل الميزة:\n[اكتب هنا وصف الميزة الجديدة]\n\nندعوك لتسجيل الدخول إلى لوحتك واستكشافها بنفسك.\n\nنتمنى أن تنال إعجابك 🌟'
+  },
+  expired_customer: {
+    subject: '⏳ نفتقدك — اشتراكك انتهى، تعال نكمل معك',
+    body: 'مرحباً بك 👋\n\nلاحظنا أن اشتراكك في O P N  LIO ⚜ قد انتهى، ونتمنى لو نراك معنا مجدداً.\n\nكل أدواتنا الأربعة المتكاملة بانتظارك، ونود تسهيل عودتك بأفضل شكل ممكن.\n\n[اكتب هنا عرضاً خاصاً للعودة إن وُجد، أو رابط تجديد الاشتراك]\n\nإن كان هناك أي سبب أو ملاحظة توقفت بسببها، يسعدنا سماعها — فريق الدعم دائماً هنا لمساعدتك.'
+  },
+  marketing_materials: {
+    subject: '🎨 مواد تسويقية جاهزة لدعم ترويجك',
+    body: 'مرحباً بك 👋\n\nأعددنا لك مجموعة من المواد التسويقية الجاهزة (صور، نصوص، روابط) لتسهيل ترويجك لكودك الخاص.\n\nروابط المواد:\n[اكتب هنا روابط الصور/النصوص الجاهزة]\n\nاستخدمها كما هي أو عدّلها بأسلوبك — الهدف مساعدتك على جلب عملاء أكثر بجهد أقل.'
+  },
+  policy_change: {
+    subject: '📜 تحديث في اتفاقية وسياسات السفراء',
+    body: 'مرحباً بك 👋\n\nنود إعلامك بتحديث في اتفاقية أو سياسات برنامج سفراء O P N  LIO.\n\nتفاصيل التحديث:\n[اكتب هنا بنود التحديث]\n\nهذا التحديث ساري من تاريخ إرسال هذه الرسالة. لأي استفسار، فريق الدعم جاهز لمساعدتك.'
+  },
+  promo_code_expiry: {
+    subject: '⏳ كود الخصم الخاص بعملائك على وشك الانتهاء',
+    body: 'مرحباً بك 👋\n\nنود تذكيرك بأن كود الخصم الخاص المخصَّص لعملائك على وشك انتهاء صلاحيته.\n\nتفاصيل الكود:\n[اكتب هنا الكود وتاريخ الانتهاء]\n\nإن كنت ترغب بالاستفادة منه أو تجديده، تواصل معنا قبل انتهائه.'
+  },
+  exclusive_offer: {
+    subject: '🎁 عرض حصري لعملاء سفرائنا',
+    body: 'مرحباً بك 👋\n\nأطلقنا عرضاً حصرياً لفترة محدودة يمكنك تقديمه لعملائك المحتملين!\n\nتفاصيل العرض:\n[اكتب هنا تفاصيل العرض ومدته]\n\nفرصة رائعة لجذب عملاء جدد بسرعة — شاركه معهم الآن.'
+  },
+  feedback_survey: {
+    subject: '📝 رأيك يهمنا — استبيان قصير للسفراء',
+    body: 'مرحباً بك 👋\n\nنعمل دائماً على تحسين تجربة سفرائنا، ونود معرفة رأيك.\n\nرابط الاستبيان (لن يستغرق أكثر من دقيقتين):\n[اكتب هنا رابط الاستبيان]\n\nملاحظاتك تساعدنا في تطوير برنامج أفضل لك ولزملائك السفراء. شكراً لوقتك 🙏'
+  },
+  boost_campaign: {
+    subject: '🚀 حملة تحفيزية: عمولتك ترتفع الآن!',
+    body: 'مرحباً بك 👋\n\nأطلقنا حملة تحفيزية مؤقتة تمنحك زيادة فورية على عمولتك!\n\nتفاصيل الحملة:\n• الزيادة: +[اكتب المقدار]$ على كل عملية تجديد تحدث خلال فترة الحملة\n• المدة: من [التاريخ/الساعة] إلى [التاريخ/الساعة]\n\nكل عميل تجدده خلال هذه الفترة يُحسب بالعمولة المرتفعة تلقائياً — لا حاجة لأي إجراء إضافي منك.\n\n⏱️ تابع العداد التنازلي المباشر للوقت المتبقي على الحملة من داخل لوحة تحكمك.\n\nهذه فرصتك لتضاعف مكاسبك في وقت محدود — لا تفوّتها! ⏳'
+  },
+  golden_campaign: {
+    subject: '🏆 حملة ذهبية استثنائية — فرصة لا تتكرر!',
+    body: 'مرحباً بك 👋\n\nلحظة استثنائية! أطلقنا حملة ذهبية بزيادة غير عادية على عمولتك، تتجاوز الحد المعتاد بالكامل! 🔥\n\nتفاصيل الحملة الذهبية:\n• الزيادة: +[اكتب المقدار]$ على كل عملية تجديد — بحد أقصى استثنائي يصل إلى [اكتب الحد]$\n• المدة: من [التاريخ/الساعة] إلى [التاريخ/الساعة] فقط — نافذة محدودة جداً\n\n⚡ كل عميل تجدده الآن يعني مكسباً أكبر بكثير من المعتاد. هذه ليست حملة عادية — هي فرصتك الذهبية لتحقيق أعلى عمولة ممكنة في تاريخك كسفير معنا.\n\n⏱️ لوحة تحكمك تعرض عداداً تنازلياً ذهبياً مباشراً بالوقت المتبقي بالضبط — تابعه لحظة بلحظة.\n\nلا تنتظر — كل ساعة تمر هي فرصة تذهب! 🚀🏆'
+  }
+};
+
+var bcTranslations = {};
+var LANG_NAMES = { en:'🇬🇧 English', tr:'🇹🇷 Türkçe', es:'🇪🇸 Español', pt:'🇵🇹 Português', de:'🇩🇪 Deutsch', fr:'🇫🇷 Français', ar:'🇸🇦 العربية' };
+
+function translateBroadcast(){
+  var subject = document.getElementById('bc_subject').value.trim();
+  var message = document.getElementById('bc_message').value.trim();
+  var audience = document.getElementById('bc_audience').value;
+  var preview = document.getElementById('bc_translations_preview');
+  if (!subject || !message) { alert('اكتب الموضوع والرسالة أولاً'); return; }
+  preview.innerHTML = '<div style="color:#8a93a8; font-size:13px;">جارِ اكتشاف لغات المستلمين والترجمة...</div>';
+  authFetch('/api/admin-data?action=broadcast-langs&audience=' + audience).then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) { preview.innerHTML = ''; return; }
+    var targets = res.langs.filter(function(l){ return l && l !== 'ar'; });
+    if (!targets.length) { preview.innerHTML = '<div style="color:#39FF14; font-size:13px;">✅ جميع المستلمين لغتهم عربية — لا حاجة للترجمة.</div>'; bcTranslations = {}; return; }
+    fetch('/.netlify/functions/translate-campaign', { method:'POST', headers:{'Content-Type':'application/json','X-Admin-Token': sessionStorage.getItem(TOKEN_KEY)}, body: JSON.stringify({ subject, message, langs: targets }) })
+      .then(function(r){return r.json();}).then(function(tres){
+        if (!tres.ok) { preview.innerHTML = '<div style="color:#ff6b6b; font-size:13px;">فشلت الترجمة، سيتم الإرسال بالعربي للجميع</div>'; return; }
+        bcTranslations = tres.translations;
+        preview.innerHTML = '<div style="color:#D4AF37; font-size:12.5px; font-weight:800; margin-bottom:4px;">راجع الترجمات (قابلة للتعديل) قبل الإرسال:</div>' +
+          Object.keys(bcTranslations).map(function(lc){
+            var t = bcTranslations[lc];
+            return '<div style="background:#10141f; border:1px solid rgba(212,175,55,.2); border-radius:8px; padding:10px;">' +
+              '<div style="font-size:12px; font-weight:800; color:#D4AF37; margin-bottom:6px;">'+(LANG_NAMES[lc]||lc)+'</div>' +
+              '<input value="'+t.subject.replace(/"/g,'&quot;')+'" oninput="bcTranslations[\''+lc+'\'].subject=this.value" style="width:100%; margin-bottom:6px; box-sizing:border-box;">' +
+              '<textarea rows="3" oninput="bcTranslations[\''+lc+'\'].message=this.value" style="width:100%; box-sizing:border-box;">'+t.message+'</textarea>' +
+            '</div>';
+          }).join('');
+      });
+  });
+}
+
+function applyBroadcastTemplate(){
+  var key = document.getElementById('bc_template').value;
+  if (!key || !BC_TEMPLATES[key]) return;
+  document.getElementById('bc_subject').value = BC_TEMPLATES[key].subject;
+  document.getElementById('bc_message').value = BC_TEMPLATES[key].body;
+}
+
 function sendBroadcast(){
   var subject = document.getElementById('bc_subject').value.trim();
   var message = document.getElementById('bc_message').value.trim();
+  var audience = document.getElementById('bc_audience').value;
   var resultEl = document.getElementById('bc_result');
   if (!subject || !message) { resultEl.textContent = '⚠️ الموضوع والرسالة مطلوبان'; return; }
-  if (!confirm('تأكيد إرسال الرسالة لجميع العملاء المسجَّلين ببريد؟')) return;
+  var payload = { subject: subject, message: message, audience: audience, translations: bcTranslations };
+  if (audience === 'affiliates') {
+    var selectedCodes = Array.prototype.map.call(document.querySelectorAll('.bc_aff_item:checked'), function(cb){ return cb.value; });
+    if (!document.getElementById('bc_aff_all').checked && selectedCodes.length === 0) { resultEl.textContent = '⚠️ اختر سفيراً واحداً على الأقل أو الكل'; return; }
+    if (!document.getElementById('bc_aff_all').checked) payload.codes = selectedCodes;
+  }
+  var audienceLabel = audience === 'affiliates' ? 'السفراء المحدَّدين' : 'العملاء';
+  if (!confirm('تأكيد إرسال الرسالة إلى ' + audienceLabel + '؟')) return;
   resultEl.textContent = 'جارِ الإرسال...';
-  authFetch('/api/admin-data?action=broadcast-email', { method:'POST', body: JSON.stringify({ subject: subject, message: message }) })
+  authFetch('/api/admin-data?action=broadcast-email', { method:'POST', body: JSON.stringify(payload) })
     .then(function(r){return r.json();}).then(function(res){
-      resultEl.textContent = res.ok ? ('✅ تم الإرسال إلى ' + res.sent + ' من أصل ' + res.total + ' عميل') : ('❌ ' + (res.error||'فشل'));
+      resultEl.textContent = res.ok ? ('✅ تم الإرسال إلى ' + res.sent + ' من أصل ' + res.total) : ('❌ ' + (res.error||'فشل'));
     });
 }
 
@@ -624,6 +1104,7 @@ function loadAffiliates(){
         : (a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>');
       tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td style="direction:ltr; text-align:left; font-family:monospace;">'+(a.login_username||a.code)+'</td><td style="direction:ltr; text-align:left; font-family:monospace;">'+(a.password||'-')+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
         '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td>' +
+        '<td><button class="btn-gold" style="padding:6px 10px; font-size:16px;" onclick="openAffiliateReport(\''+a.code+'\')" title="تقرير السفير">📊</button></td>' +
         '<td><button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="downloadAgreement(\''+a.code+'\')">📄 تحميل</button></td>' +
         '<td>'+actionBtn+'</td>';
       tb.appendChild(tr);
@@ -644,6 +1125,45 @@ function loadAffiliates(){
   });
 }
 
+function openAffiliateReport(code){
+  var modal = document.getElementById('affReportModal');
+  modal.style.display = 'flex';
+  modal.innerHTML = '<div class="card" style="max-width:480px; width:100%;"><div style="text-align:center; color:#8a93a8;">جارِ التحميل...</div></div>';
+  authFetch('/api/admin-data?action=affiliate-report&code=' + code).then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) { modal.innerHTML = '<div class="card" style="max-width:480px; width:100%;"><div style="color:#ff6b6b;">فشل تحميل التقرير</div></div>'; return; }
+    var r = res.report;
+    var lastLoginTxt = r.lastLoginAt ? new Date(r.lastLoginAt).toLocaleString('ar-SA') : 'لم يسجّل دخول بعد';
+    var regTxt = new Date(r.createdAt).toLocaleString('ar-SA');
+    modal.innerHTML = '<div class="card" style="max-width:480px; width:100%; max-height:88vh; overflow-y:auto;">' +
+      '<h3 style="margin:0 0 16px; color:#D4AF37;">📊 تقرير السفير — '+r.name+'</h3>' +
+      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">' +
+        '<div class="stat"><div class="num" style="color:#39FF14;">$'+r.amp+'</div><div class="lbl">المؤشر الحالي</div></div>' +
+        '<div class="stat"><div class="num">'+r.customerCount+'</div><div class="lbl">عدد العملاء</div></div>' +
+        '<div class="stat"><div class="num" style="color:#D4AF37;">$'+r.floor+'</div><div class="lbl">الحد الأدنى المكتسب</div></div>' +
+        '<div class="stat"><div class="num" style="color:#39FF14;">$'+parseFloat(r.monthlyBalance).toFixed(0)+'</div><div class="lbl">رصيد الصرف القادم</div></div>' +
+      '</div>' +
+      '<div style="font-size:13px; color:#c9d2e3; line-height:2; border-top:1px solid rgba(255,255,255,.08); padding-top:12px;">' +
+        '<div>📅 تاريخ التسجيل: '+regTxt+'</div>' +
+        '<div>🕓 آخر تسجيل دخول: '+lastLoginTxt+'</div>' +
+        '<div>📧 البريد: '+(r.email||'-')+'</div>' +
+      '</div>' +
+      '<div style="display:flex; gap:10px; margin-top:18px;">' +
+        (r.email ? '<button class="btn-gold" style="flex:1;" onclick="sendMotivationEmail(\''+code+'\',\''+r.email+'\')">📧 إرسال بريد تحفيزي</button>' : '') +
+        '<button style="flex:1; background:rgba(255,255,255,.08); color:#c9d2e3; border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:12px; cursor:pointer;" onclick="document.getElementById(\'affReportModal\').style.display=\'none\'">إغلاق</button>' +
+      '</div></div>';
+  });
+}
+
+function sendMotivationEmail(code, email){
+  if (!confirm('إرسال رسالة تحفيزية فورية إلى ' + email + '؟')) return;
+  var subject = '🔥 استمر بنفس الحماس!';
+  var message = 'مرحباً بك 👋\n\nلاحظنا نشاطك كسفير في O P N  LIO، ونود تحفيزك على الاستمرار!\n\nكل عميل جديد تجلبه الآن يرفع من مؤشرك ويزيد عمولتك — استمر بنفس الوتيرة وستصل لأعلى المستويات قريباً 🚀\n\nنحن هنا لدعمك في أي وقت.';
+  authFetch('/api/admin-data?action=broadcast-email', { method:'POST', body: JSON.stringify({ subject: subject, message: message, audience: 'affiliates', codes: [code] }) })
+    .then(function(r){return r.json();}).then(function(res){
+      alert(res.ok ? '✅ تم إرسال الرسالة التحفيزية' : '❌ فشل الإرسال');
+    });
+}
+
 function approveAffiliate(code){
   if (!confirm('تأكيد تفعيل هذا السفير؟ سيصله بريد إلكتروني بتفعيل كوده.')) return;
   authFetch('/api/admin-data?action=approve-affiliate', { method:'POST', body: JSON.stringify({code}) })
@@ -662,7 +1182,7 @@ function downloadAgreement(code){
     var acceptedDate = a.agreement_accepted_at ? new Date(a.agreement_accepted_at).toLocaleString('ar-SA') : '-';
     var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>اتفاقية سفير - ' + a.name + '</title>' +
       '<style>@page{size:A4; margin:18mm;} body{font-family:Tajawal,Arial,sans-serif; padding:0; color:#111; max-width:750px; margin:0 auto;} h1{color:#8a6d1f; font-size:22px; border-bottom:2px solid #D4AF37; padding-bottom:12px;} table{width:100%; border-collapse:collapse; margin:20px 0;} td{padding:8px 10px; border-bottom:1px solid #ddd; font-size:14px;} td:first-child{font-weight:800; color:#555; width:180px;} .terms p{font-size:13.5px; line-height:1.9; margin:8px 0;} .sig{margin-top:30px;} .sig img{max-width:300px; border:1px solid #ccc; border-radius:6px; background:#fff;} .sig-label{font-size:12px; color:#777; margin-top:6px;}</style></head><body>' +
-      '<h1>⚜ اتفاقية سفير أسد الأوبشن</h1>' +
+      '<h1>⚜ اتفاقية سفير O P N  LIO</h1>' +
       '<table>' +
       '<tr><td>الاسم المستعار</td><td>' + (a.name||'-') + '</td></tr>' +
       '<tr><td>الاسم القانوني</td><td>' + (a.legal_name||'-') + '</td></tr>' +
@@ -674,19 +1194,79 @@ function downloadAgreement(code){
       '<tr><td>رقم الحساب البنكي</td><td>' + (a.bank_account||'-') + '</td></tr>' +
       '<tr><td>تاريخ الموافقة</td><td>' + acceptedDate + '</td></tr>' +
       '</table>' +
-      '<div class="terms"><h3>بنود الاتفاقية</h3>' +
-      '<p>1. يحصل السفير على عمولة ثابتة قدرها 4$ عن كل عملية تجديد اشتراك فعلي مدفوع عبر كوده، ولا تُحتسب عن فترات التجربة المجانية.</p>' +
-      '<p>2. يقرّ السفير بأن جميع البيانات المُدخلة صحيحة ودقيقة، وأن حسابه شخصي وغير قابل للتحويل.</p>' +
-      '<p>3. يلتزم بعدم استخدام أساليب ترويج مضللة أو مخالفة للأنظمة.</p>' +
-      '<p>4. تحتفظ الإدارة بحق تعليق أو إلغاء أي كود سفير مخالف لهذه الاتفاقية.</p>' +
-      '<p>5. تُصرف العمولات وفق رقم الحساب البنكي المسجّل.</p>' +
-      '<p>6. بالموافقة، يقرّ السفير بقراءتها وفهمها والالتزام الكامل ببنودها.</p></div>' +
+      '<div class="terms"><h3>بنود الاتفاقية الكاملة (41 بنداً)</h3>' +
+      '<p><b>تمهيد:</b> تحكم هذه الاتفاقية العلاقة التعاقدية بين إدارة "O P N  LIO" ("الشركة") والشخص المسجّل كسفير تسويق ("السفير")، وتمثل بالتوقيع عليها إلكترونياً عقداً ملزماً كامل الأثر القانوني بين الطرفين.</p>' +
+    '<p>1. التعريفات: يُقصد بـ"كود السفير" الرمز الفريد المخصص للسفير لتتبع الإحالات، ويُقصد بـ"العميل المُحال" كل مستخدم أكمل اشتراكاً مدفوعاً فعلياً باستخدام هذا الكود.</p>' +
+    '<p>2. طبيعة العلاقة: هذه الاتفاقية لا تُنشئ أي علاقة عمل أو وكالة أو شراكة أو توظيف بين الطرفين؛ السفير متعاقد مستقل بالكامل ولا يحق له التصرف باسم الشركة أو الالتزام نيابة عنها بأي شكل.</p>' +
+    '<p>3. العمولة: يستحق السفير عمولة متغيّرة تتراوح بين 4$ و9$ عن كل عملية تجديد اشتراك مدفوع فعلياً ومكتمل السداد عبر كوده، محسوبة بوضوح وفق ثلاثة عوامل بسيطة:<br>' +
+'<b>أ) نوع الباقة:</b> شهري = 0$ إضافي، 3 أشهر = 1$، 6 أشهر = 2$، سنوي = 3$ — تُضاف فوق الأساس 4$.<br>' +
+'<b>ب) سرعة النشاط (نظام التراجع التدريجي):</b> تُحسب من عدد الأيام منذ آخر عملية تجديد فعلية أحالها السفير: أقل من يومين = سقف 9$، من 2 إلى أقل من 4 أيام = سقف 8$، من 4 إلى أقل من 8 أيام = سقف 7$، من 8 إلى أقل من 16 يوماً = سقف 6$، من 16 إلى أقل من 32 يوماً = سقف 5$، 32 يوماً فأكثر = سقف 4$. هذا السقف يتصفّر فوراً إلى 9$ عند أي عملية جديدة، ولا يتجاوزه أي حساب حتى لو كان الحد الأدنى المكتسب (الفقرة ج) أعلى منه في حالات نادرة.<br>' +
+'<b>ج) الحد الأدنى المكتسب:</b> يرتفع تلقائياً وبشكل دائم مع تراكم إجمالي عدد عملائه المُحالين طوال مسيرته كسفير، وفق الدرجات التالية: أقل من 200 عميل = حد أدنى 4$، من 200 إلى 499 = 5$، من 500 إلى 999 = 6$، من 1000 إلى 1999 = 7$، من 2000 إلى 3999 = 8$، 4000 عميل فأكثر = 9$. هذا الحد المكتسب لا يتراجع أبداً مهما تباطأ نشاط السفير لاحقاً.<br>' +
+'<b>الاحتساب النهائي:</b> عمولة كل عملية تجديد = القيمة الأعلى بين (الحد الأدنى المكتسب حسب الفقرة ج) و(سقف سرعة النشاط حسب الفقرة ب، بحد أقصى 4$ + مكافأة الباقة داخل ذلك السقف)، بحد أقصى مطلق 9$ في الحالة العادية (قد يرتفع مؤقتاً خلال حملات تحفيزية معلنة).<br>' +
+'<b>مثال توضيحي:</b> سفير حده الأدنى المكتسب 6$ (تجاوز 500 عميل تراكمياً)، مضى على آخر نشاط له 10 أيام (سقف سرعته الآن = 6$)، ثم جاب اشتراكاً سنوياً جديداً (+3$) → الحساب المؤقت داخل السقف = 4+3 = 7$، لكنه محدود بسقف السرعة 6$ → النتيجة = الأعلى بين حده الأدنى 6$ وسقفه 6$ = <b>6$</b>. ولا تُحتسب أي عمولة عن فترات التجربة المجانية أو المدفوعات الملغاة أو المستردة.<br>' +
+'<b>ثبات القيم السابقة (بشفافية مطلقة):</b> عمولة كل عملية تجديد تُحسب وتُسجَّل بشكل نهائي في اللحظة التي تتم فيها فعلياً، بناءً على وضع السفير (حده المكتسب ومكافأة سرعته) في تلك اللحظة تحديداً. لا تتغير قيمة أي عملية سابقة أبداً بعد تسجيلها — لا بالزيادة ولا بالنقصان — بغض النظر عن أي تغيّر لاحق في نشاط السفير أو مستواه. فإن جدّد عميل معيّن اشتراكه عدة مرات على مدى أشهر، تُحسب كل عملية تجديد كحدث مستقل بذاته وفق حالة السفير وقتها بالضبط، لا وفق أول عملية له مع هذا العميل ولا وفق حالته الحالية عند الصرف.</p>' +
+    '<p>4. آلية الصرف: تُصرف العمولات المستحقة دورياً وفق آلية التواصل والتحويل المتفقة بين الطرفين عبر تيليجرام أو الحساب البنكي المسجّل، وتتحمل الشركة تكاليف التحويل المباشرة فقط ما لم يُتفق على خلاف ذلك.</p>' +
+    '<p>5. دقة البيانات: يقرّ السفير بأن جميع البيانات المُدخلة (الاسم، الجنسية، معلومات التواصل، الحساب البنكي) صحيحة ومحدّثة وقت التسجيل، ويتحمل وحده مسؤولية أي ضرر ناتج عن تقديم بيانات غير صحيحة أو مضللة.</p>' +
+    '<p>6. الطابع الشخصي للحساب: حساب السفير وكوده الخاص شخصيان تماماً وغير قابلين للتحويل أو التنازل أو المشاركة مع أي طرف ثالث دون موافقة كتابية مسبقة من الشركة.</p>' +
+    '<p>7. الحظر على أساليب الترويج المخالفة: يلتزم السفير بعدم استخدام أي أسلوب ترويج مضلل أو كاذب أو منتهك للأنظمة المحلية أو الدولية، ويشمل ذلك على سبيل المثال لا الحصر: الرسائل غير المرغوبة (Spam)، الادعاءات الكاذبة بضمان الربح، أو انتحال هوية الشركة.</p>' +
+    '<p>8. حظر تضارب المصالح: لا يجوز للسفير التسجيل بأكثر من كود واحد باسمه، ولا استخدام كود مسوّق آخر للحصول على عمولة مزدوجة عن نفس العميل.</p>' +
+    '<p>9. الملكية الفكرية: جميع العلامات التجارية والشعارات والأسماء والمحتوى الخاص بـ"O P N  LIO" مملوكة حصرياً للشركة، ولا يمنح توقيع هذه الاتفاقية السفير أي حق ملكية أو ترخيص دائم لاستخدامها خارج نطاق الترويج المصرّح به.</p>' +
+    '<p>10. حدود الاستخدام المسموح للعلامة: يجوز للسفير استخدام اسم وشعار "O P N  LIO" فقط لغرض الترويج المباشر لكوده، ويُحظر تعديل الشعار أو استخدامه بطريقة توحي بشراكة رسمية غير قائمة.</p>' +
+    '<p>11. السرية: يتعهد السفير بالحفاظ على سرية أي معلومات غير علنية يطّلع عليها بحكم عمله كسفير (بيانات العملاء، آليات التسعير الداخلية، إحصائيات الأداء) وعدم إفشائها لأي طرف ثالث.</p>' +
+    '<p>12. حماية بيانات العملاء: يُحظر على السفير جمع أو تخزين أو استخدام أي بيانات شخصية لعملاء مُحالين خارج ما توفره لوحة التحكم الرسمية، والالتزام بالأنظمة المعمول بها لحماية البيانات الشخصية.</p>' +
+    '<p>13. حق التعليق والإلغاء: تحتفظ الشركة بحقها المطلق في تعليق أو إلغاء أي كود سفير فوراً ودون إشعار مسبق في حال ثبوت مخالفة أي بند من بنود هذه الاتفاقية.</p>' +
+    '<p>14. أثر الإلغاء على العمولات: عند إلغاء الحساب لمخالفة جوهرية (كالاحتيال أو انتحال الهوية)، تسقط أي عمولات مستحقة لم تُصرف بعد، أما الإلغاء لأسباب غير جوهرية فلا يُسقط العمولات المكتسبة فعلياً حتى تاريخ الإلغاء.</p>' +
+    '<p>15. عدم ضمان حد أدنى للدخل: لا تضمن الشركة أي حد أدنى من عدد الإحالات أو مقدار العمولة، والعائد يعتمد كلياً على جهد السفير الشخصي في التسويق.</p>' +
+    '<p>16. المسؤولية الضريبية: يتحمل السفير وحده كامل المسؤولية عن الإقرار بأي دخل يحصل عليه من هذه الاتفاقية لدى الجهات الضريبية المختصة في بلده، ولا تتحمل الشركة أي التزام ضريبي نيابة عنه.</p>' +
+    '<p>17. إخلاء المسؤولية عن قرارات التداول: السفير غير مخوّل بتقديم أي نصيحة أو توصية استثمارية باسم الشركة، وأي محتوى يقدّمه بصفته الشخصية لا يُعد صادراً عن الشركة ولا تتحمل الشركة أي مسؤولية عنه.</p>' +
+    '<p>18. التعويض: يتعهد السفير بتعويض الشركة عن أي ضرر أو خسارة أو مطالبة قانونية تنشأ عن مخالفته لبنود هذه الاتفاقية أو عن تصرفاته أثناء ترويجه للخدمة.</p>' +
+    '<p>19. تحديد المسؤولية: أقصى مسؤولية تتحملها الشركة تجاه السفير بموجب هذه الاتفاقية لا تتجاوز إجمالي العمولات المستحقة وغير المصروفة له وقت أي نزاع.</p>' +
+    '<p>20. القوة القاهرة: لا تتحمل الشركة مسؤولية أي تأخير أو إخفاق في الوفاء بالتزاماتها ناتج عن ظروف خارجة عن إرادتها (كأعطال تقنية جسيمة، كوارث طبيعية، أو تغييرات تنظيمية مفاجئة).</p>' +
+    '<p>21. مدة الاتفاقية: تسري هذه الاتفاقية من تاريخ الموافقة الإلكترونية عليها ولمدة غير محددة، ويحق لأي من الطرفين إنهاؤها في أي وقت بإشعار كتابي عبر تيليجرام.</p>' +
+    '<p>22. حق التعديل: تحتفظ الشركة بحق تعديل شروط العمولة أو بنود هذه الاتفاقية في أي وقت، على أن يُخطر السفير بالتعديلات الجوهرية، ويُعد استمراره بالعمل كسفير بعد الإخطار موافقة ضمنية على التعديل.</p>' +
+    '<p>23. عدم جواز التنازل: لا يجوز للسفير التنازل عن حقوقه أو التزاماته بموجب هذه الاتفاقية لأي طرف ثالث دون موافقة كتابية من الشركة.</p>' +
+    '<p>24. استقلالية البنود: في حال بطلان أي بند من بنود هذه الاتفاقية أو عدم قابليته للتنفيذ، يبقى سائر البنود نافذاً وساري المفعول بالكامل.</p>' +
+    '<p>25. الاتفاق الكامل: تمثل هذه الوثيقة الاتفاق الكامل بين الطرفين فيما يخص برنامج السفراء، وتحل محل أي تفاهمات أو وعود شفهية سابقة.</p>' +
+    '<p>26. صحة التوقيع الإلكتروني: يقرّ السفير بأن توقيعه الإلكتروني (المرسوم رقمياً) في هذا النموذج له ذات القوة والأثر القانوني للتوقيع الخطي اليدوي، ولا يجوز له إنكاره لاحقاً.</p>' +
+    '<p>27. سجل الموافقة: تحتفظ الشركة بسجل إلكتروني يوثّق تاريخ ووقت موافقة السفير وبياناته المُدخلة كدليل إثبات قابل للاستخدام عند أي نزاع.</p>' +
+    '<p>28. التواصل الرسمي: يُعد التواصل عبر حساب تيليجرام المسجّل هو القناة الرسمية المعتمدة بين الطرفين لأي إشعار أو مطالبة تتعلق بهذه الاتفاقية.</p>' +
+    '<p>29. عدم الحصرية: هذه الاتفاقية غير حصرية، ويجوز للشركة التعاقد مع عدد غير محدود من السفراء دون أي التزام بمنح أي سفير أفضلية أو حصرية جغرافية.</p>' +
+    '<p>30. حظر الإحالة الذاتية: لا يجوز للسفير استخدام كوده الخاص للاشتراك بنفسه أو لحساب مملوك له للحصول على عمولة عن اشتراكه الشخصي.</p>' +
+    '<p>31. حق التدقيق: يحق للشركة مراجعة وتدقيق أي نشاط ترويجي أو إحالات مرتبطة بكود السفير للتحقق من الامتثال لبنود هذه الاتفاقية.</p>' +
+    '<p>32. الاحتيال والإحالات الوهمية: أي محاولة لتوليد إحالات وهمية أو استخدام حسابات مزيفة أو أي وسيلة احتيالية أخرى تُسقط فوراً حق السفير في أي عمولة وتؤدي لإلغاء حسابه نهائياً.</p>' +
+    '<p>33. القانون الحاكم: تخضع هذه الاتفاقية وتُفسَّر وفقاً لأنظمة المملكة العربية السعودية، دون إخلال بأي أحكام قانونية إلزامية أخرى قد تنطبق في بلد إقامة السفير.</p>' +
+    '<p>34. تسوية النزاعات: يسعى الطرفان أولاً لتسوية أي خلاف ودياً عبر التواصل المباشر؛ وفي حال تعذر ذلك، يُحال النزاع للجهة القضائية أو التحكيمية المختصة وفق الأنظمة السارية.</p>' +
+    '<p>35. اللغة المعتمدة: في حال وجود تعارض بين النسخة العربية من هذه الاتفاقية وأي نسخة مترجمة، تكون النسخة العربية هي المرجع القانوني المعتمد.</p>' +
+    '<p>36. الإشعارات: تُرسل أي إشعارات رسمية بموجب هذه الاتفاقية إلى وسائل التواصل التي قدّمها السفير عند التسجيل، ويتحمل السفير مسؤولية تحديثها عند تغييرها.</p>' +
+    '<p>37. عدم التنازل الضمني عن الحقوق: عدم ممارسة الشركة لأي حق مقرر لها بموجب هذه الاتفاقية في مناسبة معينة لا يُعد تنازلاً عن هذا الحق في المستقبل.</p>' +
+    '<p>38. الأهلية القانونية: يقرّ السفير ببلوغه السن القانونية لإبرام العقود في بلد إقامته وبأن لا قيود قانونية تمنعه من إبرام هذه الاتفاقية.</p>' +
+    '<p>39. استقلال برنامج السفراء عن أي توصية استثمارية: التسجيل كسفير أو الحصول على عمولات لا يرتبط بأي شكل بجودة أو دقة الإشارات أو الأدوات التي تقدمها الشركة، وهما نظامان مستقلان تماماً.</p>' +
+    '<p>40. تجميد الحساب لعدم النشاط: إذا لم يُحقق السفير أي عميل مُحال فعلي خلال 14 يوماً من تاريخ تسجيله، أو إذا انتهت جميع اشتراكات عملائه المُحالين سابقاً دون أي عميل نشط حالياً، يحق للشركة تجميد حساب السفير تلقائياً حتى إشعار آخر، دون أن يؤثر ذلك على أي عمولات مكتسبة فعلياً قبل التجميد.</p><p>41. الإقرار النهائي: بالضغط على "تسجيل كسفير" والتوقيع أعلاه، يقرّ السفير بأنه قرأ جميع البنود أعلاه (من 1 إلى 41) وفهمها بالكامل، ويوافق عليها طواعية دون إكراه، ويتعهد بالالتزام الكامل بها.</p>' +
+      '</div>' +
       '<div class="sig"><div class="sig-label">توقيع السفير:</div>' + (a.signature_data ? '<img src="' + a.signature_data + '">' : '<p>لا يوجد توقيع مسجل</p>') + '</div>' +
       '<' + 'script>window.onload=function(){setTimeout(function(){window.print();},400);};</' + 'script>' +
       '</body></html>';
     var w = window.open('', '_blank');
     w.document.write(html);
     w.document.close();
+  });
+}
+
+function downloadBackup(){
+  var url = '/api/admin-data?action=export-backup'.replace('/api/','/.netlify/functions/') + '&t=' + sessionStorage.getItem(TOKEN_KEY);
+  window.open(url, '_blank');
+}
+
+function loadErrorLog(){
+  authFetch('/api/admin-data?action=error-log').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var tb = document.querySelector('#errorLogTable tbody'); tb.innerHTML = '';
+    if (!res.logs.length) { tb.innerHTML = '<tr><td colspan="3" class="emptyState">لا توجد أخطاء مسجّلة 🎉</td></tr>'; return; }
+    res.logs.forEach(function(l){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+l.action+'</td><td style="font-size:11.5px; color:#ff9b9b;">'+(l.details||'-')+'</td><td>'+new Date(l.created_at).toLocaleString('ar-SA')+'</td>';
+      tb.appendChild(tr);
+    });
   });
 }
 
@@ -726,7 +1306,7 @@ function renderStats(res){
     '<div class="stat"><div class="num">'+res.totalViews+'</div><div class="lbl">إجمالي الزيارات</div></div>' +
     '<div class="stat"><div class="num">'+res.totalClicks+'</div><div class="lbl">نقرات «انضم للنخبة»</div></div>' +
     '<div class="stat"><div class="num">'+conv+'%</div><div class="lbl">نسبة التحويل</div></div>' +
-    '<div class="stat"><div class="num">'+res.refCodes.length+'</div><div class="lbl">عدد سفراء أسد الأوبشن</div></div>';
+    '<div class="stat"><div class="num">'+res.refCodes.length+'</div><div class="lbl">عدد سفراء O P N  LIO</div></div>';
 }
 
 function renderPrices(prices){
@@ -750,9 +1330,8 @@ function savePrice(btn){
 
 function renderRefCodes(codes){
   var tb = document.querySelector('#refTable tbody'); tb.innerHTML = '';
-  codes.forEach(function(c){
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td>'+c.code+'</td><td>'+(c.owner_name||'-')+'</td><td style="font-weight:900; color:#39FF14;">'+c.uses+'</td>' +
+  codes.forEach(function(c){var tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+(c.owner_name||'-')+'</td><td style="direction:ltr; text-align:left;">'+c.code+'</td><td style="font-weight:900; color:#39FF14;">'+c.uses+'</td>' +
       '<td><button class="btn-red" onclick="deleteRefCode(\''+c.code+'\')">حذف</button></td>';
     tb.appendChild(tr);
   });
@@ -768,6 +1347,43 @@ function addRefCode(){
       loadOverview();
     });
 }
+
+function submitAddAffiliate(){
+  var cc = document.getElementById('af_cc').value;
+  var phoneDigits = document.getElementById('af_phone').value.trim().replace(/[^0-9]/g,'');
+  var payload = {
+    name: document.getElementById('af_name').value.trim(),
+    legal_name: document.getElementById('af_legal_name').value.trim(),
+    country: document.getElementById('af_country').value,
+    city: document.getElementById('af_city').value.trim(),
+    email: document.getElementById('af_email').value.trim(),
+    password: document.getElementById('af_password').value,
+    age: document.getElementById('af_age').value.trim(),
+    phone: (cc||'') + phoneDigits,
+    telegram: document.getElementById('af_telegram').value.trim().replace(/^@+/,''),
+    code: document.getElementById('af_code').value.trim().toUpperCase(),
+    bank_account: document.getElementById('af_bank').value.trim()
+  };
+  var errEl = document.getElementById('addAffError');
+  errEl.style.display = 'none';
+  if (!payload.name || !payload.code) { errEl.textContent = 'الاسم والكود مطلوبان'; errEl.style.display = 'block'; return; }
+  authFetch('/api/admin-data?action=add-affiliate', { method:'POST', body: JSON.stringify(payload) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) { errEl.textContent = res.error || 'حدث خطأ'; errEl.style.display = 'block'; return; }
+      document.getElementById('addAffModal').style.display = 'none';
+      ['af_name','af_legal_name','af_city','af_email','af_password','af_age','af_phone','af_telegram','af_code','af_bank'].forEach(function(id){ document.getElementById(id).value=''; });
+      loadOverview();
+    });
+}
+
+(function(){
+  var AFF_COUNTRIES = ["السعودية","الإمارات","الكويت","قطر","البحرين","عمان","مصر","الأردن","لبنان","العراق","المغرب","الجزائر","تونس","ليبيا","السودان","اليمن","فلسطين","سوريا","موريتانيا","الصومال","جيبوتي","جزر القمر","تركيا","ألمانيا","فرنسا","إسبانيا","البرتغال","إيطاليا","بريطانيا","الولايات المتحدة","كندا","أخرى"];
+  var AFF_CC = [["+966","🇸🇦"],["+971","🇦🇪"],["+965","🇰🇼"],["+974","🇶🇦"],["+973","🇧🇭"],["+968","🇴🇲"],["+20","🇪🇬"],["+962","🇯🇴"],["+961","🇱🇧"],["+964","🇮🇶"],["+212","🇲🇦"],["+213","🇩🇿"],["+216","🇹🇳"],["+218","🇱🇾"],["+90","🇹🇷"],["+49","🇩🇪"],["+33","🇫🇷"],["+34","🇪🇸"],["+351","🇵🇹"],["+39","🇮🇹"],["+44","🇬🇧"],["+1","🇺🇸"]];
+  var cSel = document.getElementById('af_country');
+  if (cSel) AFF_COUNTRIES.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; cSel.appendChild(o); });
+  var ccSel = document.getElementById('af_cc');
+  if (ccSel) { AFF_CC.forEach(function(c){ var o=document.createElement('option'); o.value=c[0]; o.textContent=c[1]+' '+c[0]; ccSel.appendChild(o); }); ccSel.value = '+966'; }
+})();
 
 function deleteRefCode(code){
   authFetch('/api/admin-data?action=delete-ref-code', { method:'POST', body: JSON.stringify({code}) })
@@ -836,9 +1452,142 @@ function loadAuditLog(){
 }
 
 (function(){
-  if (sessionStorage.getItem(TOKEN_KEY)) { showDash(); }
+  if (sessionStorage.getItem(TOKEN_KEY)) { showDash(); startHeartbeat(); startNotifications(); }
 })();
+
+function onCampaignTargetChange(){
+  var target = document.getElementById('cmp_target').value;
+  var listEl = document.getElementById('cmp_target_list');
+  if (target === 'specific') {
+    listEl.style.display = 'block';
+    authFetch('/api/admin-data?action=overview').then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) return;
+      listEl.innerHTML = (res.affiliates||[]).map(function(a){
+        return '<label style="display:flex; align-items:center; gap:8px; padding:5px 4px; font-size:13px; color:#c9d2e3;"><input type="checkbox" class="cmp_target_item" value="'+a.code+'"> '+a.name+' ('+a.code+')</label>';
+      }).join('') || '<p style="color:#6b7488; font-size:12.5px;">لا يوجد سفراء بعد.</p>';
+    });
+  } else {
+    listEl.style.display = 'none';
+  }
+}
+
+function createCampaign(){
+  var errEl = document.getElementById('cmp_error');
+  errEl.style.display = 'none';
+  var startsAt = document.getElementById('cmp_start').value;
+  var endsAt = document.getElementById('cmp_end').value;
+  if (!startsAt || !endsAt) { errEl.textContent = 'حدد وقت البداية والنهاية'; errEl.style.display = 'block'; return; }
+  var target = document.getElementById('cmp_target').value;
+  var payload = {
+    name: document.getElementById('cmp_name').value.trim(),
+    boost_amount: parseInt(document.getElementById('cmp_boost').value, 10),
+    cap_override: document.getElementById('cmp_cap').value ? parseInt(document.getElementById('cmp_cap').value, 10) : null,
+    target: target,
+    starts_at: new Date(startsAt).toISOString(),
+    ends_at: new Date(endsAt).toISOString()
+  };
+  if (target === 'specific') {
+    payload.target_codes = Array.prototype.map.call(document.querySelectorAll('.cmp_target_item:checked'), function(cb){ return cb.value; });
+    if (!payload.target_codes.length) { errEl.textContent = 'اختر سفيراً واحداً على الأقل'; errEl.style.display = 'block'; return; }
+  }
+  authFetch('/api/admin-data?action=create-campaign', { method:'POST', body: JSON.stringify(payload) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) { errEl.textContent = res.error || 'فشل الإنشاء'; errEl.style.display = 'block'; return; }
+      document.getElementById('cmp_name').value = '';
+      document.getElementById('cmp_start').value = '';
+      document.getElementById('cmp_end').value = '';
+      loadCampaigns();
+    });
+}
+
+function loadCampaigns(){
+  authFetch('/api/admin-data?action=campaigns').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var tb = document.querySelector('#campaignsTable tbody'); tb.innerHTML = '';
+    var now = Date.now();
+    (res.campaigns||[]).forEach(function(c){
+      var isActive = now >= new Date(c.starts_at).getTime() && now <= new Date(c.ends_at).getTime();
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+(c.name||'-')+(isActive?' <span style="color:#39FF14; font-weight:900;">● نشطة</span>':'')+'</td>' +
+        '<td style="color:#39FF14; font-weight:900;">+'+c.boost_amount+'$</td>' +
+        '<td>'+(c.cap_override ? c.cap_override+'$' : '9$')+'</td>' +
+        '<td>'+(c.target === 'all' ? '🌍 الجميع' : '🎯 '+(c.target_codes||[]).length+' سفير')+'</td>' +
+        '<td style="font-size:11.5px;">'+new Date(c.starts_at).toLocaleString('ar-SA')+'</td>' +
+        '<td style="font-size:11.5px;">'+new Date(c.ends_at).toLocaleString('ar-SA')+'</td>' +
+        '<td><button class="btn-red" onclick="deleteCampaign('+c.id+')">حذف</button></td>';
+      tb.appendChild(tr);
+    });
+    if (!(res.campaigns||[]).length) tb.innerHTML = '<tr><td colspan="7" class="emptyState">لا توجد حملات بعد</td></tr>';
+  });
+}
+
+function deleteCampaign(id){
+  if (!confirm('تأكيد حذف الحملة؟')) return;
+  authFetch('/api/admin-data?action=delete-campaign', { method:'POST', body: JSON.stringify({id}) })
+    .then(function(r){return r.json();}).then(function(){ loadCampaigns(); });
+}
+
+function simpleLineChart(canvasId, labels, values, color){
+  var canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height, pad = 34;
+  ctx.clearRect(0,0,W,H);
+  if (!values.length) { ctx.fillStyle = '#6b7488'; ctx.font = '13px Arial'; ctx.fillText('لا توجد بيانات كافية بعد', W/2-70, H/2); return; }
+  var maxV = Math.max.apply(null, values) || 1;
+  var stepX = (W - pad*2) / Math.max(1, values.length - 1);
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath();
+  values.forEach(function(v,i){
+    var x = pad + i*stepX;
+    var y = H - pad - (v/maxV)*(H-pad*2);
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  values.forEach(function(v,i){
+    var x = pad + i*stepX;
+    var y = H - pad - (v/maxV)*(H-pad*2);
+    ctx.beginPath(); ctx.arc(x,y,4,0,7); ctx.fillStyle = color; ctx.fill();
+    ctx.fillStyle = '#e9edf5'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
+    ctx.fillText(v, x, y-10);
+    ctx.fillStyle = '#6b7488'; ctx.fillText((labels[i]||'').slice(5), x, H-10);
+  });
+}
+
+function simpleBarList(containerId, items, colorFn){
+  var el = document.getElementById(containerId);
+  if (!items.length) { el.innerHTML = '<p style="color:#6b7488; font-size:13px;">لا توجد بيانات بعد.</p>'; return; }
+  var max = Math.max.apply(null, items.map(function(i){ return i.value; })) || 1;
+  el.innerHTML = items.map(function(it,idx){
+    var pct = Math.max(4, (it.value/max)*100);
+    return '<div style="margin-bottom:12px;">' +
+      '<div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;"><span>'+it.label+'</span><span style="font-weight:900;">'+it.value+'</span></div>' +
+      '<div style="background:rgba(255,255,255,.06); border-radius:8px; height:9px; overflow:hidden;"><div style="width:'+pct+'%; height:100%; background:'+colorFn(idx)+';"></div></div>' +
+    '</div>';
+  }).join('');
+}
+
+var STATUS_LABELS_MAP = {trial:'تجربة مجانية', canceled:'ملغى', pending_payment:'بانتظار الدفع', renew_1m:'شهري', renew_3m:'3 أشهر', renew_6m:'6 أشهر', renew_1y:'سنوي'};
+
+function loadAnalytics(){
+  authFetch('/api/admin-data?action=analytics').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var convRate = res.totalSignups > 0 ? ((res.totalPaid/res.totalSignups)*100).toFixed(1) : '0';
+    document.getElementById('analyticsSummary').innerHTML =
+      '<div class="stat"><div class="num">'+res.totalSignups+'</div><div class="lbl">إجمالي التسجيلات</div></div>' +
+      '<div class="stat"><div class="num">'+res.totalPaid+'</div><div class="lbl">مشتركون مدفوعون</div></div>' +
+      '<div class="stat"><div class="num">'+convRate+'%</div><div class="lbl">نسبة التحويل لمدفوع</div></div>' +
+      '<div class="stat"><div class="num" style="color:#39FF14;">$'+parseFloat(res.avgCommissionPerAff).toFixed(1)+'</div><div class="lbl">متوسط عمولة السفير</div></div>';
+
+    simpleLineChart('signupsChart', res.monthlySignups.map(function(m){return m.month;}), res.monthlySignups.map(function(m){return m.c;}), '#D4AF37');
+    simpleLineChart('affGrowthChart', res.affiliateGrowth.map(function(m){return m.month;}), res.affiliateGrowth.map(function(m){return m.c;}), '#39FF14');
+    simpleLineChart('cancelChart', res.cancellations.map(function(m){return m.month;}), res.cancellations.map(function(m){return m.c;}), '#ff4d4d');
+
+    simpleBarList('statusDistChart', res.statusDist.map(function(s){ return { label: STATUS_LABELS_MAP[s.status]||s.status, value: s.c }; }), function(i){ return ['#D4AF37','#39FF14','#2196f3','#ffb400','#ff4d4d','#7a8296'][i%6]; });
+    simpleBarList('topAffChart', res.topAffiliates.map(function(a){ return { label: a.name+' ('+a.code+')', value: parseFloat(a.total) }; }), function(){ return 'linear-gradient(90deg,#D4AF37,#f0cf6c)'; });
+  });
+}
 </script>
 <div id="customerModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:999; align-items:center; justify-content:center; padding:20px;"></div>
+<div id="affReportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:999; align-items:center; justify-content:center; padding:20px;"></div>
 </body>
 </html>

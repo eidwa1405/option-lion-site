@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title id="pageTitle">دخول السفير — أسد الأوبشن</title>
+<title id="pageTitle">دخول السفير — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -43,18 +43,19 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
   <label id="l_username"></label>
   <input id="code" style="direction:ltr; text-align:left;">
   <label id="l_password"></label>
-  <input id="password" type="password">
+  <div style="position:relative;"><input id="password" type="password" style="width:100%; box-sizing:border-box; padding-left:38px;"><span onclick="var i=document.getElementById('password'); i.type = i.type==='password'?'text':'password'; this.textContent = i.type==='password'?'👁️':'🙈';" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px;">👁️</span></div>
   <button id="btnLogin" onclick="doLogin()"></button>
+  <div style="text-align:center; margin-top:14px;"><a href="#" id="forgotLink" onclick="doForgotPassword(); return false;" style="color:#D4AF37; font-size:13px; font-weight:700;"></a></div>
 </div>
 <script>
 var T = {
-  ar:{dir:'rtl',flag:'🇸🇦',label:'العربية',title:'لوحة تحكم السفير',username:'اسم المستخدم',password:'كلمة المرور',login:'دخول',err:'تعذر الاتصال بالخادم'},
-  en:{dir:'ltr',flag:'🇬🇧',label:'English',title:'Ambassador Dashboard',username:'Username',password:'Password',login:'Login',err:'Could not connect to the server'},
-  de:{dir:'ltr',flag:'🇩🇪',label:'Deutsch',title:'Botschafter-Dashboard',username:'Benutzername',password:'Passwort',login:'Anmelden',err:'Verbindung zum Server fehlgeschlagen'},
-  es:{dir:'ltr',flag:'🇪🇸',label:'Español',title:'Panel del Embajador',username:'Usuario',password:'Contraseña',login:'Iniciar sesión',err:'No se pudo conectar al servidor'},
-  pt:{dir:'ltr',flag:'🇵🇹',label:'Português',title:'Painel do Embaixador',username:'Usuário',password:'Senha',login:'Entrar',err:'Não foi possível conectar ao servidor'},
-  tr:{dir:'ltr',flag:'🇹🇷',label:'Türkçe',title:'Elçi Panosu',username:'Kullanıcı Adı',password:'Şifre',login:'Giriş Yap',err:'Sunucuya bağlanılamadı'},
-  fr:{dir:'ltr',flag:'🇫🇷',label:'Français',title:'Tableau de Bord Ambassadeur',username:'Nom d\'utilisateur',password:'Mot de passe',login:'Connexion',err:'Impossible de se connecter au serveur'}
+  ar:{dir:'rtl',flag:'🇸🇦',label:'العربية',title:'لوحة تحكم السفير',username:'رقم السفير',password:'كلمة المرور',login:'دخول',err:'تعذر الاتصال بالخادم',forgot:'نسيت كلمة المرور؟',forgotPrompt:'أدخل اسم المستخدم أو الكود أو البريد الإلكتروني المسجّل:',forgotSent:'إذا كانت البيانات صحيحة، سيتم إرسال كلمة مرور جديدة إلى بريدك المسجّل.'},
+  en:{dir:'ltr',flag:'🇬🇧',label:'English',title:'Ambassador Dashboard',username:'Username',password:'Password',login:'Login',err:'Could not connect to the server',forgot:'Forgot password?',forgotPrompt:'Enter your username, code, or registered email:',forgotSent:'If the details are correct, a new password will be sent to your registered email.'},
+  de:{dir:'ltr',flag:'🇩🇪',label:'Deutsch',title:'Botschafter-Dashboard',username:'Benutzername',password:'Passwort',login:'Anmelden',err:'Verbindung zum Server fehlgeschlagen',forgot:'Passwort vergessen?',forgotPrompt:'Geben Sie Ihren Benutzernamen, Code oder Ihre registrierte E-Mail ein:',forgotSent:'Falls die Angaben korrekt sind, wird ein neues Passwort an Ihre registrierte E-Mail gesendet.'},
+  es:{dir:'ltr',flag:'🇪🇸',label:'Español',title:'Panel del Embajador',username:'Usuario',password:'Contraseña',login:'Iniciar sesión',err:'No se pudo conectar al servidor',forgot:'¿Olvidaste tu contraseña?',forgotPrompt:'Ingresa tu usuario, código o correo registrado:',forgotSent:'Si los datos son correctos, se enviará una nueva contraseña a tu correo registrado.'},
+  pt:{dir:'ltr',flag:'🇵🇹',label:'Português',title:'Painel do Embaixador',username:'Usuário',password:'Senha',login:'Entrar',err:'Não foi possível conectar ao servidor',forgot:'Esqueceu a senha?',forgotPrompt:'Digite seu nome de usuário, código ou e-mail registrado:',forgotSent:'Se os dados estiverem corretos, uma nova senha será enviada ao seu e-mail registrado.'},
+  tr:{dir:'ltr',flag:'🇹🇷',label:'Türkçe',title:'Elçi Panosu',username:'Kullanıcı Adı',password:'Şifre',login:'Giriş Yap',err:'Sunucuya bağlanılamadı',forgot:'Şifrenizi mi unuttunuz?',forgotPrompt:'Kullanıcı adınızı, kodunuzu veya kayıtlı e-postanızı girin:',forgotSent:'Bilgiler doğruysa, kayıtlı e-postanıza yeni bir şifre gönderilecektir.'},
+  fr:{dir:'ltr',flag:'🇫🇷',label:'Français',title:'Tableau de Bord Ambassadeur',username:'Nom d\'utilisateur',password:'Mot de passe',login:'Connexion',err:'Impossible de se connecter au serveur',forgot:'Mot de passe oublié ?',forgotPrompt:'Entrez votre nom d\'utilisateur, code ou e-mail enregistré :',forgotSent:'Si les informations sont correctes, un nouveau mot de passe sera envoyé à votre e-mail enregistré.'}
 };
 var currentLang = localStorage.getItem('aff_lang') || 'ar';
 function setLang(code){
@@ -68,6 +69,7 @@ function setLang(code){
   document.getElementById('l_username').textContent = t.username;
   document.getElementById('l_password').textContent = t.password;
   document.getElementById('btnLogin').textContent = t.login;
+  document.getElementById('forgotLink').textContent = t.forgot;
   document.getElementById('langDDFlag').textContent = t.flag;
   document.getElementById('langDDLabel').textContent = t.label;
 }
@@ -81,6 +83,15 @@ document.addEventListener('click', function(e){
   if (wrap && !wrap.contains(e.target)) toggleLangDD(false);
 });
 setLang(currentLang);
+
+function doForgotPassword(){
+  var t = T[currentLang];
+  var identifier = prompt(t.forgotPrompt);
+  if (!identifier) return;
+  fetch('/api/affiliate-forgot-password', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ identifier: identifier.trim() }) })
+    .then(function(r){ return r.json(); }).then(function(){ alert(t.forgotSent); })
+    .catch(function(){ alert(t.forgotSent); });
+}
 
 function doLogin(){
   var code = document.getElementById('code').value.trim();

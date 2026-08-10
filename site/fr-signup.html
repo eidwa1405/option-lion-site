@@ -10,7 +10,7 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Abonnement — Option Lion</title>
+<title>Abonnement — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
@@ -36,8 +36,8 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 
 <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; row-gap:10px; flex-wrap:wrap; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
   <a href="./fr-lion.html" style="display:flex; align-items:center; gap:10px;">
-    <img src="assets/lion-logo.jpg" alt="Option Lion" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
-    <span style="font-weight:900; font-size:18px; letter-spacing:.5px; color:#f4f0e4;">Option Lion</span>
+    <img src="assets/lion-logo.jpg" alt="O P N  LIO" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
+    <span style="font-weight:900; font-size:24px; letter-spacing:.5px; color:#f4f0e4;">O P N  LIO</span>
   </a>
   <a href="./option-lion.html" style="font-size:13px; font-weight:700; color:#c9d2e3; border:1px solid #2a3348; padding:8px 18px; border-radius:20px;">↩ Accueil</a>
 </nav>
@@ -103,11 +103,11 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 
 <footer style="padding:30px clamp(20px,6vw,64px) 30px; border-top:1px solid rgba(255,255,255,.08); text-align:center;">
   <p style="font-size:12.5px; color:#6b7488; max-width:520px; margin:0 auto 18px; line-height:1.8;">Le contenu est fourni à des fins éducatives et analytiques uniquement et ne constitue pas un conseil en investissement. Le trading comporte des risques.</p>
-  <div style="font-size:12.5px; color:#4d5468; margin-bottom:14px;">© 2026 Option Lion ⚜ Tous droits réservés</div>
+  <div style="font-size:12.5px; color:#4d5468; margin-bottom:14px;">© 2026 O P N  LIO ⚜ Tous droits réservés</div>
   <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;">
     <a href="#" onclick="openLegalModal('./terms.html#fr-section'); return false;">Conditions d'Utilisation</a><a href="#" onclick="openLegalModal('./privacy.html#fr-section'); return false;">Politique de Confidentialité</a><a href="#" onclick="openLegalModal('./refund.html#fr-section'); return false;">Politique de Remboursement</a>
   </div>
-  <p style="font-size:12px; color:#6b7488; margin:0;">© Option Lion</p>
+  <p style="font-size:12px; color:#6b7488; margin:0;">© O P N  LIO</p>
 </footer>
 
 </div>
@@ -154,7 +154,7 @@ function submitSignup(){
   var CHAT_ID = '8485191267';
   var refValid = ref && REF_CODES.indexOf(ref.toUpperCase()) !== -1;
   var refLine = ref ? ('\nRef Code: ' + ref + (refValid ? ' ✅' : ' ❌')) : '';
-  var msg = '📝 Nouvelle inscription — Option Lion' + '\nName: ' + name + '\nPhone: ' + cc + ' ' + phone + '\nTelegram: ' + tg + '\nTradingView: ' + tv + refLine;
+  var msg = '📝 Nouvelle inscription — O P N  LIO' + '\nName: ' + name + '\nPhone: ' + cc + ' ' + phone + '\nTelegram: ' + tg + '\nTradingView: ' + tv + refLine;
 
   fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
     method: 'POST',
@@ -163,7 +163,7 @@ function submitSignup(){
   }).then(function(){
     fetch('/api/ref-track', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, plan: 'Essai Gratuit' })
+      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'fr', plan: 'Essai Gratuit' })
     }).catch(function(){});
     Paddle.Checkout.open({
       items: [{ priceId: getPriceFromURL(), quantity: 1 }],
