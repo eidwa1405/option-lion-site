@@ -1102,7 +1102,7 @@ function loadAffiliates(){
       var actionBtn = pending
         ? '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="approveAffiliate(\''+a.code+'\')">✅ تفعيل</button>'
         : (a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>');
-      tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td style="direction:ltr; text-align:left; font-family:monospace;">'+(a.login_username||a.code)+'</td><td style="direction:ltr; text-align:left; font-family:monospace;">'+(a.password||'-')+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
+      tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
         '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td>' +
         '<td><button class="btn-gold" style="padding:6px 10px; font-size:16px;" onclick="openAffiliateReport(\''+a.code+'\')" title="تقرير السفير">📊</button></td>' +
         '<td><button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="downloadAgreement(\''+a.code+'\')">📄 تحميل</button></td>' +
