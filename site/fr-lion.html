@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr" id="top">
 <head>
+<script>(function(){var saved=localStorage.getItem('opnlio_lang');var home={"ar":"index.html","en":"option-lion.html","tr":"tr-lion.html","es":"es-lion.html","pt":"pt-lion.html","de":"de-lion.html","fr":"fr-lion.html"};if(saved&&saved!=='fr'&&home[saved]&&!sessionStorage.getItem('opnlio_lang_redirected')){sessionStorage.setItem('opnlio_lang_redirected','1');location.replace('./'+home[saved]);}else{localStorage.setItem('opnlio_lang','fr');}})();</script>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FWQZ4B4CBD"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -9,6 +11,7 @@
   gtag('config', 'G-FWQZ4B4CBD');
 </script>
 <meta charset="utf-8">
+<meta name="description" content="OPN LIO educational market-analysis platform — integrated technical tools on TradingView plus a free 12-level trader qualification program.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>O P N  LIO — Système de Trading Intelligent Intégré</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
@@ -35,15 +38,17 @@ a:hover { color:#f0cf6c; }
     <span style="font-weight:900; letter-spacing:.5px; color:#f4f0e4; white-space:nowrap;"><span style="color:#f4f0e4; font-size:22px;">O</span> <span style="color:#f4f0e4; font-size:24px;">P</span> <span style="color:#f4f0e4; font-size:26px;">N</span> <span style="color:#D4AF37; font-size:32px;">LIO</span></span>
   </a>
   <div style="display:flex; align-items:center; gap:clamp(10px,2.5vw,22px); flex-wrap:wrap; justify-content:flex-end; row-gap:8px;">
-    <a href="./fr-lion.html" style="font-size:13px; font-weight:700; color:#D4AF37;">Accueil</a>
+    <a href="./fr-lion.html" style="font-size:13px; font-weight:700; color:#D4AF37;">Accueil</a><a href="./academy.html" style="font-size:13px; font-weight:700; color:#39FF14;">Académie</a>
+    <a href="./fr-system.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Système</a>
+    <a href="./fr-pricing.html" style="font-size:13px; font-weight:700; color:#c9d2e3;">Tarifs</a>
     
     <div style="position:relative;" id="moredd_fr">
       <button onclick="var m=document.getElementById('moredd_fr_menu'); m.style.display = m.style.display==='block' ? 'none' : 'block';" style="display:flex; align-items:center; gap:5px; font-size:13px; font-weight:700; color:#c9d2e3; border:none; background:transparent; cursor:pointer; font-family:inherit; padding:0;">Plus <span style="font-size:9px;">▾</span></button>
       <div id="moredd_fr_menu" style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#10141f; border:1px solid #2a3348; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.5); padding:6px; min-width:150px; z-index:100;">
+        <a href="./fr-results.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Résultats</a>
         
-        
-        
-        
+        <a href="./fr-faq.html" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">FAQ</a>
+        <a href="./booklet.html" target="_blank" style="display:block; padding:9px 16px; font-size:13px; font-weight:600; color:#c9d2e3; white-space:nowrap;" onmouseover="this.style.background='rgba(212,175,55,.12)'" onmouseout="this.style.background='transparent'">Guide PDF</a>
       </div>
     </div>
     <script>
@@ -69,9 +74,33 @@ a:hover { color:#f0cf6c; }
   </div>
 </nav>
 
+
+<a href="#top" id="backToTop" style="position:fixed; bottom:24px; right:24px; z-index:60; width:48px; height:48px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(212,175,55,.4); font-size:20px; color:#070d18; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;">↑</a>
+<script>
+(function(){
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 500) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+    else { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
+  });
+})();
+</script>
+
 <div style="background:linear-gradient(90deg,rgba(212,175,55,.15),rgba(212,175,55,.05),rgba(212,175,55,.15)); border-bottom:1px solid rgba(212,175,55,.25); padding:10px clamp(16px,5vw,64px); text-align:center;">
   <p style="margin:0; font-size:13px; font-weight:800; color:#f0e6c8; letter-spacing:.3px;">⚜ 4 Outils Éducatifs Intégrés &nbsp;·&nbsp; Analyse Unifiée au Lieu du Chaos &nbsp;·&nbsp; Essai Gratuit de 14 Jours, Sans Engagement</p>
 </div>
+
+
+<section style="padding:clamp(50px,8vw,90px) clamp(20px,6vw,64px); text-align:center; background:linear-gradient(180deg,transparent,rgba(57,255,20,.04) 40%,transparent);">
+  <div style="max-width:820px; margin:0 auto;">
+    <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(57,255,20,.08); border:1px solid rgba(57,255,20,.3); border-radius:30px; padding:7px 18px; margin-bottom:22px;"><span style="width:8px; height:8px; border-radius:50%; background:#39FF14; box-shadow:0 0 10px #39FF14;"></span><span style="color:#c9ffb0; font-weight:800; font-size:12.5px; letter-spacing:1.2px;">Académie Éducative <span style="color:#f4f0e4; font-size:13px;">O</span> <span style="color:#f4f0e4; font-size:14px;">P</span> <span style="color:#f4f0e4; font-size:15px;">N</span> <span style="color:#D4AF37; font-size:18px;">LIO</span></span></div>
+    <h2 style="font-size:clamp(30px,4.5vw,52px); font-weight:900; line-height:1.2; margin:0 0 20px; color:#fff;">Apprenez à Lire le Marché à Travers les Yeux de <span style="background:linear-gradient(120deg,#D4AF37,#f7e39a,#D4AF37); background-size:300% auto; -webkit-background-clip:text; background-clip:text; color:transparent;">O P N LIO</span></h2>
+    <p style="font-size:15.5px; color:#aab3c5; line-height:1.9; max-width:620px; margin:0 auto 30px;">Programme Gratuit de Formation du Trader — 12 niveaux de zéro à pro : marchés, analyse technique, gestion de capital, psychologie du trading et contrats d'options, pour être diplômé avec une base permettant d'évaluer toute stratégie consciemment.</p>
+    <a href="./academy.html" style="display:inline-block; font-weight:900; font-size:15.5px; color:#070d18; background:linear-gradient(120deg,#39FF14,#7dff5c); padding:14px 32px; border-radius:30px; box-shadow:0 10px 30px rgba(57,255,20,.3);">Commencer Gratuitement →</a>
+    <p style="font-size:13px; color:#8a93a8; margin:18px auto 0; max-width:600px;">Aucune expérience requise — commencez de zéro ; obtenir le diplôme débloque une remise d’abonnement exclusive.</p>
+    <div style="display:flex; justify-content:center; gap:clamp(20px,5vw,56px); flex-wrap:wrap; margin-top:38px; padding-top:24px; border-top:1px solid rgba(255,255,255,.08); max-width:760px; margin-inline:auto;"><div style="text-align:center;"><div style="font-size:clamp(20px,2.8vw,28px); font-weight:900; color:#39FF14;">12</div><div style="font-size:11.5px; color:#8a93a8; margin-top:2px;">Niveaux</div></div><div style="text-align:center;"><div style="font-size:clamp(20px,2.8vw,28px); font-weight:900; color:#39FF14;">100%</div><div style="font-size:11.5px; color:#8a93a8; margin-top:2px;">Gratuit</div></div><div style="text-align:center;"><div style="font-size:clamp(20px,2.8vw,28px); font-weight:900; color:#39FF14;">Certificat</div><div style="font-size:11.5px; color:#8a93a8; margin-top:2px;">de Réussite</div></div><div style="text-align:center;"><div style="font-size:clamp(20px,2.8vw,28px); font-weight:900; color:#39FF14;">7</div><div style="font-size:11.5px; color:#8a93a8; margin-top:2px;">Langues</div></div></div>
+  </div>
+</section>
 
 <section style="position:relative; padding:clamp(70px,10vw,140px) clamp(20px,6vw,64px) clamp(60px,8vw,110px); text-align:center;">
   <div style="position:absolute; top:10%; left:6%; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(212,175,55,.18),transparent 70%); filter:blur(10px); animation:drift 12s ease-in-out infinite;"></div>
@@ -86,9 +115,9 @@ a:hover { color:#f0cf6c; }
     </p>
     <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
       <a href="./fr-signup.html" style="font-weight:900; font-size:16px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:15px 34px; border-radius:30px; box-shadow:0 10px 30px rgba(212,175,55,.35);">Rejoindre ⚜</a>
-      
+      <a href="./en-system.html" style="font-weight:700; font-size:16px; color:#e9edf5; border:1.5px solid #2a3348; padding:14px 30px; border-radius:30px;">Découvrir le système</a>
     </div>
-    <p style="font-size:13.5px; color:#8a93a8; margin:22px 0 0;">Aucune expérience en analyse technique requise — un système éducatif qui t'aide à lire le marché clairement, et un  suffit</p>
+    <p style="font-size:13.5px; color:#8a93a8; margin:22px 0 0;">Aucune expérience en analyse technique requise — un système éducatif qui t'aide à lire le marché clairement, et un <a href="./booklet.html" target="_blank" style="color:#D4AF37; text-decoration:underline;">guide</a> suffit</p>
   </div>
 
   <div style="position:relative; display:flex; justify-content:center; gap:clamp(24px,6vw,72px); flex-wrap:wrap; margin-top:clamp(56px,8vw,90px); padding-top:36px; border-top:1px solid rgba(255,255,255,.08); max-width:820px; margin-inline:auto;">
@@ -96,6 +125,29 @@ a:hover { color:#f0cf6c; }
     <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">8</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">Unités de temps synchronisées</div></div>
     <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">24/7</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">Surveillance en direct</div></div>
     <div style="text-align:center;"><div style="font-size:clamp(28px,4vw,40px); font-weight:900; color:#D4AF37;">32</div><div style="font-size:13px; color:#8a93a8; margin-top:4px;">Modules d'analyse</div></div>
+  </div>
+</section>
+
+<section style="padding:clamp(40px,6vw,64px) clamp(20px,6vw,64px);">
+  <div style="max-width:1180px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:30px;">
+      <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">OUTILS COMPLÉMENTAIRES ⚜</div>
+      <h2 style="font-size:clamp(24px,3.2vw,34px); font-weight:900; color:#fff; margin:0;">La famille O P N  LIO</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px;">
+      <div style="background:linear-gradient(120deg,rgba(212,175,55,.14),rgba(11,11,11,.5)); border:1px solid rgba(212,175,55,.3); border-radius:20px; padding:clamp(26px,4vw,36px);">
+        <div style="font-size:13px; font-weight:800; color:#D4AF37; letter-spacing:1.5px; margin-bottom:8px;">OUTIL SUPPORT/RÉSISTANCE</div>
+        <h3 style="font-size:clamp(19px,2.2vw,24px); font-weight:900; color:#fff; margin:0 0 10px;">Smart Pivot</h3>
+        <p style="font-size:14px; line-height:1.8; color:#c2cadb; margin:0 0 20px;">Niveaux de support et résistance issus des unités de temps supérieures avec un minimum de bruit visuel, classés par force.</p>
+        <a href="./fr-signup.html" style="display:inline-block; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:11px 24px; border-radius:22px;">Demander l'accès</a>
+      </div>
+      <div style="background:linear-gradient(120deg,rgba(212,175,55,.14),rgba(11,11,11,.5)); border:1px solid rgba(212,175,55,.3); border-radius:20px; padding:clamp(26px,4vw,36px);">
+        <div style="font-size:13px; font-weight:800; color:#D4AF37; letter-spacing:1.5px; margin-bottom:8px;">OUTIL DE LIQUIDITÉ & MOMENTUM</div>
+        <h3 style="font-size:clamp(19px,2.2vw,24px); font-weight:900; color:#fff; margin:0 0 10px;">Empire of the Wealthy</h3>
+        <p style="font-size:14px; line-height:1.8; color:#c2cadb; margin:0 0 20px;">Un panneau indépendant de liquidité et de momentum qui lit la convergence cachée et s'illumine silencieusement pour vous alerter.</p>
+        <a href="./fr-signup.html" style="display:inline-block; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:11px 24px; border-radius:22px;">Demander l'accès</a>
+      </div>
+    </div>
   </div>
 </section>
 

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Free OPN LIO Trader Qualification Program — 12 levels from zero to advanced, with quizzes and a completion certificate.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O P N  LIO Akademisi — Ücretsiz Eğitim Programı</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Inter',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh;}
+a{color:#D4AF37;}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.015)); border:1px solid rgba(212,175,55,.18); border-radius:18px; padding:26px;}
+.btn-gold{background:linear-gradient(135deg,#D4AF37,#f0cf6c); color:#1a1408; font-weight:900; border:none; border-radius:12px; padding:14px 26px; font-size:15px; cursor:pointer; font-family:inherit;}
+.btn-gold:disabled{opacity:.4; cursor:not-allowed;}
+input{width:100%; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.25); background:#10141f; color:#fff; font-family:inherit; font-size:14.5px;}
+label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bottom:6px;}
+.level-badge{width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; flex-shrink:0;}
+.bx{background:rgba(255,255,255,.03); border-radius:14px; padding:18px;}
+.bx b{color:#c9d2e3;}
+.hl{background:rgba(212,175,55,.08); border:1px solid rgba(212,175,55,.25); border-radius:14px; padding:18px; margin:20px 0;}
+.al{background:rgba(212,175,55,.1); border:1px solid rgba(212,175,55,.35); border-radius:14px; padding:20px; margin:22px 0; text-align:center;}
+</style>
+<script src="page-guard.js" data-page="academy"></script>
+</head>
+<body>
+
+<nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(212,175,55,.15);">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="assets/lion-logo.jpg" alt="O P N LIO" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
+    <span style="font-weight:900; color:#f4f0e4; font-size:18px;">Akademi <span style="font-weight:900; letter-spacing:.5px; white-space:nowrap;"><span style="color:#f4f0e4; font-size:15px;">O</span> <span style="color:#f4f0e4; font-size:16px;">P</span> <span style="color:#f4f0e4; font-size:17px;">N</span> <span style="color:#D4AF37; font-size:20px;">LIO</span></span></span>
+  </div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <a href="./tr-signup.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">Şimdi Katıl</a>
+    <div id="authStatus" style="font-size:13px; color:#8a93a8;"></div>
+  </div>
+</nav>
+
+<div style="background:rgba(255,107,107,.08); border-bottom:1px solid rgba(255,107,107,.25); padding:12px 20px; text-align:center; font-size:12.5px; color:#ffb3b3; line-height:1.7;">
+  ⚠️ Bu içerik yalnızca eğitim amaçlıdır ve yatırım tavsiyesi veya kâr garantisi değildir — trading, opsiyon sözleşmeleri ve kaldıraç sermayenin tamamının kaybı dahil risk taşır.
+</div>
+
+<div style="max-width:960px; margin:0 auto; padding:40px clamp(16px,5vw,32px) 80px;">
+
+  <section id="authScreen">
+    <div style="text-align:center; margin-bottom:32px;">
+      <h1 style="font-size:clamp(26px,4vw,36px); font-weight:900; margin:0 0 12px;">Trader Yetiştirme Programı 🦁</h1>
+      <p style="color:#aab3c5; font-size:15px; line-height:1.8; max-width:600px; margin:0 auto;">Tamamen ücretsiz 12 seviye, sıkıcı olmadan sadeleştirilmiş: piyasalar, teknik analiz, sermaye yönetimi, trading psikolojisi, opsiyon sözleşmeleri ve Greeks — kendi sistemimiz dahil herhangi bir stratejiyi değerlendirebilecek bir temelle mezun olun. Onaylı sertifikayla, belki de OPN LIO elçisi olma fırsatıyla.</p>
+    </div>
+
+    <div class="card" style="max-width:420px; margin:0 auto;">
+      <div style="display:flex; gap:8px; margin-bottom:22px;">
+        <button id="tabLogin" onclick="showTab('login')" class="btn-gold" style="flex:1; padding:10px;">Giriş Yap</button>
+        <button id="tabRegister" onclick="showTab('register')" style="flex:1; padding:10px; background:transparent; border:1px solid rgba(212,175,55,.3); color:#c9d2e3; border-radius:12px; font-weight:800; cursor:pointer; font-family:inherit;">Kayıt Ol</button>
+      </div>
+      <div id="loginForm">
+        <div style="margin-bottom:14px;"><label>E-posta</label><input id="li_email" type="email" placeholder="siz@example.com"></div>
+        <div style="margin-bottom:18px;"><label>Şifre</label><input id="li_pass" type="password"></div>
+        <button class="btn-gold" style="width:100%;" onclick="doLogin()">Giriş Yap</button>
+      </div>
+      <div id="registerForm" style="display:none;">
+        <div style="margin-bottom:14px;"><label>Ad Soyad</label><input id="re_name" placeholder="Tam adınız"></div>
+        <div style="margin-bottom:14px;"><label>E-posta</label><input id="re_email" type="email" placeholder="siz@example.com"></div>
+        <div style="margin-bottom:14px;"><label>Şifre (6+ karakter)</label><input id="re_pass" type="password"></div>
+        <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span><a href="./terms.html" target="_blank">Kullanım Şartları</a>'nı kabul ediyorum ve bu içeriğin yalnızca eğitim amaçlı olduğunu anlıyorum.</span></label>
+        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Ücretsiz Başla</button>
+      </div>
+      <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
+    </div>
+  </section>
+
+  <section id="dashScreen" style="display:none;">
+    <div class="card" style="margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+      <div>
+        <div style="font-size:13px; color:#8a93a8; margin-bottom:4px;">Hoş geldiniz</div>
+        <div id="dashName" style="font-size:20px; font-weight:900;"></div>
+        <div id="dashRank" style="color:#D4AF37; font-weight:800; font-size:14px; margin-top:4px;"></div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:28px; font-weight:900; color:#39FF14;" id="dashPoints">0</div>
+        <div style="font-size:12px; color:#8a93a8;">puan</div>
+      </div>
+      <button id="ambassadorBtn" class="btn-gold" disabled style="opacity:.35;">🔒 OPN LIO Elçisi Olmaya Uygun</button>
+    </div>
+    <div id="levelsGrid" style="display:grid; gap:14px;"></div>
+  </section>
+
+  <section id="lessonScreen" style="display:none;">
+    <button onclick="backToDash()" style="background:transparent; border:none; color:#8a93a8; font-size:13px; cursor:pointer; margin-bottom:18px; font-family:inherit;">← Panele dön</button>
+    <div class="card">
+      <div style="font-size:13px; font-weight:800; color:#D4AF37; letter-spacing:1px; margin-bottom:8px;" id="lessonLevelTag"></div>
+      <h2 style="font-size:26px; font-weight:900; margin:0 0 20px;" id="lessonTitle"></h2>
+      <div id="lessonBody"></div>
+      <h3 style="font-size:18px; font-weight:900; margin:32px 0 16px;">Seviye Testi</h3>
+      <div id="quizBox"></div>
+      <div style="margin-top:20px; display:flex; align-items:center; gap:16px;">
+        <button class="btn-gold" onclick="submitQuiz()">Cevapları Gönder</button>
+        <span id="quizResult" style="font-size:14px; font-weight:700;"></span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+var API = '/.netlify/functions/academy-auth';
+var session = JSON.parse(localStorage.getItem('opnlio_academy_session') || 'null');
+var currentLevel = 1;
+
+var LEVELS = [
+null,
+{
+  title: 'Mum Grafiği Temelleri 🕯️',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Her şey burada başlar: Japon mumu, piyasanın konuştuğu "cümledir". İyi anlarsanız karşınızdaki her grafiği kolayca okursunuz.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Mumun bileşenleri</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Gövde</b>: açılış ve kapanış fiyatı arası mesafe. <b>Üst fitil</b>: dokunulup reddedilen en yüksek fiyat. <b>Alt fitil</b>: dokunulup reddedilen en düşük fiyat.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Renk hikayeyi anlatır</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Yeşil = kapanış açılıştan yüksek (alıcılar kontrolde). Kırmızı = kapanış açılıştan düşük (satıcılar kontrolde).</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Yaygın mum türleri</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Doji</b>: neredeyse sıfır gövde — tam kararsızlık. <b>Çekiç</b>: düşüşten sonra uzun alt fitil — olası dönüş. <b>Yutan</b>: öncekini tamamen yutan büyük mum — güçlü olası dönüş.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Zaman dilimleri</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Her mum seçtiğiniz bir periyodu temsil eder (dakika, saat, gün...). Küçük dilim daha çok detay ve gürültü, büyük dilim daha net genel trend verir.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Profesyonel ipucu</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Mum okumada ustalaşmak, sonra öğreneceğiniz her şeyin temelidir — okumalarını tam bu anlayış üzerine kuran OPN LIO sistemi de dahil.</p></div>',
+  quiz: [
+    { q: 'Belirli bir hisse üzerindeki bir call sözleşmesinde mum gövdesi neyi temsil eder?', options: ['Dönem içindeki en yüksek ve en düşük fiyat arası mesafe', 'Açılış ve kapanış fiyatı arası mesafe', 'Sadece işlem hacmi'], correct: 1 },
+    { q: 'Aldığınız call sözleşmesinde büyük bir yeşil mum belirdi — yeşil renk ne anlama gelir?', options: ['Satıcılar kontrolü ele geçirdi, kapanış açılıştan düşük', 'Alıcılar kontrolü ele geçirdi, kapanış açılıştan yüksek', 'Rengin fiyatla ilgisi yok'], correct: 1 },
+    { q: 'Hangi mum genellikle alıcı ve satıcılar arasında tam kararsızlığa işaret eder?', options: ['Çekiç', 'Doji', 'Yutan'], correct: 1 },
+    { q: 'Saatlik dilimde bir put sözleşmesini izliyorsunuz, sonra günlük dilime geçtiniz — ne değişir?', options: ['Hiçbir şey değişmez', 'Daha gürültülü detay yerine daha net genel trend görürsünüz', 'Kırmızı mumlar yeşile döner'], correct: 1 },
+    { q: 'Bir call sözleşmesi mumundaki uzun alt fitil neyi temsil eder?', options: ['Dokunulan en yüksek fiyat', 'Dokunulup yukarı reddedilen en düşük fiyat', 'İşlem hacmi'], correct: 1 }
+  ]
+},
+{
+  title: 'Tepeler, Dipler ve Trend Yapısı 📈',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Fiyat düz bir çizgide hareket etmez — ardışık tepeler ve diplerle hareket eder, ve bu yapı trendi gerçekten belirleyen şeydir.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Tepe ve dip nedir?</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Tepe</b>: fiyatın geri çekilmeden önce ulaştığı en yüksek nokta. <b>Dip</b>: yukarı sıçramadan önceki en düşük nokta.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Yükseliş trendi</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Öncekinden yüksek tepe, öncekinden yüksek dip — bu düzen sürdükçe trend yükseliştedir.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Düşüş trendi</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Öncekinden düşük tepe, öncekinden düşük dip.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Eşit tepe/dip</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Tepeler veya dipler ilerlemeyi durdurup birbirine yakınlaştığında, bu genellikle konsolidasyon veya yaklaşan trend değişimine işarettir.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Neden önemli?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Bizimkiler dahil her ileri teknik araç, bu basit yapıyı anlamanız üzerine kurulur. Tepe ve dipleri göremeyen, hiçbir aracın sinyalini neden verdiğini anlamaz.</p></div>',
+  quiz: [
+    { q: 'Bir call sözleşmesini izliyorsunuz ve fiyat sürekli öncekinden yüksek tepe ve dip oluşturuyor — bu hangi trend?', options: ['Yükseliş trendi', 'Düşüş trendi', 'Trend yok'], correct: 0 },
+    { q: 'Fiyat yapısında "dip" tanımı nedir?', options: ['Fiyatın ulaştığı en yüksek nokta', 'Yukarı sıçramadan önce ulaşılan en düşük nokta', 'Gün içi ortalama fiyat'], correct: 1 },
+    { q: 'Put sözleşmesi düşündüğünüz bir düşüş trendinde ardışık tepelerden ne beklersiniz?', options: ['Her tepe öncekinden yüksek', 'Her tepe öncekinden düşük', 'Tepeler hep eşit kalır'], correct: 1 },
+    { q: 'Sözleşmenizde uzun bir yükselişten sonra tepe ve dipler birbirine yakınlaşıp eşitlenmeye başladı — bu genellikle neye işarettir?', options: ['Yükselişin daha güçlü devamı', 'Konsolidasyon veya olası trend değişimi', 'Hiçbir anlamı yok'], correct: 1 }
+  ]
+},
+{
+  title: 'Kırılma, Gerçek Kırılım ve Yeniden Test 🔨',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Yeni başlayanları en çok karıştıran kavramlardan biri: bir seviyeyi geçmek ne zaman "geçici kırılma", ne zaman "gerçek kırılım" olur?</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Geçici kırılma (fitil)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Fiyat seviyeye sadece fitille dokunup reddediyor, arkasında gerçek kapanış yok — gerçek kırılım sayılmaz.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Gerçek kırılım</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Mum gövdesi seviyenin gerçekten arkasında kapanır (sadece fitil değil) — gerçek değişimin çok daha güçlü göstergesi.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Yeniden test kuralı</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Kırılımdan sonra fiyat genelde aynı seviyeyi karşı taraftan test eder — başarılı yeniden test (yeniden kırmadan sıçrama) kırılımı doğrular.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Fiyat yapısıyla onay</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Son tepeyi (yükselişte) veya son dibi (düşüşte) kırmak, yeni trendin devamına ek onay verir.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Sabır neden önemli?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">En yaygın hatalar, net bir kapanış veya başarılı yeniden test beklemeden ilk dokunuşta girmekten kaynaklanır.</p></div>',
+  quiz: [
+    { q: 'Fiyat bir direnç seviyesine sadece fitille dokunup arkasında kapanmadan sıçradı — buna ne denir?', options: ['Onaylanmış gerçek kırılım', 'Geçici kırılma (fitil)', 'Başarılı yeniden test'], correct: 1 },
+    { q: 'Geçici kırılma ile gerçek kırılım arasındaki temel fark nedir?', options: ['Hiç fark yok', 'Gerçek kırılım gövde ile seviyenin arkasında kapanır, sadece fitille değil', 'Geçici kırılma her zaman daha güçlüdür'], correct: 1 },
+    { q: 'Bir seviyeyi kırdıktan sonra fiyat geri dönüp test etti ve tekrar kırmadan başarıyla sıçradı — bu ne anlama gelir?', options: ['Kırılımın tamamen başarısız olması', 'Kırılımın geçerliliğine ek onay', 'Kırılımla hiçbir ilgisi yok'], correct: 1 },
+    { q: 'Önemli bir seviyeye ilk dokunuşta neden girilmemesi önerilir?', options: ['İlk dokunuş her zaman onaylanmış kırılımdır', 'İlk dokunuş gerçek kırılım değil geçici fitil kırılması olabilir', 'Bunun bir nedeni yok'], correct: 1 }
+  ]
+},
+{
+  title: 'Hareketli Ortalamalar ve Hacim Okuma 📊',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Basit ama güçlü araçlar: ortalamalar fiyat hareketini yumuşatıp trendi netleştirir, hacim ise her hareketin ne kadar güçlü veya zayıf olduğunu ortaya koyar.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">SMA — Basit Ortalama</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Son N mumun (örn. 50) basit ortalaması — her mum eşit ağırlıklıdır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">EMA — Üssel Ortalama</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Son mumlara daha fazla ağırlık verir, SMA\'ya göre son fiyat değişimlerine daha hızlı tepki verir.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">HMA — Hull Ortalaması</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">EMA ve SMA\'dan daha hızlı tepki, daha az gecikme — anlık kararlarda sıkça kullanılır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Hacim</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Dönem içinde işlem gören sözleşme/hisse sayısını temsil eder. Yüksek hacimli fiyat hareketi zayıf hacimlisine göre daha güçlü ve güvenilirdir.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Pratikte nasıl kullanılır?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Fiyat hareketli ortalamasının üzerindeyse genel eğilim yükseliş, altındaysa düşüştür. Kırılımda yüksek hacim geçerliliğine güveninizi artırır.</p></div>',
+  quiz: [
+    { q: 'SMA ile EMA arasındaki temel fark nedir?', options: ['Hiç fark yok', 'EMA son mumlara daha fazla ağırlık verir, daha hızlı tepki verir', 'SMA EMA\'dan daha hızlı tepki verir'], correct: 1 },
+    { q: 'Call sözleşmenizde fiyat bir direnci çok yüksek hacimle kırdı — bu kırılımın gücü hakkında ne söyler?', options: ['Kırılım zayıf ve güvenilmez', 'Kırılım daha güçlü ve daha güvenilir', 'Hacmin kırılım gücüyle ilgisi yok'], correct: 1 },
+    { q: 'Genellikle en hızlı tepki ve en az gecikmeyle bilinen ortalama hangisidir?', options: ['SMA', 'HMA', 'Aralarında fark yok'], correct: 1 },
+    { q: 'Fiyat sürekli ana hareketli ortalamasının altında işlem görüyor — muhtemel genel eğilim nedir?', options: ['Yükseliş eğilimi', 'Düşüş eğilimi', 'Fiyatın ortalamaya göre konumunun eğilimle ilgisi yok'], correct: 1 }
+  ]
+},
+{
+  title: 'Osilatörler: RSI · MFI · Stochastic · MACD 🌀',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Osilatörler hareketin "momentumunu" ölçer — piyasa güçlü mü ivmeleniyor yoksa gücünü mü kaybediyor?</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">RSI (Göreceli Güç Endeksi)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">0-100 arası değişir. 70 üzeri = aşırı alım (olası düzeltme), 30 altı = aşırı satım (olası sıçrama).</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">MFI (Para Akış Endeksi)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">RSI gibi ama hesabına hacmi de katar — sadece fiyatı değil "gerçek parayla desteklenen momentumu" ölçer.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Stochastic</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Kapanış fiyatını bir dönemdeki işlem aralığıyla karşılaştırır, kesişen iki çizgi (%K ve %D) ile sinyal verir.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">MACD</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">İki hareketli ortalama arasındaki ilişkiyi MACD çizgisi, sinyal çizgisi ve histogramla ölçer — kesişmeleri momentum sinyali verir.</p></div>' +
+    '</div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Uyumsuzluk (Divergence) kavramı</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Fiyat bir yöne hareket ederken (örn. daha yüksek tepe) osilatör ters yöne gidiyorsa (daha düşük tepe) — bu "uyumsuzluk" genellikle zayıflayan momentuma ve yaklaşan dönüşe işaret eder. Bu uyumsuzluk kavramı, en güçlü OPN LIO araçlarının bazılarının üzerine kurulduğu sütunlardan biridir.</p></div>',
+  quiz: [
+    { q: 'Call sözleşmenizde RSI 70 üzerine çıktı — bu genellikle neye işarettir?', options: ['Aşırı satım ve olası yükseliş sıçraması', 'Aşırı alım ve olası düşüş düzeltmesi', 'Bu sayının anlamı yok'], correct: 1 },
+    { q: 'MFI\'yi RSI\'den ayıran nedir?', options: ['Hiç fark yok', 'MFI hesabına işlem hacmini katar', 'RSI hacmi katar, MFI katmaz'], correct: 1 },
+    { q: 'Sözleşmenizin fiyatı yeni yüksek tepeye çıktı ama momentum göstergesi daha düşük tepe çizdi — buna ne denir?', options: ['Yükselişin güçlü onayı', 'Zayıflayan momentuma işaret edebilecek uyumsuzluk', 'Gösterge hatası'], correct: 1 },
+    { q: 'Stochastic göstergesi esas olarak neye dayanır?', options: ['Kapanış fiyatını bir dönemdeki işlem aralığıyla karşılaştırma', 'Sadece işlem hacmi', 'Aktif trader sayısı'], correct: 0 }
+  ]
+},
+{
+  title: 'İleri Araçlar: SAR · ATR · Bollinger · Fibonacci · Ichimoku 🧭',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Piyasayı farklı açılardan gösteren ek araçlar: trend, volatilite ve olası dönüş seviyeleri.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Parabolic SAR</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Fiyatın üstünde veya altında trendi izleyen noktalar; konumlarının dönmesi (örn. alttan üste) olası dönüşe işaret eder.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">ATR (Ortalama Gerçek Aralık)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Piyasanın mevcut volatilite düzeyini ölçer — yükseldikçe hareketler sertleşir, volatiliteye uygun esnek stop-loss ayarlamada kullanılır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Bollinger Bantları</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Hareketli ortalama etrafında volatiliteyle genişleyip daralan bant. Şiddetli sıkışma genelde güçlü bir hareketi öncüler.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Fibonacci ve Ichimoku</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Fibonacci</b>: güçlü hareket sonrası fiyatın genelde sıçradığı göreceli seviyeler (%23.6, %38.2, %61.8...). <b>Ichimoku</b>: trend, destek/direnç ve momentumu tek bulutta birleştiren tam sistem.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Her şeyi üst üste yığmayın</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">En iyi traderlar, düzinelerce çelişen göstergeyle grafiği doldurmak yerine derinlemesine anladıkları 2-3 araç seçer.</p></div>',
+  quiz: [
+    { q: 'Parabolic SAR noktaları mumların altından üstüne döndü — bu genellikle neye işarettir?', options: ['Yükseliş trendinin değişmeden devamı', 'Olası trend dönüşü', 'Bu dönüşün anlamı yok'], correct: 1 },
+    { q: 'ATR göstergesi esas olarak neyi ölçer?', options: ['Fiyat yönü', 'Piyasanın mevcut volatilite düzeyi', 'Sadece işlem hacmi'], correct: 1 },
+    { q: 'İzlediğiniz bir sözleşmede şiddetli Bollinger sıkışması fark ettiniz — bu genelde neyi öncüler?', options: ['Güçlü bir gelecek fiyat hareketi', 'Hareketsiz kalıcı istikrar', 'Sıkışmanın gelecekteki hareketle ilgisi yok'], correct: 0 },
+    { q: 'Yeni başlayan bir trader için araç sayısı açısından en iyisi nedir?', options: ['Mümkün olduğunca çok gösterge kullanmak', '2-3 aracı derinlemesine anlamak', 'Tüm araçlardan tamamen vazgeçmek'], correct: 1 }
+  ]
+},
+{
+  title: 'Opsiyon Sözleşmeleri Dünyası: Temeller 🎯',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Opsiyon sözleşmeleri güçlü ama kullanmadan önce kesin anlayış gerektiren bir araçtır — işte temel terimler.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Opsiyon sözleşmesi nedir?</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Belirli bir tarihe kadar belirli bir fiyattan belirli bir varlığı alma veya satma hakkını (zorunluluk değil) "prim" adı verilen bir ücret karşılığında size veren sözleşme.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Call ve Put</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Call</b>: alma hakkı — fiyat yükselirse kazanırsınız. <b>Put</b>: satma hakkı — fiyat düşerse kazanırsınız.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Strike ve Vade</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Strike</b>: sözleşmede kararlaştırılan fiyat. <b>Vade</b>: sözleşmenin sona erdiği tarih — kullanılmazsa sonrasında değersiz kalır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">ITM · OTM · ATM</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>ITM</b> (kârda): sözleşmenin şu an gerçek değeri var. <b>OTM</b> (zararda): şu an gerçek değeri yok. <b>ATM</b> (nötr): mevcut fiyat strike\'a çok yakın.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Hisseyi doğrudan işlem yapmaktan farkı</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Hisseyi doğrudan almak vade tarihi olmayan gerçek mülkiyet verir. Opsiyon sözleşmeleri daha küçük sermayeyle daha yüksek kaldıraç (görece büyük kazanç/kayıp) verir ama bitecek zamanla sınırlıdır — "zaman aşınması" hareketsiz uzun sözleşme tutan herkesin sessiz düşmanıdır.</p></div>',
+  quiz: [
+    { q: 'Bir hissenin yükseleceğini düşünerek call sözleşmesi aldınız — bu sözleşme size ne sağlar?', options: ['Fiyata bakılmaksızın hisseyi alma zorunluluğu', 'Belirli bir tarihe kadar belirli fiyattan hisseyi alma hakkı (zorunluluk değil)', 'Anında kalıcı hisse mülkiyeti'], correct: 1 },
+    { q: 'Bir hissenin fiyatının düşeceğini bekliyorsunuz — hangi sözleşme bu beklentiye uyar?', options: ['Call', 'Put', 'Aralarında fark yok'], correct: 1 },
+    { q: 'Sözleşmeniz kullanılmadan ve değersiz olarak vade tarihine ulaştı — ne olur?', options: ['Otomatik olarak yenilenir', 'Değersiz kalır ve ödediğiniz primi kaybedersiniz', 'Otomatik olarak kalıcı hisse mülkiyetine dönüşür'], correct: 1 },
+    { q: 'Sözleşmeniz şu anda "OTM" (zararda) — bu ne anlama gelir?', options: ['Şu anda büyük gerçek değeri var', 'Mevcut fiyatta şu anda gerçek değeri yok', 'Vadesi zaten dolmuş'], correct: 1 },
+    { q: 'Bir hisseyi doğrudan almak ile üzerine opsiyon sözleşmesi almak arasındaki temel fark nedir?', options: ['Aralarında hiç fark yok', 'Sözleşme vade tarihi ve daha yüksek kaldıraçla sınırlıdır, hisse ise vade tarihi olmayan kalıcı mülkiyettir', 'Hisse her zaman sözleşmeden ucuzdur'], correct: 1 }
+  ]
+},
+{
+  title: 'Greeks ve Opsiyon Fiyatlaması 🔤',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Greeks, bir sözleşmenin fiyatının "neden" öyle hareket ettiğini açıklar — anlamak sizi beklenmedik sürprizlerden korur.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Delta</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Hissedeki 1 dolarlık harekete karşı sözleşme fiyatının ne kadar hareket ettiğini ölçer, ve "kârda" bitme olasılığına yaklaşır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Gamma</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Delta\'nın kendisinin ne kadar hızlı değiştiğini ölçer — sözleşme "nötr"e yaklaştıkça Gamma yükselir ve hareket sertleşir.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Theta</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">"Zaman aşınmasını" ölçer — fiyat hiç hareket etmese bile vadeye yaklaştıkça sözleşmenin günlük ne kadar değer kaybettiği.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Vega ve Rho</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Vega</b>: zımni volatilite (IV) değişiminin fiyata etkisi. <b>Rho</b>: faiz oranı değişiminin etkisi — kısa vadeli sözleşmelerde genelde sınırlıdır.</p></div>' +
+    '</div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Zımni Volatilite (IV)</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Piyasanın gelecekteki fiyat dalgalanmasına dair beklentisidir ve herhangi bir sözleşmenin fiyatlanmasında temel unsurdur. IV yükselişi, hisse hiç hareket etmese bile primi yükseltir — birçok yeni başlayan bu faktörü tamamen görmezden geldiği için kaybeder.</p></div>',
+  quiz: [
+    { q: 'Hisse fiyatı tamamen sabitken sözleşmeniz günlük değer kaybediyor — hangi Greek sorumlu?', options: ['Delta', 'Theta', 'Rho'], correct: 1 },
+    { q: 'Sözleşmeniz "nötr" (ATM) noktasına yaklaştı ve hareketinin daha sert ve fiyata daha hızlı tepki verdiğini fark ettiniz — hangi unsur yükseldi?', options: ['Gamma', 'Rho', 'Bunun bir unsurla ilgisi yok'], correct: 0 },
+    { q: 'Bir hissede zımni volatilite (IV) aniden yükseldi, hisse fiyatı sabit kalsa bile sözleşmenizin fiyatı yükseldi — hangi Greek sorumlu?', options: ['Vega', 'Theta', 'Delta'], correct: 0 },
+    { q: 'Delta esas olarak neyi ölçer?', options: ['Sadece günlük zaman aşınması', 'Hisse hareketine karşı sözleşme fiyatının hareketi ve kârda bitme olasılığı', 'Sadece faiz oranı etkisi'], correct: 1 }
+  ]
+},
+{
+  title: 'Ekoller ve Kişisel Strateji Kurma 🏛️',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Trading için tek bir "doğru" yol yoktur — farklı ekoller vardır, önemli olan onlardan size uygun net bir strateji kurmaktır.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Price Action</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Ağır göstergelere dayanmadan fiyatın kendisini (mumlar, tepe-dip, destek/direnç) okumak.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Wyckoff Yöntemi</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Piyasa aşamalarına (toplama, yükseliş, dağıtım, düşüş) ve büyük oyuncuların davranışına odaklanır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Smart Money / ICT</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Büyük kurumların piyasayı nasıl hareket ettirdiğini ve büyük hareketlerden önce likiditeyi nerede topladığını anlamaya çalışır.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Klasik ekol</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Trend çizgileri, geometrik formasyonlar (üçgenler, bayraklar) ve geleneksel destek/direnç seviyelerine dayanır.</p></div>' +
+    '</div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Stratejinizi nasıl kurarsınız?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">İyi bir stratejinin önceden net üç unsuru olmalı: <b>giriş koşulu</b> (tam olarak ne zaman girersiniz), <b>kârla çıkış koşulu</b> (nerede kâr alırsınız), ve <b>stop-loss</b> (nerede hatayı kabul edip çıkarsınız). Üçü olmadan trading değil kumar oynarsınız.</p></div>',
+  quiz: [
+    { q: 'Ağır göstergelere dayanmadan fiyatın kendisini (mumlar, tepe-dip) okumaya odaklanan ekol hangisidir?', options: ['Wyckoff', 'Price Action', 'Smart Money'], correct: 1 },
+    { q: 'Büyük kurumların nasıl hareket ettiğini ve likiditeyi nerede topladığını anlamaya çalışır — bu hangi yaklaşım?', options: ['Smart Money / ICT', 'Klasik ekol', 'Hiçbir yaklaşımla ilgisi yok'], correct: 0 },
+    { q: 'Herhangi bir call veya put işleminden önce tanımlanması gereken üç temel unsur nedir?', options: ['Sadece hisse adı', 'Giriş koşulu, kârla çıkış koşulu ve stop-loss', 'Sadece son mumun rengi'], correct: 1 },
+    { q: 'Önceden stop-loss belirlemeden bir call sözleşmesine girdiniz — ana risk nedir?', options: ['Hiç risk yok', 'Hatayı ne zaman kabul edip çıkacağınızı bilmede zorluk, kaybı büyütebilir', 'Sözleşme otomatik güvenle kapanır'], correct: 1 }
+  ]
+},
+{
+  title: 'Sermaye Yönetimi ve Trading Psikolojisi 🧠',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Dünyanın en iyi stratejisi bile sıkı risk yönetimi ve psikolojik disiplin olmadan başarısız olur — profesyoneli amatörden ayıran gerçekten budur.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Pozisyon Büyüklüğü</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Altın kural: ne kadar emin olursanız olun, tek işlemde toplam sermayenizin %1-2\'sinden fazlasını riske atmayın.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Portföy yönetimi</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">İşlemleri çeşitlendirmek ve tüm sermayeyi tek varlık veya sözleşmede toplamamak, hesabınızı bitirecek tek bir sürprizden korur.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Psikolojik disiplin</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Korku ve açgözlülük traderın en büyük düşmanıdır — korkuyla erken çıkmak veya açgözlülükle çok kalmak, net bir planı yok eder.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Trading Günlüğü</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Her işlemi belgelemek (giriş nedeni, sonuç, öğrenilen ders) kendinizi geliştirmenin ve aynı hatayı tekrarlamaktan kaçınmanın en hızlı yoludur.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Altın kural</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Başarılı bir trader sadece kazanma sayısıyla değil, doğru kararda daha büyük kazançlara karşı küçük yönetilen kayıplarla üstün olur.</p></div>',
+  quiz: [
+    { q: 'Toplam sermayeden tek işlem başına yaygın olarak belirtilen risk büyüklüğü altın kuralı nedir?', options: ['Sermayenin %50\'si', 'Sermayenin %1-2\'si', 'Tüm sermaye bir kerede'], correct: 1 },
+    { q: 'Trend lehinize devam ederken korkuyla çok erken kazançlı bir işlemden çıktınız — hangi psikolojik faktör etkiledi?', options: ['Açgözlülük', 'Korku', 'Bu kararla psikolojik faktörün ilgisi yok'], correct: 1 },
+    { q: 'Trading Günlüğünün ana faydası nedir?', options: ['Gerçek bir faydası yok', 'Performansı geliştirmek ve hataları tekrarlamaktan kaçınmak için neden ve sonuçları belgelemek', 'Sadece işlem hızını artırır'], correct: 1 },
+    { q: 'Bu derse göre başarılı bir traderı gerçekten neyin ayırt eder?', options: ['Sadece büyüklüğüne bakmaksızın kazanma sayısı', 'Doğru kararda küçük kayıpları büyük kazançlara karşı akıllıca yönetmek', 'Tüm sermayeyi tek güvenli işlemde toplamak'], correct: 1 }
+  ]
+},
+{
+  title: 'Kralın Çağrısı × Akıllı Pivot 👑',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Artık öncekinden farklı bir aşamaya ulaştınız — burada piyasayı gerçek OPN LIO sistem kullanıcılarının gördüğü gibi görmeye başlıyorsunuz.</p>' +
+    '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">👑 Kralın Çağrısı</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Düzinelerce çelişen göstergeyi izlemek yerine, grafiğin üstünde tüm piyasa durumunu özetleyen büyük net tek bir cümleye baktığınızı hayal edin: yükseliş, düşüş veya nötr. Tam olarak "Kralın Çağrısı" fikri budur — daha büyük bir zaman dilimiyle filtrelenmiş, birkaç analitik ölçüt arasında ağırlıklı bir oylama, gürültü yerine size temiz bir okuma sunar. Deneyenler ilk günden piyasayı düşünme şeklini değiştirdiğini söylüyor.</p></div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎯 Akıllı Pivot</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Destek ve direnç hakkında öğrendiklerinizi hatırlıyor musunuz? Şimdi bunları büyük zaman dilimlerinden otomatik çizen, minimum görsel karmaşayla, gerçek gücüne göre sıralanmış bir araç hayal edin — grafiği dolduran düzinelerce rastgele çizgi yerine. "Akıllı Pivot"un tam olarak yaptığı budur, OPN LIO traderlarının giriş noktalarını güvenle belirlemek için günlük en çok güvendiği araçlardan biri.</p></div>',
+  quiz: [
+    { q: '"Kralın Çağrısı" aracının temel fikri nedir?', options: ['Düzinelerce ayrı göstergeyi birlikte göstermek', 'Birkaç ölçüt arasında ağırlıklı oylamayla piyasa durumunu özetleyen birleşik net okuma', 'Trader adına otomatik işlem yapmak'], correct: 1 },
+    { q: '"Akıllı Pivot"u manuel destek/direnç çizgileri çizmekten ayıran nedir?', options: ['Hiç fark yok', 'Büyük zaman dilimlerinden minimum görsel karmaşayla otomatik çizim ve güce göre sıralama', 'Hiçbir zaman dilimi kullanmaz'], correct: 1 },
+    { q: 'Daha önce öğrendiğiniz hangi kategoriye "Akıllı Pivot" fikri esas olarak aittir?', options: ['Greeks', 'Destek ve direnç', 'Opsiyon sözleşmeleri'], correct: 1 }
+  ]
+},
+{
+  title: 'Zenginlerin İmparatorluğu × Bütünleşik Sistem ⚜️',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Burada resim tamamlanır — çıplak gözün likidite ve momentum hareketinde göremediğini ortaya çıkarmak için tasarlanmış araçlar.</p>' +
+    '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">💎 Öz Çizgi ve Kalkan</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">"Zenginlerin İmparatorluğu"nda öz çizgi sıradan bir çizgi değildir — mumların ona tekrarlanan saygısı, gerçek bir karar bölgesi olarak ne kadar güçlü olduğunu ortaya koyar. "Kalkan" size ek bir güven katmanı sunar: fiyat kırmadan ona ne kadar çok saygı gösterirse, sonraki her yaklaşımda sinyal o kadar güçlenir.</p></div>' +
+    '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">☁️ Gelişmiş Bulut ve Hacim Bulutu</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Gelişmiş bulut fiyatı referans momentum bölgesi olarak çevreler — kalınlığı ve rengi bölgenin gücünü veya zayıflığını yansıtır, ve mumların üst/alt sınırlarına saygısı zamanla gözünüzün antrene olduğu bir sinyaldir. Hacim bulutu ise hareketin arkasındaki gerçek likidite yoğunluğunu ortaya çıkarır — bazı traderların onu piyasa üzerinde bir "üçüncü göz" olarak tanımlamasının tam nedeni budur.</p></div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎨 Mumlarda Renk Sıçraması</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">OPN LIO kullanıcıları için en heyecan verici anlardan biri: mum renginin fosforlu yeşilden doğrudan beyaza dönmesi — "Renk Sıçraması" olarak bilinen bu, momentumdaki değişime dair anlık görsel bir sinyaldir, sistemin diğer araçlarıyla uyumlu olduğunda gücü belirgin şekilde artar.</p></div>',
+  quiz: [
+    { q: '"Zenginlerin İmparatorluğu"nda mumların öz çizgiye tekrarlanan saygısı ne ortaya koyar?', options: ['Hiçbir anlamı yok', 'Gerçek bir karar bölgesi olarak ne kadar güçlü olduğu', 'Her zaman göz ardı edilmeli'], correct: 1 },
+    { q: 'Gelişmiş bulutun kalınlığı ve rengi neyi yansıtır?', options: ['Bölgenin momentum referansı olarak gücü veya zayıflığı', 'Herhangi bir bölgenin gücüyle ilgisi yok', 'Sadece hisse adı'], correct: 0 },
+    { q: 'OPN LIO sisteminde mum renginin fosforlu yeşilden beyaza dönmesine ne denir?', options: ['Uyumsuzluk (Divergence)', 'Renk Sıçraması', 'Aşırı alım'], correct: 1 },
+    { q: 'Hacim bulutu özellikle neyi ortaya çıkarır?', options: ['Faiz oranı yönü', 'Fiyat hareketinin arkasındaki gerçek likidite yoğunluğu', 'Sözleşme vade tarihleri'], correct: 1 }
+  ]
+},
+{
+  title: 'Mezuniyet: Tam Bütünleşme 🎓',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Son seviyeye ulaştınız — şimdi öğrendiğiniz her şeyi tutarlı tek bir görüşe bağlama zamanı.</p>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🧩 Öğrendiklerinizin haritası</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.9;">Tek bir mumu okumaktan tepe-dip yapısına, göstergeler ve osilatörlerden opsiyonlar ve Greeks dünyasına, sermaye yönetimi ve psikolojik disipline — tüm bunlar ayrı bilgi değil, deneyimli bir traderın gözünü oluşturan üst üste inşa edilen katmanlardır.</p></div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🦁 Şimdi, ve öncesinde değil</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Artık OPN LIO sistemi dahil herhangi bir strateji veya trading sistemini gerçek farkındalıkla değerlendirmenizi sağlayan temele sahipsiniz. Kralın Çağrısı, Akıllı Pivot ve Zenginlerin İmparatorluğu\'nu derin anlayışınız artık sadece araç isimleri değil, bu programda inşa ettiğiniz her şeyin doğal uzantısı.</p></div>' +
+    '<div class="hl"><b style="color:#39FF14; display:block; margin-bottom:8px;">🏆 Bu testten sonra ne olur?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Geçtiğinizde, paylaşılabilir resmi "OPN LIO Sertifikalı Trader" sertifikasını, yalnızca hesabınıza bağlı özel %60 abonelik indirimini ve onaylı elçi olarak başvuru hakkını kazanırsınız.</p></div>',
+  quiz: [
+    { q: 'Sonunda açıklandığı gibi bu eğitim programının temel amacı nedir?', options: ['Araç isimlerini anlamadan ezberlemek', 'OPN LIO dahil herhangi bir stratejiyi bilinçli değerlendirebileceğiniz gerçek bir temel kurmak', 'Düşünmeden sizi hemen abone olmaya zorlamak'], correct: 1 },
+    { q: 'Bu son seviyenin testini başarıyla geçtiğinizde hemen ne kazanırsınız?', options: ['Ek bir şey yok', 'Paylaşılabilir tamamlama sertifikası, hesabınıza bağlı özel indirim ve elçi başvuru hakkı', 'Otomatik site yasağı'], correct: 1 },
+    { q: 'İzlediğiniz bir call sözleşmesi RSI\'de aşırı alım gösterdi, aynı zamanda OPN LIO grafiğinde fosforlu yeşilden beyaza "Renk Sıçraması" belirdi — deneyimli bir trader bu sinyalleri nasıl birleştirir?', options: ['Tüm sinyalleri göz ardı edip rastgele girer', 'Karar öncesi tam resmi değerlendirmek için geleneksel momentum göstergesini sistem sinyaliyle birlikte ilişkilendirir', 'Başka hiçbir göstergeye bakmadan sadece mum rengine güvenir'], correct: 1 }
+  ]
+}
+];
+
+function showTab(t) {
+  document.getElementById('loginForm').style.display = t === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = t === 'register' ? 'block' : 'none';
+  document.getElementById('tabLogin').className = t === 'login' ? 'btn-gold' : '';
+  document.getElementById('tabLogin').style.cssText = t === 'login' ? '' : 'flex:1;padding:10px;background:transparent;border:1px solid rgba(212,175,55,.3);color:#c9d2e3;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit;';
+  document.getElementById('tabRegister').style.cssText = t === 'register' ? 'flex:1;padding:10px;' : 'flex:1;padding:10px;background:transparent;border:1px solid rgba(212,175,55,.3);color:#c9d2e3;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit;';
+}
+
+function doRegister() {
+  var name = document.getElementById('re_name').value.trim();
+  var email = document.getElementById('re_email').value.trim();
+  var pass = document.getElementById('re_pass').value;
+  var agreed = document.getElementById('re_agree').checked;
+  var msg = document.getElementById('authMsg');
+  if (!agreed) { msg.style.color = '#ff6b6b'; msg.textContent = 'Önce Kullanım Şartlarını kabul etmelisiniz.'; return; }
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'register', name, email, password: pass, lang:'tr' }) })
+    .then(r=>r.json()).then(function(res){
+      if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
+      msg.style.color = '#39FF14';
+      msg.textContent = 'Kayıt oldunuz! Şimdi giriş yapın.';
+      showTab('login');
+    });
+}
+
+function doLogin() {
+  var email = document.getElementById('li_email').value.trim();
+  var pass = document.getElementById('li_pass').value;
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'login', email, password: pass }) })
+    .then(r=>r.json()).then(function(res){
+      if (!res.ok) { document.getElementById('authMsg').style.color='#ff6b6b'; document.getElementById('authMsg').textContent = res.error; return; }
+      session = res;
+      localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      renderDash();
+    });
+}
+
+function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }
+
+function renderDash() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('dashScreen').style.display = 'block';
+  document.getElementById('authStatus').innerHTML = session.student.name + ' — <a href="#" onclick="logout();return false;" style="color:#ff9b9b;">Çıkış</a>';
+  document.getElementById('dashName').textContent = session.student.name;
+  document.getElementById('dashRank').textContent = '🏅 ' + session.student.rank;
+  document.getElementById('dashPoints').textContent = session.student.points;
+
+  var grid = document.getElementById('levelsGrid');
+  var progress = {}; (session.progress||[]).forEach(function(p){ progress[p.level_num] = p; });
+  grid.innerHTML = '';
+  for (var i=1;i<=12;i++) {
+    var done = progress[i] && progress[i].completed;
+    var unlocked = i <= session.student.current_level;
+    var el = document.createElement('div');
+    el.className = 'card';
+    el.style.cssText = 'display:flex; align-items:center; gap:16px; ' + (unlocked ? 'cursor:pointer;' : 'opacity:.45;');
+    el.innerHTML =
+      '<div class="level-badge" style="background:'+(done?'#39FF14':unlocked?'#D4AF37':'#2a3348')+'; color:'+(done||unlocked?'#111':'#8a93a8')+';">'+(done?'✓':i)+'</div>' +
+      '<div style="flex:1;"><div style="font-weight:800; font-size:15px;">Seviye '+i+': '+LEVELS[i].title.replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\s*$/u,'')+'</div><div style="font-size:12.5px; color:#8a93a8; margin-top:3px;">'+(done?'Tamamlandı — Puan '+progress[i].score+'%':unlocked?'Şimdi Erişilebilir':'Kilitli')+'</div></div>' +
+      (unlocked && !done ? '<span style="color:#D4AF37; font-weight:800; font-size:13px;">Başla →</span>' : '');
+    if (unlocked) el.onclick = (function(lv){ return function(){ openLesson(lv); }; })(i);
+    grid.appendChild(el);
+  }
+
+  if (session.student.graduated_at) {
+    var btn = document.getElementById('ambassadorBtn');
+    btn.disabled = false; btn.style.opacity = '1';
+    btn.textContent = '⚜ OPN LIO Elçisi Olmaya Uygun';
+    btn.onclick = function(){ location.href = './affiliate.html'; };
+  }
+}
+
+function openLesson(level) {
+  currentLevel = level;
+  var lv = LEVELS[level];
+  document.getElementById('dashScreen').style.display = 'none';
+  document.getElementById('lessonScreen').style.display = 'block';
+  document.getElementById('lessonLevelTag').textContent = 'Seviye ' + level;
+  document.getElementById('lessonTitle').textContent = lv.title;
+  document.getElementById('lessonBody').innerHTML = lv.body;
+  var box = document.getElementById('quizBox'); box.innerHTML = '';
+  document.getElementById('quizResult').textContent = '';
+  lv.quiz.forEach(function(q, qi){
+    var d = document.createElement('div');
+    d.style.cssText = 'margin-bottom:18px; background:rgba(255,255,255,.03); border-radius:12px; padding:16px;';
+    var opts = q.options.map(function(o,oi){ return '<label style="display:flex; align-items:center; gap:8px; font-size:14px; color:#c9d2e3; margin-bottom:8px; cursor:pointer; font-weight:400;"><input type="radio" name="q'+qi+'" value="'+oi+'" style="width:auto;">'+o+'</label>'; }).join('');
+    d.innerHTML = '<div style="font-weight:700; margin-bottom:10px; font-size:14.5px;">'+(qi+1)+'. '+q.q+'</div>' + opts;
+    box.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+
+function backToDash() {
+  document.getElementById('lessonScreen').style.display = 'none';
+  document.getElementById('dashScreen').style.display = 'block';
+}
+
+function submitQuiz() {
+  var lv = LEVELS[currentLevel];
+  var correct = 0;
+  lv.quiz.forEach(function(q, qi){
+    var sel = document.querySelector('input[name="q'+qi+'"]:checked');
+    if (sel && parseInt(sel.value) === q.correct) correct++;
+  });
+  var score = Math.round((correct / lv.quiz.length) * 100);
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'complete-level', studentId: session.student.id, level: currentLevel, score }) })
+    .then(r=>r.json()).then(function(res){
+      var el = document.getElementById('quizResult');
+      if (!res.ok) { el.style.color = '#ff6b6b'; el.textContent = 'Puanınız ' + score + '% — ' + res.error; return; }
+      el.style.color = '#39FF14';
+      el.textContent = res.graduated ? 'Mezuniyet tebrikler! 🎉 Puan ' + score + '%' : 'Aferin! Puan ' + score + '% — ' + res.pointsEarned + ' puan kazandınız 🎉';
+      session.student.points += res.pointsEarned;
+      session.student.current_level = res.nextLevel;
+      session.student.rank = res.rank;
+      if (res.graduated) { session.student.graduated_at = new Date().toISOString(); session.student.discount_code = res.discountCode; }
+      var lvlProg = session.progress.find(function(p){return p.level_num===currentLevel;});
+      if (lvlProg) { lvlProg.completed = true; lvlProg.score = score; } else { session.progress.push({level_num:currentLevel, completed:true, score:score}); }
+      localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      setTimeout(function(){ backToDash(); renderDash(); }, 1600);
+    });
+}
+
+
+var lastActive = Date.now();
+['click','keydown','scroll'].forEach(function(ev){ document.addEventListener(ev, function(){ lastActive = Date.now(); }); });
+setInterval(function(){
+  if (!session || document.getElementById('sessionPromptModal')) return;
+  if (Date.now() - lastActive > 30*60*1000) showExtendPrompt();
+}, 30000);
+function showExtendPrompt(){
+  var countdown = 30;
+  var modal = document.createElement('div');
+  modal.id = 'sessionPromptModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = '<div class="card" style="max-width:360px; text-align:center;"><h3 style="margin:0 0 10px; color:#fff;">Hâlâ orada mısınız?</h3><p style="color:#aab3c5; font-size:13px; margin:0 0 18px;">Otomatik olarak çıkış yapılacak: <span id="sessCountdown">30</span> saniye.</p><button class="btn-gold" style="width:100%;" onclick="extendSession()">Oturumu 30 Dakika Uzat</button></div>';
+  document.body.appendChild(modal);
+  window._sessTimer = setInterval(function(){
+    countdown--;
+    var el = document.getElementById('sessCountdown'); if (el) el.textContent = countdown;
+    if (countdown <= 0) { clearInterval(window._sessTimer); logout(); }
+  }, 1000);
+}
+function extendSession(){
+  clearInterval(window._sessTimer);
+  lastActive = Date.now();
+  var m = document.getElementById('sessionPromptModal'); if (m) m.remove();
+}
+if (session && session.student) { renderDash(); } else { showTab('login'); }
+</script>
+</body>
+</html>

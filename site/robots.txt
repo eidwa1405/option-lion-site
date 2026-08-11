@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /nawaf-ZsN8pU0E.html
+Disallow: /affiliate-dashboard.html
+Disallow: /member-dashboard.html
+Disallow: /welcome.html
+
+Sitemap: https://opnlio.com/sitemap.xml

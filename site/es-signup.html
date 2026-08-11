@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" id="top">
+<html lang="es" dir="ltr" id="top">
 <head>
+<script>(function(){if(location.hostname==='opnlio.com'||location.hostname==='www.opnlio.com'){location.replace('https://opon.netlify.app'+location.pathname+location.search);}})();</script>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FWQZ4B4CBD"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -9,6 +11,7 @@
   gtag('config', 'G-FWQZ4B4CBD');
 </script>
 <meta charset="utf-8">
+<meta name="description" content="Join OPN LIO — register and start your 14-day free trial of the TradingView analytical tools.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Suscripción — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
@@ -41,6 +44,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
   </a>
   <a href="./es-lion.html" style="font-size:13px; font-weight:700; color:#c9d2e3; border:1px solid #2a3348; padding:8px 18px; border-radius:20px;">↩ Inicio</a>
 </nav>
+<a href="./academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Nuevo: Programa Gratuito de Certificación de Traders — 12 niveles, de cero a profesional, con certificado y descuento exclusivo. <span style="color:#39FF14; text-decoration:underline;">Empieza gratis →</span></p></a>
 
 <section style="padding:clamp(60px,9vw,110px) clamp(20px,6vw,64px);">
   <div style="max-width:640px; margin:0 auto;">
@@ -207,6 +211,8 @@ function submitSignup(){
     }).catch(function(){});
     Paddle.Checkout.open({
       items: [{ priceId: getPriceFromURL(), quantity: 1 }],
+      customer: { email: email },
+      customData: { customerEmail: email, customerName: name },
       settings: { displayMode: 'overlay', variant: 'one-page', successUrl: location.origin + '/welcome.html?lang=es&name=' + encodeURIComponent(name) + '&price=' + encodeURIComponent(getPriceFromURL()) + '&regdate=' + encodeURIComponent(new Date().toISOString()) + (refValid ? '&ref=' + encodeURIComponent(ref) : '') }
     });
     btn.disabled = false;

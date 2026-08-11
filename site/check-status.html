@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>تحقق من اشتراكك — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
@@ -38,7 +39,7 @@ button:hover{filter:brightness(1.06);}
     <p style="font-size:13.5px; color:#aab3c5; margin:0; line-height:1.8;">أدخل رقم عميلك (المرسَل إليك بالبريد عند التفعيل) وحساب TradingView معاً لعرض حالة اشتراكك فوراً</p>
   </div>
   <div class="field">
-    <label>🆔 رقم العميل</label>
+    <label>🆔 رقم العضوية</label>
     <input id="cid" placeholder="مثال: sa1234567" style="direction:ltr; text-align:left;">
   </div>
   <div class="field">
@@ -95,7 +96,7 @@ function checkStatus(){
   var notFound = document.getElementById('notFound');
   notFound.style.display = 'none';
   if (!cid || !tv) {
-    notFound.textContent = 'يرجى إدخال رقم العميل وحساب TradingView معاً.';
+    notFound.textContent = 'يرجى إدخال رقم العضوية وحساب TradingView معاً.';
     notFound.style.display = 'block';
     return;
   }

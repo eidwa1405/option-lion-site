@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Free OPN LIO Trader Qualification Program — 12 levels from zero to advanced, with quizzes and a completion certificate.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O P N  LIO Academy — Free Training Program</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Inter',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh;}
+a{color:#D4AF37;}
+.card{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.015)); border:1px solid rgba(212,175,55,.18); border-radius:18px; padding:26px;}
+.btn-gold{background:linear-gradient(135deg,#D4AF37,#f0cf6c); color:#1a1408; font-weight:900; border:none; border-radius:12px; padding:14px 26px; font-size:15px; cursor:pointer; font-family:inherit;}
+.btn-gold:disabled{opacity:.4; cursor:not-allowed;}
+input{width:100%; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.25); background:#10141f; color:#fff; font-family:inherit; font-size:14.5px;}
+label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bottom:6px;}
+.level-badge{width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; flex-shrink:0;}
+.bx{background:rgba(255,255,255,.03); border-radius:14px; padding:18px;}
+.bx b{color:#c9d2e3;}
+.hl{background:rgba(212,175,55,.08); border:1px solid rgba(212,175,55,.25); border-radius:14px; padding:18px; margin:20px 0;}
+.al{background:rgba(212,175,55,.1); border:1px solid rgba(212,175,55,.35); border-radius:14px; padding:20px; margin:22px 0; text-align:center;}
+</style>
+<script src="page-guard.js" data-page="academy"></script>
+</head>
+<body>
+
+<nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(212,175,55,.15);">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="assets/lion-logo.jpg" alt="O P N LIO" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
+    <span style="font-weight:900; color:#f4f0e4; font-size:18px;">Academy <span style="font-weight:900; letter-spacing:.5px; white-space:nowrap;"><span style="color:#f4f0e4; font-size:15px;">O</span> <span style="color:#f4f0e4; font-size:16px;">P</span> <span style="color:#f4f0e4; font-size:17px;">N</span> <span style="color:#D4AF37; font-size:20px;">LIO</span></span></span>
+  </div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <a href="./en-signup.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">Join Now</a>
+    <div id="authStatus" style="font-size:13px; color:#8a93a8;"></div>
+  </div>
+</nav>
+
+<div style="background:rgba(255,107,107,.08); border-bottom:1px solid rgba(255,107,107,.25); padding:12px 20px; text-align:center; font-size:12.5px; color:#ffb3b3; line-height:1.7;">
+  ⚠️ This content is purely educational and does not constitute investment advice or a profit guarantee — trading, options contracts, and leverage carry risk, including total loss of capital.
+</div>
+
+<div style="max-width:960px; margin:0 auto; padding:40px clamp(16px,5vw,32px) 80px;">
+
+  <section id="authScreen">
+    <div style="text-align:center; margin-bottom:32px;">
+      <h1 style="font-size:clamp(26px,4vw,36px); font-weight:900; margin:0 0 12px;">Trader Qualification Program 🦁</h1>
+      <p style="color:#aab3c5; font-size:15px; line-height:1.8; max-width:600px; margin:0 auto;">12 fully free levels, simplified and never boring: markets, technical analysis, capital management, trading psychology, options contracts and Greeks — so you graduate with a foundation that lets you evaluate any strategy or trading system, including ours. In your language, with a certified certificate, and maybe a chance to become an OPN LIO ambassador.</p>
+    </div>
+
+    <div class="card" style="max-width:420px; margin:0 auto;">
+      <div style="display:flex; gap:8px; margin-bottom:22px;">
+        <button id="tabLogin" onclick="showTab('login')" class="btn-gold" style="flex:1; padding:10px;">Log In</button>
+        <button id="tabRegister" onclick="showTab('register')" style="flex:1; padding:10px; background:transparent; border:1px solid rgba(212,175,55,.3); color:#c9d2e3; border-radius:12px; font-weight:800; cursor:pointer; font-family:inherit;">Sign Up</button>
+      </div>
+      <div id="loginForm">
+        <div style="margin-bottom:14px;"><label>Email</label><input id="li_email" type="email" placeholder="you@example.com"></div>
+        <div style="margin-bottom:18px;"><label>Password</label><input id="li_pass" type="password"></div>
+        <button class="btn-gold" style="width:100%;" onclick="doLogin()">Log In</button>
+      </div>
+      <div id="registerForm" style="display:none;">
+        <div style="margin-bottom:14px;"><label>Name</label><input id="re_name" placeholder="Your full name"></div>
+        <div style="margin-bottom:14px;"><label>Email</label><input id="re_email" type="email" placeholder="you@example.com"></div>
+        <div style="margin-bottom:14px;"><label>Password (6+ characters)</label><input id="re_pass" type="password"></div>
+        <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span>I agree to the <a href="./terms.html" target="_blank">Terms of Use</a> and understand this content is educational only.</span></label>
+        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Start Free</button>
+      </div>
+      <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
+    </div>
+  </section>
+
+  <section id="dashScreen" style="display:none;">
+    <div class="card" style="margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+      <div>
+        <div style="font-size:13px; color:#8a93a8; margin-bottom:4px;">Welcome</div>
+        <div id="dashName" style="font-size:20px; font-weight:900;"></div>
+        <div id="dashRank" style="color:#D4AF37; font-weight:800; font-size:14px; margin-top:4px;"></div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:28px; font-weight:900; color:#39FF14;" id="dashPoints">0</div>
+        <div style="font-size:12px; color:#8a93a8;">points</div>
+      </div>
+      <button id="ambassadorBtn" class="btn-gold" disabled style="opacity:.35;">🔒 Eligible to become OPN LIO Ambassador</button>
+    </div>
+    <div id="levelsGrid" style="display:grid; gap:14px;"></div>
+  </section>
+
+  <section id="lessonScreen" style="display:none;">
+    <button onclick="backToDash()" style="background:transparent; border:none; color:#8a93a8; font-size:13px; cursor:pointer; margin-bottom:18px; font-family:inherit;">← Back to dashboard</button>
+    <div class="card">
+      <div style="font-size:13px; font-weight:800; color:#D4AF37; letter-spacing:1px; margin-bottom:8px;" id="lessonLevelTag"></div>
+      <h2 style="font-size:26px; font-weight:900; margin:0 0 20px;" id="lessonTitle"></h2>
+      <div id="lessonBody"></div>
+      <h3 style="font-size:18px; font-weight:900; margin:32px 0 16px;">Level Quiz</h3>
+      <div id="quizBox"></div>
+      <div style="margin-top:20px; display:flex; align-items:center; gap:16px;">
+        <button class="btn-gold" onclick="submitQuiz()">Submit Answers</button>
+        <span id="quizResult" style="font-size:14px; font-weight:700;"></span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+var API = '/.netlify/functions/academy-auth';
+var session = JSON.parse(localStorage.getItem('opnlio_academy_session') || 'null');
+var currentLevel = 1;
+
+var LEVELS = [
+null,
+{
+  title: 'Candlestick Basics 🕯️',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Everything starts here: the Japanese candlestick is the "sentence" the market speaks in. Master it and you will read any chart with ease.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Candle components</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Body</b>: the distance between open and close price. <b>Upper wick</b>: the highest price touched then rejected. <b>Lower wick</b>: the lowest price touched then rejected.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Color tells the story</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Green = close above open (buyers in control). Red = close below open (sellers in control).</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Common candle types</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Doji</b>: near-zero body — total indecision. <b>Hammer</b>: long lower wick after a decline — possible reversal. <b>Engulfing</b>: a large candle fully swallowing the previous one — strong potential reversal.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Timeframes</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Each candle represents a period you choose (minute, hour, day...). Smaller timeframes give more detail and noise; larger ones give a clearer overall trend picture.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Pro tip</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Mastering candle reading is the foundation for everything you will learn next — including the OPN LIO system itself, which builds its readings on this exact understanding.</p></div>',
+  quiz: [
+    { q: 'On a call contract for a given stock, what does the candle body represent?', options: ['The distance between the highest and lowest price during the period', 'The distance between the open and close price', 'Trading volume only'], correct: 1 },
+    { q: 'A large green candle appeared on the call contract you bought — what does the green color mean?', options: ['Sellers took control and close was below open', 'Buyers took control and close was above open', 'Color has no relation to price'], correct: 1 },
+    { q: 'Which candle usually signals total indecision between buyers and sellers?', options: ['Hammer', 'Doji', 'Engulfing'], correct: 1 },
+    { q: 'You are watching a put contract on the hourly timeframe then switch to the daily timeframe — what changes?', options: ['Nothing changes at all', 'You get a clearer overall trend picture instead of more noisy detail', 'Red candles turn green'], correct: 1 },
+    { q: 'What does a long lower wick represent on a call contract candle?', options: ['The highest price touched', 'The lowest price touched then rejected upward', 'Trading volume'], correct: 1 }
+  ]
+},
+{
+  title: 'Swing Highs/Lows and Trend Structure 📈',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Price does not move in a straight line — it moves in successive swing highs and lows, and this structure is what actually defines the trend.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">What is a swing high/low?</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Swing high</b>: the highest point price reaches before pulling back. <b>Swing low</b>: the lowest point before it bounces up.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Uptrend</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">A higher high and a higher low than the previous ones — as long as this pattern continues, the trend is up.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Downtrend</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">A lower high and a lower low than previous ones.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Equal highs/lows</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">When highs or lows stop advancing and become close/equal, this often signals consolidation or an upcoming trend change.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Why this matters</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Every advanced technical tool — including ours — is built on top of your understanding of this simple structure. If you cannot see swing highs and lows, you will not understand why any tool fires its signal.</p></div>',
+  quiz: [
+    { q: 'You are watching a call contract and price keeps forming higher highs and higher lows — what trend is this?', options: ['Uptrend', 'Downtrend', 'No trend'], correct: 0 },
+    { q: 'What is the definition of a "swing low" in price structure?', options: ['The highest point price reached', 'The lowest point price reached before bouncing upward', 'The average price during the day'], correct: 1 },
+    { q: 'In a downtrend you are considering a put contract on, what do you expect from consecutive highs?', options: ['Each high higher than the last', 'Each high lower than the last', 'Highs stay equal forever'], correct: 1 },
+    { q: 'Highs and lows started converging and becoming equal after a long uptrend on your contract — what does this often signal?', options: ['Continuation of the uptrend with more strength', 'Consolidation or a possible trend change', 'It has no meaning at all'], correct: 1 }
+  ]
+},
+{
+  title: 'Break, Breakout, and Retest 🔨',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">One of the most confusing concepts for beginners: when is crossing a level a "temporary break" and when is it a "real breakout"?</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Temporary break (wick)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Price touches the level only with a wick then rejects, without actually closing beyond it — not considered a real breakout.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Real breakout</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">The candle body actually closes beyond the level (not just the wick) — a much stronger signal of real change.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Retest rule</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">After a breakout, price often returns to test the same level from the opposite side — a successful retest (bouncing off without re-breaking) confirms the breakout.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Confirmation via price structure</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Breaking the last swing high (in an uptrend) or last swing low (in a downtrend) gives extra confirmation the new trend is continuing.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Why patience matters here</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Most common mistakes come from entering the moment price first touches a level, without waiting for a clear close or successful retest.</p></div>',
+  quiz: [
+    { q: 'Price touched a resistance level with only a wick then bounced without closing beyond it — what is this called?', options: ['A confirmed real breakout', 'A temporary break (wick)', 'A successful retest'], correct: 1 },
+    { q: 'What is the key difference between a temporary break and a real breakout?', options: ['No difference at all', 'A real breakout closes with the candle body beyond the level, not just the wick', 'A temporary break is always stronger'], correct: 1 },
+    { q: 'After breaking a level, price returned to test it then bounced successfully without re-breaking it — what does this mean?', options: ['Complete breakout failure', 'Extra confirmation the breakout is valid', 'It has no relation to the breakout'], correct: 1 },
+    { q: 'Why is it advised not to enter on the very first touch of an important level?', options: ['Because the first touch is always a confirmed breakout', 'Because the first touch might be a temporary wick break, not a real breakout', 'There is no reason for this'], correct: 1 }
+  ]
+},
+{
+  title: 'Moving Averages and Reading Volume 📊',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Simple but powerful tools: moving averages smooth price movement to clarify trend, and volume reveals how strong or weak each move really is.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">SMA — Simple Moving Average</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">A simple average of the last N candles (e.g. 50) — every candle has equal weight.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">EMA — Exponential Moving Average</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Gives more weight to recent candles, so it reacts faster to recent price changes compared to SMA.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">HMA — Hull Moving Average</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Faster response and less lag than EMA and SMA, so it is often used for near-instant decisions.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Volume</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Represents the number of contracts/shares traded during the period. A price move accompanied by high volume is stronger and more credible than one on weak volume.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 How is this used practically?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">If price is above its moving average, the general bias is bullish; below it, bearish. High volume on a breakout increases your confidence in its validity.</p></div>',
+  quiz: [
+    { q: 'What is the core difference between SMA and EMA?', options: ['No difference at all', 'EMA gives more weight to recent candles so it reacts faster', 'SMA reacts faster than EMA'], correct: 1 },
+    { q: 'Price broke a resistance level on your call contract with very high volume — what does this say about the breakout strength?', options: ['The breakout is weak and unreliable', 'The breakout is stronger and more credible', 'Volume has no relation to breakout strength'], correct: 1 },
+    { q: 'Which moving average is generally known for the fastest response and least lag?', options: ['SMA', 'HMA', 'No difference between them'], correct: 1 },
+    { q: 'Price is trading consistently below its main moving average — what is the likely general bias?', options: ['Bullish bias', 'Bearish bias', 'Price position relative to the average has no relation to bias'], correct: 1 }
+  ]
+},
+{
+  title: 'Oscillators: RSI · MFI · Stochastic · MACD 🌀',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Oscillators measure the "momentum" of movement — is the market surging strongly or starting to lose steam?</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">RSI (Relative Strength Index)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Ranges 0-100. Above 70 = overbought (possible correction), below 30 = oversold (possible bounce).</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">MFI (Money Flow Index)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Like RSI but incorporates volume into its calculation — measures "momentum backed by real money" not price alone.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Stochastic</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Compares closing price to the trading range over a period, via two lines (%K and %D) that cross to give signals.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">MACD</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Measures the relationship between two moving averages via the MACD line, signal line, and histogram — their crossovers give momentum signals.</p></div>' +
+    '</div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Divergence concept</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">When price moves one way (e.g. a higher high) while the oscillator moves the opposite way (a lower high) — this "divergence" often warns of weakening momentum and a possible upcoming reversal. This same divergence concept is one of the pillars some of the strongest OPN LIO tools are built on.</p></div>',
+  quiz: [
+    { q: 'RSI rose above 70 on your call contract — what does this typically indicate?', options: ['Oversold and possible bullish bounce', 'Overbought and possible bearish correction', 'This number has no meaning'], correct: 1 },
+    { q: 'What distinguishes MFI from RSI?', options: ['No difference between them at all', 'MFI incorporates trading volume into its calculation', 'RSI incorporates volume and MFI does not'], correct: 1 },
+    { q: 'Your contract\'s price rose to a new higher high, but the momentum indicator drew a lower high — what is this called?', options: ['Strong confirmation of the uptrend', 'Divergence, which may warn of weakening momentum', 'An indicator error'], correct: 1 },
+    { q: 'What does the Stochastic indicator fundamentally rely on?', options: ['Comparing closing price to the trading range over a period', 'Trading volume only', 'The number of active traders'], correct: 0 }
+  ]
+},
+{
+  title: 'Advanced Tools: SAR · ATR · Bollinger · Fibonacci · Ichimoku 🧭',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Additional tools that widen your view of the market from different angles: trend, volatility, and potential reversal levels.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Parabolic SAR</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Dots appearing above or below price tracking the trend; their flip (e.g. from below to above) signals a possible reversal.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">ATR (Average True Range)</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Measures the market\'s current volatility level — the higher it is, the more violent moves are, and it is used to set stop-losses flexibly matching volatility.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Bollinger Bands</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">A band around a moving average that widens and narrows with volatility. A severe squeeze often precedes a strong upcoming move.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Fibonacci and Ichimoku</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Fibonacci</b>: relative levels (23.6%, 38.2%, 61.8%...) where price often bounces after a strong move. <b>Ichimoku</b>: a complete system combining trend, support/resistance, and momentum in one cloud.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Do not stack everything</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">The best traders pick 2-3 tools they deeply understand instead of cluttering their chart with dozens of conflicting indicators.</p></div>',
+  quiz: [
+    { q: 'Parabolic SAR dots flipped from below the candles to above them — what does this often signal?', options: ['Uptrend continuing unchanged', 'A possible trend reversal', 'This flip has no meaning'], correct: 1 },
+    { q: 'What does the ATR indicator fundamentally measure?', options: ['Price direction', 'The market\'s current volatility level', 'Trading volume only'], correct: 1 },
+    { q: 'You noticed a severe Bollinger Band squeeze on a contract you\'re watching — what does this often precede?', options: ['A strong upcoming price move', 'Permanent stability with no movement', 'The squeeze has no relation to any future move'], correct: 0 },
+    { q: 'What is best for a beginner trader regarding the number of tools used?', options: ['Using as many indicators as possible together', 'Choosing 2-3 tools understood deeply', 'Giving up all tools entirely'], correct: 1 }
+  ]
+},
+{
+  title: 'Options Contracts: The Basics 🎯',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Options contracts are a powerful tool but require precise understanding before use — here are the essential terms.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">What is an options contract?</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">A contract granting you the right (not the obligation) to buy or sell a given asset at a set price before a certain date, in exchange for paying an amount called the "Premium".</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Call vs. Put</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Call</b>: the right to buy — you profit if price rises. <b>Put</b>: the right to sell — you profit if price falls.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Strike and Expiry</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Strike</b>: the price agreed in the contract. <b>Expiry</b>: the contract\'s expiration date — after which it becomes worthless if unused.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">ITM · OTM · ATM</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>ITM</b> (in the money): the contract has real value now. <b>OTM</b> (out of the money): no real value currently. <b>ATM</b> (at the money): current price is very close to the strike.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Difference from trading stocks directly</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Trading stocks directly gives you real ownership with no expiry date. Options contracts give you higher leverage (relatively larger gains/losses for smaller capital) but are governed by time running out — "time decay" is a silent enemy for anyone holding a long contract with no movement.</p></div>',
+  quiz: [
+    { q: 'You bought a call contract on a stock expecting it to rise — what does this contract grant you?', options: ['An obligation to buy the stock regardless of price', 'A right (not an obligation) to buy the stock at a set price before a certain date', 'Permanent ownership of the stock immediately'], correct: 1 },
+    { q: 'You expect a stock\'s price to decline — which contract fits this expectation?', options: ['Call', 'Put', 'No difference between them'], correct: 1 },
+    { q: 'Your contract reached its Expiry date unused and with no value — what happens?', options: ['It renews automatically for another period', 'It becomes worthless and you lose the premium paid', 'It automatically converts to permanent stock ownership'], correct: 1 },
+    { q: 'Your contract is currently "OTM" (out of the money) — what does this mean?', options: ['It has large real value now', 'It has no real value currently at the present price', 'It has already expired'], correct: 1 },
+    { q: 'What is the fundamental difference between buying a stock directly and buying an options contract on it?', options: ['No difference at all between them', 'The contract is governed by an expiry date and higher leverage, while the stock is permanent ownership with no expiry', 'The stock is always cheaper than the contract'], correct: 1 }
+  ]
+},
+{
+  title: 'Greeks and Options Pricing 🔤',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">The Greeks explain "why" a contract\'s price moves as it does — understanding them protects you from unexpected surprises.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Delta</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Measures how much the contract price moves against a $1 move in the stock, and approximates the probability of expiring "in the money".</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Gamma</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Measures how fast Delta itself changes — the closer the contract gets to "at the money", the higher Gamma rises and the more violent the move becomes.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Theta</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Measures "time decay" — how much value the contract loses daily as it nears expiry, even if price does not move at all.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Vega and Rho</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;"><b>Vega</b>: the impact of changing implied volatility (IV) on price. <b>Rho</b>: the impact of interest rate changes — usually limited on short-dated contracts.</p></div>' +
+    '</div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Implied Volatility (IV)</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">The market\'s forecast of future price volatility, and a core element in pricing any contract. Rising IV raises the premium even if the stock itself does not move — many beginners lose because they completely ignore this factor.</p></div>',
+  quiz: [
+    { q: 'Your contract loses part of its value daily despite the stock price being completely flat — which Greek is responsible?', options: ['Delta', 'Theta', 'Rho'], correct: 1 },
+    { q: 'Your contract approached the "at the money" (ATM) point and you noticed its movement became more violent and faster reacting to price — which element rose?', options: ['Gamma', 'Rho', 'This has no relation to any element'], correct: 0 },
+    { q: 'Implied volatility (IV) on a stock suddenly rose, raising your contract\'s price despite the stock price staying flat — which Greek is responsible?', options: ['Vega', 'Theta', 'Delta'], correct: 0 },
+    { q: 'What does Delta fundamentally measure?', options: ['Daily time decay only', 'How much the contract price moves against the stock and its probability of expiring in the money', 'The impact of interest rates only'], correct: 1 }
+  ]
+},
+{
+  title: 'Schools of Thought and Building Your Own Strategy 🏛️',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">There is no single "correct" way to trade — there are different schools, and the important thing is to build a clear strategy from them that fits you.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Price Action</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Reading price itself (candles, swing highs/lows, support/resistance) without relying on heavy indicators.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Wyckoff Method</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Focuses on market phases (accumulation, markup, distribution, markdown) and the behavior of big players during them.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Smart Money / ICT</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Tries to understand how large institutions move the market and where they gather liquidity before big moves.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Classical school</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Relies on trend lines, geometric patterns (triangles, flags), and traditional support/resistance levels.</p></div>' +
+    '</div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 How do you build your strategy?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Any good strategy needs three elements clear in advance: an <b>entry condition</b> (exactly when you enter), a <b>profit exit condition</b> (where you take profits), and a <b>stop-loss</b> (where you admit you were wrong and exit). Without all three together, you are gambling, not trading.</p></div>',
+  quiz: [
+    { q: 'Which school focuses on reading price itself (candles, swing highs/lows) without relying on heavy indicators?', options: ['Wyckoff', 'Price Action', 'Smart Money'], correct: 1 },
+    { q: 'Tries to understand how large institutions move and where they gather liquidity — which approach is this?', options: ['Smart Money / ICT', 'The classical school', 'No approach relates to this'], correct: 0 },
+    { q: 'What are the three essential elements to define before any call or put trade?', options: ['The stock name only', 'Entry condition, profit exit condition, and stop-loss', 'The last candle\'s color only'], correct: 1 },
+    { q: 'You entered a call contract without pre-defining a stop-loss — what is the main risk?', options: ['No risk at all', 'Difficulty knowing when to admit the mistake and exit, potentially amplifying the loss', 'The contract will auto-close safely'], correct: 1 }
+  ]
+},
+{
+  title: 'Capital Management and Trading Psychology 🧠',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">The best strategy in the world fails without strict risk management and psychological discipline — this is what actually separates a professional from a hobbyist.</p>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0;">' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Position Sizing</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Golden rule: never risk more than 1-2% of your total capital on a single trade, no matter how confident you feel.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Portfolio management</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Diversifying trades and not concentrating all your capital in one asset or contract protects you from a single surprise ending your account.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Psychological discipline</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Fear and greed are a trader\'s biggest enemies — exiting too early out of fear, or staying too long out of greed, both destroy a clear plan.</p></div>' +
+      '<div class="bx"><b style="display:block; margin-bottom:6px;">Trading Journal</b><p style="font-size:13px; color:#8a93a8; margin:0; line-height:1.8;">Documenting every trade (reason for entry, outcome, lesson learned) is the fastest way to develop yourself and avoid repeating the same mistake.</p></div>' +
+    '</div>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Golden rule</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">A successful trader does not excel by number of wins alone, but by managing small controlled losses against larger gains when the call is right.</p></div>',
+  quiz: [
+    { q: 'What is the commonly cited golden rule for risk size per single trade from total capital?', options: ['50% of capital', '1-2% of capital', 'All capital at once'], correct: 1 },
+    { q: 'You exited a winning trade way too early out of fear despite the trend continuing in your favor — which psychological factor affected you?', options: ['Greed', 'Fear', 'No psychological factor affected this decision'], correct: 1 },
+    { q: 'What is the main benefit of a Trading Journal?', options: ['No real benefit from it', 'Documenting reasons and outcomes to develop performance and avoid repeating mistakes', 'It only speeds up trade execution'], correct: 1 },
+    { q: 'What actually distinguishes a successful trader per this lesson?', options: ['Number of wins only regardless of size', 'Smartly managing small losses against larger gains when the call is right', 'Concentrating all capital in one confident trade'], correct: 1 }
+  ]
+},
+{
+  title: 'The King\'s Call × Smart Pivot 👑',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">You have now reached a stage different from before — here you start seeing the market as actual OPN LIO system users see it.</p>' +
+    '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">👑 The King\'s Call</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Imagine instead of watching dozens of conflicting indicators, you look at one big clear sentence above the chart summarizing the entire market state: bullish, bearish, or neutral. That is exactly the idea of "The King\'s Call" — a weighted vote among several analytical metrics, filtered through a higher timeframe, giving you a clean reading instead of noise. Those who\'ve tried it describe it as changing how they think about the market from day one.</p></div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎯 Smart Pivot</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Remember what you learned about support and resistance? Now imagine a tool drawing them automatically from higher timeframes, with minimal visual clutter, and ranked by their actual strength — instead of dozens of random lines flooding the chart. That is exactly what "Smart Pivot" does, one of the most relied-upon tools by OPN LIO traders daily for confidently identifying their entry points.</p></div>',
+  quiz: [
+    { q: 'What is the core idea of "The King\'s Call" tool?', options: ['Displaying dozens of separate indicators together', 'One unified, clear reading summarizing market state via a weighted vote among several metrics', 'Automatically executing trades on the trader\'s behalf'], correct: 1 },
+    { q: 'What distinguishes "Smart Pivot" from manually drawing support/resistance lines?', options: ['No difference at all', 'Automatic drawing from higher timeframes with minimal visual clutter and strength ranking', 'It does not use any timeframe'], correct: 1 },
+    { q: 'Which category of elements you learned earlier does the "Smart Pivot" idea fundamentally belong to?', options: ['The Greeks', 'Support and resistance', 'Options contracts'], correct: 1 }
+  ]
+},
+{
+  title: 'Empire of the Wealthy × The Integrated System ⚜️',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">Here the picture completes — tools designed to reveal what the naked eye cannot see in liquidity and momentum flow.</p>' +
+    '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">💎 The Core Line and the Shield</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">In "Empire of the Wealthy", the core line is no ordinary line — repeated candle respect for it reveals how strong it is as a real decision zone. The "Shield" gives you an extra confidence layer: the more price respects it without breaking, the stronger the signal on any later approach.</p></div>' +
+    '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">☁️ The Advanced Cloud and Volume Cloud</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">The advanced cloud surrounds price as a reference momentum zone — its thickness and color reflect the strength or weakness of the area, and candle respect for its upper and lower bounds is a signal your eye trains on over time. The volume cloud reveals the real liquidity density behind the move — exactly why some traders describe it as a "third eye" on the market.</p></div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎨 The Color Jump in Candles</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">One of the most exciting moments for OPN LIO users: a candle\'s color flipping directly from phosphorescent green to white — known as the "Color Jump" — an instant visual signal of shifting momentum, growing noticeably stronger when it aligns with the rest of the system\'s tools.</p></div>',
+  quiz: [
+    { q: 'What does repeated candle respect for the core line in "Empire of the Wealthy" reveal?', options: ['No meaning at all', 'How strong it is as a real decision zone', 'It should always be ignored'], correct: 1 },
+    { q: 'What do the thickness and color of the advanced cloud reflect?', options: ['The strength or weakness of the area as a momentum reference', 'It has no relation to any zone\'s strength', 'The stock name only'], correct: 0 },
+    { q: 'What is a candle color flip from phosphorescent green to white called in the OPN LIO system?', options: ['Divergence', 'The Color Jump', 'Overbought'], correct: 1 },
+    { q: 'What does the volume cloud specifically reveal?', options: ['Interest rate direction', 'The real liquidity density behind the price move', 'Contract expiry dates'], correct: 1 }
+  ]
+},
+{
+  title: 'Graduation: Full Integration 🎓',
+  body:
+    '<p style="line-height:1.9; color:#c9d2e3; font-size:15px;">You\'ve reached the final level — now it\'s time to connect everything you\'ve learned into one cohesive view.</p>' +
+    '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🧩 Map of what you learned</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.9;">From reading a single candle, to swing high/low structure, to indicators and oscillators, to the world of options and Greeks, to capital management and psychological discipline — none of this is separate knowledge, but layers built on each other to form the eye of a seasoned trader.</p></div>' +
+    '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🦁 Now, and not before</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">You now have the foundation that lets you evaluate any strategy or trading system with true awareness — including the OPN LIO system itself. Your deep understanding of The King\'s Call, Smart Pivot, and Empire of the Wealthy is no longer just tool names, but a natural extension of everything you built in this program.</p></div>' +
+    '<div class="hl"><b style="color:#39FF14; display:block; margin-bottom:8px;">🏆 What happens after this quiz?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Upon passing, you receive the official shareable "OPN LIO Certified Trader" certificate, an exclusive 60% discount on your subscription tied only to your account, plus eligibility to apply as a certified ambassador.</p></div>',
+  quiz: [
+    { q: 'What is the fundamental goal of this training program as explained at the end?', options: ['Memorizing tool names without understanding them', 'Building a real foundation that lets you evaluate any strategy or trading system consciously, including OPN LIO', 'Forcing you to subscribe immediately without thought'], correct: 1 },
+    { q: 'What do you receive immediately upon successfully passing this final level\'s quiz?', options: ['Nothing additional', 'An shareable completion certificate, an exclusive discount tied to your account, and ambassador eligibility', 'Automatic site ban'], correct: 1 },
+    { q: 'A call contract you\'re watching showed RSI overbought, alongside a "Color Jump" from phosphorescent green to white on the OPN LIO chart — how does a seasoned trader combine these signals?', options: ['Ignores all signals and enters randomly', 'Links the traditional momentum indicator with the system signal together to assess the full picture before any decision', 'Relies only on candle color without any other indicator'], correct: 1 }
+  ]
+}
+];
+
+function showTab(t) {
+  document.getElementById('loginForm').style.display = t === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = t === 'register' ? 'block' : 'none';
+  document.getElementById('tabLogin').className = t === 'login' ? 'btn-gold' : '';
+  document.getElementById('tabLogin').style.cssText = t === 'login' ? '' : 'flex:1;padding:10px;background:transparent;border:1px solid rgba(212,175,55,.3);color:#c9d2e3;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit;';
+  document.getElementById('tabRegister').style.cssText = t === 'register' ? 'flex:1;padding:10px;' : 'flex:1;padding:10px;background:transparent;border:1px solid rgba(212,175,55,.3);color:#c9d2e3;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit;';
+}
+
+function doRegister() {
+  var name = document.getElementById('re_name').value.trim();
+  var email = document.getElementById('re_email').value.trim();
+  var pass = document.getElementById('re_pass').value;
+  var agreed = document.getElementById('re_agree').checked;
+  var msg = document.getElementById('authMsg');
+  if (!agreed) { msg.style.color = '#ff6b6b'; msg.textContent = 'You must agree to the Terms of Use first.'; return; }
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'register', name, email, password: pass, lang:'en' }) })
+    .then(r=>r.json()).then(function(res){
+      if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
+      msg.style.color = '#39FF14';
+      msg.textContent = 'Registered! Log in now.';
+      showTab('login');
+    });
+}
+
+function doLogin() {
+  var email = document.getElementById('li_email').value.trim();
+  var pass = document.getElementById('li_pass').value;
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'login', email, password: pass }) })
+    .then(r=>r.json()).then(function(res){
+      if (!res.ok) { document.getElementById('authMsg').style.color='#ff6b6b'; document.getElementById('authMsg').textContent = res.error; return; }
+      session = res;
+      localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      renderDash();
+    });
+}
+
+function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }
+
+function renderDash() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('dashScreen').style.display = 'block';
+  document.getElementById('authStatus').innerHTML = session.student.name + ' — <a href="#" onclick="logout();return false;" style="color:#ff9b9b;">Log Out</a>';
+  document.getElementById('dashName').textContent = session.student.name;
+  document.getElementById('dashRank').textContent = '🏅 ' + session.student.rank;
+  document.getElementById('dashPoints').textContent = session.student.points;
+
+  var grid = document.getElementById('levelsGrid');
+  var progress = {}; (session.progress||[]).forEach(function(p){ progress[p.level_num] = p; });
+  grid.innerHTML = '';
+  for (var i=1;i<=12;i++) {
+    var done = progress[i] && progress[i].completed;
+    var unlocked = i <= session.student.current_level;
+    var el = document.createElement('div');
+    el.className = 'card';
+    el.style.cssText = 'display:flex; align-items:center; gap:16px; ' + (unlocked ? 'cursor:pointer;' : 'opacity:.45;');
+    el.innerHTML =
+      '<div class="level-badge" style="background:'+(done?'#39FF14':unlocked?'#D4AF37':'#2a3348')+'; color:'+(done||unlocked?'#111':'#8a93a8')+';">'+(done?'✓':i)+'</div>' +
+      '<div style="flex:1;"><div style="font-weight:800; font-size:15px;">Level '+i+': '+LEVELS[i].title.replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\s*$/u,'')+'</div><div style="font-size:12.5px; color:#8a93a8; margin-top:3px;">'+(done?'Completed — Score '+progress[i].score+'%':unlocked?'Available now':'Locked')+'</div></div>' +
+      (unlocked && !done ? '<span style="color:#D4AF37; font-weight:800; font-size:13px;">Start →</span>' : '');
+    if (unlocked) el.onclick = (function(lv){ return function(){ openLesson(lv); }; })(i);
+    grid.appendChild(el);
+  }
+
+  if (session.student.graduated_at) {
+    var btn = document.getElementById('ambassadorBtn');
+    btn.disabled = false; btn.style.opacity = '1';
+    btn.textContent = '⚜ Eligible to become OPN LIO Ambassador';
+    btn.onclick = function(){ location.href = './affiliate.html'; };
+  }
+}
+
+function openLesson(level) {
+  currentLevel = level;
+  var lv = LEVELS[level];
+  document.getElementById('dashScreen').style.display = 'none';
+  document.getElementById('lessonScreen').style.display = 'block';
+  document.getElementById('lessonLevelTag').textContent = 'Level ' + level;
+  document.getElementById('lessonTitle').textContent = lv.title;
+  document.getElementById('lessonBody').innerHTML = lv.body;
+  var box = document.getElementById('quizBox'); box.innerHTML = '';
+  document.getElementById('quizResult').textContent = '';
+  lv.quiz.forEach(function(q, qi){
+    var d = document.createElement('div');
+    d.style.cssText = 'margin-bottom:18px; background:rgba(255,255,255,.03); border-radius:12px; padding:16px;';
+    var opts = q.options.map(function(o,oi){ return '<label style="display:flex; align-items:center; gap:8px; font-size:14px; color:#c9d2e3; margin-bottom:8px; cursor:pointer; font-weight:400;"><input type="radio" name="q'+qi+'" value="'+oi+'" style="width:auto;">'+o+'</label>'; }).join('');
+    d.innerHTML = '<div style="font-weight:700; margin-bottom:10px; font-size:14.5px;">'+(qi+1)+'. '+q.q+'</div>' + opts;
+    box.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+
+function backToDash() {
+  document.getElementById('lessonScreen').style.display = 'none';
+  document.getElementById('dashScreen').style.display = 'block';
+}
+
+function submitQuiz() {
+  var lv = LEVELS[currentLevel];
+  var correct = 0;
+  lv.quiz.forEach(function(q, qi){
+    var sel = document.querySelector('input[name="q'+qi+'"]:checked');
+    if (sel && parseInt(sel.value) === q.correct) correct++;
+  });
+  var score = Math.round((correct / lv.quiz.length) * 100);
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'complete-level', studentId: session.student.id, level: currentLevel, score }) })
+    .then(r=>r.json()).then(function(res){
+      var el = document.getElementById('quizResult');
+      if (!res.ok) { el.style.color = '#ff6b6b'; el.textContent = 'Your score ' + score + '% — ' + res.error; return; }
+      el.style.color = '#39FF14';
+      el.textContent = res.graduated ? 'Congratulations on graduating! 🎉 Score ' + score + '%' : 'Well done! Score ' + score + '% — you earned ' + res.pointsEarned + ' points 🎉';
+      session.student.points += res.pointsEarned;
+      session.student.current_level = res.nextLevel;
+      session.student.rank = res.rank;
+      if (res.graduated) { session.student.graduated_at = new Date().toISOString(); session.student.discount_code = res.discountCode; }
+      var lvlProg = session.progress.find(function(p){return p.level_num===currentLevel;});
+      if (lvlProg) { lvlProg.completed = true; lvlProg.score = score; } else { session.progress.push({level_num:currentLevel, completed:true, score:score}); }
+      localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      setTimeout(function(){ backToDash(); renderDash(); }, 1600);
+    });
+}
+
+
+var lastActive = Date.now();
+['click','keydown','scroll'].forEach(function(ev){ document.addEventListener(ev, function(){ lastActive = Date.now(); }); });
+setInterval(function(){
+  if (!session || document.getElementById('sessionPromptModal')) return;
+  if (Date.now() - lastActive > 30*60*1000) showExtendPrompt();
+}, 30000);
+function showExtendPrompt(){
+  var countdown = 30;
+  var modal = document.createElement('div');
+  modal.id = 'sessionPromptModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = '<div class="card" style="max-width:360px; text-align:center;"><h3 style="margin:0 0 10px; color:#fff;">Are you still there?</h3><p style="color:#aab3c5; font-size:13px; margin:0 0 18px;">You will be logged out automatically in <span id="sessCountdown">30</span> seconds.</p><button class="btn-gold" style="width:100%;" onclick="extendSession()">Extend Session 30 min</button></div>';
+  document.body.appendChild(modal);
+  window._sessTimer = setInterval(function(){
+    countdown--;
+    var el = document.getElementById('sessCountdown'); if (el) el.textContent = countdown;
+    if (countdown <= 0) { clearInterval(window._sessTimer); logout(); }
+  }, 1000);
+}
+function extendSession(){
+  clearInterval(window._sessTimer);
+  lastActive = Date.now();
+  var m = document.getElementById('sessionPromptModal'); if (m) m.remove();
+}
+if (session && session.student) { renderDash(); } else { showTab('login'); }
+</script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>لوحة التحكم — O P N  LIO</title>
@@ -112,13 +113,14 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
 
   <section class="panel" data-panel="broadcast">
   <div class="card" style="margin-bottom:24px;">
-    <h3 style="margin:0 0 16px; color:#D4AF37;">📧 مراسلة العملاء والسفراء بالبريد الإلكتروني</h3>
-    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُرسل الرسالة لكل من لديه بريد إلكتروني محفوظ في الفئة المختارة، بنفس النسق الموحّد (الهيدر والشعار والتذييل).</p>
+    <h3 style="margin:0 0 16px; color:#D4AF37;">📧 المراسلة</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">اختر الفئة (المشتركون · السفراء · أعضاء الأكاديمية)، ثم قالباً جاهزاً أو اكتب رسالتك. تُرسل لكل من لديه بريد محفوظ في الفئة المختارة بنفس نسق الهوية الموحّد، ويمكن ترجمتها تلقائياً لكل مستلم بلغته.</p>
     <div style="margin-bottom:14px;">
       <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">المرسَل إليهم</label>
       <select id="bc_audience" onchange="onAudienceChange()" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">
-        <option value="customers">👥 العملاء</option>
+        <option value="customers">👥 المشتركون</option>
         <option value="affiliates">🤝 السفراء</option>
+        <option value="academy">🎓 أعضاء الأكاديمية</option>
       </select>
     </div>
     <div id="bc_aff_list" style="display:none; margin-bottom:14px; max-height:220px; overflow-y:auto; background:#10141f; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;">
@@ -128,20 +130,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <div style="margin-bottom:14px;">
       <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">قوالب جاهزة</label>
       <select id="bc_template" onchange="applyBroadcastTemplate()" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25);">
-        <option value="">— اختر قالباً (اختياري) —</option>
-        <option value="commission_update">📊 تحديث نظام العمولات</option>
-        <option value="expired_customer">⏳ عملاء منتهية اشتراكاتهم</option>
-        <option value="motivation_campaign">🔥 حملة تحفيزية</option>
-        <option value="payout_notice">💸 إشعار دفعة عمولات</option>
-        <option value="low_perf_warning">⚠️ تنبيه أداء ضعيف / تجميد حساب</option>
-        <option value="new_feature">✨ إطلاق ميزة جديدة بلوحة تحكم السفير</option>
-        <option value="marketing_materials">🎨 مواد تسويقية جاهزة</option>
-        <option value="policy_change">📜 تحديث في الاتفاقية أو السياسات</option>
-        <option value="promo_code_expiry">⏳ اقتراب انتهاء كود خصم خاص</option>
-        <option value="exclusive_offer">🎁 عرض حصري لعملاء السفراء</option>
-        <option value="feedback_survey">📝 استبيان رضا وملاحظات</option>
-        <option value="boost_campaign">🚀 حملة تحفيزية (رفع عمولة مؤقت)</option>
-        <option value="golden_campaign">🏆 حملة ذهبية (رفع عمولة استثنائي)</option>
+        <option value="">— اختر قالباً جاهزاً (اختياري) —</option>
       </select>
     </div>
     <div style="margin-bottom:14px;">
@@ -207,11 +196,11 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
     <div class="card">
       <h3 style="margin:0 0 16px; color:#D4AF37;">🌐 الزيارات حسب اللغة</h3>
-      <table id="langTable"><thead><tr><th>اللغة</th><th>زيارات</th></tr></thead><tbody></tbody></table>
+      <div id="langChart" style="display:flex; flex-direction:column; gap:11px;"></div>
     </div>
     <div class="card">
       <h3 style="margin:0 0 16px; color:#D4AF37;">📄 أكثر الصفحات زيارة</h3>
-      <table id="pageTable"><thead><tr><th>الصفحة</th><th>زيارات</th></tr></thead><tbody></tbody></table>
+      <div id="pageChart" style="display:flex; flex-direction:column; gap:11px;"></div>
     </div>
   </div>
   </section>
@@ -311,7 +300,13 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
   </section>
 
-  <section class="panel" data-panel="payouts">
+  <section class="panel" data-panel="page-visibility">
+  <div class="card">
+    <h3 style="margin:0 0 16px; color:#D4AF37;">👁️ إظهار/إخفاء صفحات الموقع</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">إخفاء صفحة يعرض للزائر رسالة "غير متاحة حالياً" بدل محتواها — لا يحذف الملف.</p>
+    <div id="pageVisList" style="display:grid; gap:10px;"></div>
+  </div>
+  </section>
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">💸 الصرف</h3>
     <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُولَّد دفعة الصرف تلقائياً في الساعة 00:00 من أول كل شهر ميلادي لعمولات الشهر المنتهي. تقدر أيضاً تولّدها يدوياً إذا احتجت.</p>
@@ -321,6 +316,29 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   <div class="card">
     <h3 style="margin:0 0 16px; color:#D4AF37;">📋 دفعات الصرف</h3>
     <table id="payoutRunsTable"><thead><tr><th>الشهر</th><th>عدد السفراء</th><th>الإجمالي</th><th>تاريخ التوليد</th><th></th></tr></thead><tbody></tbody></table>
+  </div>
+  </section>
+
+  <section class="panel" data-panel="academy">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:20px;">
+    <div class="card" style="text-align:center; padding:18px;"><div style="font-size:26px; font-weight:900; color:#39FF14;" id="acTotal">—</div><div style="font-size:12px; color:#8a93a8; margin-top:4px;">إجمالي المتدربين</div></div>
+    <div class="card" style="text-align:center; padding:18px;"><div style="font-size:26px; font-weight:900; color:#D4AF37;" id="acGrads">—</div><div style="font-size:12px; color:#8a93a8; margin-top:4px;">الخريجون</div></div>
+    <div class="card" style="text-align:center; padding:18px;"><div style="font-size:26px; font-weight:900; color:#5eead4;" id="acVerified">—</div><div style="font-size:12px; color:#8a93a8; margin-top:4px;">بريد مُفعَّل</div></div>
+    <div class="card" style="text-align:center; padding:18px;"><div style="font-size:26px; font-weight:900; color:#c9d2e3;" id="acAvgLvl">—</div><div style="font-size:12px; color:#8a93a8; margin-top:4px;">متوسط المستوى</div></div>
+  </div>
+  <div class="card" style="margin-bottom:20px;">
+    <h3 style="margin:0 0 14px; color:#D4AF37;">📊 توزيع المتدربين على المستويات</h3>
+    <div id="acLevelChart" style="display:flex; align-items:flex-end; gap:6px; height:120px;"></div>
+  </div>
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+      <h3 style="margin:0; color:#D4AF37;">🎓 متدربو الأكاديمية</h3>
+      <a href="#" onclick="exportAcademy(); return false;" class="btn-gold" style="padding:8px 16px; font-size:12.5px; text-decoration:none;">⬇️ تصدير CSV</a>
+    </div>
+    <input id="acSearch" class="searchBox" placeholder="🔍 بحث بالاسم أو البريد..." oninput="filterAcademy()">
+    <div style="overflow-x:auto;">
+      <table id="acTable"><thead><tr><th>الاسم</th><th>البريد</th><th>المستوى</th><th>النقاط</th><th>الرتبة</th><th>الحالة</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
   </div>
   </section>
 
@@ -448,7 +466,7 @@ var NAV_ITEMS = [
   ['revenue','💵 الإيرادات'],
   ['prices','💰 الأسعار'],
   ['customers','👥 حالات الاشتراك'],
-  ['broadcast','📧 مراسلة العملاء'],
+  ['broadcast','📧 المراسلة'],
   ['affiliates','🤝 أداء السفراء'],
   ['refcodes','🏷️ أكواد السفراء'],
   ['traffic','🌐 الزيارات'],
@@ -457,8 +475,10 @@ var NAV_ITEMS = [
   ['reviews','💬 آراء العملاء'],
   ['analytics','📈 لوحة القرارات'],
   ['campaigns','🚀 حملات تحفيزية'],
+  ['page-visibility','👁️ إظهار الصفحات'],
   ['payouts','💸 الصرف'],
   ['tickets','📨 الشكاوى والاستفسارات'],
+  ['academy','🎓 الأكاديمية'],
   ['settings','🔑 الإعدادات']
 ];
 
@@ -474,13 +494,90 @@ function buildNav(){
   });
 }
 
+var ACADEMY_CACHE = [];
+function loadAcademy(){
+  authFetch('/api/admin-data?action=academy-students').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    ACADEMY_CACHE = res.students;
+    document.getElementById('acTotal').textContent = res.stats.total;
+    document.getElementById('acGrads').textContent = res.stats.graduates;
+    document.getElementById('acVerified').textContent = res.stats.verified;
+    document.getElementById('acAvgLvl').textContent = res.stats.avg_level;
+    var maxC = Math.max.apply(null, res.levelDist.map(function(d){return d.c;}).concat([1]));
+    document.getElementById('acLevelChart').innerHTML = res.levelDist.map(function(d){
+      var h = Math.round((d.c / maxC) * 100);
+      return '<div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:4px;">' +
+        '<div style="font-size:10px; color:#8a93a8;">'+d.c+'</div>' +
+        '<div style="width:100%; height:'+h+'px; background:linear-gradient(180deg,#39FF14,#1f8a0c); border-radius:4px 4px 0 0; min-height:3px;"></div>' +
+        '<div style="font-size:10px; color:#c9d2e3;">'+d.lvl+'</div></div>';
+    }).join('') || '<div style="color:#6b7488; font-size:13px;">لا توجد بيانات بعد</div>';
+    renderAcademy(ACADEMY_CACHE);
+  });
+}
+function filterAcademy(){
+  var q = document.getElementById('acSearch').value.toLowerCase();
+  renderAcademy(ACADEMY_CACHE.filter(function(s){ return (s.name+' '+s.email).toLowerCase().indexOf(q) > -1; }));
+}
+function renderAcademy(list){
+  var tb = document.querySelector('#acTable tbody'); tb.innerHTML = '';
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="7" class="emptyState">لا يوجد متدربون بعد</td></tr>'; return; }
+  list.forEach(function(s){
+    var lamp = s.graduated_at ? '<span title="خرّيج" style="color:#D4AF37;">🎓 خرّيج</span>'
+      : (s.email_verified ? '<span style="color:#39FF14;">🟢 نشط</span>' : '<span style="color:#ff9b9b;">🔴 بريد غير مُفعّل</span>');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+s.name+'</td><td style="font-size:12px; color:#8a93a8;">'+s.email+'</td>' +
+      '<td>'+s.current_level+' <span style="color:#6b7488; font-size:11px;">('+s.levels_done+' مكتمل)</span></td>' +
+      '<td style="color:#39FF14; font-weight:800;">'+s.points+'</td><td style="font-size:12px;">'+s.rank+'</td><td>'+lamp+'</td>' +
+      '<td style="display:flex; gap:5px; flex-wrap:wrap;">' +
+      (!s.email_verified ? '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acVerify('+s.id+')">✅ تفعيل</button>' : '') +
+      '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acEdit('+s.id+')">✏️ تعديل</button>' +
+      '<button style="padding:5px 10px; font-size:11px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acReset('+s.id+')">🔄 تصفير</button>' +
+      '<button style="padding:5px 10px; font-size:11px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acDelete('+s.id+')">🗑️</button></td>';
+    tb.appendChild(tr);
+  });
+}
+function acVerify(id){
+  authFetch('/api/admin-data?action=academy-verify-student', { method:'POST', body: JSON.stringify({id}) })
+    .then(function(r){return r.json();}).then(function(){ loadAcademy(); });
+}
+function acReset(id){
+  if (!confirm('تصفير كل تقدّم هذا المتدرب والعودة للمستوى الأول؟')) return;
+  authFetch('/api/admin-data?action=academy-reset-progress', { method:'POST', body: JSON.stringify({id}) })
+    .then(function(r){return r.json();}).then(function(){ loadAcademy(); });
+}
+function acDelete(id){
+  if (!confirm('حذف هذا المتدرب نهائياً مع كل تقدّمه؟')) return;
+  authFetch('/api/admin-data?action=academy-delete-student', { method:'POST', body: JSON.stringify({id}) })
+    .then(function(r){return r.json();}).then(function(){ loadAcademy(); });
+}
+function acEdit(id){
+  var s = ACADEMY_CACHE.filter(function(x){return x.id===id;})[0];
+  if (!s) return;
+  var name = prompt('الاسم:', s.name); if (name === null) return;
+  var email = prompt('البريد:', s.email); if (email === null) return;
+  var lvl = prompt('المستوى الحالي (1-12):', s.current_level); if (lvl === null) return;
+  var pts = prompt('النقاط:', s.points); if (pts === null) return;
+  var rank = prompt('الرتبة:', s.rank); if (rank === null) return;
+  authFetch('/api/admin-data?action=academy-update-student', { method:'POST', body: JSON.stringify({id, name, email, current_level:lvl, points:pts, rank}) })
+    .then(function(r){return r.json();}).then(function(res){ if(!res.ok) alert(res.error); loadAcademy(); });
+}
+function exportAcademy(){
+  authFetch('/api/admin-data?action=export-academy').then(function(r){return r.text();}).then(function(csv){
+    var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'academy-students.csv'; a.click();
+  });
+}
+
 function showPanel(name){
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===name); });
   document.querySelectorAll('.navBtn').forEach(function(b, i){ b.classList.toggle('active', NAV_ITEMS[i][0]===name); });
+  if (name === 'academy') loadAcademy();
+  if (name === 'broadcast') populateBcTemplates();
   if (name === 'audit') loadAuditLog();
   if (name === 'reviews') loadPendingReviews();
   if (name === 'analytics') loadAnalytics();
   if (name === 'campaigns') loadCampaigns();
+  if (name === 'page-visibility') loadPageVisibility();
   if (name === 'payouts') loadPayoutRuns();
   if (name === 'tickets') loadTickets();
   if (name === 'settings') loadErrorLog();
@@ -908,7 +1005,7 @@ function exportCustomerPdf(id){
     '<tr><td>حساب TradingView</td><td>' + (tv||'-') + '</td></tr>' +
     '<tr><td>الباقة</td><td>' + (plan||'-') + '</td></tr>' +
     '<tr><td>كود المسوّق</td><td>' + (c.ref_code||'-') + '</td></tr>' +
-    '<tr><td>حالة الاشتراك</td><td>' + (c.status||'-') + '</td></tr>' +
+    '<tr><td>حالة الاشتراك</td><td>' + ((typeof STATUS_LABELS_MAP!=='undefined' && STATUS_LABELS_MAP[c.status]) || c.status || '-') + '</td></tr>' +
     '<tr><td>تاريخ الانتهاء</td><td>' + expiryTxt + '</td></tr>' +
     '</table>' +
     '<' + 'script>window.onload=function(){setTimeout(function(){window.print();},400);};</' + 'script>' +
@@ -933,6 +1030,18 @@ function sendActivationEmail(id){
     });
 }
 
+function currentBcSet(){
+  var a = document.getElementById('bc_audience').value;
+  return (BC_TEMPLATES[a] || {});
+}
+function populateBcTemplates(){
+  var set = currentBcSet();
+  var sel = document.getElementById('bc_template');
+  if (!sel) return;
+  var opts = '<option value="">— اختر قالباً جاهزاً (اختياري) —</option>';
+  Object.keys(set).forEach(function(k){ opts += '<option value="'+k+'">'+set[k].label+'</option>'; });
+  sel.innerHTML = opts;
+}
 function onAudienceChange(){
   var audience = document.getElementById('bc_audience').value;
   var listEl = document.getElementById('bc_aff_list');
@@ -942,6 +1051,10 @@ function onAudienceChange(){
   } else {
     listEl.style.display = 'none';
   }
+  populateBcTemplates();
+  document.getElementById('bc_subject').value = '';
+  document.getElementById('bc_message').value = '';
+  document.getElementById('bc_translations_preview').innerHTML = '';
 }
 
 function loadAffiliateCheckboxList(){
@@ -960,57 +1073,387 @@ function toggleAllAff(){
 }
 
 var BC_TEMPLATES = {
-  commission_update: {
-    subject: '📊 تحديث في نظام عمولات سفراء O P N  LIO',
-    body: 'مرحباً بك 👋\n\nنود إعلامك بتحديث في نظام حساب العمولات الخاص بسفراء O P N  LIO ⚜\n\nتفاصيل التحديث:\n[اكتب هنا تفاصيل التحديث]\n\nهذا التحديث يهدف لمكافأتك بشكل أفضل على جهودك المستمرة معنا.\n\nلأي استفسار، فريق الدعم جاهز دائماً لخدمتك.'
+ "customers": {
+  "welcome": {
+   "label": "🎉 ترحيب بعد الاشتراك",
+   "subject": "🎉 أهلاً بك في O P N  LIO ⚜",
+   "body": "مرحباً بك 👋\n\nيسعدنا انضمامك إلى O P N  LIO ⚜\n\nأدواتك التحليلية الأربع المتكاملة جاهزة الآن على TradingView، وكتيب الشرح الكامل بانتظارك بلغتك.\n\nنتمنى لك تجربة موفّقة، وفريق الدعم جاهز لأي استفسار عبر البريد."
   },
-  motivation_campaign: {
-    subject: '🔥 حملة تحفيزية جديدة لسفراء O P N  LIO',
-    body: 'مرحباً بك 👋\n\nأطلقنا حملة تحفيزية جديدة لسفرائنا المميزين!\n\nتفاصيل الحملة:\n[اكتب هنا تفاصيل الحملة والمدة والمكافآت]\n\nهذه فرصتك لتعزيز أداءك ومضاعفة عمولاتك خلال هذه الفترة المحدودة.\n\nنراك في القمة! 🏆'
+  "trial_ending": {
+   "label": "⏳ اقتراب انتهاء التجربة (48 ساعة)",
+   "subject": "⏳ باقٍ 48 ساعة على تجربتك المجانية",
+   "body": "مرحباً بك 👋\n\nنذكّرك بأن فترتك التجريبية المجانية في O P N  LIO ⚜ تنتهي خلال 48 ساعة.\n\nبعد انتهائها يتحوّل اشتراكك تلقائياً إلى الباقة المختارة لتستمر أدواتك دون انقطاع.\n\nإن رغبت بأي تعديل، يمكنك إدارة اشتراكك في أي وقت."
   },
-  payout_notice: {
-    subject: '💸 إشعار صرف عمولات السفراء',
-    body: 'مرحباً بك 👋\n\nنود إعلامك بأن دفعة عمولاتك عن الفترة المنتهية قد تم صرفها بنجاح.\n\nتفاصيل الدفعة:\n[اكتب هنا المبلغ والفترة وطريقة التحويل]\n\nشكراً لجهودك المستمرة معنا، ونتطلع لاستمرار شراكتنا.'
+  "trial_converted": {
+   "label": "✅ بدأ اشتراكك الرسمي",
+   "subject": "✅ تم تفعيل اشتراكك في O P N  LIO ⚜",
+   "body": "مرحباً بك 👋\n\nانتهت فترتك التجريبية بنجاح وبدأ اشتراكك الرسمي في O P N  LIO ⚜\n\nكل أدواتك التحليلية وتنبيهاتك المباشرة مستمرة دون انقطاع.\n\nشكراً لثقتك بنا."
   },
-  low_perf_warning: {
-    subject: '⚠️ تنبيه بخصوص نشاط حسابك كسفير',
-    body: 'مرحباً بك 👋\n\nلاحظنا عدم وجود نشاط ملموس على حسابك كسفير خلال الفترة الأخيرة.\n\nنود تذكيرك بأن استمرار الحساب نشطاً يتطلب جلب عملاء بشكل دوري، وفقاً لاتفاقية السفراء الموقعة.\n\nإذا كنت بحاجة لأي دعم أو مواد تسويقية إضافية، فريقنا جاهز لمساعدتك.\n\nنأمل رؤية نشاط منك قريباً قبل مراجعة حالة الحساب.'
-  },  new_feature: {
-    subject: '✨ ميزة جديدة في لوحة تحكم السفير',
-    body: 'مرحباً بك 👋\n\nأضفنا ميزة جديدة إلى لوحة تحكم السفراء لتحسين تجربتك ومتابعة أدائك بشكل أفضل!\n\nتفاصيل الميزة:\n[اكتب هنا وصف الميزة الجديدة]\n\nندعوك لتسجيل الدخول إلى لوحتك واستكشافها بنفسك.\n\nنتمنى أن تنال إعجابك 🌟'
+  "sub_ending": {
+   "label": "⏳ اقتراب انتهاء اشتراكك (48 ساعة)",
+   "subject": "⏳ اشتراكك ينتهي خلال 48 ساعة",
+   "body": "مرحباً بك 👋\n\nنذكّرك بأن اشتراكك في O P N  LIO ⚜ ينتهي خلال 48 ساعة.\n\nللاستمرار دون انقطاع في أدواتك وتنبيهاتك، يمكنك تجديد اشتراكك بسهولة من حسابك.\n\nنتطلع لاستمرار رحلتك معنا."
   },
-  expired_customer: {
-    subject: '⏳ نفتقدك — اشتراكك انتهى، تعال نكمل معك',
-    body: 'مرحباً بك 👋\n\nلاحظنا أن اشتراكك في O P N  LIO ⚜ قد انتهى، ونتمنى لو نراك معنا مجدداً.\n\nكل أدواتنا الأربعة المتكاملة بانتظارك، ونود تسهيل عودتك بأفضل شكل ممكن.\n\n[اكتب هنا عرضاً خاصاً للعودة إن وُجد، أو رابط تجديد الاشتراك]\n\nإن كان هناك أي سبب أو ملاحظة توقفت بسببها، يسعدنا سماعها — فريق الدعم دائماً هنا لمساعدتك.'
+  "renew_thanks": {
+   "label": "🙏 شكراً على التجديد",
+   "subject": "🙏 تم تجديد اشتراكك بنجاح",
+   "body": "مرحباً بك 👋\n\nتم تجديد اشتراكك في O P N  LIO ⚜ بنجاح، ونشكر ثقتك المستمرة.\n\nأدواتك وتنبيهاتك مستمرة دون انقطاع.\n\nنتمنى لك التوفيق الدائم."
   },
-  marketing_materials: {
-    subject: '🎨 مواد تسويقية جاهزة لدعم ترويجك',
-    body: 'مرحباً بك 👋\n\nأعددنا لك مجموعة من المواد التسويقية الجاهزة (صور، نصوص، روابط) لتسهيل ترويجك لكودك الخاص.\n\nروابط المواد:\n[اكتب هنا روابط الصور/النصوص الجاهزة]\n\nاستخدمها كما هي أو عدّلها بأسلوبك — الهدف مساعدتك على جلب عملاء أكثر بجهد أقل.'
+  "expired_comeback": {
+   "label": "💛 نفتقدك — عُد إلينا",
+   "subject": "💛 اشتراكك انتهى… ونتمنى عودتك",
+   "body": "مرحباً بك 👋\n\nلاحظنا انتهاء اشتراكك في O P N  LIO ⚜، ونتمنى لو نراك معنا مجدداً.\n\nأدواتك الأربع المتكاملة وتنبيهاتها المباشرة بانتظارك، والعودة أسهل مما تتصور.\n\nإن كان لديك أي ملاحظة أوقفتك، يسعدنا سماعها."
   },
-  policy_change: {
-    subject: '📜 تحديث في اتفاقية وسياسات السفراء',
-    body: 'مرحباً بك 👋\n\nنود إعلامك بتحديث في اتفاقية أو سياسات برنامج سفراء O P N  LIO.\n\nتفاصيل التحديث:\n[اكتب هنا بنود التحديث]\n\nهذا التحديث ساري من تاريخ إرسال هذه الرسالة. لأي استفسار، فريق الدعم جاهز لمساعدتك.'
+  "grant_access": {
+   "label": "🔓 تم منح صلاحية المؤشرات",
+   "subject": "🔓 تم تفعيل وصولك للمؤشرات على TradingView",
+   "body": "مرحباً بك 👋\n\nتم منح حسابك على TradingView صلاحية الوصول إلى مؤشرات O P N  LIO ⚜ الأربعة.\n\nستجدها ضمن قائمة \"Invite-only scripts\" في منصة TradingView.\n\nإن لم تظهر خلال دقائق، أعد تحميل المنصة أو تواصل مع الدعم."
   },
-  promo_code_expiry: {
-    subject: '⏳ كود الخصم الخاص بعملائك على وشك الانتهاء',
-    body: 'مرحباً بك 👋\n\nنود تذكيرك بأن كود الخصم الخاص المخصَّص لعملائك على وشك انتهاء صلاحيته.\n\nتفاصيل الكود:\n[اكتب هنا الكود وتاريخ الانتهاء]\n\nإن كنت ترغب بالاستفادة منه أو تجديده، تواصل معنا قبل انتهائه.'
+  "how_to_add": {
+   "label": "🛠️ كيف تضيف المؤشرات لشارتك",
+   "subject": "🛠️ دليل سريع: إضافة مؤشرات O P N  LIO",
+   "body": "مرحباً بك 👋\n\nلإضافة مؤشرات O P N  LIO ⚜ إلى شارتك على TradingView:\n\n1) افتح قائمة Indicators\n2) اختر تبويب Invite-only\n3) أضف المؤشرات الأربعة\n\nثم راجع كتيب الشرح لفهم كل عنصر بصري. فريقنا جاهز لأي مساعدة."
   },
-  exclusive_offer: {
-    subject: '🎁 عرض حصري لعملاء سفرائنا',
-    body: 'مرحباً بك 👋\n\nأطلقنا عرضاً حصرياً لفترة محدودة يمكنك تقديمه لعملائك المحتملين!\n\nتفاصيل العرض:\n[اكتب هنا تفاصيل العرض ومدته]\n\nفرصة رائعة لجذب عملاء جدد بسرعة — شاركه معهم الآن.'
+  "live_session": {
+   "label": "🔴 دعوة لبث مباشر",
+   "subject": "🔴 انضم لبثنا المباشر القادم",
+   "body": "مرحباً بك 👋\n\nندعوك لحضور بثنا المباشر القادم حيث نشرح قراءة السوق بأدوات O P N  LIO ⚜ عملياً على الشارت.\n\nستصلك تفاصيل الموعد والرابط قريباً. حضورك يثري تجربتك التعليمية."
   },
-  feedback_survey: {
-    subject: '📝 رأيك يهمنا — استبيان قصير للسفراء',
-    body: 'مرحباً بك 👋\n\nنعمل دائماً على تحسين تجربة سفرائنا، ونود معرفة رأيك.\n\nرابط الاستبيان (لن يستغرق أكثر من دقيقتين):\n[اكتب هنا رابط الاستبيان]\n\nملاحظاتك تساعدنا في تطوير برنامج أفضل لك ولزملائك السفراء. شكراً لوقتك 🙏'
+  "weekly_tip": {
+   "label": "💡 نصيحة الأسبوع",
+   "subject": "💡 نصيحة تداول من O P N  LIO",
+   "body": "مرحباً بك 👋\n\nنصيحة هذا الأسبوع: لا تدخل عند أول ظهور للإشارة مباشرةً، بل انتظر تأكيد التوافق بين الأدوات — التوافق بين مقاييس مستقلة هو أقوى دليل على جودة القرار.\n\nراجع كتيب الشرح لمزيد من التفاصيل."
   },
-  boost_campaign: {
-    subject: '🚀 حملة تحفيزية: عمولتك ترتفع الآن!',
-    body: 'مرحباً بك 👋\n\nأطلقنا حملة تحفيزية مؤقتة تمنحك زيادة فورية على عمولتك!\n\nتفاصيل الحملة:\n• الزيادة: +[اكتب المقدار]$ على كل عملية تجديد تحدث خلال فترة الحملة\n• المدة: من [التاريخ/الساعة] إلى [التاريخ/الساعة]\n\nكل عميل تجدده خلال هذه الفترة يُحسب بالعمولة المرتفعة تلقائياً — لا حاجة لأي إجراء إضافي منك.\n\n⏱️ تابع العداد التنازلي المباشر للوقت المتبقي على الحملة من داخل لوحة تحكمك.\n\nهذه فرصتك لتضاعف مكاسبك في وقت محدود — لا تفوّتها! ⏳'
+  "booklet_reminder": {
+   "label": "📘 كتيبك التعليمي بانتظارك",
+   "subject": "📘 هل قرأت كتيب الشرح الكامل؟",
+   "body": "مرحباً بك 👋\n\nكتيب شرح O P N  LIO ⚜ يشرح كل لون ورقم وخط وتنبيه تراه على الشارت — بلغتك ومدعوماً بالصور.\n\nحمّله بصيغة PDF من الموقع، فهو أسرع طريق لإتقان أدواتك."
   },
-  golden_campaign: {
-    subject: '🏆 حملة ذهبية استثنائية — فرصة لا تتكرر!',
-    body: 'مرحباً بك 👋\n\nلحظة استثنائية! أطلقنا حملة ذهبية بزيادة غير عادية على عمولتك، تتجاوز الحد المعتاد بالكامل! 🔥\n\nتفاصيل الحملة الذهبية:\n• الزيادة: +[اكتب المقدار]$ على كل عملية تجديد — بحد أقصى استثنائي يصل إلى [اكتب الحد]$\n• المدة: من [التاريخ/الساعة] إلى [التاريخ/الساعة] فقط — نافذة محدودة جداً\n\n⚡ كل عميل تجدده الآن يعني مكسباً أكبر بكثير من المعتاد. هذه ليست حملة عادية — هي فرصتك الذهبية لتحقيق أعلى عمولة ممكنة في تاريخك كسفير معنا.\n\n⏱️ لوحة تحكمك تعرض عداداً تنازلياً ذهبياً مباشراً بالوقت المتبقي بالضبط — تابعه لحظة بلحظة.\n\nلا تنتظر — كل ساعة تمر هي فرصة تذهب! 🚀🏆'
+  "academy_invite": {
+   "label": "🎓 تعلّم مجاناً في أكاديميتنا",
+   "subject": "🎓 برنامج تأهيل المتداول — مجاناً بالكامل",
+   "body": "مرحباً بك 👋\n\nكمشترك في O P N  LIO ⚜، يمكنك الوصول مجاناً لأكاديميتنا: 12 مستوى من الأساسيات إلى الاحتراف، تنتهي بشهادة رسمية.\n\nابدأ رحلتك التعليمية الآن من الموقع."
+  },
+  "upgrade_offer": {
+   "label": "⬆️ طوّر باقتك ووفّر أكثر",
+   "subject": "⬆️ الباقات الأطول = توفير أكبر",
+   "body": "مرحباً بك 👋\n\nهل تعلم أن الباقات الأطول في O P N  LIO ⚜ توفّر عليك أكثر شهرياً؟\n\nيمكنك الترقية في أي وقت من حسابك والاستمتاع بنفس الأدوات بتكلفة شهرية أقل.\n\nفريق الدعم جاهز لمساعدتك في الاختيار."
+  },
+  "indicator_update": {
+   "label": "✨ تحديث في المؤشرات",
+   "subject": "✨ تحديث جديد على أدوات O P N  LIO",
+   "body": "مرحباً بك 👋\n\nطوّرنا أدوات O P N  LIO ⚜ بتحسينات جديدة ترفع دقة القراءة ووضوح التنبيهات.\n\nالتحديث يصلك تلقائياً على TradingView دون أي إجراء منك.\n\nنتمنى أن تلمس الفرق."
+  },
+  "satisfaction_survey": {
+   "label": "📝 رأيك يهمنا",
+   "subject": "📝 دقيقتان من وقتك تصنع الفرق",
+   "body": "مرحباً بك 👋\n\nنعمل دائماً على تحسين تجربتك في O P N  LIO ⚜، ورأيك هو بوصلتنا.\n\nيسعدنا لو شاركتنا ملاحظاتك وتقييمك عبر الرد على هذا البريد. شكراً لوقتك 🙏"
+  },
+  "unused_features": {
+   "label": "🔍 مزايا لم تجرّبها بعد",
+   "subject": "🔍 هل استفدت من كل أدواتك؟",
+   "body": "مرحباً بك 👋\n\nاشتراكك في O P N  LIO ⚜ يمنحك أربع أدوات متكاملة وتنبيهات مباشرة وكتيباً تعليمياً وأكاديمية مجانية.\n\nإن لم تجرّبها جميعاً بعد، فأنت تفوّت جزءاً من قيمة اشتراكك. استكشفها الآن."
+  },
+  "leave_review": {
+   "label": "⭐ شاركنا تجربتك",
+   "subject": "⭐ رأيك يلهم غيرك",
+   "body": "مرحباً بك 👋\n\nإن كانت تجربتك مع O P N  LIO ⚜ إيجابية، يسعدنا أن تشاركها كرأي يظهر على موقعنا ويفيد متداولين آخرين.\n\nيمكنك إضافة رأيك من صفحة الآراء. شكراً لدعمك 🌟"
+  },
+  "maintenance": {
+   "label": "🛠️ صيانة مجدولة",
+   "subject": "🛠️ إشعار صيانة قصيرة",
+   "body": "مرحباً بك 👋\n\nننفّذ صيانة قصيرة لتحسين أداء خدمات O P N  LIO ⚜ خلال الفترة القادمة.\n\nقد تلاحظ انقطاعاً بسيطاً ومؤقتاً في بعض الخدمات، وستعود كاملة تلقائياً.\n\nنشكر تفهّمك."
+  },
+  "risk_tip": {
+   "label": "🛡️ إدارة رأس المال",
+   "subject": "🛡️ الحماية قبل الربح",
+   "body": "مرحباً بك 👋\n\nتذكير مهم: أدوات O P N  LIO ⚜ تعليمية تساعدك على القراءة، لكن إدارة رأس المال هي ما يحمي حسابك.\n\nلا تخاطر بأكثر مما تتحمّل خسارته، ووزّع مخاطرك دائماً. النجاح مسار طويل."
+  },
+  "security_tip": {
+   "label": "🔐 أمان حسابك",
+   "subject": "🔐 نصائح لحماية حسابك",
+   "body": "مرحباً بك 👋\n\nحرصاً على أمانك في O P N  LIO ⚜:\n\n• لا تشارك بيانات دخولك مع أحد\n• رقم عميلك خاص بك وحدك للتحقق من اشتراكك\n\nنحن لا نطلب كلمة مرورك عبر البريد إطلاقاً. حسابك أمانة لدينا."
+  },
+  "limited_offer": {
+   "label": "🎁 عرض حصري لفترة محدودة",
+   "subject": "🎁 عرض خاص لمشتركي O P N  LIO",
+   "body": "مرحباً بك 👋\n\nكشكر على ثقتك، خصصنا عرضاً حصرياً لفترة محدودة لمشتركي O P N  LIO ⚜\n\nتفاصيل العرض والمدة متاحة الآن — لا تفوّت الفرصة قبل انتهائها."
+  },
+  "become_ambassador": {
+   "label": "🤝 كن سفيراً واكسب معنا",
+   "subject": "🤝 حوّل شغفك إلى دخل",
+   "body": "مرحباً بك 👋\n\nهل تحب O P N  LIO ⚜ وتنصح به أصدقاءك؟ يمكنك أن تصبح سفيراً معتمداً وتكسب عمولة عن كل عميل تجلبه.\n\nسجّل كسفير من الموقع وابدأ رحلتك معنا شريكاً في النجاح."
+  },
+  "occasion": {
+   "label": "🎊 تهنئة بمناسبة",
+   "subject": "🎊 كل عام وأنت بخير",
+   "body": "مرحباً بك 👋\n\nمن عائلة O P N  LIO ⚜، نهنئك بهذه المناسبة الكريمة ونتمنى لك التوفيق في أسواقك وحياتك.\n\nشكراً لكونك جزءاً من مجتمعنا."
+  },
+  "reactivate": {
+   "label": "🔄 عُد أقوى",
+   "subject": "🔄 حسابك بانتظار عودتك",
+   "body": "مرحباً بك 👋\n\nلاحظنا غيابك عن O P N  LIO ⚜ منذ فترة. أدواتك وتنبيهاتك المباشرة ما زالت جاهزة، والسوق لا ينتظر.\n\nعُد الآن وأكمل من حيث توقفت."
+  },
+  "loyalty_thanks": {
+   "label": "💎 شكراً لولائك",
+   "subject": "💎 ولاؤك يعني لنا الكثير",
+   "body": "مرحباً بك 👋\n\nمرور هذه المدة معنا في O P N  LIO ⚜ وسام نعتز به. شكراً لثقتك الطويلة ودعمك المستمر.\n\nنعدك بالاستمرار في تطوير أدواتنا لتبقى الأفضل بين يديك."
   }
+ },
+ "affiliates": {
+  "welcome": {
+   "label": "🎉 ترحيب بعد التفعيل",
+   "subject": "🎉 مرحباً بك سفيراً في O P N  LIO ⚜",
+   "body": "مرحباً بك 👋\n\nتم تفعيل حسابك كسفير معتمد في O P N  LIO ⚜\n\nمن لوحة تحكمك تتابع عملاءك وعمولتك ومؤشر أدائك لحظياً. كل عميل تجلبه يرفع مؤشرك ويزيد عمولتك الدائمة.\n\nنتمنى لك رحلة موفّقة شريكاً في النجاح."
+  },
+  "first_customer": {
+   "label": "🎯 أول عميل — مبروك!",
+   "subject": "🎯 عميلك الأول انضم!",
+   "body": "مرحباً بك 👋\n\nمبروك! انضم أول عميل عبر كودك في O P N  LIO ⚜ 🎉\n\nهذه بداية الطريق — كل عميل قادم يرفع مؤشر أدائك ويزيد عمولتك. استمر بنفس الحماس!"
+  },
+  "commission_update": {
+   "label": "📊 تحديث نظام العمولات",
+   "subject": "📊 تحديث في نظام عمولات السفراء",
+   "body": "مرحباً بك 👋\n\nنود إعلامك بتحديث في نظام حساب عمولات سفراء O P N  LIO ⚜، صُمّم ليكافئك بشكل أعدل على نشاطك المستمر.\n\nتفاصيل النظام المحدّث ظاهرة الآن في لوحة تحكمك ضمن قسم العمولات."
+  },
+  "payout_notice": {
+   "label": "💸 إشعار صرف العمولات",
+   "subject": "💸 تم صرف دفعة عمولتك",
+   "body": "مرحباً بك 👋\n\nيسرّنا إعلامك بصرف دفعة عمولتك عن الفترة المنتهية في O P N  LIO ⚜\n\nتفاصيل المبلغ والفترة متاحة في كشف الصرف بلوحة تحكمك. شكراً لجهودك المستمرة."
+  },
+  "payout_soon": {
+   "label": "🗓️ اقتراب موعد الصرف",
+   "subject": "🗓️ موعد صرف العمولات يقترب",
+   "body": "مرحباً بك 👋\n\nنذكّرك بأن موعد الصرف الشهري لعمولات سفراء O P N  LIO ⚜ يقترب.\n\nتأكد من صحة بياناتك البنكية (IBAN) في لوحة تحكمك لضمان وصول مستحقاتك دون تأخير."
+  },
+  "boost_campaign": {
+   "label": "🚀 حملة تحفيزية (رفع عمولة)",
+   "subject": "🚀 عمولتك ترتفع الآن — حملة محدودة",
+   "body": "مرحباً بك 👋\n\nأطلقنا حملة تحفيزية مؤقتة ترفع عمولتك فوراً على كل تجديد خلال فترة الحملة!\n\n⏱️ تابع العدّاد التنازلي المباشر بلوحة تحكمك لمعرفة الوقت المتبقي والمقدار المحدّث. ضاعف مكاسبك قبل انتهائها!"
+  },
+  "golden_campaign": {
+   "label": "🏆 حملة ذهبية استثنائية",
+   "subject": "🏆 فرصة ذهبية لا تتكرر!",
+   "body": "مرحباً بك 👋\n\nلحظة استثنائية! حملة ذهبية بزيادة غير عادية على عمولتك تتجاوز الحد المعتاد 🔥\n\n⏱️ لوحة تحكمك تعرض عدّاداً ذهبياً مباشراً بالوقت المتبقي والحد الأقصى. هذه فرصتك لأعلى عمولة في تاريخك معنا!"
+  },
+  "low_perf": {
+   "label": "⚠️ تنبيه أداء",
+   "subject": "⚠️ بخصوص نشاط حسابك كسفير",
+   "body": "مرحباً بك 👋\n\nلاحظنا تراجع نشاطك كسفير في O P N  LIO ⚜ خلال الفترة الأخيرة.\n\nاستمرار الحساب نشطاً يتطلب جلب عملاء بشكل دوري وفق الاتفاقية. إن احتجت دعماً أو مواد تسويقية، نحن جاهزون لمساعدتك."
+  },
+  "freeze_warning": {
+   "label": "🚫 تنبيه قرب تجميد الحساب",
+   "subject": "🚫 حسابك معرّض للتجميد",
+   "body": "مرحباً بك 👋\n\nوفق اتفاقية السفراء، الحسابات غير النشطة لمدة طويلة دون جلب عملاء تُجمَّد مؤقتاً.\n\nحسابك يقترب من هذه الحالة. جلب عميل واحد قبل انتهاء المهلة يبقيه نشطاً. نأمل رؤية نشاطك قريباً."
+  },
+  "reactivated": {
+   "label": "✅ تم تنشيط حسابك",
+   "subject": "✅ حسابك كسفير نشط مجدداً",
+   "body": "مرحباً بك 👋\n\nيسعدنا إعادة تنشيط حسابك كسفير في O P N  LIO ⚜\n\nكل مزايا لوحة التحكم متاحة لك الآن من جديد. أهلاً بعودتك، ونتطلع لنشاطك."
+  },
+  "marketing_kit": {
+   "label": "🎨 مواد تسويقية جاهزة",
+   "subject": "🎨 عُدّة ترويجية تسهّل عملك",
+   "body": "مرحباً بك 👋\n\nأعددنا لك مجموعة مواد تسويقية جاهزة (صور ونصوص وروابط) لتسهيل ترويج كودك الخاص في O P N  LIO ⚜\n\nستجدها بلوحة تحكمك — استخدمها كما هي أو بأسلوبك لجذب عملاء أكثر بجهد أقل."
+  },
+  "conversion_tips": {
+   "label": "📈 نصائح لزيادة التحويلات",
+   "subject": "📈 كيف تحوّل المهتمين إلى عملاء",
+   "body": "مرحباً بك 👋\n\nثلاث نصائح ترفع تحويلاتك كسفير:\n\n1) ركّز على التجربة المجانية 14 يوم كنقطة دخول سهلة\n2) اشرح قيمة الأدوات لا سعرها\n3) وجّههم للأكاديمية المجانية أولاً لبناء الثقة\n\nنشاطك المتزايد يرفع مؤشرك وعمولتك."
+  },
+  "policy_change": {
+   "label": "📜 تحديث الاتفاقية",
+   "subject": "📜 تحديث في اتفاقية السفراء",
+   "body": "مرحباً بك 👋\n\nنود إعلامك بتحديث في اتفاقية وسياسات برنامج سفراء O P N  LIO ⚜\n\nيمكنك مراجعة النسخة المحدّثة من لوحة تحكمك. التحديث ساري من تاريخ هذه الرسالة، وفريق الدعم جاهز لأي استفسار."
+  },
+  "new_feature": {
+   "label": "✨ ميزة جديدة بلوحتك",
+   "subject": "✨ جديد في لوحة تحكم السفير",
+   "body": "مرحباً بك 👋\n\nأضفنا ميزة جديدة إلى لوحة تحكم السفراء لتحسين متابعتك لأدائك وعملائك.\n\nسجّل دخولك واستكشفها بنفسك — نتمنى أن تنال إعجابك 🌟"
+  },
+  "amp_up": {
+   "label": "⬆️ ارتفع مؤشر أدائك",
+   "subject": "⬆️ مبروك — مؤشرك ارتفع!",
+   "body": "مرحباً بك 👋\n\nنشاطك المتميز رفع مؤشر أدائك في O P N  LIO ⚜، وهذا يعني عمولة أعلى على تجديدات عملائك 🎉\n\nاستمر — كلما حافظت على نشاطك بقي مؤشرك مرتفعاً. تابع التفاصيل بلوحة تحكمك."
+  },
+  "amp_down": {
+   "label": "📉 تنبيه تراجع المؤشر",
+   "subject": "📉 مؤشر أدائك يحتاج انتباهك",
+   "body": "مرحباً بك 👋\n\nتراجع مؤشر أدائك قليلاً بسبب انخفاض النشاط مؤخراً. لا قلق — جلب عملاء جدد يعيده للارتفاع تدريجياً.\n\nراجع لوحة تحكمك لمتابعة مؤشرك والمدة المتبقية لكل درجة."
+  },
+  "leaderboard": {
+   "label": "🏅 لوحة الصدارة",
+   "subject": "🏅 أين موقعك بين السفراء؟",
+   "body": "مرحباً بك 👋\n\nأطلقنا لوحة صدارة تعرض أفضل سفراء O P N  LIO ⚜ أداءً.\n\nتحقق من ترتيبك بلوحة تحكمك — المنافسة الشريفة تحفّزنا جميعاً نحو الأفضل. هل تصل للقمة هذا الشهر؟"
+  },
+  "survey": {
+   "label": "📝 استبيان السفراء",
+   "subject": "📝 رأيك يطوّر برنامجنا",
+   "body": "مرحباً بك 👋\n\nنطوّر برنامج سفراء O P N  LIO ⚜ باستمرار، ورأيك أساسي.\n\nيسعدنا سماع ملاحظاتك واقتراحاتك عبر الرد على هذا البريد. شكراً لشراكتك 🙏"
+  },
+  "bank_update": {
+   "label": "🏦 حدّث بياناتك البنكية",
+   "subject": "🏦 تأكد من صحة حساب الصرف",
+   "body": "مرحباً بك 👋\n\nلضمان وصول عمولاتك دون تأخير، يرجى التأكد من صحة اسمك حسب الهوية ورقم حسابك البنكي (IBAN) في لوحة تحكمك.\n\nبيانات دقيقة = صرف سلس في موعده."
+  },
+  "refer_ambassador": {
+   "label": "🤝 مكافأة إحالة سفير",
+   "subject": "🤝 اعرف سفيراً محتملاً؟",
+   "body": "مرحباً بك 👋\n\nهل تعرف من يصلح ليكون سفيراً ناجحاً في O P N  LIO ⚜؟\n\nرشّحه لنا — نكافئ السفراء الذين يوسّعون شبكتنا بشركاء نجاح متميزين. التفاصيل عبر الدعم."
+  },
+  "milestone": {
+   "label": "🎉 إنجاز جديد",
+   "subject": "🎉 مبروك بلوغك محطة مهمة",
+   "body": "مرحباً بك 👋\n\nوصلت إلى محطة مميزة في عدد عملائك عبر O P N  LIO ⚜ 🎉\n\nهذا دليل على جهدك وثقة عملائك بك. مستمرون في دعمك لبلوغ محطات أكبر. فخورون بك!"
+  },
+  "training_invite": {
+   "label": "📚 تدريب السفراء",
+   "subject": "📚 دعوة لجلسة تدريب السفراء",
+   "body": "مرحباً بك 👋\n\nندعوك لجلسة تدريبية خاصة بسفراء O P N  LIO ⚜ نشارك فيها أفضل أساليب الترويج ورفع العمولة.\n\nتفاصيل الموعد والرابط تصلك قريباً. حضورك استثمار في نجاحك."
+  },
+  "month_thanks": {
+   "label": "🙏 شكر نهاية الشهر",
+   "subject": "🙏 شكراً على شهر مميز",
+   "body": "مرحباً بك 👋\n\nمع نهاية الشهر، نشكرك على جهدك كسفير في O P N  LIO ⚜\n\nكل عميل جلبته صنع فرقاً. كشف أدائك وعمولتك متاح بلوحة تحكمك. إلى شهر أنجح 🚀"
+  },
+  "security": {
+   "label": "🔐 أمان حسابك",
+   "subject": "🔐 حماية حساب السفير",
+   "body": "مرحباً بك 👋\n\nحرصاً على أمان حسابك في O P N  LIO ⚜: لا تشارك رقم السفير أو كلمة المرور مع أحد، ونحن لا نطلبهما عبر البريد إطلاقاً.\n\nإن لاحظت أي نشاط غير معتاد، تواصل معنا فوراً."
+  },
+  "promo_reminder": {
+   "label": "🏷️ كود الخصم الخاص بك",
+   "subject": "🏷️ ذكّر عملاءك بكود الخصم",
+   "body": "مرحباً بك 👋\n\nكود الخصم الخاص بعملائك في O P N  LIO ⚜ أداة قوية لرفع تحويلاتك.\n\nشاركه في محتواك ومع المهتمين — كل استخدام يقربك من عمولة أعلى. التفاصيل بلوحة تحكمك."
+  }
+ },
+ "academy": {
+  "welcome": {
+   "label": "🎓 ترحيب بالتسجيل",
+   "subject": "🎓 أهلاً بك في أكاديمية O P N  LIO",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nيسعدنا انضمامك إلى أكاديميتنا — رحلتك من الصفر إلى الاحتراف تبدأ الآن عبر 12 مستوى متدرّجاً.\n\nكل مستوى تنجزه يقرّبك من شهادتك الرسمية وكود خصم حصري وأهلية الانضمام كسفير. ابدأ مستواك الأول من لوحة تحكمك 🚀"
+  },
+  "level_done": {
+   "label": "✅ إتمام مستوى",
+   "subject": "✅ إنجاز جديد في مسارك!",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nأحسنت! أتممت بنجاح مستوىً جديداً في أكاديمية O P N  LIO\n\nرصيد نقاطك يتزايد ورتبتك تتقدم. المستوى التالي بانتظارك من لوحة تحكمك — لا تتوقف الآن!"
+  },
+  "graduation": {
+   "label": "🏆 التخرج والشهادة",
+   "subject": "🏆 مبروك التخرج! شهادتك جاهزة",
+   "body": "مبروك يا عضو O P N  LIO 🏆👋\n\nأتممت بامتياز جميع مستويات الأكاديمية ونلت رتبة \"محترف O P N  LIO\".\n\nشهادتك الرسمية جاهزة للتحميل والمشاركة من لوحة تحكمك، مع كود خصم حصري. والأهم: أصبحت مؤهلاً للانضمام كسفير معتمد!"
+  },
+  "inactivity": {
+   "label": "⏰ تذكير بالمتابعة",
+   "subject": "⏰ افتقدناك في الأكاديمية",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nلاحظنا توقفك عن متابعة مسارك التعليمي منذ فترة.\n\nنقاطك وتقدمك محفوظان بانتظارك — أكمل مستواك القادم واقترب خطوة من شهادتك. نراك قريباً 🎓"
+  },
+  "next_level": {
+   "label": "▶️ ابدأ مستواك التالي",
+   "subject": "▶️ مستواك التالي بانتظارك",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nأنت على بُعد مستوى واحد من إنجاز جديد! افتح لوحة تحكمك وابدأ درسك القادم الآن.\n\nكل خطوة تقرّبك من الاحتراف ومن شهادتك الرسمية."
+  },
+  "quiz_soon": {
+   "label": "⏳ اقتراب فتح الاختبار",
+   "subject": "⏳ اختبار مستواك يفتح قريباً",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nأتممت دروس المستوى — اختبارك سيُفتح بعد فترة وجيزة من التطبيق العملي.\n\nراجع ما تعلّمته جيداً، فالاختبار بوابتك للمستوى التالي. بالتوفيق!"
+  },
+  "quiz_pass": {
+   "label": "🎉 نجحت في الاختبار",
+   "subject": "🎉 اجتزت الاختبار بنجاح!",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nمبروك! اجتزت اختبار المستوى بنجاح وأضفت نقاطاً جديدة لرصيدك 🎉\n\nالمستوى التالي مفتوح الآن أمامك. استمر بنفس التميّز!"
+  },
+  "quiz_retry": {
+   "label": "🔁 أعد المحاولة",
+   "subject": "🔁 لا تستسلم — حاول مجدداً",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nلم تجتز الاختبار هذه المرة، وهذا جزء طبيعي من التعلّم.\n\nراجع دروس المستوى مرة أخرى ثم أعد المحاولة — الفهم العميق أهم من السرعة. نحن واثقون بك!"
+  },
+  "study_tip": {
+   "label": "💡 نصيحة تعليمية",
+   "subject": "💡 نصيحة من أكاديمية O P N  LIO",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nنصيحة اليوم: لا تحفظ الإشارات، بل افهم منطقها. عندما تدرك لماذا يتحرك السعر، تصبح قراءتك للسوق مستقلة وواثقة.\n\nطبّق ما تتعلّمه على شارت حقيقي بعد كل مستوى."
+  },
+  "level_reminder": {
+   "label": "📌 تذكير بمستواك الحالي",
+   "subject": "📌 أكمل من حيث توقفت",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nمستواك الحالي في الأكاديمية ما زال مفتوحاً بانتظار إتمامه.\n\nخصّص دقائق اليوم لإكماله — الاستمرارية اليومية أسرع طريق للاحتراف. لوحة تحكمك جاهزة."
+  },
+  "new_content": {
+   "label": "✨ محتوى جديد",
+   "subject": "✨ إضافة جديدة للبرنامج",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nأضفنا محتوى تعليمياً جديداً لأكاديمية O P N  LIO يثري رحلتك نحو الاحتراف.\n\nسجّل دخولك لاستكشاف الإضافة الجديدة من لوحة تحكمك."
+  },
+  "points_boost": {
+   "label": "⭐ ضاعف نقاطك",
+   "subject": "⭐ نقاطك = طريقك للرتبة التالية",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nكل مستوى تنجزه وكل اختبار تجتازه يضيف نقاطاً ترفع رتبتك نحو \"محترف O P N  LIO\".\n\nكم نقطة تحتاج للرتبة التالية؟ تحقق من لوحة تحكمك وواصل التقدّم!"
+  },
+  "rank_close": {
+   "label": "🎖️ اقتربت من رتبة جديدة",
+   "subject": "🎖️ رتبة جديدة على بُعد خطوات",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nأنت قريب جداً من بلوغ رتبة جديدة في الأكاديمية!\n\nأكمل مستواك القادم واحصد النقاط المتبقية. الإنجاز القادم بمتناول يدك 🎖️"
+  },
+  "discount_code": {
+   "label": "🏷️ كود خصم التخرج",
+   "subject": "🏷️ كود خصمك الحصري بانتظارك",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nبتخرجك من الأكاديمية حصلت على كود خصم حصري خاص بك وحدك، غير قابل للمشاركة.\n\nاستخدمه عند الاشتراك في O P N  LIO ⚜ من لوحة تحكمك واستمتع بأدواتنا الأربع المتكاملة."
+  },
+  "ambassador_eligible": {
+   "label": "🤝 أصبحت مؤهلاً كسفير",
+   "subject": "🤝 مؤهل للانضمام كسفير O P N  LIO",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nبإتمامك البرنامج، فُتحت لك أهلية الانضمام كسفير معتمد في O P N  LIO ⚜\n\nحوّل معرفتك إلى دخل: اكسب عمولة عن كل عميل تجلبه. فعّل مسار السفير من لوحة تحكمك."
+  },
+  "live_class": {
+   "label": "🔴 بث تعليمي مباشر",
+   "subject": "🔴 انضم لحصتنا التعليمية",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nندعوك لبث تعليمي مباشر نطبّق فيه دروس الأكاديمية على السوق الحقيقي ونجيب أسئلتك.\n\nتفاصيل الموعد والرابط تصلك قريباً. حضورك يعمّق فهمك."
+  },
+  "membership_perks": {
+   "label": "💎 مزايا عضويتك",
+   "subject": "💎 كل مزاياك في مكان واحد",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nعضويتك تمنحك: أكاديمية مجانية كاملة بشهادة، كود خصم عند التخرج، أهلية أن تصبح سفيراً، ومتابعة أدواتنا من لوحة واحدة.\n\nسجّل دخولك واستكشف كل ما هو متاح لك 🌟"
+  },
+  "streak": {
+   "label": "🔥 سلسلة إنجازك",
+   "subject": "🔥 حافظ على سلسلة تقدّمك",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nإنجازك المتتالي للمستويات يبني عادة تعلّم قوية. لا تكسر السلسلة اليوم!\n\nدقائق قليلة في لوحة تحكمك تبقيك على المسار نحو الاحتراف 🔥"
+  },
+  "challenge": {
+   "label": "🏆 تحدٍّ تعليمي",
+   "subject": "🏆 هل أنت مستعد للتحدي؟",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nأطلقنا تحدياً تعليمياً لأعضاء الأكاديمية يختبر ما تعلّمته ويمنحك نقاطاً إضافية.\n\nشارك الآن من لوحة تحكمك وأثبت تقدّمك بين الأعضاء!"
+  },
+  "learn_survey": {
+   "label": "📝 استبيان التعلّم",
+   "subject": "📝 كيف كانت تجربتك التعليمية؟",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nنطوّر أكاديمية O P N  LIO باستمرار، ورأيك يصنع الفرق.\n\nشاركنا ملاحظاتك عن الدروس والاختبارات عبر الرد على هذا البريد. شكراً لوقتك 🙏"
+  },
+  "psychology": {
+   "label": "🧠 نفسية التداول",
+   "subject": "🧠 عقلك أهم أدواتك",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nدرس مهم: أكبر عدو للمتداول ليس السوق، بل الطمع والخوف. الانضباط والصبر يصنعان الفرق أكثر من أي مؤشر.\n\nستتعمّق في هذا ضمن مستويات نفسية التداول بالأكاديمية."
+  },
+  "weekly_review": {
+   "label": "📊 مراجعتك الأسبوعية",
+   "subject": "📊 ملخص تقدّمك هذا الأسبوع",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nهذا وقت مثالي لمراجعة تقدّمك الأسبوعي في الأكاديمية: كم مستوى أنجزت؟ كم نقطة جمعت؟\n\nافتح لوحة تحكمك، راجع إنجازك، وحدّد هدف الأسبوع القادم 📊"
+  },
+  "halfway": {
+   "label": "🌟 منتصف الطريق",
+   "subject": "🌟 مبروك — وصلت المنتصف!",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nوصلت إلى منتصف رحلتك في أكاديمية O P N  LIO 🌟\n\nالنصف الأصعب خلفك، والاحتراف يقترب. استمر بنفس العزيمة — شهادتك في الأفق!"
+  },
+  "cert_share": {
+   "label": "📜 شارك شهادتك",
+   "subject": "📜 شهادتك تستحق أن تُرى",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nشهادة تخرجك من أكاديمية O P N  LIO جاهزة للمشاركة على واتساب وإكس ولينكدإن وغيرها مباشرة من لوحة تحكمك.\n\nأظهر إنجازك للعالم وألهم غيرك لبدء رحلته 🎓"
+  },
+  "general_update": {
+   "label": "📢 تحديث عام",
+   "subject": "📢 جديد أكاديمية O P N  LIO",
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nلدينا تحديثات وتحسينات جديدة في أكاديمية O P N  LIO تجعل تجربتك التعليمية أفضل وأسلس.\n\nسجّل دخولك لتكتشف كل جديد من لوحة تحكمك."
+  }
+ }
 };
 
 var bcTranslations = {};
@@ -1046,9 +1489,10 @@ function translateBroadcast(){
 
 function applyBroadcastTemplate(){
   var key = document.getElementById('bc_template').value;
-  if (!key || !BC_TEMPLATES[key]) return;
-  document.getElementById('bc_subject').value = BC_TEMPLATES[key].subject;
-  document.getElementById('bc_message').value = BC_TEMPLATES[key].body;
+  var set = currentBcSet();
+  if (!key || !set[key]) return;
+  document.getElementById('bc_subject').value = set[key].subject;
+  document.getElementById('bc_message').value = set[key].body;
 }
 
 function sendBroadcast(){
@@ -1391,21 +1835,31 @@ function deleteRefCode(code){
 }
 
 function renderLangTable(rows){
-  var tb = document.querySelector('#langTable tbody'); tb.innerHTML = '';
-  rows.forEach(function(r){
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td>'+(r.lang||'-')+'</td><td>'+r.c+'</td>';
-    tb.appendChild(tr);
-  });
+  var el = document.getElementById('langChart');
+  if (!el) return;
+  if (!rows || !rows.length) { el.innerHTML = '<div class="emptyState" style="padding:14px; color:#6b7488; font-size:13px;">\u0644\u0627 \u062a\u0648\u062c\u062f \u0628\u064a\u0627\u0646\u0627\u062a \u0628\u0639\u062f</div>'; return; }
+  var flags = {ar:'\ud83c\uddf8\ud83c\udde6',en:'\ud83c\uddec\ud83c\udde7',tr:'\ud83c\uddf9\ud83c\uddf7',es:'\ud83c\uddea\ud83c\uddf8',pt:'\ud83c\uddf5\ud83c\uddf9',de:'\ud83c\udde9\ud83c\uddea',fr:'\ud83c\uddeb\ud83c\uddf7'};
+  var names = {ar:'\u0627\u0644\u0639\u0631\u0628\u064a\u0629',en:'English',tr:'T\u00fcrk\u00e7e',es:'Espa\u00f1ol',pt:'Portugu\u00eas',de:'Deutsch',fr:'Fran\u00e7ais'};
+  var max = Math.max.apply(null, rows.map(function(r){return r.c;})) || 1;
+  el.innerHTML = rows.map(function(r){
+    var pct = Math.round((r.c/max)*100);
+    var lg = (r.lang||'-');
+    var label = (flags[lg]||'\ud83c\udf10') + ' ' + (names[lg]||lg);
+    return '<div><div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px; color:#c9d2e3;"><span style="font-weight:700;">'+label+'</span><span style="font-weight:900; color:#D4AF37;">'+r.c+'</span></div>' +
+      '<div style="height:9px; background:rgba(255,255,255,.06); border-radius:6px; overflow:hidden;"><div style="height:100%; width:'+pct+'%; border-radius:6px; background:linear-gradient(90deg,#8a6d1f,#D4AF37);"></div></div></div>';
+  }).join('');
 }
 
 function renderPageTable(rows){
-  var tb = document.querySelector('#pageTable tbody'); tb.innerHTML = '';
-  rows.forEach(function(r){
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td>'+(r.page||'-')+'</td><td>'+r.c+'</td>';
-    tb.appendChild(tr);
-  });
+  var el = document.getElementById('pageChart');
+  if (!el) return;
+  if (!rows || !rows.length) { el.innerHTML = '<div class="emptyState" style="padding:14px; color:#6b7488; font-size:13px;">\u0644\u0627 \u062a\u0648\u062c\u062f \u0628\u064a\u0627\u0646\u0627\u062a \u0628\u0639\u062f</div>'; return; }
+  var max = Math.max.apply(null, rows.map(function(r){return r.c;})) || 1;
+  el.innerHTML = rows.slice(0,8).map(function(r){
+    var pct = Math.round((r.c/max)*100);
+    return '<div><div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px; color:#c9d2e3;"><span style="font-weight:700; direction:ltr;">'+(r.page||'-')+'</span><span style="font-weight:900; color:#5eead4;">'+r.c+'</span></div>' +
+      '<div style="height:9px; background:rgba(255,255,255,.06); border-radius:6px; overflow:hidden;"><div style="height:100%; width:'+pct+'%; border-radius:6px; background:linear-gradient(90deg,#0e7490,#5eead4);"></div></div></div>';
+  }).join('');
 }
 
 function renderEvents(rows){
@@ -1567,6 +2021,36 @@ function simpleBarList(containerId, items, colorFn){
 }
 
 var STATUS_LABELS_MAP = {trial:'تجربة مجانية', canceled:'ملغى', pending_payment:'بانتظار الدفع', renew_1m:'شهري', renew_3m:'3 أشهر', renew_6m:'6 أشهر', renew_1y:'سنوي'};
+
+var PAGE_LIST = [
+  {key:'academy', label:'🎓 الأكاديمية التدريبية'},
+  {key:'system', label:'⚙️ المنظومة'},
+  {key:'results', label:'📊 النتائج'},
+  {key:'testimonials', label:'💬 الآراء'},
+  {key:'faq', label:'❓ الأسئلة الشائعة'},
+  {key:'pricing', label:'💰 الأسعار'},
+  {key:'signup', label:'✍️ الاشتراك'},
+  {key:'affiliate', label:'⚜ تسجيل السفراء'}
+];
+function loadPageVisibility(){
+  authFetch('/api/admin-data?action=page-visibility').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var el = document.getElementById('pageVisList');
+    el.innerHTML = PAGE_LIST.map(function(p){
+      var isHidden = !!res.hidden[p.key];
+      return '<div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,.03); border-radius:10px;">' +
+        '<span style="font-size:13.5px; font-weight:700;">'+p.label+'</span>' +
+        '<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:'+(isHidden?'#ff9b9b':'#39FF14')+'; font-weight:800;">' +
+        (isHidden ? 'مخفية' : 'ظاهرة') +
+        '<input type="checkbox" '+(isHidden?'':'checked')+' onchange="togglePageVisibility(\''+p.key+'\', !this.checked)" style="width:auto;">' +
+        '</label></div>';
+    }).join('');
+  });
+}
+function togglePageVisibility(page, hidden){
+  authFetch('/api/admin-data?action=set-page-visibility', { method:'POST', body: JSON.stringify({page, hidden}) })
+    .then(function(r){return r.json();}).then(function(){ loadPageVisibility(); });
+}
 
 function loadAnalytics(){
   authFetch('/api/admin-data?action=analytics').then(function(r){return r.json();}).then(function(res){
