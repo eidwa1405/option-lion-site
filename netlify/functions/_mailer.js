@@ -9,9 +9,14 @@ function getTransporter() {
   if (!transporter) {
     transporter = nodemailer.createTransport({
       host: 'mail.privateemail.com',
-      port: 465,
-      secure: true,
-      auth: { user: SMTP_USER, pass: SMTP_PASS }
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 8000,
+      tls: { minVersion: 'TLSv1.2' }
     });
   }
   return transporter;
