@@ -88,11 +88,11 @@ exports.handler = async (event) => {
         ar: { subject: 'تذكير: اشتراكك في O P N LIO ينتهي قريباً ⚜', hi: 'لا تفوّت استمرارية أدواتك',
           body: `مرحباً <b>${c.customer_name}</b> 👋<br><br>باقي على انتهاء اشتراكك في O P N LIO حوالي <b style="color:#ff9b9b;">${hoursRounded} ساعة</b> فقط.<br><br>
             لا تدع أدواتك المتكاملة (منظومة O P N LIO، امبراطورية الأثرياء، Smart Pivot، King's Call) تتوقف عن خدمتك — جدّد اشتراكك الآن واستمر بالاستفادة من التحليل اللحظي والتنبيهات الذكية.<br><br>
-            <a href="https://opon.netlify.app/signup.html" style="display:inline-block;background:linear-gradient(120deg,#D4AF37,#f0cf6c);color:#070d18;font-weight:900;padding:12px 26px;border-radius:10px;text-decoration:none;">تجديد الاشتراك الآن</a>` },
+            <a href="https://opnlio.com/signup.html" style="display:inline-block;background:linear-gradient(120deg,#D4AF37,#f0cf6c);color:#070d18;font-weight:900;padding:12px 26px;border-radius:10px;text-decoration:none;">تجديد الاشتراك الآن</a>` },
         en: { subject: 'Reminder: Your O P N LIO subscription is expiring soon ⚜', hi: "Don't lose access to your tools",
           body: `Hi <b>${c.customer_name}</b> 👋<br><br>Your O P N LIO subscription expires in about <b style="color:#ff9b9b;">${hoursRounded} hours</b>.<br><br>
             Don't let your integrated tools (O P N LIO System, Empire of the Wealthy, Smart Pivot, King's Call) stop serving you — renew now and keep benefiting from real-time analysis and smart alerts.<br><br>
-            <a href="https://opon.netlify.app/en-signup.html" style="display:inline-block;background:linear-gradient(120deg,#D4AF37,#f0cf6c);color:#070d18;font-weight:900;padding:12px 26px;border-radius:10px;text-decoration:none;">Renew Now</a>` }
+            <a href="https://opnlio.com/en-signup.html" style="display:inline-block;background:linear-gradient(120deg,#D4AF37,#f0cf6c);color:#070d18;font-weight:900;padding:12px 26px;border-radius:10px;text-decoration:none;">Renew Now</a>` }
       };
       const t = T[lang];
       const res = await sendMail(c.email, t.subject, t.hi, t.body, lang);
@@ -110,7 +110,7 @@ exports.handler = async (event) => {
       await sql`INSERT INTO admin_settings (key, value) VALUES (${'activation_req_' + affiliate.code}, ${new Date().toISOString()})
         ON CONFLICT (key) DO UPDATE SET value = ${new Date().toISOString()}`;
       await sql`INSERT INTO audit_log (action, details) VALUES ('affiliate-activation-request', ${'طلب تنشيط من السفير: ' + affiliate.code + ' (' + affiliate.name + ')'})`;
-      await sendMail('opon.netlify@gmail.com', 'طلب تنشيط حساب سفير ⚜ ' + affiliate.code, 'طلب تنشيط', 'السفير <b>' + affiliate.name + '</b> (الكود: ' + affiliate.code + ') طلب إعادة تنشيط حسابه المجمّد من لوحة تحكمه.', 'ar');
+      await sendMail('info@opnlio.com', 'طلب تنشيط حساب سفير ⚜ ' + affiliate.code, 'طلب تنشيط', 'السفير <b>' + affiliate.name + '</b> (الكود: ' + affiliate.code + ') طلب إعادة تنشيط حسابه المجمّد من لوحة تحكمه.', 'ar');
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 

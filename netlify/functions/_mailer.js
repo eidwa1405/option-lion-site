@@ -1,14 +1,14 @@
-// أداة إرسال بريد موحّدة عبر SMTP (حساب Gmail الرسمي لO P N LIO)
+// أداة إرسال بريد موحّدة عبر SMTP (Namecheap Private Email — info@opnlio.com)
 const nodemailer = require('nodemailer');
 
-const SMTP_USER = process.env.SMTP_USER || 'opon.netlify@gmail.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'bdqoxxskjxwcdpuo';
+const SMTP_USER = process.env.SMTP_USER || 'info@opnlio.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'ZsN8pU0E1405@';
 
 let transporter;
 function getTransporter() {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: 'mail.privateemail.com',
       port: 465,
       secure: true,
       auth: { user: SMTP_USER, pass: SMTP_PASS }
@@ -51,7 +51,7 @@ async function nextCustomerId(sql, phone) {
 }
 
 const BRAND = {
-  logo: 'https://opon.netlify.app/assets/lion-logo.jpg',
+  logo: 'https://opnlio.com/assets/lion-logo.jpg',
   gold: '#D4AF37',
   bg: '#070d18'
 };

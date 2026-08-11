@@ -58,7 +58,7 @@ exports.handler = async () => {
 
         const lang = (r.lang === 'en') ? 'en' : 'ar';
         const t = T[lang][stage.key];
-        const signupUrl = lang === 'ar' ? 'https://opon.netlify.app/signup.html' : 'https://opon.netlify.app/en-signup.html';
+        const signupUrl = lang === 'ar' ? 'https://opnlio.com/signup.html' : 'https://opnlio.com/en-signup.html';
         const res = await sendMail(r.email, t.subject, t.hi, t.body(r.customer_name, signupUrl), lang);
         if (res.ok) totalSent++;
         await sql`UPDATE subscriptions SET reminder_stage = ${i + 1} WHERE id = ${r.id} AND status = 'pending_payment'`;

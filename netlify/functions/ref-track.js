@@ -50,10 +50,10 @@ exports.handler = async (event) => {
         if (!row.welcome_sent && row.email) {
           const t = WELCOME_T[lang] || WELCOME_T.ar;
           const trialStr = new Date(expiresAt).toISOString().slice(0, 10);
-          const booklet = 'https://opon.netlify.app/booklet.html#' + lang + '-section';
+          const booklet = 'https://opnlio.com/booklet-' + lang + '.html';
           const verifyToken = require('crypto').randomBytes(24).toString('hex');
-          await sql`UPDATE subscriptions SET verify_token = ${verifyToken} WHERE id = ${row.id}`;
-          const verifyLink = 'https://opon.netlify.app/.netlify/functions/verify-email?kind=customer&token=' + verifyToken;
+          await sql`UPDATE subscriptions SET verify_token = ${verifyToken}, verify_token_created_at = now() WHERE id = ${row.id}`;
+          const verifyLink = 'https://opnlio.com/.netlify/functions/verify-email?kind=customer&token=' + verifyToken;
           const bodyHtml = t.body(customerName).replace('{CID}', cid).replace('{PLAN}', row.plan || '-').replace('{TRIAL}', trialStr).replace('{BOOKLET}', booklet) + '<br><br><a href="' + verifyLink + '" style="display:inline-block; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; padding:11px 22px; border-radius:10px; text-decoration:none;">' + (lang === 'ar' ? 'تأكيد بريدك الإلكتروني' : 'Verify Your Email') + '</a>';
           await sendMail(row.email, t.subject, t.hi, bodyHtml, lang);
           await sql`UPDATE subscriptions SET welcome_sent = true WHERE id = ${row.id}`;

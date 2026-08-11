@@ -148,8 +148,10 @@ async function ensureTables() {
   await sql`ALTER TABLE check_attempts ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'customer-status'`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT FALSE`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS verify_token TEXT`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS verify_token_created_at TIMESTAMPTZ`;
   await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT FALSE`;
   await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS verify_token TEXT`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS verify_token_created_at TIMESTAMPTZ`;
   await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS agreement_ip TEXT`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS terms_accepted_at TIMESTAMPTZ`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS terms_accepted_ip TEXT`;
@@ -205,7 +207,44 @@ async function ensureTables() {
   if (userRow.length === 0) {
     await sql`INSERT INTO admin_settings (key, value) VALUES ('admin_username', 'admin')`;
   }
-  const priceCount = await sql`SELECT COUNT(*)::int AS c FROM prices`;
+  await sql`CREATE TABLE IF NOT EXISTS academy_students (
+    id SERIAL PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    agreed_terms_at TIMESTAMPTZ,
+    name TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    lang TEXT DEFAULT 'ar',
+    points INTEGER NOT NULL DEFAULT 0,
+    current_level INTEGER NOT NULL DEFAULT 1,
+    rank TEXT NOT NULL DEFAULT 'مبتدئ',
+    graduated_at TIMESTAMPTZ,
+    discount_code TEXT,
+    referred_by TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_login_at TIMESTAMPTZ
+  )`;
+  await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS verify_token TEXT`;
+  await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS verify_token_created_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false`;
+  await sql`CREATE TABLE IF NOT EXISTS tv_alerts (
+    id SERIAL PRIMARY KEY,
+    symbol TEXT,
+    timeframe TEXT,
+    script_name TEXT,
+    direction TEXT,
+    message TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS academy_progress (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER REFERENCES academy_students(id),
+    level_num INTEGER NOT NULL,
+    completed BOOLEAN NOT NULL DEFAULT false,
+    score INTEGER,
+    completed_at TIMESTAMPTZ,
+    UNIQUE(student_id, level_num)
+  )`;
+
   if (priceCount[0].c === 0) {
     await sql`INSERT INTO prices (id,label,amount,paddle_price_id) VALUES
       ('monthly','شهري',39,'pri_01kyhe6m178pfmv5p755mkhpf0'),

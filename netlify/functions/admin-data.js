@@ -38,6 +38,8 @@ exports.handler = async (event) => {
       let rows;
       if (audience === 'affiliates') {
         rows = await sql`SELECT DISTINCT COALESCE(lang,'ar') AS lang FROM affiliates WHERE email IS NOT NULL AND email != ''`;
+      } else if (audience === 'academy') {
+        rows = await sql`SELECT DISTINCT COALESCE(lang,'ar') AS lang FROM academy_students WHERE email IS NOT NULL AND email != ''`;
       } else {
         rows = await sql`SELECT DISTINCT lang FROM subscriptions WHERE email IS NOT NULL AND email != '' AND email_verified = true`;
       }
@@ -53,6 +55,11 @@ exports.handler = async (event) => {
 
     if (event.httpMethod === 'GET' && action === 'heartbeat') {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'tv-alerts') {
+      const alerts = await sql`SELECT symbol, timeframe, script_name, direction, message, created_at FROM tv_alerts ORDER BY created_at DESC LIMIT 50`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, alerts }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'logout') {
@@ -124,7 +131,14 @@ exports.handler = async (event) => {
         let bonusAmt = parseFloat(r.bonus_amount);
         const carryRows = await sql`SELECT value FROM admin_settings WHERE key = ${'carry_negative_' + r.code}`;
         const carry = carryRows.length ? parseFloat(carryRows[0].value) : 0;
-        if (carry < 0) { amt += carry; }
+        if (carry < 0) {
+          amt += carry;
+          // خصم الترحيل السالب من المكافأة أولاً ثم من العمولة الأساسية حتى يبقى التفصيل مطابقاً للإجمالي
+          let deficit = -carry;
+          const fromBonus = Math.min(bonusAmt, deficit);
+          bonusAmt -= fromBonus; deficit -= fromBonus;
+          floorAmt = Math.max(0, floorAmt - deficit);
+        }
         if (amt <= 0) {
           await sql`INSERT INTO admin_settings (key, value) VALUES (${'carry_negative_' + r.code}, ${String(amt)}) ON CONFLICT (key) DO UPDATE SET value = ${String(amt)}`;
           continue;
@@ -138,8 +152,8 @@ exports.handler = async (event) => {
       for (const r of positiveRows) {
         await sql`INSERT INTO payout_items (run_id, ref_code, name, legal_name, bank_account, amount, floor_amount, bonus_amount) VALUES (${runId}, ${r.code}, ${r.name}, ${r.legal_name||''}, ${r.bank_account||''}, ${r.amount}, ${r.floor_amount}, ${r.bonus_amount})`;
       }
-      await sql`INSERT INTO audit_log (action, details) VALUES ('manual-payout-run', ${'توليد يدوي لدفعة صرف شهر ' + monthKey})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, month: monthKey, count: rows.length }) };
+      await sql`INSERT INTO audit_log (action, details) VALUES ('manual-payout-run', ${'توليد يدوي لدفعة صرف شهر ' + monthKey + ' — عدد المستحقين: ' + positiveRows.length})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, month: monthKey, count: positiveRows.length }) };
     }
 
     if (event.httpMethod === 'GET' && action === 'tickets') {
@@ -210,6 +224,25 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && action === 'resolve-unmatched') {
       const { id } = JSON.parse(event.body || '{}');
       await sql`UPDATE paddle_unmatched SET resolved = true WHERE id = ${id}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'page-visibility') {
+      const rows = await sql`SELECT key, value FROM admin_settings WHERE key LIKE 'page_hidden_%'`;
+      const hidden = {}; rows.forEach(r => { hidden[r.key.replace('page_hidden_', '')] = r.value === 'true'; });
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, hidden }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'set-page-visibility') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { page, hidden } = JSON.parse(event.body || '{}');
+      if (!page) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الصفحة غير محددة' }) };
+      const key = 'page_hidden_' + page;
+      if (hidden) {
+        await sql`INSERT INTO admin_settings (key, value) VALUES (${key}, 'true') ON CONFLICT (key) DO UPDATE SET value = 'true'`;
+      } else {
+        await sql`DELETE FROM admin_settings WHERE key = ${key}`;
+      }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
@@ -320,6 +353,8 @@ exports.handler = async (event) => {
         rows = (codes && codes.length)
           ? await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM affiliates WHERE email IS NOT NULL AND email != '' AND code = ANY(${codes})`
           : await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM affiliates WHERE email IS NOT NULL AND email != ''`;
+      } else if (audience === 'academy') {
+        rows = await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM academy_students WHERE email IS NOT NULL AND email != ''`;
       } else {
         rows = await sql`SELECT email, lang FROM subscriptions WHERE email IS NOT NULL AND email != '' AND email_verified = true`;
       }
@@ -332,7 +367,7 @@ exports.handler = async (event) => {
         const res = await sendMail(r.email, finalSubject, finalSubject, String(finalMessage).replace(/\n/g, '<br>'), lc);
         if (res.ok) sent++;
       }
-      await sql`INSERT INTO audit_log (action, details) VALUES ('broadcast-email', ${'إرسال حملة بريدية (' + (audience === 'affiliates' ? 'سفراء' : 'عملاء') + '): ' + subject + ' — إلى ' + sent})`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('broadcast-email', ${'إرسال حملة بريدية (' + (audience === 'affiliates' ? 'سفراء' : audience === 'academy' ? 'أعضاء الأكاديمية' : 'عملاء') + '): ' + subject + ' — إلى ' + sent})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, sent, total: rows.length }) };
     }
 
@@ -429,7 +464,7 @@ exports.handler = async (event) => {
       await sql`UPDATE affiliates SET active = true, approved_at = now() WHERE code = ${cleanCode}`;
       await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${cleanCode}, ${row.name||''}) ON CONFLICT (code) DO NOTHING`;
       if (row.email) {
-        const bodyHtml = `<div dir="rtl">مرحباً <b>${row.name}</b> 👋<br><br>تم تفعيل كودك <b style="color:#D4AF37;">${cleanCode}</b> رسمياً كسفير لO P N LIO ⚜<br><br>رقم السفير الخاص بك لدخول لوحة تحكمك: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>خطواتك الأولى:</b><br>1️⃣ سجّل الدخول إلى لوحة تحكمك الخاصة عبر الرابط أدناه باستخدام رقم السفير أعلاه وكلمة المرور التي اخترتها، لتتابع أداءك وعمولاتك.<br>2️⃣ شارك كودك <b style="color:#D4AF37;">${cleanCode}</b> مع متابعينك وعملائك المحتملين — عبر تيليجرام أو أي قناة تسويقية تناسبك.<br>3️⃣ عند اشتراك أي عميل فعلياً بكودك، تُحسب عمولتك تلقائياً وتبدأ من 4$ وتتصاعد مع نشاطك (حتى 9$).<br><br>يمكنك الدخول للوحة تحكمك الخاصة عبر: <a href="https://opon.netlify.app/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>فريق الدعم جاهز دائماً لمساعدتك في أي استفسار.</div><hr style="border-color:rgba(255,255,255,.1); margin:18px 0;"><div dir="ltr">Hi <b>${row.name}</b> 👋<br><br>Your code <b style="color:#D4AF37;">${cleanCode}</b> has been officially activated as an O P N LIO Ambassador ⚜<br><br>Your Ambassador ID to log in to your dashboard: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>Your first steps:</b><br>1️⃣ Log in to your dashboard below using the Ambassador ID above and the password you chose, to track your performance and commissions.<br>2️⃣ Share your code <b style="color:#D4AF37;">${cleanCode}</b> with your audience and potential customers — via Telegram or any channel that works for you.<br>3️⃣ Once a customer subscribes with your code, your commission is calculated automatically, starting at $4 and scaling up with your activity (up to $9).<br><br>You can access your dashboard at: <a href="https://opon.netlify.app/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>Our support team is always ready to help with any question.</div>`;
+        const bodyHtml = `<div dir="rtl">مرحباً <b>${row.name}</b> 👋<br><br>تم تفعيل كودك <b style="color:#D4AF37;">${cleanCode}</b> رسمياً كسفير لO P N LIO ⚜<br><br>رقم السفير الخاص بك لدخول لوحة تحكمك: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>خطواتك الأولى:</b><br>1️⃣ سجّل الدخول إلى لوحة تحكمك الخاصة عبر الرابط أدناه باستخدام رقم السفير أعلاه وكلمة المرور التي اخترتها، لتتابع أداءك وعمولاتك.<br>2️⃣ شارك كودك <b style="color:#D4AF37;">${cleanCode}</b> مع متابعينك وعملائك المحتملين — عبر تيليجرام أو أي قناة تسويقية تناسبك.<br>3️⃣ عند اشتراك أي عميل فعلياً بكودك، تُحسب عمولتك تلقائياً وتبدأ من 4$ وتتصاعد مع نشاطك (حتى 9$).<br><br>يمكنك الدخول للوحة تحكمك الخاصة عبر: <a href="https://opnlio.com/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>فريق الدعم جاهز دائماً لمساعدتك في أي استفسار.</div><hr style="border-color:rgba(255,255,255,.1); margin:18px 0;"><div dir="ltr">Hi <b>${row.name}</b> 👋<br><br>Your code <b style="color:#D4AF37;">${cleanCode}</b> has been officially activated as an O P N LIO Ambassador ⚜<br><br>Your Ambassador ID to log in to your dashboard: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>Your first steps:</b><br>1️⃣ Log in to your dashboard below using the Ambassador ID above and the password you chose, to track your performance and commissions.<br>2️⃣ Share your code <b style="color:#D4AF37;">${cleanCode}</b> with your audience and potential customers — via Telegram or any channel that works for you.<br>3️⃣ Once a customer subscribes with your code, your commission is calculated automatically, starting at $4 and scaling up with your activity (up to $9).<br><br>You can access your dashboard at: <a href="https://opnlio.com/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>Our support team is always ready to help with any question.</div>`;
         await sendMail(row.email, 'تم تفعيل كودك كسفير O P N LIO ⚜ Your Ambassador Code is Active', 'تفعيل ناجح ✅ Activated', bodyHtml, 'ar');
       }
       await sql`INSERT INTO audit_log (action, details) VALUES ('approve-affiliate', ${'اعتماد سفير: ' + cleanCode})`;
@@ -498,6 +533,71 @@ exports.handler = async (event) => {
         GROUP BY month ORDER BY month ASC`;
       const totalAll = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS total FROM revenue_log`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, monthly: rows, totalAll: totalAll[0].total }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'academy-students') {
+      const rows = await sql`SELECT s.id, s.name, s.email, s.lang, s.points, s.current_level, s.rank, s.graduated_at,
+        s.discount_code, s.email_verified, s.created_at, s.last_login_at,
+        (SELECT COUNT(*)::int FROM academy_progress p WHERE p.student_id = s.id AND p.completed = true) AS levels_done
+        FROM academy_students s ORDER BY s.created_at DESC LIMIT 300`;
+      const stats = await sql`SELECT COUNT(*)::int AS total,
+        COUNT(CASE WHEN graduated_at IS NOT NULL THEN 1 END)::int AS graduates,
+        COUNT(CASE WHEN email_verified = true THEN 1 END)::int AS verified,
+        COALESCE(AVG(current_level),0)::numeric(10,1) AS avg_level FROM academy_students`;
+      const levelDist = await sql`SELECT current_level AS lvl, COUNT(*)::int AS c FROM academy_students GROUP BY current_level ORDER BY current_level`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, students: rows, stats: stats[0], levelDist }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'academy-student-detail') {
+      const id = parseInt((event.queryStringParameters && event.queryStringParameters.id) || '0', 10);
+      const rows = await sql`SELECT * FROM academy_students WHERE id = ${id}`;
+      if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
+      const progress = await sql`SELECT level_num, completed, score, completed_at FROM academy_progress WHERE student_id = ${id} ORDER BY level_num`;
+      const st = rows[0]; delete st.password_hash; delete st.verify_token;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, student: st, progress }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'academy-verify-student') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`UPDATE academy_students SET email_verified = true, verify_token = NULL WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-verify', ${'تفعيل يدوي لمتدرب #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'academy-update-student') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { id, name, email, current_level, points, rank } = JSON.parse(event.body || '{}');
+      await sql`UPDATE academy_students SET name = ${name||''}, email = ${String(email||'').toLowerCase()},
+        current_level = ${parseInt(current_level||1,10)}, points = ${parseInt(points||0,10)}, rank = ${rank||'مبتدئ'} WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-update', ${'تعديل بيانات متدرب #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'academy-delete-student') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`DELETE FROM academy_progress WHERE student_id = ${id}`;
+      await sql`DELETE FROM academy_students WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-delete', ${'حذف متدرب #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'academy-reset-progress') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`DELETE FROM academy_progress WHERE student_id = ${id}`;
+      await sql`INSERT INTO academy_progress (student_id, level_num) VALUES (${id}, 1)`;
+      await sql`UPDATE academy_students SET current_level = 1, points = 0, rank = 'مبتدئ', graduated_at = NULL, discount_code = NULL WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-reset', ${'تصفير تقدّم متدرب #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'export-academy') {
+      const rows = await sql`SELECT name, email, lang, points, current_level, rank, graduated_at, discount_code, created_at FROM academy_students ORDER BY created_at DESC`;
+      let csv = 'الاسم,البريد,اللغة,النقاط,المستوى,الرتبة,تاريخ التخرج,كود الخصم,تاريخ التسجيل\n';
+      rows.forEach(r => { csv += [r.name, r.email, r.lang, r.points, r.current_level, r.rank, r.graduated_at||'', r.discount_code||'', r.created_at].map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',') + '\n'; });
+      return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv; charset=utf-8' }, body: '\uFEFF' + csv };
     }
 
     if (event.httpMethod === 'GET' && action === 'pending-reviews') {
