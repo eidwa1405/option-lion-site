@@ -205,6 +205,17 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
   </section>
 
+  <section class="panel" data-panel="tv-alerts">
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+      <h3 style="margin:0; color:#D4AF37; font-size:16px;">📡 تنبيهات TradingView المباشرة</h3>
+      <span style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:#39FF14; font-weight:700;"><span style="width:7px; height:7px; border-radius:50%; background:#39FF14; box-shadow:0 0 8px #39FF14;"></span>مباشر · يتحدّث كل دقيقة</span>
+    </div>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">أحدث 50 تنبيهاً وصلت من مؤشرات O P N  LIO على TradingView (تُحفظ 7 أيام).</p>
+    <div id="tvAlertsList" style="display:flex; flex-direction:column; gap:10px; max-height:520px; overflow-y:auto;"></div>
+  </div>
+  </section>
+
   <section class="panel" data-panel="events">
   <div class="card">
     <h3 style="margin:0 0 16px; color:#D4AF37;">🕓 آخر الأحداث</h3>
@@ -307,6 +318,8 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <div id="pageVisList" style="display:grid; gap:10px;"></div>
   </div>
   </section>
+
+  <section class="panel" data-panel="payouts">
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">💸 الصرف</h3>
     <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">تُولَّد دفعة الصرف تلقائياً في الساعة 00:00 من أول كل شهر ميلادي لعمولات الشهر المنتهي. تقدر أيضاً تولّدها يدوياً إذا احتجت.</p>
@@ -463,6 +476,7 @@ document.addEventListener('click', function(e){
 
 var NAV_ITEMS = [
   ['overview','📊 نظرة عامة'],
+  ['tv-alerts','📡 تنبيهات TradingView'],
   ['revenue','💵 الإيرادات'],
   ['prices','💰 الأسعار'],
   ['customers','👥 حالات الاشتراك'],
@@ -578,6 +592,7 @@ function showPanel(name){
   if (name === 'analytics') loadAnalytics();
   if (name === 'campaigns') loadCampaigns();
   if (name === 'page-visibility') loadPageVisibility();
+  if (name === 'tv-alerts') loadTvAlerts();
   if (name === 'payouts') loadPayoutRuns();
   if (name === 'tickets') loadTickets();
   if (name === 'settings') loadErrorLog();
@@ -1182,7 +1197,7 @@ var BC_TEMPLATES = {
   "become_ambassador": {
    "label": "🤝 كن سفيراً واكسب معنا",
    "subject": "🤝 حوّل شغفك إلى دخل",
-   "body": "مرحباً بك 👋\n\nهل تحب O P N  LIO ⚜ وتنصح به أصدقاءك؟ يمكنك أن تصبح سفيراً معتمداً وتكسب عمولة عن كل عميل تجلبه.\n\nسجّل كسفير من الموقع وابدأ رحلتك معنا شريكاً في النجاح."
+   "body": "مرحباً بك 👋\n\nهل تحب O P N  LIO ⚜ وتنصح به أصدقاءك؟ يمكنك أن تصبح سفيراً وتكسب عمولة عن كل عميل تجلبه.\n\nسجّل كسفير من الموقع وابدأ رحلتك معنا شريكاً في النجاح."
   },
   "occasion": {
    "label": "🎊 تهنئة بمناسبة",
@@ -1204,7 +1219,7 @@ var BC_TEMPLATES = {
   "welcome": {
    "label": "🎉 ترحيب بعد التفعيل",
    "subject": "🎉 مرحباً بك سفيراً في O P N  LIO ⚜",
-   "body": "مرحباً بك 👋\n\nتم تفعيل حسابك كسفير معتمد في O P N  LIO ⚜\n\nمن لوحة تحكمك تتابع عملاءك وعمولتك ومؤشر أدائك لحظياً. كل عميل تجلبه يرفع مؤشرك ويزيد عمولتك الدائمة.\n\nنتمنى لك رحلة موفّقة شريكاً في النجاح."
+   "body": "مرحباً بك 👋\n\nتم تفعيل حسابك كسفير في O P N  LIO ⚜\n\nمن لوحة تحكمك تتابع عملاءك وعمولتك ومؤشر أدائك لحظياً. كل عميل تجلبه يرفع مؤشرك ويزيد عمولتك الدائمة.\n\nنتمنى لك رحلة موفّقة شريكاً في النجاح."
   },
   "first_customer": {
    "label": "🎯 أول عميل — مبروك!",
@@ -1341,7 +1356,7 @@ var BC_TEMPLATES = {
   "graduation": {
    "label": "🏆 التخرج والشهادة",
    "subject": "🏆 مبروك التخرج! شهادتك جاهزة",
-   "body": "مبروك يا عضو O P N  LIO 🏆👋\n\nأتممت بامتياز جميع مستويات الأكاديمية ونلت رتبة \"محترف O P N  LIO\".\n\nشهادتك الرسمية جاهزة للتحميل والمشاركة من لوحة تحكمك، مع كود خصم حصري. والأهم: أصبحت مؤهلاً للانضمام كسفير معتمد!"
+   "body": "مبروك يا عضو O P N  LIO 🏆👋\n\nأتممت جميع مستويات الأكاديمية بنجاح.\n\nشهادتك جاهزة للتحميل والمشاركة من لوحة تحكمك، مع كود خصم حصري. والأهم: أصبحت مؤهلاً للانضمام كسفير معتمد!"
   },
   "inactivity": {
    "label": "⏰ تذكير بالمتابعة",
@@ -1386,7 +1401,7 @@ var BC_TEMPLATES = {
   "points_boost": {
    "label": "⭐ ضاعف نقاطك",
    "subject": "⭐ نقاطك = طريقك للرتبة التالية",
-   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nكل مستوى تنجزه وكل اختبار تجتازه يضيف نقاطاً ترفع رتبتك نحو \"محترف O P N  LIO\".\n\nكم نقطة تحتاج للرتبة التالية؟ تحقق من لوحة تحكمك وواصل التقدّم!"
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nكل مستوى تنجزه وكل اختبار تجتازه يضيف نقاطاً ترفع رتبتك نحو \"خرّيج O P N  LIO\".\n\nكم نقطة تحتاج للرتبة التالية؟ تحقق من لوحة تحكمك وواصل التقدّم!"
   },
   "rank_close": {
    "label": "🎖️ اقتربت من رتبة جديدة",
@@ -1401,7 +1416,7 @@ var BC_TEMPLATES = {
   "ambassador_eligible": {
    "label": "🤝 أصبحت مؤهلاً كسفير",
    "subject": "🤝 مؤهل للانضمام كسفير O P N  LIO",
-   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nبإتمامك البرنامج، فُتحت لك أهلية الانضمام كسفير معتمد في O P N  LIO ⚜\n\nحوّل معرفتك إلى دخل: اكسب عمولة عن كل عميل تجلبه. فعّل مسار السفير من لوحة تحكمك."
+   "body": "مرحباً بك يا عضو O P N  LIO 👋\n\nبإتمامك البرنامج، فُتحت لك أهلية الانضمام كسفير في O P N  LIO ⚜\n\nحوّل معرفتك إلى دخل: اكسب عمولة عن كل عميل تجلبه. فعّل مسار السفير من لوحة تحكمك."
   },
   "live_class": {
    "label": "🔴 بث تعليمي مباشر",
@@ -2025,13 +2040,34 @@ var STATUS_LABELS_MAP = {trial:'تجربة مجانية', canceled:'ملغى', p
 var PAGE_LIST = [
   {key:'academy', label:'🎓 الأكاديمية التدريبية'},
   {key:'system', label:'⚙️ المنظومة'},
-  {key:'results', label:'📊 النتائج'},
-  {key:'testimonials', label:'💬 الآراء'},
-  {key:'faq', label:'❓ الأسئلة الشائعة'},
-  {key:'pricing', label:'💰 الأسعار'},
   {key:'signup', label:'✍️ الاشتراك'},
-  {key:'affiliate', label:'⚜ تسجيل السفراء'}
+  {key:'affiliate', label:'⚜ تسجيل السفراء'},
+  {key:'booklet', label:'📘 كتيب الشرح'},
+  {key:'check-status', label:'🔍 التحقق من الاشتراك'}
 ];
+function loadTvAlerts(){
+  authFetch('/api/admin-data?action=tv-alerts').then(function(r){return r.json();}).then(function(res){
+    var list = document.getElementById('tvAlertsList');
+    if (!res.ok) { list.innerHTML = '<div style="text-align:center; color:#ff9b9b; font-size:13px; padding:20px;">تعذّر جلب التنبيهات</div>'; return; }
+    if (!res.alerts.length) { list.innerHTML = '<div style="text-align:center; color:#6b7488; font-size:13px; padding:20px;">لا توجد تنبيهات بعد — ستظهر هنا فور إطلاقها من TradingView</div>'; return; }
+    list.innerHTML = res.alerts.map(function(a){
+      var color = a.direction === 'up' ? '#39FF14' : a.direction === 'down' ? '#ff6b6b' : '#D4AF37';
+      var icon = a.direction === 'up' ? '▲' : a.direction === 'down' ? '▼' : '◆';
+      var t = new Date(a.created_at);
+      var mins = Math.round((Date.now() - t.getTime()) / 60000);
+      var ago = mins < 1 ? 'الآن' : mins < 60 ? ('قبل ' + mins + ' دقيقة') : ('قبل ' + Math.round(mins/60) + ' ساعة');
+      return '<div style="display:flex; gap:12px; align-items:flex-start; padding:12px 14px; background:rgba(255,255,255,.03); border-right:3px solid '+color+'; border-radius:10px;">' +
+        '<span style="color:'+color+'; font-size:15px; font-weight:900;">'+icon+'</span>' +
+        '<div style="flex:1; min-width:0;">' +
+        '<div style="font-weight:800; font-size:13.5px; color:#fff;">'+(a.symbol||'—')+(a.timeframe?' <span style="color:#8a93a8; font-weight:400; font-size:11.5px;">· '+a.timeframe+'</span>':'')+'</div>' +
+        '<div style="font-size:12.5px; color:#c9d2e3; margin-top:3px; word-break:break-word;">'+a.message+'</div>' +
+        '<div style="font-size:11px; color:#6b7488; margin-top:4px;">'+(a.script_name||'')+' · '+ago+'</div>' +
+        '</div></div>';
+    }).join('');
+  }).catch(function(){});
+}
+var _tvAlertsTimer = setInterval(function(){ var p = document.querySelector('.panel[data-panel="tv-alerts"]'); if (p && p.classList.contains('active')) loadTvAlerts(); }, 60000);
+
 function loadPageVisibility(){
   authFetch('/api/admin-data?action=page-visibility').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
