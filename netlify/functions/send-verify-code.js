@@ -24,7 +24,10 @@ exports.handler = async (event) => {
     const isAr = L === 'ar';
     const subject = isAr ? 'كود تحقق بريدك الإلكتروني — O P N LIO ⚜' : 'Your Email Verification Code — O P N LIO ⚜';
     const bodyHtml = `<div dir="${isAr?'rtl':'ltr'}">${isAr ? 'مرحباً 👋<br><br>كود تحقق بريدك الإلكتروني هو:' : 'Hi 👋<br><br>Your email verification code is:'}<br><br><b style="font-size:26px; color:#D4AF37; letter-spacing:4px;">${code}</b><br><br>${isAr ? 'صالح لمدة 15 دقيقة.' : 'Valid for 15 minutes.'}</div>`;
-    await sendMail(cleanEmail, subject, subject, bodyHtml, L);
+    const mailRes = await sendMail(cleanEmail, subject, subject, bodyHtml, L);
+    if (!mailRes || mailRes.ok !== true) {
+      return { statusCode: 502, headers, body: JSON.stringify({ ok: false, error: 'تعذّر إرسال البريد — تحقق من إعدادات SMTP (' + ((mailRes && mailRes.error) || 'unknown') + ')' }) };
+    }
 
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
   } catch (e) {
