@@ -44,8 +44,8 @@ exports.handler = async (event) => {
         OR (bank_account = ${bankAccount} AND ${bankAccount} != '') LIMIT 1`;
       if (dup.length > 0) {
         const msg = dup[0].active
-          ? 'يوجد حساب سفير مسجّل مسبقاً بنفس البريد أو الجوال، تواصل معنا عبر البريد الإلكتروني opon.netlify@gmail.com إن كنت تحتاج مساعدة.'
-          : 'حسابك السابق كسفير مُعطّل حالياً بسبب عدم النشاط — تواصل مع الدعم عبر البريد الإلكتروني opon.netlify@gmail.com لإعادة تفعيله بدل التسجيل من جديد.';
+          ? 'يوجد حساب سفير مسجّل مسبقاً بنفس البريد أو الجوال، تواصل معنا عبر البريد الإلكتروني info@opnlio.com إن كنت تحتاج مساعدة.'
+          : 'حسابك السابق كسفير مُعطّل حالياً بسبب عدم النشاط — تواصل مع الدعم عبر البريد الإلكتروني info@opnlio.com لإعادة تفعيله بدل التسجيل من جديد.';
         return { statusCode: 409, headers, body: JSON.stringify({ ok: false, error: msg }) };
       }
     }
@@ -61,12 +61,12 @@ exports.handler = async (event) => {
     }
     const affId = await nextAffiliateId();
     const verifyToken = crypto.randomBytes(24).toString('hex');
-    await sql`INSERT INTO affiliates (code, name, legal_name, country, city, email, age, phone, telegram, bank_account, agreement_accepted_at, signature_data, active, password, login_username, affiliate_id, verify_token, agreement_ip, lang)
-      VALUES (${code}, ${b.name||''}, ${b.legalName||''}, ${b.country||''}, ${b.city||''}, ${b.email||''}, ${b.age?parseInt(b.age):null}, ${b.phone||''}, ${b.telegram||''}, ${b.bankAccount||''}, now(), ${b.signature||null}, false, ${hashPassword(b.password)}, ${loginUsername}, ${affId}, ${verifyToken}, ${clientIp}, ${b.lang||'ar'})`;
+    await sql`INSERT INTO affiliates (code, name, legal_name, country, city, email, age, phone, telegram, bank_account, agreement_accepted_at, signature_data, active, password, login_username, affiliate_id, verify_token, verify_token_created_at, agreement_ip, lang)
+      VALUES (${code}, ${b.name||''}, ${b.legalName||''}, ${b.country||''}, ${b.city||''}, ${b.email||''}, ${b.age?parseInt(b.age):null}, ${b.phone||''}, ${b.telegram||''}, ${b.bankAccount||''}, now(), ${b.signature||null}, false, ${hashPassword(b.password)}, ${loginUsername}, ${affId}, ${verifyToken}, now(), ${clientIp}, ${b.lang||'ar'})`;
     await notifyAdmin('🤝 طلب تسجيل سفير جديد\nالاسم: ' + (b.name||'') + '\nالكود: ' + code + '\nتيليجرام: ' + (b.telegram||'') + '\nالدولة: ' + (b.country||''));
 
     if (b.email) {
-      const verifyLink = 'https://opon.netlify.app/.netlify/functions/verify-email?kind=affiliate&token=' + verifyToken;
+      const verifyLink = 'https://opnlio.com/.netlify/functions/verify-email?kind=affiliate&token=' + verifyToken;
       const bodyHtml = `<div dir="rtl">مرحباً <b>${b.name}</b> 👋<br><br>يرجى تأكيد بريدك الإلكتروني لإكمال تسجيلك كسفير في O P N LIO ⚜<br><br><a href="${verifyLink}" style="display:inline-block; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; padding:12px 26px; border-radius:10px; text-decoration:none;">تأكيد البريد الإلكتروني</a></div>`;
       await sendMail(b.email, 'تأكيد بريدك الإلكتروني — O P N LIO ⚜', 'تأكيد البريد', bodyHtml, b.lang||'ar');
     }

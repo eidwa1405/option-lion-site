@@ -41,8 +41,13 @@ exports.handler = async (event) => {
     if (eventType === 'transaction.refunded' || eventType === 'adjustment.created' || eventType === 'transaction.payment_failed') {
       const custData = data.custom_data || (data.transaction && data.transaction.custom_data) || {};
       const refundCustomerName = custData.customerName || null;
+      const refundCustomerEmail = custData.customerEmail || (data.customer && data.customer.email) || (data.transaction && data.transaction.customer && data.transaction.customer.email) || null;
       let refundMatch = null;
-      if (refundCustomerName) {
+      if (refundCustomerEmail) {
+        const rows = await sql`SELECT id, ref_code, customer_name FROM subscriptions WHERE lower(email) = ${String(refundCustomerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
+        if (rows.length) refundMatch = rows[0];
+      }
+      if (!refundMatch && refundCustomerName) {
         const rows = await sql`SELECT id, ref_code, customer_name FROM subscriptions WHERE customer_name = ${refundCustomerName} ORDER BY created_at DESC LIMIT 1`;
         if (rows.length) refundMatch = rows[0];
       }
@@ -60,12 +65,16 @@ exports.handler = async (event) => {
     }
 
     // نحاول مطابقة العميل عبر البريد أو الاسم المخزن في custom_data إن وُجد
-    const customerEmail = (data.customer && data.customer.email) || (data.customer_email) || null;
     const customData = data.custom_data || {};
+    const customerEmail = customData.customerEmail || (data.customer && data.customer.email) || (data.customer_email) || null;
     const customerName = customData.customerName || null;
 
     let matchRow = null;
-    if (customerName) {
+    if (customerEmail) {
+      const rows = await sql`SELECT id FROM subscriptions WHERE lower(email) = ${String(customerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
+      if (rows.length) matchRow = rows[0];
+    }
+    if (!matchRow && customerName) {
       const rows = await sql`SELECT id FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
       if (rows.length) matchRow = rows[0];
     }

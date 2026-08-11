@@ -1,35 +1,34 @@
-// يستقبل تنبيهات TradingView (Webhook) ويرسلها فوراً لقناة تيليجرام
-const BOT_TOKEN = (process.env.TELEGRAM_BOT_TOKEN || '').trim();
-const CHAT_ID = (process.env.TELEGRAM_CHAT_ID || '').trim();
+// استقبال تنبيهات TradingView وتخزينها لعرضها مباشرة في لوحة تحكم العضو
+const { getSql, ensureTables } = require('./_db');
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-  if (!BOT_TOKEN || !CHAT_ID) {
-    return { statusCode: 500, body: JSON.stringify({ ok: false, error: 'TELEGRAM_BOT_TOKEN أو TELEGRAM_CHAT_ID غير معرّفين' }) };
-  }
-
-  let text = event.body || '';
+  const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' };
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ ok: false }) };
   try {
-    const parsed = JSON.parse(event.body);
-    text = parsed.message || parsed.text || JSON.stringify(parsed);
-  } catch (e) {
-    // TradingView قد يرسل نص عادي غير JSON، نستخدمه كما هو
-  }
+    await ensureTables();
+    const sql = getSql();
 
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text: `🔔 ${text}` })
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      return { statusCode: 502, body: JSON.stringify({ ok: false, telegram: data }) };
+    const secret = (event.queryStringParameters && event.queryStringParameters.key) || '';
+    if (!process.env.TV_WEBHOOK_SECRET || secret !== process.env.TV_WEBHOOK_SECRET) {
+      return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'unauthorized' }) };
     }
-    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
-  } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ ok: false, error: err.message }) };
+
+    let payload = {};
+    const raw = event.body || '';
+    try { payload = JSON.parse(raw); } catch (e) { payload = { message: raw }; }
+
+    const symbol = String(payload.symbol || payload.ticker || '').toUpperCase().slice(0, 24);
+    const timeframe = String(payload.timeframe || payload.interval || '').slice(0, 12);
+    const script = String(payload.script || payload.indicator || '').slice(0, 64);
+    const direction = /هبوط|down|put|bear/i.test(raw) ? 'down' : /صعود|up|call|bull/i.test(raw) ? 'up' : 'neutral';
+    const message = String(payload.message || raw || '').slice(0, 400);
+
+    await sql`INSERT INTO tv_alerts (symbol, timeframe, script_name, direction, message) VALUES (${symbol}, ${timeframe}, ${script}, ${direction}, ${message})`;
+    await sql`DELETE FROM tv_alerts WHERE created_at < now() - interval '7 days'`;
+
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+  } catch (e) {
+    return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: String(e) }) };
   }
 };

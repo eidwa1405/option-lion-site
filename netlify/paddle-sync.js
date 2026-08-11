@@ -55,9 +55,16 @@ exports.handler = async (event) => {
     for (const tx of transactions) {
       const customData = tx.custom_data || {};
       const customerName = customData.customerName || null;
-      if (!customerName) { unmatched++; continue; }
+      const customerEmail = customData.customerEmail || (tx.customer && tx.customer.email) || null;
+      if (!customerName && !customerEmail) { unmatched++; continue; }
 
-      const rows = await sql`SELECT id FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
+      let rows = [];
+      if (customerEmail) {
+        rows = await sql`SELECT id FROM subscriptions WHERE lower(email) = ${String(customerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
+      }
+      if (!rows.length && customerName) {
+        rows = await sql`SELECT id FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
+      }
       if (!rows.length) { unmatched++; continue; }
 
       const item = (tx.items && tx.items[0]) || {};
