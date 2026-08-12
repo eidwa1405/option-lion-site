@@ -31,7 +31,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 <div style="max-width:420px; margin:0 auto; padding:60px 20px 80px;">
   <div style="text-align:center; margin-bottom:24px;">
     <h1 style="font-size:24px; font-weight:900; margin:0 0 8px;">ابدأ رحلتك</h1>
-    <p style="color:#aab3c5; font-size:14px; margin:0;">سجّل الآن برسم رمزي $1 +15% أو سجّل دخولك لمتابعة تقدّمك بالأكاديمية</p>
+    <p style="color:#aab3c5; font-size:14px; margin:0;">سجّل عضويتك أو سجّل دخولك لمتابعة تقدّمك بالأكاديمية</p>
   </div>
   <div class="card">
     <div style="display:flex; gap:8px; margin-bottom:22px;">
@@ -49,7 +49,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
       <div style="position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden;"><input id="re_hp" type="text" tabindex="-1" autocomplete="off"></div>
       <div style="margin-bottom:14px;"><label>كلمة المرور (6 أحرف فأكثر)</label><input id="re_pass" type="password"></div>
       <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span>أوافق على <a href="./terms.html" target="_blank">شروط الاستخدام</a> وأتفهم أن المحتوى تعليمي فقط.</span></label>
-      <button class="btn-gold" style="width:100%;" onclick="doRegister()">سجّل الآن — $1 +15%</button>
+      <button class="btn-gold" style="width:100%;" onclick="doRegister()">تسجيل عضوية</button>
     </div>
     <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
   </div>
@@ -97,7 +97,6 @@ function doRegister() {
       if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
       msg.style.color = '#39FF14';
       msg.textContent = 'تم التسجيل! سجّل دخولك الآن.';
-      openAcademyCheckout(document.getElementById('re_email').value.trim().toLowerCase(), 'ar');
       showTab('login');
     });
 }

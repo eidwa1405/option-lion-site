@@ -65,7 +65,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
         <div style="margin-bottom:14px;"><label>E-posta</label><input id="re_email" type="email" placeholder="siz@example.com"></div>
         <div style="margin-bottom:14px;"><label>Şifre (6+ karakter)</label><input id="re_pass" type="password"></div>
         <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span><a href="./terms.html" target="_blank">Kullanım Şartları</a>'nı kabul ediyorum ve bu içeriğin yalnızca eğitim amaçlı olduğunu anlıyorum.</span></label>
-        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Kayıt Ol — $1 +15%</button>
+        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Kayıt Ol</button>
       </div>
       <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
     </div>
@@ -354,7 +354,6 @@ function doRegister() {
       if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
       msg.style.color = '#39FF14';
       msg.textContent = 'Kayıt oldunuz! Şimdi giriş yapın.';
-      openAcademyCheckout(document.getElementById('re_email').value.trim().toLowerCase(), 'tr');
       showTab('login');
     });
 }
