@@ -355,7 +355,7 @@ function doRegister() {
       msg.style.color = '#39FF14';
       msg.textContent = 'Registriert! Melden Sie sich jetzt an.';
       showTab('login');
-    });
+    }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='Server nicht erreichbar — erneut versuchen'; });
 }
 
 function doLogin() {
@@ -367,7 +367,7 @@ function doLogin() {
       session = res;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
       renderDash();
-    });
+    }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='Server nicht erreichbar — erneut versuchen'; });
 }
 
 function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }

@@ -46,7 +46,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
     <div id="registerForm" style="display:none;">
       <div style="margin-bottom:14px;"><label>الاسم</label><input id="re_name" placeholder="اسمك الكامل"></div>
       <div style="margin-bottom:14px;"><label>البريد الإلكتروني</label><div style="display:flex; gap:8px;"><input id="re_email" type="email" placeholder="you@example.com" style="flex:1;"><button type="button" id="re_verifyBtn" onclick="sendReVerifyCode()" style="flex:0 0 auto; padding:0 16px; border-radius:10px; border:1px solid rgba(212,175,55,.35); background:transparent; color:#D4AF37; font-weight:800; font-size:13px; cursor:pointer; font-family:inherit;">تفعيل</button></div><input type="hidden" id="re_emailVerified" value=""><div id="re_verifyStatus" style="font-size:12px; margin-top:6px;"></div></div>
-      <div style="position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden;"><input id="re_hp" type="text" tabindex="-1" autocomplete="off"></div>
+      <div style="position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden;"><input id="re_hp" type="text" tabindex="-1" autocomplete="one-time-code" readonly onfocus="this.removeAttribute('readonly')"></div>
       <div style="margin-bottom:14px;"><label>كلمة المرور (6 أحرف فأكثر)</label><input id="re_pass" type="password"></div>
       <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span>أوافق على <a href="./terms.html" target="_blank">شروط الاستخدام</a> وأتفهم أن المحتوى تعليمي فقط.</span></label>
       <button class="btn-gold" style="width:100%;" onclick="doRegister()">تسجيل عضوية</button>
@@ -98,7 +98,7 @@ function doRegister() {
       msg.style.color = '#39FF14';
       msg.textContent = 'تم التسجيل! سجّل دخولك الآن.';
       showTab('login');
-    });
+    }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='تعذّر الاتصال بالخادم — حاول مجدداً'; });
 }
 
 function doLogin() {
@@ -114,7 +114,7 @@ function doLogin() {
       var s = res; s.expiresAt = Date.now() + 24*60*60*1000;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(s));
       location.href = './academy.html';
-    });
+    }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='تعذّر الاتصال بالخادم — حاول مجدداً'; });
 }
 
 function resendVerify(email){

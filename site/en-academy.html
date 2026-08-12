@@ -355,7 +355,7 @@ function doRegister() {
       msg.style.color = '#39FF14';
       msg.textContent = 'Registered! Log in now.';
       showTab('login');
-    });
+    }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='Could not reach the server — try again'; });
 }
 
 function doLogin() {
@@ -367,7 +367,7 @@ function doLogin() {
       session = res;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
       renderDash();
-    });
+    }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='Could not reach the server — try again'; });
 }
 
 function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }
