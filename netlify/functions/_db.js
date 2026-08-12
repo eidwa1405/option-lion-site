@@ -245,6 +245,7 @@ async function ensureTables() {
     UNIQUE(student_id, level_num)
   )`;
 
+  const priceCount = await sql`SELECT COUNT(*)::int AS c FROM prices`;
   if (priceCount[0].c === 0) {
     await sql`INSERT INTO prices (id,label,amount,paddle_price_id) VALUES
       ('monthly','شهري',39,'pri_01kyhe6m178pfmv5p755mkhpf0'),
