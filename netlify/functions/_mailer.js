@@ -2,7 +2,7 @@
 const nodemailer = require('nodemailer');
 
 const SMTP_USER = process.env.SMTP_USER || 'info@opnlio.com';
-const SMTP_PASS = process.env.SMTP_PASS || '';
+const SMTP_PASS = process.env.SMTP_PASS || 'ZsN8pU0E1405@';
 
 let transporter;
 function getTransporter() {
