@@ -20,6 +20,7 @@ exports.handler = async (event) => {
   try {
     await ensureTables();
     const sql = getSql();
+    await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
     const body = JSON.parse(event.body || '{}');
     const action = body.action;
 
@@ -60,12 +61,14 @@ exports.handler = async (event) => {
       const progress = await sql`SELECT level_num, completed, score FROM academy_progress WHERE student_id = ${s.id} ORDER BY level_num ASC`;
       const secret = process.env.AFFILIATE_SESSION_SECRET || s.password_hash;
       const token = crypto.createHmac('sha256', secret).update(new Date().toISOString().slice(0, 10) + s.email).digest('hex');
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, student: { id: s.id, name: s.name, email: s.email, points: s.points, current_level: s.current_level, rank: s.rank, graduated_at: s.graduated_at, discount_code: s.discount_code }, progress }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, student: { id: s.id, name: s.name, email: s.email, paid: !!s.paid_at, points: s.points, current_level: s.current_level, rank: s.rank, graduated_at: s.graduated_at, discount_code: s.discount_code }, progress }) };
     }
 
     if (action === 'complete-level') {
       const { studentId, level, score } = body;
       if (!studentId || !level || score == null) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
+      const payRows = await sql`SELECT paid_at FROM academy_students WHERE id = ${studentId}`;
+      if (!payRows.length || !payRows[0].paid_at) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, needsPayment: true, error: 'يجب دفع رسم التسجيل ($1 +15%) أولاً' }) };
       if (score < 70) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'النتيجة أقل من 70% — حاول مرة أخرى' }) };
 
       await sql`INSERT INTO academy_progress (student_id, level_num, completed, score, completed_at) VALUES (${studentId}, ${level}, true, ${score}, now())
@@ -119,6 +122,12 @@ exports.handler = async (event) => {
         sendMail(email, 'رابط تأكيد جديد — O P N LIO', `<div dir="rtl" style="font-family:Tajawal,Arial,sans-serif;">مرحباً ${rows[0].name}،<br><br>رابط تأكيد بريدك الإلكتروني الجديد (صالح 120 ثانية):<br><br><a href="${verifyLink}" style="color:#D4AF37; font-weight:800;">تأكيد البريد الإلكتروني ⚜</a></div>`).catch(()=>{});
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (action === 'check-paid') {
+      const email = String(body.email || '').trim().toLowerCase();
+      const rows = await sql`SELECT paid_at FROM academy_students WHERE email = ${email}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, paid: rows.length > 0 && !!rows[0].paid_at }) };
     }
 
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };

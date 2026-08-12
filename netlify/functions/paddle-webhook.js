@@ -38,6 +38,26 @@ exports.handler = async (event) => {
     await ensureTables();
     const sql = getSql();
 
+    // رسوم الأكاديمية ($1) — تُعالج وتُنهى هنا حتى لا تختلط بمطابقة الاشتراكات
+    const acadCustom = data.custom_data || {};
+    if (acadCustom.product === 'academy') {
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paddle_transaction_id text`;
+      const acadEmail = String(acadCustom.email || (data.customer && data.customer.email) || '').trim().toLowerCase();
+      if (eventType === 'transaction.completed' && acadEmail) {
+        const upd = await sql`UPDATE academy_students SET paid_at = now(), paddle_transaction_id = ${data.id || null} WHERE lower(email) = ${acadEmail} RETURNING id`;
+        if (upd.length) {
+          await sql`INSERT INTO audit_log (action, details) VALUES ('academy-fee-paid', ${'دفع رسم تسجيل الأكاديمية — الطالب #' + upd[0].id + ' (' + acadEmail + ')'})`;
+        } else {
+          await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES (${eventType || ''}, ${acadEmail || null}, ${null}, ${JSON.stringify(payload)})`;
+        }
+      } else if ((eventType === 'transaction.refunded' || eventType === 'adjustment.created') && acadEmail) {
+        await sql`UPDATE academy_students SET paid_at = NULL WHERE lower(email) = ${acadEmail}`;
+        await sql`INSERT INTO audit_log (action, details) VALUES ('academy-fee-refunded', ${'استرجاع رسم تسجيل الأكاديمية — ' + acadEmail})`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, academy: true }) };
+    }
+
     if (eventType === 'transaction.refunded' || eventType === 'adjustment.created' || eventType === 'transaction.payment_failed') {
       const custData = data.custom_data || (data.transaction && data.transaction.custom_data) || {};
       const refundCustomerName = custData.customerName || null;
