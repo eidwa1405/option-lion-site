@@ -2,9 +2,9 @@
 <html lang="tr" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta name="description" content="Free OPN LIO Trader Qualification Program — 12 levels from zero to advanced, with quizzes and a completion certificate.">
+<meta name="description" content="OPN LIO Trader Qualification Program (one-time $1 +15% enrollment fee) — 12 levels from zero to advanced, with quizzes and a completion certificate.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>O P N  LIO Akademisi — Ücretsiz Eğitim Programı</title>
+<title>O P N  LIO Akademisi — Eğitim Programı</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -23,6 +23,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 .al{background:rgba(212,175,55,.1); border:1px solid rgba(212,175,55,.35); border-radius:14px; padding:20px; margin:22px 0; text-align:center;}
 </style>
 <script src="page-guard.js" data-page="academy"></script>
+<script src="academy-pay.js"></script>
 </head>
 <body>
 
@@ -46,7 +47,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
   <section id="authScreen">
     <div style="text-align:center; margin-bottom:32px;">
       <h1 style="font-size:clamp(26px,4vw,36px); font-weight:900; margin:0 0 12px;">Trader Yetiştirme Programı 🦁</h1>
-      <p style="color:#aab3c5; font-size:15px; line-height:1.8; max-width:600px; margin:0 auto;">Tamamen ücretsiz 12 seviye, sıkıcı olmadan sadeleştirilmiş: piyasalar, teknik analiz, sermaye yönetimi, trading psikolojisi, opsiyon sözleşmeleri ve Greeks — kendi sistemimiz dahil herhangi bir stratejiyi değerlendirebilecek bir temelle mezun olun. Onaylı sertifikayla, belki de OPN LIO elçisi olma fırsatıyla.</p>
+      <p style="color:#aab3c5; font-size:15px; line-height:1.8; max-width:600px; margin:0 auto;">Tek seferlik $1 +15% kayıt ücretiyle 12 seviye, sıkıcı olmadan sadeleştirilmiş: piyasalar, teknik analiz, sermaye yönetimi, trading psikolojisi, opsiyon sözleşmeleri ve Greeks — kendi sistemimiz dahil herhangi bir stratejiyi değerlendirebilecek bir temelle mezun olun. Profesyonel trader geçiş sertifikasıyla, belki de OPN LIO elçisi olma fırsatıyla.</p>
     </div>
 
     <div class="card" style="max-width:420px; margin:0 auto;">
@@ -64,7 +65,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
         <div style="margin-bottom:14px;"><label>E-posta</label><input id="re_email" type="email" placeholder="siz@example.com"></div>
         <div style="margin-bottom:14px;"><label>Şifre (6+ karakter)</label><input id="re_pass" type="password"></div>
         <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span><a href="./terms.html" target="_blank">Kullanım Şartları</a>'nı kabul ediyorum ve bu içeriğin yalnızca eğitim amaçlı olduğunu anlıyorum.</span></label>
-        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Ücretsiz Başla</button>
+        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Kayıt Ol — $1 +15%</button>
       </div>
       <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
     </div>
@@ -353,6 +354,7 @@ function doRegister() {
       if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
       msg.style.color = '#39FF14';
       msg.textContent = 'Kayıt oldunuz! Şimdi giriş yapın.';
+      openAcademyCheckout(document.getElementById('re_email').value.trim().toLowerCase(), 'tr');
       showTab('login');
     });
 }
@@ -372,6 +374,7 @@ function doLogin() {
 function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }
 
 function renderDash() {
+  if (window.academyGate) window.academyGate(session, 'tr');
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('dashScreen').style.display = 'block';
   document.getElementById('authStatus').innerHTML = session.student.name + ' — <a href="#" onclick="logout();return false;" style="color:#ff9b9b;">Çıkış</a>';
@@ -405,6 +408,7 @@ function renderDash() {
 }
 
 function openLesson(level) {
+  if (window.academyGate && !window.academyGate(session, 'tr')) return;
   currentLevel = level;
   var lv = LEVELS[level];
   document.getElementById('dashScreen').style.display = 'none';
