@@ -58,6 +58,27 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, academy: true }) };
     }
 
+    // حماية خصم الخريجين: عملية بخصم 60% من بريد غير خريج → تنبيه إداري + تسجيل
+    const GRAD_DSC = process.env.PADDLE_GRADUATE_DISCOUNT_ID || 'dsc_01kzqv94x5d3t04dt15g43pths';
+    const txDiscount = data.discount_id || (data.details && data.details.discount && data.details.discount.id) || null;
+    if (eventType === 'transaction.completed' && txDiscount === GRAD_DSC) {
+      const payerEmail = String(acadCustom.customerEmail || acadCustom.email || (data.customer && data.customer.email) || '').trim().toLowerCase();
+      let isGrad = false;
+      if (payerEmail) {
+        const g = await sql`SELECT id FROM academy_students WHERE email = ${payerEmail} AND graduated_at IS NOT NULL LIMIT 1`;
+        isGrad = g.length > 0;
+      }
+      if (!isGrad) {
+        await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES ('grad-discount-abuse', ${payerEmail || null}, ${acadCustom.customerName || null}, ${JSON.stringify(payload)})`;
+        await sql`INSERT INTO audit_log (action, details) VALUES ('grad-discount-abuse', ${'⚠️ استخدام خصم الخريجين من بريد غير خريج: ' + (payerEmail || 'مجهول')})`;
+        if (ADMIN_ALERT_EMAIL) {
+          try {
+            await sendMail(ADMIN_ALERT_EMAIL, '⚠️ استخدام مشبوه لخصم الخريجين — O P N LIO', 'تنبيه', '<div dir="rtl">عملية دفع استخدمت خصم الخريجين 60% من بريد <b>' + (payerEmail || 'مجهول') + '</b> وهو ليس خريجاً مسجلاً في الأكاديمية.<br><br>راجع Paddle لإلغاء العملية واسترجاع المبلغ إن لزم — العملية مسجّلة في لوحة التحكم → بانر العمليات غير المطابقة.</div>', 'ar');
+          } catch (mailErr2) {}
+        }
+      }
+    }
+
     if (eventType === 'transaction.refunded' || eventType === 'adjustment.created' || eventType === 'transaction.payment_failed') {
       const custData = data.custom_data || (data.transaction && data.transaction.custom_data) || {};
       const refundCustomerName = custData.customerName || null;

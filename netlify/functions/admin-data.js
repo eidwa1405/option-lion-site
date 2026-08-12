@@ -28,10 +28,13 @@ exports.handler = async (event) => {
   try {
     await ensureTables();
     const sql = getSql();
-    if (!(await checkTokenAsync(event, sql))) {
-      return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح — سجّل الدخول مرة أخرى' }) };
-    }
     const action = event.queryStringParameters && event.queryStringParameters.action;
+    // page-visibility تُقرأ علنياً (يحتاجها page-guard في كل الصفحات)
+    if (!(event.httpMethod === 'GET' && action === 'page-visibility')) {
+      if (!(await checkTokenAsync(event, sql))) {
+        return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح — سجّل الدخول مرة أخرى' }) };
+      }
+    }
 
     if (event.httpMethod === 'GET' && action === 'broadcast-langs') {
       const audience = event.queryStringParameters && event.queryStringParameters.audience;
@@ -536,7 +539,9 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'GET' && action === 'academy-students') {
-      const rows = await sql`SELECT s.id, s.name, s.email, s.lang, s.points, s.current_level, s.rank, s.graduated_at,
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS phone text`;
+      const rows = await sql`SELECT s.id, s.name, s.email, s.phone, s.paid_at, s.lang, s.points, s.current_level, s.rank, s.graduated_at,
         s.discount_code, s.email_verified, s.created_at, s.last_login_at,
         (SELECT COUNT(*)::int FROM academy_progress p WHERE p.student_id = s.id AND p.completed = true) AS levels_done
         FROM academy_students s ORDER BY s.created_at DESC LIMIT 300`;
@@ -555,6 +560,16 @@ exports.handler = async (event) => {
       const progress = await sql`SELECT level_num, completed, score, completed_at FROM academy_progress WHERE student_id = ${id} ORDER BY level_num`;
       const st = rows[0]; delete st.password_hash; delete st.verify_token;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, student: st, progress }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'academy-set-paid') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { id, paid } = JSON.parse(event.body || '{}');
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
+      if (paid) await sql`UPDATE academy_students SET paid_at = now() WHERE id = ${id}`;
+      else await sql`UPDATE academy_students SET paid_at = NULL WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-set-paid', ${(paid ? 'تفعيل يدوي لدفع البرنامج التدريبي' : 'إلغاء تفعيل دفع البرنامج التدريبي') + ' — متدرب #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'academy-verify-student') {

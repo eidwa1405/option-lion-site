@@ -2,7 +2,7 @@
 const nodemailer = require('nodemailer');
 
 const SMTP_USER = process.env.SMTP_USER || 'info@opnlio.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'ZsN8pU0E1405@';
+const SMTP_PASS = process.env.SMTP_PASS || '';
 
 let transporter;
 function getTransporter() {
@@ -44,15 +44,12 @@ function isoFromPhone(phone) {
 }
 
 async function nextCustomerId(sql, phone) {
-  const iso = isoFromPhone(phone);
   for (let attempt = 0; attempt < 10; attempt++) {
-    const rand = String(Math.floor(Math.random() * 10000000)).padStart(7, '0');
-    const cid = iso + rand;
-    const exists = await sql`SELECT id FROM subscriptions WHERE customer_id = ${cid} LIMIT 1`;
-    if (exists.length === 0) return cid;
+    const rand = String(Math.floor(1000000 + Math.random() * 9000000)); // 7 أرقام عشوائية
+    const exists = await sql`SELECT id FROM subscriptions WHERE customer_id = ${rand} LIMIT 1`;
+    if (exists.length === 0) return rand;
   }
-  // احتياطي نادر إذا تكررت كل المحاولات
-  return iso + String(Date.now()).slice(-7);
+  return String(Date.now()).slice(-7);
 }
 
 const BRAND = {
@@ -87,10 +84,12 @@ function emailShell(lang, titleHtml, bodyHtml) {
 async function sendMail(to, subject, titleHtml, bodyHtml, lang) {
   if (!to) return { skipped: true };
   const html = emailShell(lang || 'ar', titleHtml, bodyHtml);
+  const text = String(bodyHtml || '').replace(/<br\s*\/?\s*>/gi, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
   try {
     await getTransporter().sendMail({
-      from: '"أو بي إن ليو O P N LIO ⚜" <' + SMTP_USER + '>',
-      to, subject, html
+      from: '"O P N LIO" <' + SMTP_USER + '>',
+      replyTo: SMTP_USER,
+      to, subject, html, text
     });
     return { ok: true };
   } catch (e) {
