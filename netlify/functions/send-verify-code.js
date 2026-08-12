@@ -31,6 +31,7 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
   } catch (e) {
+    try { const sql3 = getSql(); await sql3`INSERT INTO audit_log (action, details) VALUES ('error-send-verify', ${String(e).slice(0,500)})`; } catch(e2){}
     return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: String(e) }) };
   }
 };
