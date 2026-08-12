@@ -468,7 +468,7 @@ function submitQuiz() {
       session.student.rank = res.rank;
       if (res.graduated) { session.student.graduated_at = new Date().toISOString(); session.student.discount_code = res.discountCode; }
       var lvlProg = session.progress.find(function(p){return p.level_num===currentLevel;});
-      if (lvlProg) { lvlProg.completed = true; lvlProg.score = score; } else { session.progress.push({level_num:currentLevel, completed:true, score:score}); }
+      if (lvlProg) { lvlProg.completed = true; lvlProg.score = res.score; } else { session.progress.push({level_num:currentLevel, completed:true, score:res.score}); }
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
       setTimeout(function(){ backToDash(); renderDash(); }, 1600);
     });
