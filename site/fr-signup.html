@@ -33,6 +33,15 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 </style>
 <script src="page-guard.js" data-page="signup"></script>
 <script src="verify-modal.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="Abonnement — O P N  LIO">
+<meta property="og:description" content="Join OPN LIO — register and start your 14-day free trial of the TradingView analytical tools.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/fr-signup">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 </head>
 <body>
 
@@ -143,7 +152,7 @@ function getPriceFromURL(){
 function sendSuVerifyCode(){
   var email = document.getElementById('su_email').value.trim().toLowerCase();
   var statusEl = document.getElementById('su_verifyStatus');
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Veuillez d'abord saisir un e-mail valide'; return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Veuillez d\'abord saisir un e-mail valide'; return; }
   statusEl.style.color = '#8a93a8'; statusEl.textContent = 'Envoi en cours...';
   fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'fr' }) })
     .then(function(r){return r.json();}).then(function(res){
@@ -174,7 +183,7 @@ function submitSignup(){
   });
   if(missing){
     var errEl=document.getElementById('su_error');
-    errEl.textContent='Veuillez remplir tous les champs requis avant d'envoyer votre demande.';
+    errEl.textContent='Veuillez remplir tous les champs requis avant d\'envoyer votre demande.';
     errEl.style.display='block';
     return;
   } else {
@@ -183,27 +192,19 @@ function submitSignup(){
   if (document.getElementById('su_emailVerified').value.trim().toLowerCase() !== email) {
     var errElV=document.getElementById('su_error');
     document.getElementById('su_email').style.borderColor='#ff4d4d';
-    errElV.textContent='Veuillez d'abord saisir un e-mail valide';
+    errElV.textContent='Veuillez d\'abord saisir un e-mail valide';
     errElV.style.display='block';
     return;
   }
   var btn = document.getElementById('su_submit');
   btn.disabled = true; btn.textContent = 'Envoi en cours...';
 
-  var BOT_TOKEN = '8893054915:AAEOPsa1rX38q0vb-By1aAUvH-1rL10-nR8';
-  var CHAT_ID = '8485191267';
   var refValid = ref && REF_CODES.indexOf(ref.toUpperCase()) !== -1;
   var refLine = ref ? ('\nRef Code: ' + ref + (refValid ? ' ✅' : ' ❌')) : '';
-  var msg = '📝 Nouvelle inscription — O P N  LIO' + '\nName: ' + name + '\nPhone: ' + cc + ' ' + phone + '\nTelegram: ' + tg + '\nTradingView: ' + tv + refLine;
 
-  fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
-  }).then(function(){
-    fetch('/api/ref-track', {
+      fetch('/api/ref-track', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'fr', plan: 'Free Trial' })
+      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'fr', plan: 'Free Trial', termsAccepted: true })
     }).catch(function(){});
     Paddle.Checkout.open({
       items: [{ priceId: getPriceFromURL(), quantity: 1 }],
@@ -211,11 +212,7 @@ function submitSignup(){
       customData: { customerEmail: email, customerName: name },
       settings: { displayMode: 'overlay', variant: 'one-page', successUrl: location.origin + '/welcome.html?lang=fr&name=' + encodeURIComponent(name) + '&price=' + encodeURIComponent(getPriceFromURL()) + '&regdate=' + encodeURIComponent(new Date().toISOString()) + (refValid ? '&ref=' + encodeURIComponent(ref) : '') }
     });
-    btn.disabled = false;
-  }).catch(function(){
-    btn.disabled = false; btn.textContent = 'Rejoindre Maintenant';
-    alert('Failed to send, please try again.');
-  });
+  btn.disabled = false;
 }
 
 function qsRef(){ var m = location.search.match(/[?&]ref=([^&]*)/); return m ? decodeURIComponent(m[1]) : ''; }

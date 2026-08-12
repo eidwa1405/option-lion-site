@@ -33,6 +33,15 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 </style>
 <script src="page-guard.js" data-page="signup"></script>
 <script src="verify-modal.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="Abone Ol — O P N  LIO">
+<meta property="og:description" content="Join OPN LIO — register and start your 14-day free trial of the TradingView analytical tools.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/tr-signup">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 </head>
 <body>
 
@@ -190,20 +199,12 @@ function submitSignup(){
   var btn = document.getElementById('su_submit');
   btn.disabled = true; btn.textContent = 'Gönderiliyor...';
 
-  var BOT_TOKEN = '8893054915:AAEOPsa1rX38q0vb-By1aAUvH-1rL10-nR8';
-  var CHAT_ID = '8485191267';
   var refValid = ref && REF_CODES.indexOf(ref.toUpperCase()) !== -1;
   var refLine = ref ? ('\nRef Code: ' + ref + (refValid ? ' ✅' : ' ❌')) : '';
-  var msg = '📝 Yeni kayıt — O P N  LIO' + '\nName: ' + name + '\nPhone: ' + cc + ' ' + phone + '\nTelegram: ' + tg + '\nTradingView: ' + tv + refLine;
 
-  fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
-  }).then(function(){
-    fetch('/api/ref-track', {
+      fetch('/api/ref-track', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'tr', plan: 'Free Trial' })
+      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'tr', plan: 'Free Trial', termsAccepted: true })
     }).catch(function(){});
     Paddle.Checkout.open({
       items: [{ priceId: getPriceFromURL(), quantity: 1 }],
@@ -211,11 +212,7 @@ function submitSignup(){
       customData: { customerEmail: email, customerName: name },
       settings: { displayMode: 'overlay', variant: 'one-page', successUrl: location.origin + '/welcome.html?lang=tr&name=' + encodeURIComponent(name) + '&price=' + encodeURIComponent(getPriceFromURL()) + '&regdate=' + encodeURIComponent(new Date().toISOString()) + (refValid ? '&ref=' + encodeURIComponent(ref) : '') }
     });
-    btn.disabled = false;
-  }).catch(function(){
-    btn.disabled = false; btn.textContent = 'Şimdi Katıl';
-    alert('Failed to send, please try again.');
-  });
+  btn.disabled = false;
 }
 
 function qsRef(){ var m = location.search.match(/[?&]ref=([^&]*)/); return m ? decodeURIComponent(m[1]) : ''; }

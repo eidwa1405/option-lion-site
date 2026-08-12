@@ -1,128 +1,13 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="top">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل بـ12 مستوى برسم رمزي $1 +15%.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تسجيل عضوية — O P N  LIO</title>
-<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; }
-a { color:#D4AF37; text-decoration:none; }
-::selection { background:#D4AF37; color:#070d18; }
-.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:34px 30px; box-shadow:0 30px 70px rgba(0,0,0,.45); }
-input { font-family:inherit; }
-input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3px rgba(212,175,55,.15); }
-#reg_submit:hover { filter:brightness(1.08); }
-</style>
+<meta http-equiv="refresh" content="0;url=./member-login.html#register">
+<title>تحويل — O P N LIO</title>
+<script>location.replace('./member-login.html#register');</script>
 </head>
-<body>
-<div style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 10%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh;">
-
-<nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
-  <a href="./index.html" style="display:flex; align-items:center; gap:10px;">
-    <img src="assets/lion-logo.jpg" alt="O P N LIO" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
-    <span style="font-weight:900; letter-spacing:.5px; color:#f4f0e4; white-space:nowrap;"><span style="color:#f4f0e4; font-size:22px;">O</span> <span style="color:#f4f0e4; font-size:24px;">P</span> <span style="color:#f4f0e4; font-size:26px;">N</span> <span style="color:#D4AF37; font-size:32px;">LIO</span></span>
-  </a>
-  <a href="./index.html" style="font-size:13px; font-weight:700; color:#c9d2e3; border:1px solid #2a3348; padding:8px 18px; border-radius:20px;">↩ الرئيسية</a>
-</nav>
-
-<section style="padding:clamp(50px,8vw,90px) clamp(20px,6vw,64px);">
-  <div style="max-width:520px; margin:0 auto;">
-    <div style="text-align:center; margin-bottom:34px;">
-      <div style="font-size:32px; margin-bottom:10px;">🔐</div>
-      <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:3px; margin-bottom:14px;">تسجيل عضوية</div>
-      <h1 style="font-size:clamp(24px,3.2vw,32px); font-weight:900; color:#fff; margin:0 0 12px;">أنشئ عضويتك المجانية</h1>
-      <p style="font-size:14px; color:#aab3c5; margin:0; line-height:1.8;">حساب واحد يجمع كل شيء: متابعة اشتراكك، أكاديمية OPN LIO التعليمية، وشهادتك — بدون أي التزام مالي الآن.</p>
-    </div>
-
-    <div class="card" id="regCard" style="display:flex; flex-direction:column; gap:16px;">
-      <div>
-        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">الاسم</label>
-        <input id="reg_name" type="text" style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px;">
-      </div>
-      <div>
-        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">البريد الإلكتروني</label>
-        <input id="reg_email" type="email" style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
-      </div>
-      <div>
-        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">كلمة المرور</label>
-        <div style="position:relative;">
-          <input id="reg_pass" type="password" style="width:100%; box-sizing:border-box; padding:13px 44px 13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
-          <button type="button" onclick="var i=document.getElementById('reg_pass'); i.type = i.type==='password' ? 'text':'password'; this.textContent = i.type==='password' ? '👁️':'🙈';" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:16px;">👁️</button>
-        </div>
-      </div>
-      <div id="reg_error" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:600; padding:12px 16px; border-radius:10px; text-align:center;"></div>
-      <label style="display:flex; align-items:flex-start; gap:10px; font-size:12.5px; color:#aab3c5; cursor:pointer; line-height:1.7;">
-        <input id="reg_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;">
-        <span>أقر بأنني قرأت ووافقت على <a href="#" onclick="openLegalModal('./terms.html'); return false;" style="font-weight:700;">شروط الاستخدام</a> و<a href="#" onclick="openLegalModal('./privacy.html'); return false;" style="font-weight:700;">سياسة الخصوصية</a>، وأتفهم أن المحتوى تعليمي بحت ولا يشكّل توصية استثمارية.</span>
-      </label>
-      <button id="reg_submit" onclick="submitMemberReg()" style="margin-top:6px; width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer;">إنشاء العضوية</button>
-      <p style="font-size:12px; color:#6b7488; text-align:center; margin:2px 0 0;">بعد إنشاء عضويتك، يمكنك الاشتراك أو بدء الأكاديمية ($1 +15%) من داخل لوحة تحكمك مباشرة.</p>
-    </div>
-
-    <div id="legalModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
-      <div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; width:100%; max-width:720px; height:80vh; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.6); overflow:hidden;">
-        <button onclick="document.getElementById('legalModalOverlay').style.display='none';" style="position:absolute; top:12px; right:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:none; background:rgba(255,255,255,.08); color:#fff; font-size:18px; cursor:pointer; line-height:1;">×</button>
-        <iframe id="legalModalFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
-      </div>
-    </div>
-
-    <div class="card" id="regThanks" style="display:none; text-align:center; padding:44px 30px;">
-      <div style="font-size:42px; margin-bottom:16px;">✅</div>
-      <h3 style="font-size:21px; font-weight:900; color:#fff; margin:0 0 10px;">تم إنشاء عضويتك</h3>
-      <p style="font-size:14px; color:#aab3c5; margin:0 0 22px; line-height:1.8;">افتح لوحة تحكمك الآن لمتابعة الاشتراك أو بدء الأكاديمية.</p>
-      <a href="./member-login.html" style="font-size:13.5px; font-weight:700;">↩ الدخول للوحة التحكم</a>
-    </div>
-
-    <p style="text-align:center; font-size:13px; color:#8a93a8; margin-top:20px;">لديك عضوية بالفعل؟ <a href="./member-login.html" style="font-weight:700;">سجّل الدخول</a></p>
-  </div>
-</section>
-</div>
-
-<script>
-function submitMemberReg(){
-  var name = document.getElementById('reg_name').value.trim();
-  var email = document.getElementById('reg_email').value.trim().toLowerCase();
-  var pass = document.getElementById('reg_pass').value;
-  var agreed = document.getElementById('reg_agree').checked;
-  var errEl = document.getElementById('reg_error');
-  if (!name || !email || !pass || pass.length < 6) {
-    errEl.textContent = 'يرجى تعبئة جميع الحقول (كلمة المرور 6 أحرف على الأقل).';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!agreed) {
-    errEl.textContent = 'يجب الموافقة على شروط الاستخدام وسياسة الخصوصية أولاً.';
-    errEl.style.display = 'block';
-    return;
-  }
-  errEl.style.display = 'none';
-  var btn = document.getElementById('reg_submit');
-  btn.disabled = true; btn.textContent = 'جارٍ الإنشاء...';
-  fetch('/api/academy-auth', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ action:'register', name:name, email:email, password:pass, lang:'ar' })
-  }).then(function(r){ return r.json(); }).then(function(res){
-    btn.disabled = false; btn.textContent = 'إنشاء العضوية';
-    if (!res.ok) { errEl.textContent = res.error || 'تعذر إنشاء العضوية، حاول مجدداً.'; errEl.style.display = 'block'; return; }
-    document.getElementById('regCard').style.display = 'none';
-    document.getElementById('regThanks').style.display = 'block';
-  }).catch(function(){
-    btn.disabled = false; btn.textContent = 'إنشاء العضوية';
-    errEl.textContent = 'تعذر الاتصال بالخادم، حاول مجدداً.'; errEl.style.display = 'block';
-  });
-}
-</script>
-<script>
-function openLegalModal(url){
-  document.getElementById('legalModalFrame').src = url;
-  document.getElementById('legalModalOverlay').style.display = 'flex';
-}
-document.addEventListener('click', function(e){
-  if (e.target && e.target.id === 'legalModalOverlay') e.target.style.display = 'none';
-});
-</script>
+<body style="background:#070d18; color:#e9edf5; font-family:Tajawal,Arial,sans-serif; text-align:center; padding-top:90px;">
+يتم تحويلك لصفحة العضوية…<br><br><a href="./member-login.html#register" style="color:#D4AF37; font-weight:800;">اضغط هنا إن لم يتم التحويل</a>
 </body>
 </html>

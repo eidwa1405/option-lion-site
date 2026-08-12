@@ -16,6 +16,16 @@ input { font-family:inherit; }
 input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3px rgba(212,175,55,.15); }
 .linklike { background:none; border:none; color:#D4AF37; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:0; }
 </style>
+<script src="verify-modal.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="دخول العضوية — O P N  LIO">
+<meta property="og:description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/member-login">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 </head>
 <body>
 <div style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 10%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh;">
@@ -33,11 +43,16 @@ input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3p
 
     <!-- ===== شاشة الدخول ===== -->
     <div id="viewLogin">
-      <div style="text-align:center; margin-bottom:34px;">
-        <div style="font-size:32px; margin-bottom:10px;">🔑</div>
+      <div style="text-align:center; margin-bottom:26px;">
+        <div style="font-size:32px; margin-bottom:10px;">⚜</div>
         <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:3px; margin-bottom:14px;">لوحة تحكم العضوية</div>
-        <h1 style="font-size:clamp(24px,3.2vw,30px); font-weight:900; color:#fff; margin:0;">تسجيل الدخول</h1>
+        <h1 style="font-size:clamp(24px,3.2vw,30px); font-weight:900; color:#fff; margin:0;">انضم للنخبة</h1>
       </div>
+      <div style="display:flex; gap:8px; margin-bottom:22px;">
+        <button id="tabLogin" onclick="showTab('login')" style="flex:1; padding:12px;">تسجيل الدخول</button>
+        <button id="tabRegister" onclick="showTab('register')" style="flex:1; padding:12px;">تسجيل عضوية جديد</button>
+      </div>
+      <div id="paneLogin">
       <div class="card" style="display:flex; flex-direction:column; gap:16px;">
         <div>
           <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">البريد الإلكتروني</label>
@@ -54,10 +69,50 @@ input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3p
         <button id="lg_submit" onclick="doMemberLogin()" style="margin-top:2px; width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer;">دخول</button>
         <div style="display:flex; justify-content:space-between; margin-top:4px;">
           <button class="linklike" onclick="showView('forgotPass')">نسيت كلمة المرور؟</button>
-          <button class="linklike" onclick="showView('recoverNum')">استعادة رقم العضوية</button>
         </div>
       </div>
-      <p style="text-align:center; font-size:13px; color:#8a93a8; margin-top:20px;">ليس لديك عضوية؟ <a href="./member-signup.html" style="font-weight:700;">سجّل الآن</a></p>
+      </div>
+      <div id="paneRegister" style="display:none;">
+      <div class="card" style="display:flex; flex-direction:column; gap:16px;">
+      <div>
+        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">الاسم</label>
+        <input id="reg_name" type="text" style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px;">
+      </div>
+      <div>
+        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">البريد الإلكتروني</label>
+        <div style="display:flex; gap:8px;">
+          <input id="reg_email" type="email" style="flex:1; min-width:0; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
+          <button type="button" onclick="sendRegVerify()" style="flex:0 0 auto; padding:0 20px; border-radius:10px; border:1px solid rgba(212,175,55,.45); background:rgba(212,175,55,.08); color:#D4AF37; font-weight:800; font-size:13.5px; cursor:pointer; font-family:inherit;">تفعيل</button>
+        </div>
+        <div id="reg_verifyStatus" style="font-size:12px; font-weight:700; margin-top:6px;"></div>
+        <input id="reg_emailVerified" type="hidden">
+      </div>
+      <div>
+        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">رقم الجوال</label>
+        <input id="reg_phone" type="tel" inputmode="tel" placeholder="+9665xxxxxxxx" oninput="this.value=this.value.replace(/[^0-9+]/g,'');" style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
+      </div>
+      <div>
+        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">كلمة المرور (6 أحرف فأكثر)</label>
+        <div style="position:relative;">
+          <input id="reg_pass" type="password" style="width:100%; box-sizing:border-box; padding:13px 44px 13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
+          <button type="button" onclick="var i=document.getElementById('reg_pass'); i.type = i.type==='password' ? 'text':'password'; this.textContent = i.type==='password' ? '👁️':'🙈';" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:16px;">👁️</button>
+        </div>
+      </div>
+      <div id="reg_error" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:600; padding:12px 16px; border-radius:10px; text-align:center;"></div>
+      <label style="display:flex; align-items:flex-start; gap:10px; font-size:12.5px; color:#aab3c5; cursor:pointer; line-height:1.7;">
+        <input id="reg_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;">
+        <span>أقر بأنني قرأت ووافقت على <a href="#" onclick="openLegalModal('./terms.html'); return false;" style="font-weight:700;">شروط الاستخدام</a> و<a href="#" onclick="openLegalModal('./privacy.html'); return false;" style="font-weight:700;">سياسة الخصوصية</a>، وأتفهم أن المحتوى تعليمي بحت ولا يشكّل توصية استثمارية.</span>
+      </label>
+      <button id="reg_submit" onclick="submitMemberReg()" style="margin-top:6px; width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer;">إنشاء العضوية</button>
+      <p style="font-size:12px; color:#6b7488; text-align:center; margin:2px 0 0;">بعد إنشاء عضويتك، سجّل دخولك وابدأ الاشتراك أو الأكاديمية ($1 +15%) من لوحة تحكمك.</p>
+      </div>
+      </div>
+      <div id="legalModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#0B0B0F; border:1px solid rgba(212,175,55,.3); border-radius:16px; width:100%; max-width:720px; height:80vh; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.6); overflow:hidden;">
+          <button onclick="document.getElementById('legalModalOverlay').style.display='none';" style="position:absolute; top:12px; right:12px; z-index:2; width:34px; height:34px; border-radius:50%; border:none; background:rgba(255,255,255,.08); color:#fff; font-size:18px; cursor:pointer; line-height:1;">×</button>
+          <iframe id="legalModalFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+      </div>
     </div>
 
     <!-- ===== نسيت كلمة المرور ===== -->
@@ -101,6 +156,56 @@ input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3p
 </div>
 
 <script>
+function showTab(t){
+  document.getElementById('paneLogin').style.display = t==='login' ? 'block' : 'none';
+  document.getElementById('paneRegister').style.display = t==='register' ? 'block' : 'none';
+  var A='flex:1;padding:12px;background:linear-gradient(135deg,#D4AF37,#f0cf6c);color:#1a1408;font-weight:900;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px;';
+  var I='flex:1;padding:12px;background:transparent;border:1px solid rgba(212,175,55,.3);color:#c9d2e3;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit;font-size:14px;';
+  document.getElementById('tabLogin').style.cssText = t==='login' ? A : I;
+  document.getElementById('tabRegister').style.cssText = t==='register' ? A : I;
+}
+function openLegalModal(u){ document.getElementById('legalModalFrame').src = u; document.getElementById('legalModalOverlay').style.display = 'flex'; }
+function sendRegVerify(){
+  var email = document.getElementById('reg_email').value.trim().toLowerCase();
+  var st = document.getElementById('reg_verifyStatus');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { st.style.color = '#ff9b9b'; st.textContent = 'أدخل بريداً صحيحاً أولاً'; return; }
+  st.style.color = '#8a93a8'; st.textContent = 'جارِ الإرسال…';
+  fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'ar' }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+      if (!res.ok) { st.style.color = '#ff9b9b'; st.textContent = res.error || 'فشل الإرسال'; return; }
+      openVerifyModal({ email: email, lang: 'ar', onSuccess: function(){
+        st.style.color = '#39FF14'; st.textContent = '✅ تم التحقق';
+        document.getElementById('reg_emailVerified').value = email;
+      }, onCancel: function(){ st.style.color = '#ff9b9b'; st.textContent = 'لم يتم التحقق'; } });
+    }).catch(function(){ st.style.color = '#ff9b9b'; st.textContent = 'تعذّر الاتصال بالخادم'; });
+}
+function submitMemberReg(){
+  var name = document.getElementById('reg_name').value.trim();
+  var email = document.getElementById('reg_email').value.trim().toLowerCase();
+  var phone = document.getElementById('reg_phone').value.trim();
+  var pass = document.getElementById('reg_pass').value;
+  var agreed = document.getElementById('reg_agree').checked;
+  var errEl = document.getElementById('reg_error');
+  if (!name || !email || !phone || phone.replace(/[^0-9]/g,'').length < 8 || !pass || pass.length < 6) { errEl.textContent = 'يرجى تعبئة جميع الحقول — رقم جوال صحيح وكلمة مرور 6 أحرف على الأقل.'; errEl.style.display = 'block'; return; }
+  if (!agreed) { errEl.textContent = 'يجب الموافقة على شروط الاستخدام وسياسة الخصوصية أولاً.'; errEl.style.display = 'block'; return; }
+  if (document.getElementById('reg_emailVerified').value.trim().toLowerCase() !== email) { errEl.textContent = 'يجب تفعيل البريد الإلكتروني أولاً — اضغط زر "تفعيل" بجوار البريد.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  var btn = document.getElementById('reg_submit');
+  btn.disabled = true; btn.textContent = 'جارٍ الإنشاء...';
+  fetch('/api/academy-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'register', name:name, email:email, phone:phone, password:pass, lang:'ar' }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+      btn.disabled = false; btn.textContent = 'إنشاء العضوية';
+      if (!res.ok) { errEl.textContent = res.error || 'تعذر إنشاء العضوية'; errEl.style.display = 'block'; return; }
+      try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
+      showTab('login');
+      document.getElementById('lg_email').value = email;
+      var m = document.getElementById('lg_error');
+      m.style.display = 'block'; m.style.color = '#39FF14'; m.style.background = 'rgba(57,255,20,.08)'; m.style.borderColor = 'rgba(57,255,20,.35)';
+      m.textContent = '✅ تم إنشاء عضويتك — سجّل دخولك الآن.';
+    }).catch(function(){ btn.disabled = false; btn.textContent = 'إنشاء العضوية'; errEl.textContent = 'تعذر الاتصال بالخادم، حاول مجدداً.'; errEl.style.display = 'block'; });
+}
+(function(){ var t = 'login'; try { if (location.hash === '#register' || !localStorage.getItem('opnlio_returning')) t = 'register'; } catch(e){} showTab(t); })();
+
 function showView(name){
   document.getElementById('viewLogin').style.display = name === 'login' ? 'block' : 'none';
   document.getElementById('viewForgotPass').style.display = name === 'forgotPass' ? 'block' : 'none';
@@ -111,6 +216,7 @@ function doMemberLogin(){
   var email = document.getElementById('lg_email').value.trim().toLowerCase();
   var pass = document.getElementById('lg_pass').value;
   var errEl = document.getElementById('lg_error');
+  errEl.style.color = '#ff9b9b'; errEl.style.background = 'rgba(255,60,60,.1)'; errEl.style.borderColor = 'rgba(255,80,80,.4)';
   if (!email || !pass) { errEl.textContent = 'يرجى إدخال البريد وكلمة المرور.'; errEl.style.display = 'block'; return; }
   errEl.style.display = 'none';
   var btn = document.getElementById('lg_submit');
@@ -121,9 +227,20 @@ function doMemberLogin(){
   }).then(function(r){ return r.json(); }).then(function(res){
     btn.disabled = false; btn.textContent = 'دخول';
     if (!res.ok) { errEl.textContent = res.error || 'بيانات الدخول غير صحيحة.'; errEl.style.display = 'block'; return; }
-    sessionStorage.setItem('member_token', res.token);
-    sessionStorage.setItem('member_data', JSON.stringify(res.student));
-    location.href = './member-dashboard.html';
+    var msgEl = document.getElementById('lg_error');
+    msgEl.style.display = 'block'; msgEl.style.color = '#8a93a8'; msgEl.textContent = 'جارِ إرسال رمز التحقق إلى بريدك…';
+    fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'ar' }) })
+      .then(function(r2){ return r2.json(); }).then(function(sres){
+        if (!sres.ok) { msgEl.style.color = '#ff9b9b'; msgEl.textContent = sres.error || 'تعذّر إرسال رمز التحقق'; return; }
+        msgEl.style.display = 'none';
+        openVerifyModal({ email: email, lang: 'ar', onSuccess: function(){
+          try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
+          sessionStorage.setItem('member_token', res.token);
+          sessionStorage.setItem('member_data', JSON.stringify(res.student));
+          try { localStorage.setItem('opnlio_academy_session', JSON.stringify({ token: res.token, student: res.student, progress: res.progress || [], expiresAt: Date.now() + 24*60*60*1000 })); } catch(e){}
+          location.href = './member-dashboard.html';
+        }, onCancel: function(){ msgEl.style.display='block'; msgEl.style.color='#ff9b9b'; msgEl.textContent='لم يكتمل التحقق — لم يتم تسجيل الدخول'; } });
+      }).catch(function(){ msgEl.style.display='block'; msgEl.style.color='#ff9b9b'; msgEl.textContent='تعذّر الاتصال بالخادم'; });
   }).catch(function(){
     btn.disabled = false; btn.textContent = 'دخول';
     errEl.textContent = 'تعذر الاتصال بالخادم، حاول مجدداً.'; errEl.style.display = 'block';

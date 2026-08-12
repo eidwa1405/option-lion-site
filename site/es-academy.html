@@ -25,6 +25,15 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 <script src="page-guard.js" data-page="academy"></script>
 <script src="academy-pay.js"></script>
 <script src="verify-modal.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="Academia O P N  LIO — Programa de Formación">
+<meta property="og:description" content="OPN LIO Trader Qualification Program (one-time $1 +15% enrollment fee) — 12 levels from zero to advanced, with quizzes and a completion certificate.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/es-academy">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 </head>
 <body>
 
@@ -34,7 +43,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
     <span style="font-weight:900; color:#f4f0e4; font-size:18px;">Academia <span style="font-weight:900; letter-spacing:.5px; white-space:nowrap;"><span style="color:#f4f0e4; font-size:15px;">O</span> <span style="color:#f4f0e4; font-size:16px;">P</span> <span style="color:#f4f0e4; font-size:17px;">N</span> <span style="color:#D4AF37; font-size:20px;">LIO</span></span></span>
   </div>
   <div style="display:flex; align-items:center; gap:14px;">
-    <a href="./es-signup.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">Únete Ahora</a>
+    <a href="./es-academy.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">Únete Ahora</a>
     <div id="authStatus" style="font-size:13px; color:#8a93a8;"></div>
   </div>
 </nav>
@@ -64,9 +73,10 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
       <div id="registerForm" style="display:none;">
         <div style="margin-bottom:14px;"><label>Nombre</label><input id="re_name" placeholder="Tu nombre completo"></div>
         <div style="margin-bottom:14px;"><label>Correo Electrónico</label><input id="re_email" type="email" placeholder="tu@ejemplo.com"></div>
+        <div style="margin-bottom:14px;"><label>Número de teléfono</label><input id="re_phone" type="tel" inputmode="tel" placeholder="+1xxxxxxxxxx" oninput="this.value=this.value.replace(/[^0-9+]/g,'');" style="direction:ltr; text-align:left;"></div>
         <div style="margin-bottom:14px;"><label>Contraseña (6+ caracteres)</label><input id="re_pass" type="password"></div>
         <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span>Acepto los <a href="./terms.html" target="_blank">Términos de Uso</a> y entiendo que este contenido es solo educativo.</span></label>
-        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Inscribirse</button>
+        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Crear membresía</button>
       </div>
       <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
     </div>
@@ -124,11 +134,11 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Consejo profesional</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Dominar la lectura de velas es la base de todo lo que aprenderás después — incluido el propio sistema OPN LIO, que construye sus lecturas exactamente sobre esta comprensión.</p></div>',
   quiz: [
-    { q: 'En un contrato call sobre cierta acción, ¿qué representa el cuerpo de la vela?', options: ['La distancia entre el precio más alto y más bajo del periodo', 'La distancia entre el precio de apertura y cierre', 'Solo el volumen de negociación'], correct: 1 },
-    { q: 'Apareció una vela verde grande en el contrato call que compraste — ¿qué significa el color verde?', options: ['Los vendedores tomaron el control y el cierre fue menor que la apertura', 'Los compradores tomaron el control y el cierre fue mayor que la apertura', 'El color no tiene relación con el precio'], correct: 1 },
-    { q: '¿Qué vela suele indicar indecisión total entre compradores y vendedores?', options: ['Martillo', 'Doji', 'Envolvente'], correct: 1 },
-    { q: 'Estás vigilando un contrato put en el marco horario y luego cambias al marco diario — ¿qué cambia?', options: ['Nada cambia en absoluto', 'Obtienes una imagen más clara de la tendencia general en vez de más detalle ruidoso', 'Las velas rojas se vuelven verdes'], correct: 1 },
-    { q: '¿Qué representa una mecha inferior larga en la vela de un contrato call?', options: ['El precio más alto tocado', 'El precio más bajo tocado y luego rechazado hacia arriba', 'El volumen de negociación'], correct: 1 }
+    { q: 'En un contrato call sobre cierta acción, ¿qué representa el cuerpo de la vela?', options: ['La distancia entre el precio más alto y más bajo del periodo', 'La distancia entre el precio de apertura y cierre', 'Solo el volumen de negociación'] },
+    { q: 'Apareció una vela verde grande en el contrato call que compraste — ¿qué significa el color verde?', options: ['Los vendedores tomaron el control y el cierre fue menor que la apertura', 'Los compradores tomaron el control y el cierre fue mayor que la apertura', 'El color no tiene relación con el precio'] },
+    { q: '¿Qué vela suele indicar indecisión total entre compradores y vendedores?', options: ['Martillo', 'Doji', 'Envolvente'] },
+    { q: 'Estás vigilando un contrato put en el marco horario y luego cambias al marco diario — ¿qué cambia?', options: ['Nada cambia en absoluto', 'Obtienes una imagen más clara de la tendencia general en vez de más detalle ruidoso', 'Las velas rojas se vuelven verdes'] },
+    { q: '¿Qué representa una mecha inferior larga en la vela de un contrato call?', options: ['El precio más alto tocado', 'El precio más bajo tocado y luego rechazado hacia arriba', 'El volumen de negociación'] }
   ]
 },
 {
@@ -143,10 +153,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Por qué importa esto</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Toda herramienta técnica avanzada — incluidas las nuestras — se construye sobre tu comprensión de esta estructura simple. Quien no ve máximos y mínimos, no entenderá por qué cualquier herramienta emite su señal.</p></div>',
   quiz: [
-    { q: 'Estás vigilando un contrato call y el precio forma máximos y mínimos cada vez más altos — ¿qué tendencia es esta?', options: ['Tendencia alcista', 'Tendencia bajista', 'No hay tendencia'], correct: 0 },
-    { q: '¿Cuál es la definición de "mínimo" en la estructura del precio?', options: ['El punto más alto alcanzado por el precio', 'El punto más bajo alcanzado antes de rebotar al alza', 'El precio promedio durante el día'], correct: 1 },
-    { q: 'En una tendencia bajista en la que consideras un contrato put, ¿qué esperas de los máximos consecutivos?', options: ['Cada máximo más alto que el anterior', 'Cada máximo más bajo que el anterior', 'Los máximos permanecen siempre iguales'], correct: 1 },
-    { q: 'Los máximos y mínimos empezaron a acercarse e igualarse tras una larga tendencia alcista en tu contrato — ¿qué suele indicar esto?', options: ['Continuación de la tendencia alcista con más fuerza', 'Consolidación o posible cambio de tendencia', 'No tiene ningún significado'], correct: 1 }
+    { q: 'Estás vigilando un contrato call y el precio forma máximos y mínimos cada vez más altos — ¿qué tendencia es esta?', options: ['Tendencia alcista', 'Tendencia bajista', 'No hay tendencia'] },
+    { q: '¿Cuál es la definición de "mínimo" en la estructura del precio?', options: ['El punto más alto alcanzado por el precio', 'El punto más bajo alcanzado antes de rebotar al alza', 'El precio promedio durante el día'] },
+    { q: 'En una tendencia bajista en la que consideras un contrato put, ¿qué esperas de los máximos consecutivos?', options: ['Cada máximo más alto que el anterior', 'Cada máximo más bajo que el anterior', 'Los máximos permanecen siempre iguales'] },
+    { q: 'Los máximos y mínimos empezaron a acercarse e igualarse tras una larga tendencia alcista en tu contrato — ¿qué suele indicar esto?', options: ['Continuación de la tendencia alcista con más fuerza', 'Consolidación o posible cambio de tendencia', 'No tiene ningún significado'] }
   ]
 },
 {
@@ -161,10 +171,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Por qué importa la paciencia aquí</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">La mayoría de los errores comunes se deben a entrar al primer toque del nivel sin esperar un cierre claro o un retest exitoso.</p></div>',
   quiz: [
-    { q: 'El precio tocó un nivel de resistencia solo con la mecha y rebotó sin cerrar más allá — ¿cómo se llama esto?', options: ['Rompimiento real confirmado', 'Ruptura temporal (mecha)', 'Retest exitoso'], correct: 1 },
-    { q: '¿Cuál es la diferencia clave entre la ruptura temporal y el rompimiento real?', options: ['No hay diferencia', 'El rompimiento real cierra con el cuerpo de la vela más allá del nivel, no solo con la mecha', 'La ruptura temporal siempre es más fuerte'], correct: 1 },
-    { q: 'Tras romper un nivel, el precio volvió a probarlo y rebotó con éxito sin romperlo de nuevo — ¿qué significa esto?', options: ['Fracaso total del rompimiento', 'Confirmación extra de que el rompimiento es válido', 'No tiene relación con el rompimiento'], correct: 1 },
-    { q: '¿Por qué se recomienda no entrar en el primer toque de un nivel importante?', options: ['Porque el primer toque siempre es un rompimiento confirmado', 'Porque el primer toque puede ser una ruptura temporal de mecha, no un rompimiento real', 'No hay ninguna razón para ello'], correct: 1 }
+    { q: 'El precio tocó un nivel de resistencia solo con la mecha y rebotó sin cerrar más allá — ¿cómo se llama esto?', options: ['Rompimiento real confirmado', 'Ruptura temporal (mecha)', 'Retest exitoso'] },
+    { q: '¿Cuál es la diferencia clave entre la ruptura temporal y el rompimiento real?', options: ['No hay diferencia', 'El rompimiento real cierra con el cuerpo de la vela más allá del nivel, no solo con la mecha', 'La ruptura temporal siempre es más fuerte'] },
+    { q: 'Tras romper un nivel, el precio volvió a probarlo y rebotó con éxito sin romperlo de nuevo — ¿qué significa esto?', options: ['Fracaso total del rompimiento', 'Confirmación extra de que el rompimiento es válido', 'No tiene relación con el rompimiento'] },
+    { q: '¿Por qué se recomienda no entrar en el primer toque de un nivel importante?', options: ['Porque el primer toque siempre es un rompimiento confirmado', 'Porque el primer toque puede ser una ruptura temporal de mecha, no un rompimiento real', 'No hay ninguna razón para ello'] }
   ]
 },
 {
@@ -179,10 +189,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 ¿Cómo se usa en la práctica?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Si el precio está sobre su media móvil, el sesgo general es alcista; si está debajo, bajista. El volumen alto en un rompimiento aumenta tu confianza en su validez.</p></div>',
   quiz: [
-    { q: '¿Cuál es la diferencia principal entre SMA y EMA?', options: ['No hay diferencia', 'La EMA da más peso a las velas recientes y reacciona más rápido', 'La SMA reacciona más rápido que la EMA'], correct: 1 },
-    { q: 'El precio rompió un nivel de resistencia en tu contrato call con volumen muy alto — ¿qué dice esto sobre la fuerza del rompimiento?', options: ['El rompimiento es débil y poco confiable', 'El rompimiento es más fuerte y más creíble', 'El volumen no tiene relación con la fuerza del rompimiento'], correct: 1 },
-    { q: '¿Qué media móvil se conoce generalmente por la respuesta más rápida y menor retraso?', options: ['SMA', 'HMA', 'No hay diferencia entre ellas'], correct: 1 },
-    { q: 'El precio cotiza consistentemente por debajo de su media móvil principal — ¿cuál es el sesgo general probable?', options: ['Sesgo alcista', 'Sesgo bajista', 'La posición del precio respecto a la media no tiene relación con el sesgo'], correct: 1 }
+    { q: '¿Cuál es la diferencia principal entre SMA y EMA?', options: ['No hay diferencia', 'La EMA da más peso a las velas recientes y reacciona más rápido', 'La SMA reacciona más rápido que la EMA'] },
+    { q: 'El precio rompió un nivel de resistencia en tu contrato call con volumen muy alto — ¿qué dice esto sobre la fuerza del rompimiento?', options: ['El rompimiento es débil y poco confiable', 'El rompimiento es más fuerte y más creíble', 'El volumen no tiene relación con la fuerza del rompimiento'] },
+    { q: '¿Qué media móvil se conoce generalmente por la respuesta más rápida y menor retraso?', options: ['SMA', 'HMA', 'No hay diferencia entre ellas'] },
+    { q: 'El precio cotiza consistentemente por debajo de su media móvil principal — ¿cuál es el sesgo general probable?', options: ['Sesgo alcista', 'Sesgo bajista', 'La posición del precio respecto a la media no tiene relación con el sesgo'] }
   ]
 },
 {
@@ -197,10 +207,10 @@ null,
     '</div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Concepto de divergencia</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Cuando el precio se mueve en una dirección (ej. un máximo más alto) mientras el oscilador se mueve en la contraria (un máximo más bajo) — esta "divergencia" suele advertir de un momentum debilitado y una posible reversión próxima. Este mismo concepto de divergencia es uno de los pilares sobre los que se construyen algunas de las herramientas más fuertes de OPN LIO.</p></div>',
   quiz: [
-    { q: 'El RSI subió por encima de 70 en tu contrato call — ¿qué suele indicar esto?', options: ['Sobreventa y posible rebote alcista', 'Sobrecompra y posible corrección bajista', 'Este número no tiene significado'], correct: 1 },
-    { q: '¿Qué distingue al MFI del RSI?', options: ['No hay diferencia en absoluto', 'El MFI incorpora el volumen de negociación en su cálculo', 'El RSI incorpora el volumen y el MFI no'], correct: 1 },
-    { q: 'El precio de tu contrato subió a un nuevo máximo, pero el indicador de momentum dibujó un máximo más bajo — ¿cómo se llama esto?', options: ['Confirmación fuerte de la tendencia alcista', 'Divergencia que puede advertir de momentum debilitado', 'Un error del indicador'], correct: 1 },
-    { q: '¿En qué se basa fundamentalmente el indicador Estocástico?', options: ['Comparar el precio de cierre con el rango de negociación durante un periodo', 'Solo el volumen de negociación', 'El número de traders activos'], correct: 0 }
+    { q: 'El RSI subió por encima de 70 en tu contrato call — ¿qué suele indicar esto?', options: ['Sobreventa y posible rebote alcista', 'Sobrecompra y posible corrección bajista', 'Este número no tiene significado'] },
+    { q: '¿Qué distingue al MFI del RSI?', options: ['No hay diferencia en absoluto', 'El MFI incorpora el volumen de negociación en su cálculo', 'El RSI incorpora el volumen y el MFI no'] },
+    { q: 'El precio de tu contrato subió a un nuevo máximo, pero el indicador de momentum dibujó un máximo más bajo — ¿cómo se llama esto?', options: ['Confirmación fuerte de la tendencia alcista', 'Divergencia que puede advertir de momentum debilitado', 'Un error del indicador'] },
+    { q: '¿En qué se basa fundamentalmente el indicador Estocástico?', options: ['Comparar el precio de cierre con el rango de negociación durante un periodo', 'Solo el volumen de negociación', 'El número de traders activos'] }
   ]
 },
 {
@@ -215,10 +225,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 No acumules todo</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Los mejores traders eligen 2-3 herramientas que entienden a fondo en vez de saturar el gráfico con decenas de indicadores contradictorios.</p></div>',
   quiz: [
-    { q: 'Los puntos del Parabolic SAR pasaron de debajo de las velas a encima de ellas — ¿qué suele indicar esto?', options: ['Continuación de la tendencia alcista sin cambios', 'Posible reversión de tendencia', 'Este cambio no tiene significado'], correct: 1 },
-    { q: '¿Qué mide fundamentalmente el indicador ATR?', options: ['La dirección del precio', 'El nivel actual de volatilidad del mercado', 'Solo el volumen de negociación'], correct: 1 },
-    { q: 'Notaste una compresión severa en las Bandas de Bollinger en un contrato que vigilas — ¿qué suele preceder esto?', options: ['Un fuerte movimiento de precio próximo', 'Estabilidad permanente sin movimiento', 'La compresión no tiene relación con ningún movimiento futuro'], correct: 0 },
-    { q: '¿Qué es lo mejor para un trader principiante en cuanto al número de herramientas?', options: ['Usar la mayor cantidad posible de indicadores juntos', 'Elegir 2-3 herramientas que se entiendan a fondo', 'Prescindir de todas las herramientas por completo'], correct: 1 }
+    { q: 'Los puntos del Parabolic SAR pasaron de debajo de las velas a encima de ellas — ¿qué suele indicar esto?', options: ['Continuación de la tendencia alcista sin cambios', 'Posible reversión de tendencia', 'Este cambio no tiene significado'] },
+    { q: '¿Qué mide fundamentalmente el indicador ATR?', options: ['La dirección del precio', 'El nivel actual de volatilidad del mercado', 'Solo el volumen de negociación'] },
+    { q: 'Notaste una compresión severa en las Bandas de Bollinger en un contrato que vigilas — ¿qué suele preceder esto?', options: ['Un fuerte movimiento de precio próximo', 'Estabilidad permanente sin movimiento', 'La compresión no tiene relación con ningún movimiento futuro'] },
+    { q: '¿Qué es lo mejor para un trader principiante en cuanto al número de herramientas?', options: ['Usar la mayor cantidad posible de indicadores juntos', 'Elegir 2-3 herramientas que se entiendan a fondo', 'Prescindir de todas las herramientas por completo'] }
   ]
 },
 {
@@ -233,11 +243,11 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Diferencia con negociar acciones directamente</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Negociar acciones directamente te da propiedad real sin fecha de vencimiento. Los contratos de opciones te dan mayor apalancamiento (ganancias/pérdidas relativamente mayores para un capital más pequeño) pero están gobernados por un tiempo que se agota — el "desgaste temporal" es un enemigo silencioso para quien mantiene un contrato largo sin movimiento.</p></div>',
   quiz: [
-    { q: 'Compraste un contrato call sobre una acción esperando que suba — ¿qué te otorga este contrato?', options: ['Una obligación de comprar la acción sin importar el precio', 'Un derecho (no una obligación) de comprar la acción a un precio fijado antes de cierta fecha', 'Propiedad permanente de la acción de inmediato'], correct: 1 },
-    { q: 'Esperas que baje el precio de cierta acción — ¿qué contrato se ajusta a esta expectativa?', options: ['Call', 'Put', 'No hay diferencia entre ellos'], correct: 1 },
-    { q: 'Tu contrato llegó a su fecha de Vencimiento sin usarse y sin tener valor — ¿qué ocurre?', options: ['Se renueva automáticamente por otro periodo', 'Pierde todo valor y pierdes la prima pagada', 'Se convierte automáticamente en propiedad permanente de la acción'], correct: 1 },
-    { q: 'Tu contrato está actualmente "OTM" (fuera del dinero) — ¿qué significa esto?', options: ['Tiene gran valor real ahora', 'No tiene valor real actualmente al precio presente', 'Ya expiró'], correct: 1 },
-    { q: '¿Cuál es la diferencia fundamental entre comprar una acción directamente y comprar un contrato de opción sobre ella?', options: ['No hay diferencia en absoluto entre ellas', 'El contrato está gobernado por una fecha de vencimiento y mayor apalancamiento, mientras la acción es propiedad permanente sin vencimiento', 'La acción siempre es más barata que el contrato'], correct: 1 }
+    { q: 'Compraste un contrato call sobre una acción esperando que suba — ¿qué te otorga este contrato?', options: ['Una obligación de comprar la acción sin importar el precio', 'Un derecho (no una obligación) de comprar la acción a un precio fijado antes de cierta fecha', 'Propiedad permanente de la acción de inmediato'] },
+    { q: 'Esperas que baje el precio de cierta acción — ¿qué contrato se ajusta a esta expectativa?', options: ['Call', 'Put', 'No hay diferencia entre ellos'] },
+    { q: 'Tu contrato llegó a su fecha de Vencimiento sin usarse y sin tener valor — ¿qué ocurre?', options: ['Se renueva automáticamente por otro periodo', 'Pierde todo valor y pierdes la prima pagada', 'Se convierte automáticamente en propiedad permanente de la acción'] },
+    { q: 'Tu contrato está actualmente "OTM" (fuera del dinero) — ¿qué significa esto?', options: ['Tiene gran valor real ahora', 'No tiene valor real actualmente al precio presente', 'Ya expiró'] },
+    { q: '¿Cuál es la diferencia fundamental entre comprar una acción directamente y comprar un contrato de opción sobre ella?', options: ['No hay diferencia en absoluto entre ellas', 'El contrato está gobernado por una fecha de vencimiento y mayor apalancamiento, mientras la acción es propiedad permanente sin vencimiento', 'La acción siempre es más barata que el contrato'] }
   ]
 },
 {
@@ -252,10 +262,10 @@ null,
     '</div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Volatilidad Implícita (IV)</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Es la previsión del mercado sobre la volatilidad futura del precio, y un elemento central en la valoración de cualquier contrato. Un IV en aumento eleva la prima incluso si la acción misma no se mueve — muchos principiantes pierden porque ignoran por completo este factor.</p></div>',
   quiz: [
-    { q: 'Tu contrato pierde parte de su valor diariamente pese a que el precio de la acción está totalmente plano — ¿qué Greek es responsable?', options: ['Delta', 'Theta', 'Rho'], correct: 1 },
-    { q: 'Tu contrato se acercó al punto "en el dinero" (ATM) y notaste que su movimiento se volvió más violento y reactivo al precio — ¿qué elemento subió?', options: ['Gamma', 'Rho', 'No tiene relación con ningún elemento'], correct: 0 },
-    { q: 'La volatilidad implícita (IV) de una acción subió de repente, elevando el precio de tu contrato pese a que el precio de la acción se mantuvo plano — ¿qué Greek es responsable?', options: ['Vega', 'Theta', 'Delta'], correct: 0 },
-    { q: '¿Qué mide fundamentalmente la Delta?', options: ['Solo el desgaste temporal diario', 'Cuánto se mueve el precio del contrato frente a la acción y su probabilidad de expirar en el dinero', 'Solo el impacto de las tasas de interés'], correct: 1 }
+    { q: 'Tu contrato pierde parte de su valor diariamente pese a que el precio de la acción está totalmente plano — ¿qué Greek es responsable?', options: ['Delta', 'Theta', 'Rho'] },
+    { q: 'Tu contrato se acercó al punto "en el dinero" (ATM) y notaste que su movimiento se volvió más violento y reactivo al precio — ¿qué elemento subió?', options: ['Gamma', 'Rho', 'No tiene relación con ningún elemento'] },
+    { q: 'La volatilidad implícita (IV) de una acción subió de repente, elevando el precio de tu contrato pese a que el precio de la acción se mantuvo plano — ¿qué Greek es responsable?', options: ['Vega', 'Theta', 'Delta'] },
+    { q: '¿Qué mide fundamentalmente la Delta?', options: ['Solo el desgaste temporal diario', 'Cuánto se mueve el precio del contrato frente a la acción y su probabilidad de expirar en el dinero', 'Solo el impacto de las tasas de interés'] }
   ]
 },
 {
@@ -270,10 +280,10 @@ null,
     '</div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 ¿Cómo construyes tu estrategia?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Toda buena estrategia necesita tres elementos claros de antemano: una <b>condición de entrada</b> (exactamente cuándo entras), una <b>condición de salida con ganancia</b> (dónde tomas ganancias), y un <b>stop-loss</b> (dónde admites el error y sales). Sin los tres juntos, estás apostando, no operando.</p></div>',
   quiz: [
-    { q: '¿Qué escuela se enfoca en leer el precio en sí (velas, máximos/mínimos) sin depender de indicadores pesados?', options: ['Wyckoff', 'Price Action', 'Smart Money'], correct: 1 },
-    { q: 'Intenta entender cómo mueven el mercado las grandes instituciones y dónde acumulan liquidez — ¿qué enfoque es este?', options: ['Smart Money / ICT', 'La escuela clásica', 'Ningún enfoque se relaciona con esto'], correct: 0 },
-    { q: '¿Cuáles son los tres elementos esenciales a definir antes de cualquier operación call o put?', options: ['Solo el nombre de la acción', 'Condición de entrada, condición de salida con ganancia, y stop-loss', 'Solo el color de la última vela'], correct: 1 },
-    { q: 'Entraste a un contrato call sin definir un stop-loss previamente — ¿cuál es el riesgo principal?', options: ['Ningún riesgo en absoluto', 'Dificultad para saber cuándo admitir el error y salir, lo que puede amplificar la pérdida', 'El contrato se cerrará automáticamente de forma segura'], correct: 1 }
+    { q: '¿Qué escuela se enfoca en leer el precio en sí (velas, máximos/mínimos) sin depender de indicadores pesados?', options: ['Wyckoff', 'Price Action', 'Smart Money'] },
+    { q: 'Intenta entender cómo mueven el mercado las grandes instituciones y dónde acumulan liquidez — ¿qué enfoque es este?', options: ['Smart Money / ICT', 'La escuela clásica', 'Ningún enfoque se relaciona con esto'] },
+    { q: '¿Cuáles son los tres elementos esenciales a definir antes de cualquier operación call o put?', options: ['Solo el nombre de la acción', 'Condición de entrada, condición de salida con ganancia, y stop-loss', 'Solo el color de la última vela'] },
+    { q: 'Entraste a un contrato call sin definir un stop-loss previamente — ¿cuál es el riesgo principal?', options: ['Ningún riesgo en absoluto', 'Dificultad para saber cuándo admitir el error y salir, lo que puede amplificar la pérdida', 'El contrato se cerrará automáticamente de forma segura'] }
   ]
 },
 {
@@ -288,10 +298,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Regla de oro</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Un trader exitoso no destaca solo por su número de victorias, sino por gestionar pérdidas pequeñas y controladas frente a ganancias mayores cuando acierta.</p></div>',
   quiz: [
-    { q: '¿Cuál es la regla de oro comúnmente citada sobre el tamaño de riesgo por operación del capital total?', options: ['50% del capital', '1-2% del capital', 'Todo el capital de una vez'], correct: 1 },
-    { q: 'Saliste de una operación ganadora demasiado pronto por miedo, pese a que la tendencia seguía a tu favor — ¿qué factor psicológico te afectó?', options: ['Codicia', 'Miedo', 'Ningún factor psicológico afectó esta decisión'], correct: 1 },
-    { q: '¿Cuál es el beneficio principal del Diario de Trading?', options: ['Ningún beneficio real', 'Documentar razones y resultados para mejorar el desempeño y evitar repetir errores', 'Solo aumenta la velocidad de ejecución de operaciones'], correct: 1 },
-    { q: '¿Qué distingue realmente a un trader exitoso según esta lección?', options: ['Solo el número de victorias sin importar su tamaño', 'Gestionar inteligentemente pérdidas pequeñas frente a ganancias mayores cuando acierta', 'Concentrar todo su capital en una sola operación segura'], correct: 1 }
+    { q: '¿Cuál es la regla de oro comúnmente citada sobre el tamaño de riesgo por operación del capital total?', options: ['50% del capital', '1-2% del capital', 'Todo el capital de una vez'] },
+    { q: 'Saliste de una operación ganadora demasiado pronto por miedo, pese a que la tendencia seguía a tu favor — ¿qué factor psicológico te afectó?', options: ['Codicia', 'Miedo', 'Ningún factor psicológico afectó esta decisión'] },
+    { q: '¿Cuál es el beneficio principal del Diario de Trading?', options: ['Ningún beneficio real', 'Documentar razones y resultados para mejorar el desempeño y evitar repetir errores', 'Solo aumenta la velocidad de ejecución de operaciones'] },
+    { q: '¿Qué distingue realmente a un trader exitoso según esta lección?', options: ['Solo el número de victorias sin importar su tamaño', 'Gestionar inteligentemente pérdidas pequeñas frente a ganancias mayores cuando acierta', 'Concentrar todo su capital en una sola operación segura'] }
   ]
 },
 {
@@ -301,9 +311,9 @@ null,
     '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">👑 El Llamado del Rey</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Imagina que en vez de vigilar decenas de indicadores contradictorios, miras una sola frase grande y clara sobre el gráfico que resume todo el estado del mercado: alcista, bajista o neutral. Esta es exactamente la idea de "El Llamado del Rey" — un voto ponderado entre varias métricas analíticas, filtrado por un marco temporal mayor, para darte una lectura limpia en vez de ruido. Quienes lo han probado dicen que les cambió la forma de pensar el mercado desde el primer día.</p></div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎯 Smart Pivot</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">¿Recuerdas lo que aprendiste sobre soporte y resistencia? Ahora imagina una herramienta que los dibuja automáticamente desde marcos temporales mayores, con el mínimo desorden visual posible, y clasificados según su fuerza real — en vez de decenas de líneas aleatorias inundando el gráfico. Eso es exactamente lo que hace "Smart Pivot", una de las herramientas más usadas a diario por los traders de OPN LIO para identificar sus puntos de entrada con confianza.</p></div>',
   quiz: [
-    { q: '¿Cuál es la idea central de la herramienta "El Llamado del Rey"?', options: ['Mostrar decenas de indicadores separados juntos', 'Una lectura única y clara que resume el estado del mercado mediante un voto ponderado entre varias métricas', 'Ejecutar operaciones automáticamente en nombre del trader'], correct: 1 },
-    { q: '¿Qué distingue a "Smart Pivot" de dibujar líneas de soporte/resistencia manualmente?', options: ['No hay diferencia en absoluto', 'Dibujo automático desde marcos temporales mayores con mínimo desorden visual y clasificación por fuerza', 'No usa ningún marco temporal'], correct: 1 },
-    { q: '¿A qué categoría de elementos aprendidos anteriormente pertenece fundamentalmente la idea de "Smart Pivot"?', options: ['Las Greeks', 'Soporte y resistencia', 'Contratos de opciones'], correct: 1 }
+    { q: '¿Cuál es la idea central de la herramienta "El Llamado del Rey"?', options: ['Mostrar decenas de indicadores separados juntos', 'Una lectura única y clara que resume el estado del mercado mediante un voto ponderado entre varias métricas', 'Ejecutar operaciones automáticamente en nombre del trader'] },
+    { q: '¿Qué distingue a "Smart Pivot" de dibujar líneas de soporte/resistencia manualmente?', options: ['No hay diferencia en absoluto', 'Dibujo automático desde marcos temporales mayores con mínimo desorden visual y clasificación por fuerza', 'No usa ningún marco temporal'] },
+    { q: '¿A qué categoría de elementos aprendidos anteriormente pertenece fundamentalmente la idea de "Smart Pivot"?', options: ['Las Greeks', 'Soporte y resistencia', 'Contratos de opciones'] }
   ]
 },
 {
@@ -314,10 +324,10 @@ null,
     '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">☁️ La Nube Avanzada y la Nube de Volumen</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">La nube avanzada envuelve el precio como zona de referencia de momentum — su grosor y color reflejan la fuerza o debilidad de la zona, y el respeto de las velas a sus límites superior e inferior es una señal que tu ojo entrena con el tiempo. La nube de volumen revela la densidad real de liquidez detrás del movimiento — exactamente por eso algunos traders la describen como un "tercer ojo" sobre el mercado.</p></div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎨 El Salto de Color en las Velas</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Uno de los momentos más emocionantes para los usuarios de OPN LIO: el color de la vela cambiando directamente de verde fosforescente a blanco — conocido como el "Salto de Color" — una señal visual instantánea de un cambio de momentum, que aumenta notablemente su fuerza cuando se alinea con el resto de las herramientas del sistema.</p></div>',
   quiz: [
-    { q: '¿Qué revela el respeto repetido de las velas a la línea central en "El Imperio de los Ricos"?', options: ['Ningún significado en absoluto', 'Qué tan fuerte es como zona de decisión real', 'Siempre debe ignorarse'], correct: 1 },
-    { q: '¿Qué reflejan el grosor y el color de la nube avanzada?', options: ['La fuerza o debilidad de la zona como referencia de momentum', 'No tiene relación con la fuerza de ninguna zona', 'Solo el nombre de la acción'], correct: 0 },
-    { q: '¿Cómo se llama el cambio del color de la vela de verde fosforescente a blanco en el sistema OPN LIO?', options: ['Divergencia', 'El Salto de Color', 'Sobrecompra'], correct: 1 },
-    { q: '¿Qué revela específicamente la nube de volumen?', options: ['La dirección de las tasas de interés', 'La densidad real de liquidez detrás del movimiento del precio', 'Las fechas de vencimiento de los contratos'], correct: 1 }
+    { q: '¿Qué revela el respeto repetido de las velas a la línea central en "El Imperio de los Ricos"?', options: ['Ningún significado en absoluto', 'Qué tan fuerte es como zona de decisión real', 'Siempre debe ignorarse'] },
+    { q: '¿Qué reflejan el grosor y el color de la nube avanzada?', options: ['La fuerza o debilidad de la zona como referencia de momentum', 'No tiene relación con la fuerza de ninguna zona', 'Solo el nombre de la acción'] },
+    { q: '¿Cómo se llama el cambio del color de la vela de verde fosforescente a blanco en el sistema OPN LIO?', options: ['Divergencia', 'El Salto de Color', 'Sobrecompra'] },
+    { q: '¿Qué revela específicamente la nube de volumen?', options: ['La dirección de las tasas de interés', 'La densidad real de liquidez detrás del movimiento del precio', 'Las fechas de vencimiento de los contratos'] }
   ]
 },
 {
@@ -328,9 +338,9 @@ null,
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🦁 Ahora, y no antes</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Ahora tienes la base que te permite evaluar cualquier estrategia o sistema de trading con verdadera conciencia — incluido el propio sistema OPN LIO. Tu comprensión profunda de El Llamado del Rey, Smart Pivot y El Imperio de los Ricos ya no son solo nombres de herramientas, sino una extensión natural de todo lo que construiste en este programa.</p></div>' +
     '<div class="hl"><b style="color:#39FF14; display:block; margin-bottom:8px;">🏆 ¿Qué pasa después de este examen?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Al aprobar, recibes el certificado oficial y compartible de "Trader Certificado OPN LIO", un descuento exclusivo del 60% en tu suscripción vinculado solo a tu cuenta, además de la elegibilidad para postular como embajador certificado.</p></div>',
   quiz: [
-    { q: '¿Cuál es el objetivo fundamental de este programa de formación como se explicó al final?', options: ['Memorizar nombres de herramientas sin entenderlas', 'Construir una base real que te permita evaluar cualquier estrategia o sistema de trading con conciencia, incluido OPN LIO', 'Obligarte a suscribirte de inmediato sin pensar'], correct: 1 },
-    { q: '¿Qué recibes inmediatamente al aprobar con éxito el examen de este último nivel?', options: ['Nada adicional', 'Un certificado de finalización compartible, un descuento exclusivo vinculado a tu cuenta, y elegibilidad como embajador', 'Baneo automático del sitio'], correct: 1 },
-    { q: 'Un contrato call que vigilas mostró sobrecompra en el RSI, junto con un "Salto de Color" de verde fosforescente a blanco en el gráfico de OPN LIO — ¿cómo combina un trader experimentado estas señales?', options: ['Ignora todas las señales y entra al azar', 'Relaciona el indicador de momentum tradicional con la señal del sistema para evaluar el cuadro completo antes de decidir', 'Se basa solo en el color de la vela sin ningún otro indicador'], correct: 1 }
+    { q: '¿Cuál es el objetivo fundamental de este programa de formación como se explicó al final?', options: ['Memorizar nombres de herramientas sin entenderlas', 'Construir una base real que te permita evaluar cualquier estrategia o sistema de trading con conciencia, incluido OPN LIO', 'Obligarte a suscribirte de inmediato sin pensar'] },
+    { q: '¿Qué recibes inmediatamente al aprobar con éxito el examen de este último nivel?', options: ['Nada adicional', 'Un certificado de finalización compartible, un descuento exclusivo vinculado a tu cuenta, y elegibilidad como embajador', 'Baneo automático del sitio'] },
+    { q: 'Un contrato call que vigilas mostró sobrecompra en el RSI, junto con un "Salto de Color" de verde fosforescente a blanco en el gráfico de OPN LIO — ¿cómo combina un trader experimentado estas señales?', options: ['Ignora todas las señales y entra al azar', 'Relaciona el indicador de momentum tradicional con la señal del sistema para evaluar el cuadro completo antes de decidir', 'Se basa solo en el color de la vela sin ningún otro indicador'] }
   ]
 }
 ];
@@ -347,10 +357,12 @@ function doRegister() {
   var name = document.getElementById('re_name').value.trim();
   var email = document.getElementById('re_email').value.trim();
   var pass = document.getElementById('re_pass').value;
+  var phone = document.getElementById('re_phone').value.trim();
   var agreed = document.getElementById('re_agree').checked;
   var msg = document.getElementById('authMsg');
   if (!agreed) { msg.style.color = '#ff6b6b'; msg.textContent = 'Debes aceptar los Términos de Uso primero.'; return; }
-  fetch(API, { method:'POST', body: JSON.stringify({ action:'register', name, email, password: pass, lang:'es' }) })
+  if (!phone || phone.replace(/[^0-9]/g,'').length < 8) { msg.style.color = '#ff6b6b'; msg.textContent = "Ingresa un número de teléfono válido."; return; }
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'register', name, email, phone: phone, password: pass, lang:'es' }) })
     .then(r=>r.json()).then(function(res){
       if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
       msg.style.color = '#39FF14';
@@ -374,6 +386,7 @@ function doLogin() {
           openVerifyModal({ email: email, lang: "es", onSuccess: function(){
       session = res;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
       renderDash();
           }, onCancel: function(){ msgEl.style.color='#ff9b9b'; msgEl.textContent = "Verificación no completada — sesión no iniciada"; } });
         }).catch(function(){ msgEl.style.color='#ff6b6b'; msgEl.textContent = "No se pudo enviar el código — inténtalo de nuevo"; });
@@ -395,7 +408,7 @@ function renderDash() {
   var grid = document.getElementById('levelsGrid');
   var progress = {}; (session.progress||[]).forEach(function(p){ progress[p.level_num] = p; });
   grid.innerHTML = '';
-  for (var i=1;i<=12;i++) {
+  for (var i=1;i<=13;i++) {
     var done = progress[i] && progress[i].completed;
     var unlocked = i <= session.student.current_level;
     var el = document.createElement('div');
@@ -403,7 +416,7 @@ function renderDash() {
     el.style.cssText = 'display:flex; align-items:center; gap:16px; ' + (unlocked ? 'cursor:pointer;' : 'opacity:.45;');
     el.innerHTML =
       '<div class="level-badge" style="background:'+(done?'#39FF14':unlocked?'#D4AF37':'#2a3348')+'; color:'+(done||unlocked?'#111':'#8a93a8')+';">'+(done?'✓':i)+'</div>' +
-      '<div style="flex:1;"><div style="font-weight:800; font-size:15px;">Nivel '+i+': '+LEVELS[i].title.replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\s*$/u,'')+'</div><div style="font-size:12.5px; color:#8a93a8; margin-top:3px;">'+(done?'Completado — Puntaje '+progress[i].score+'%':unlocked?'Disponible ahora':'Bloqueado')+'</div></div>' +
+      '<div style="flex:1;"><div style="font-weight:800; font-size:15px;">'+(i===13 ? "Graduación 🎓" : 'Nivel '+i+': ')+LEVELS[i].title.replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\s*$/u,'')+'</div><div style="font-size:12.5px; color:#8a93a8; margin-top:3px;">'+(done?'Completado — Puntaje '+progress[i].score+'%':unlocked?'Disponible ahora':'Bloqueado')+'</div></div>' +
       (unlocked && !done ? '<span style="color:#D4AF37; font-weight:800; font-size:13px;">Empezar →</span>' : '');
     if (unlocked) el.onclick = (function(lv){ return function(){ openLesson(lv); }; })(i);
     grid.appendChild(el);
@@ -445,18 +458,13 @@ function backToDash() {
 
 function submitQuiz() {
   var lv = LEVELS[currentLevel];
-  var correct = 0;
-  lv.quiz.forEach(function(q, qi){
-    var sel = document.querySelector('input[name="q'+qi+'"]:checked');
-    if (sel && parseInt(sel.value) === q.correct) correct++;
-  });
-  var score = Math.round((correct / lv.quiz.length) * 100);
-  fetch(API, { method:'POST', body: JSON.stringify({ action:'complete-level', studentId: session.student.id, level: currentLevel, score }) })
+  var answers = lv.quiz.map(function(q, qi){ var sel = document.querySelector('input[name="q'+qi+'"]:checked'); return sel ? parseInt(sel.value) : -1; });
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'complete-level', studentId: session.student.id, token: session.token, level: currentLevel, answers: answers }) })
     .then(r=>r.json()).then(function(res){
       var el = document.getElementById('quizResult');
-      if (!res.ok) { el.style.color = '#ff6b6b'; el.textContent = 'Tu puntaje ' + score + '% — ' + res.error; return; }
+      if (!res.ok) { el.style.color = '#ff6b6b'; el.textContent = 'Tu puntaje ' + res.score + '% — ' + res.error; return; }
       el.style.color = '#39FF14';
-      el.textContent = res.graduated ? '¡Felicidades por graduarte! 🎉 Puntaje ' + score + '%' : '¡Bien hecho! Puntaje ' + score + '% — ganaste ' + res.pointsEarned + ' puntos 🎉';
+      el.textContent = res.graduated ? '¡Felicidades por graduarte! 🎉 Puntaje ' + res.score + '%' : '¡Bien hecho! Puntaje ' + res.score + '% — ganaste ' + res.pointsEarned + ' puntos 🎉';
       session.student.points += res.pointsEarned;
       session.student.current_level = res.nextLevel;
       session.student.rank = res.rank;
@@ -464,6 +472,7 @@ function submitQuiz() {
       var lvlProg = session.progress.find(function(p){return p.level_num===currentLevel;});
       if (lvlProg) { lvlProg.completed = true; lvlProg.score = score; } else { session.progress.push({level_num:currentLevel, completed:true, score:score}); }
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
       setTimeout(function(){ backToDash(); renderDash(); }, 1600);
     });
 }
@@ -495,5 +504,6 @@ function extendSession(){
 }
 if (session && session.student) { renderDash(); } else { showTab('login'); }
 </script>
+<script>if (location.hash === "#register" && typeof showTab === "function") showTab("register");</script>
 </body>
 </html>

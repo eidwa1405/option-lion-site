@@ -25,6 +25,15 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 <script src="page-guard.js" data-page="academy"></script>
 <script src="academy-pay.js"></script>
 <script src="verify-modal.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="O P N  LIO Academy — Training Program">
+<meta property="og:description" content="OPN LIO Trader Qualification Program (one-time $1 +15% enrollment fee) — 12 levels from zero to advanced, with quizzes and a completion certificate.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/en-academy">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 </head>
 <body>
 
@@ -34,7 +43,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
     <span style="font-weight:900; color:#f4f0e4; font-size:18px;">Academy <span style="font-weight:900; letter-spacing:.5px; white-space:nowrap;"><span style="color:#f4f0e4; font-size:15px;">O</span> <span style="color:#f4f0e4; font-size:16px;">P</span> <span style="color:#f4f0e4; font-size:17px;">N</span> <span style="color:#D4AF37; font-size:20px;">LIO</span></span></span>
   </div>
   <div style="display:flex; align-items:center; gap:14px;">
-    <a href="./en-signup.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">Join Now</a>
+    <a href="./en-academy.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">Join Now</a>
     <div id="authStatus" style="font-size:13px; color:#8a93a8;"></div>
   </div>
 </nav>
@@ -64,9 +73,10 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
       <div id="registerForm" style="display:none;">
         <div style="margin-bottom:14px;"><label>Name</label><input id="re_name" placeholder="Your full name"></div>
         <div style="margin-bottom:14px;"><label>Email</label><input id="re_email" type="email" placeholder="you@example.com"></div>
+        <div style="margin-bottom:14px;"><label>Phone Number</label><input id="re_phone" type="tel" inputmode="tel" placeholder="+1xxxxxxxxxx" oninput="this.value=this.value.replace(/[^0-9+]/g,'');" style="direction:ltr; text-align:left;"></div>
         <div style="margin-bottom:14px;"><label>Password (6+ characters)</label><input id="re_pass" type="password"></div>
         <label style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#aab3c5; font-weight:400; cursor:pointer; margin-bottom:18px;"><input id="re_agree" type="checkbox" style="width:auto; margin-top:3px; accent-color:#D4AF37;"><span>I agree to the <a href="./terms.html" target="_blank">Terms of Use</a> and understand this content is educational only.</span></label>
-        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Enroll</button>
+        <button class="btn-gold" style="width:100%;" onclick="doRegister()">Create Membership</button>
       </div>
       <p id="authMsg" style="color:#ff6b6b; font-size:13px; margin:14px 0 0; text-align:center;"></p>
     </div>
@@ -124,11 +134,11 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Pro tip</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Mastering candle reading is the foundation for everything you will learn next — including the OPN LIO system itself, which builds its readings on this exact understanding.</p></div>',
   quiz: [
-    { q: 'On a call contract for a given stock, what does the candle body represent?', options: ['The distance between the highest and lowest price during the period', 'The distance between the open and close price', 'Trading volume only'], correct: 1 },
-    { q: 'A large green candle appeared on the call contract you bought — what does the green color mean?', options: ['Sellers took control and close was below open', 'Buyers took control and close was above open', 'Color has no relation to price'], correct: 1 },
-    { q: 'Which candle usually signals total indecision between buyers and sellers?', options: ['Hammer', 'Doji', 'Engulfing'], correct: 1 },
-    { q: 'You are watching a put contract on the hourly timeframe then switch to the daily timeframe — what changes?', options: ['Nothing changes at all', 'You get a clearer overall trend picture instead of more noisy detail', 'Red candles turn green'], correct: 1 },
-    { q: 'What does a long lower wick represent on a call contract candle?', options: ['The highest price touched', 'The lowest price touched then rejected upward', 'Trading volume'], correct: 1 }
+    { q: 'On a call contract for a given stock, what does the candle body represent?', options: ['The distance between the highest and lowest price during the period', 'The distance between the open and close price', 'Trading volume only'] },
+    { q: 'A large green candle appeared on the call contract you bought — what does the green color mean?', options: ['Sellers took control and close was below open', 'Buyers took control and close was above open', 'Color has no relation to price'] },
+    { q: 'Which candle usually signals total indecision between buyers and sellers?', options: ['Hammer', 'Doji', 'Engulfing'] },
+    { q: 'You are watching a put contract on the hourly timeframe then switch to the daily timeframe — what changes?', options: ['Nothing changes at all', 'You get a clearer overall trend picture instead of more noisy detail', 'Red candles turn green'] },
+    { q: 'What does a long lower wick represent on a call contract candle?', options: ['The highest price touched', 'The lowest price touched then rejected upward', 'Trading volume'] }
   ]
 },
 {
@@ -143,10 +153,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Why this matters</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Every advanced technical tool — including ours — is built on top of your understanding of this simple structure. If you cannot see swing highs and lows, you will not understand why any tool fires its signal.</p></div>',
   quiz: [
-    { q: 'You are watching a call contract and price keeps forming higher highs and higher lows — what trend is this?', options: ['Uptrend', 'Downtrend', 'No trend'], correct: 0 },
-    { q: 'What is the definition of a "swing low" in price structure?', options: ['The highest point price reached', 'The lowest point price reached before bouncing upward', 'The average price during the day'], correct: 1 },
-    { q: 'In a downtrend you are considering a put contract on, what do you expect from consecutive highs?', options: ['Each high higher than the last', 'Each high lower than the last', 'Highs stay equal forever'], correct: 1 },
-    { q: 'Highs and lows started converging and becoming equal after a long uptrend on your contract — what does this often signal?', options: ['Continuation of the uptrend with more strength', 'Consolidation or a possible trend change', 'It has no meaning at all'], correct: 1 }
+    { q: 'You are watching a call contract and price keeps forming higher highs and higher lows — what trend is this?', options: ['Uptrend', 'Downtrend', 'No trend'] },
+    { q: 'What is the definition of a "swing low" in price structure?', options: ['The highest point price reached', 'The lowest point price reached before bouncing upward', 'The average price during the day'] },
+    { q: 'In a downtrend you are considering a put contract on, what do you expect from consecutive highs?', options: ['Each high higher than the last', 'Each high lower than the last', 'Highs stay equal forever'] },
+    { q: 'Highs and lows started converging and becoming equal after a long uptrend on your contract — what does this often signal?', options: ['Continuation of the uptrend with more strength', 'Consolidation or a possible trend change', 'It has no meaning at all'] }
   ]
 },
 {
@@ -161,10 +171,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Why patience matters here</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Most common mistakes come from entering the moment price first touches a level, without waiting for a clear close or successful retest.</p></div>',
   quiz: [
-    { q: 'Price touched a resistance level with only a wick then bounced without closing beyond it — what is this called?', options: ['A confirmed real breakout', 'A temporary break (wick)', 'A successful retest'], correct: 1 },
-    { q: 'What is the key difference between a temporary break and a real breakout?', options: ['No difference at all', 'A real breakout closes with the candle body beyond the level, not just the wick', 'A temporary break is always stronger'], correct: 1 },
-    { q: 'After breaking a level, price returned to test it then bounced successfully without re-breaking it — what does this mean?', options: ['Complete breakout failure', 'Extra confirmation the breakout is valid', 'It has no relation to the breakout'], correct: 1 },
-    { q: 'Why is it advised not to enter on the very first touch of an important level?', options: ['Because the first touch is always a confirmed breakout', 'Because the first touch might be a temporary wick break, not a real breakout', 'There is no reason for this'], correct: 1 }
+    { q: 'Price touched a resistance level with only a wick then bounced without closing beyond it — what is this called?', options: ['A confirmed real breakout', 'A temporary break (wick)', 'A successful retest'] },
+    { q: 'What is the key difference between a temporary break and a real breakout?', options: ['No difference at all', 'A real breakout closes with the candle body beyond the level, not just the wick', 'A temporary break is always stronger'] },
+    { q: 'After breaking a level, price returned to test it then bounced successfully without re-breaking it — what does this mean?', options: ['Complete breakout failure', 'Extra confirmation the breakout is valid', 'It has no relation to the breakout'] },
+    { q: 'Why is it advised not to enter on the very first touch of an important level?', options: ['Because the first touch is always a confirmed breakout', 'Because the first touch might be a temporary wick break, not a real breakout', 'There is no reason for this'] }
   ]
 },
 {
@@ -179,10 +189,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 How is this used practically?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">If price is above its moving average, the general bias is bullish; below it, bearish. High volume on a breakout increases your confidence in its validity.</p></div>',
   quiz: [
-    { q: 'What is the core difference between SMA and EMA?', options: ['No difference at all', 'EMA gives more weight to recent candles so it reacts faster', 'SMA reacts faster than EMA'], correct: 1 },
-    { q: 'Price broke a resistance level on your call contract with very high volume — what does this say about the breakout strength?', options: ['The breakout is weak and unreliable', 'The breakout is stronger and more credible', 'Volume has no relation to breakout strength'], correct: 1 },
-    { q: 'Which moving average is generally known for the fastest response and least lag?', options: ['SMA', 'HMA', 'No difference between them'], correct: 1 },
-    { q: 'Price is trading consistently below its main moving average — what is the likely general bias?', options: ['Bullish bias', 'Bearish bias', 'Price position relative to the average has no relation to bias'], correct: 1 }
+    { q: 'What is the core difference between SMA and EMA?', options: ['No difference at all', 'EMA gives more weight to recent candles so it reacts faster', 'SMA reacts faster than EMA'] },
+    { q: 'Price broke a resistance level on your call contract with very high volume — what does this say about the breakout strength?', options: ['The breakout is weak and unreliable', 'The breakout is stronger and more credible', 'Volume has no relation to breakout strength'] },
+    { q: 'Which moving average is generally known for the fastest response and least lag?', options: ['SMA', 'HMA', 'No difference between them'] },
+    { q: 'Price is trading consistently below its main moving average — what is the likely general bias?', options: ['Bullish bias', 'Bearish bias', 'Price position relative to the average has no relation to bias'] }
   ]
 },
 {
@@ -197,10 +207,10 @@ null,
     '</div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Divergence concept</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">When price moves one way (e.g. a higher high) while the oscillator moves the opposite way (a lower high) — this "divergence" often warns of weakening momentum and a possible upcoming reversal. This same divergence concept is one of the pillars some of the strongest OPN LIO tools are built on.</p></div>',
   quiz: [
-    { q: 'RSI rose above 70 on your call contract — what does this typically indicate?', options: ['Oversold and possible bullish bounce', 'Overbought and possible bearish correction', 'This number has no meaning'], correct: 1 },
-    { q: 'What distinguishes MFI from RSI?', options: ['No difference between them at all', 'MFI incorporates trading volume into its calculation', 'RSI incorporates volume and MFI does not'], correct: 1 },
-    { q: 'Your contract\'s price rose to a new higher high, but the momentum indicator drew a lower high — what is this called?', options: ['Strong confirmation of the uptrend', 'Divergence, which may warn of weakening momentum', 'An indicator error'], correct: 1 },
-    { q: 'What does the Stochastic indicator fundamentally rely on?', options: ['Comparing closing price to the trading range over a period', 'Trading volume only', 'The number of active traders'], correct: 0 }
+    { q: 'RSI rose above 70 on your call contract — what does this typically indicate?', options: ['Oversold and possible bullish bounce', 'Overbought and possible bearish correction', 'This number has no meaning'] },
+    { q: 'What distinguishes MFI from RSI?', options: ['No difference between them at all', 'MFI incorporates trading volume into its calculation', 'RSI incorporates volume and MFI does not'] },
+    { q: 'Your contract\'s price rose to a new higher high, but the momentum indicator drew a lower high — what is this called?', options: ['Strong confirmation of the uptrend', 'Divergence, which may warn of weakening momentum', 'An indicator error'] },
+    { q: 'What does the Stochastic indicator fundamentally rely on?', options: ['Comparing closing price to the trading range over a period', 'Trading volume only', 'The number of active traders'] }
   ]
 },
 {
@@ -215,10 +225,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Do not stack everything</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">The best traders pick 2-3 tools they deeply understand instead of cluttering their chart with dozens of conflicting indicators.</p></div>',
   quiz: [
-    { q: 'Parabolic SAR dots flipped from below the candles to above them — what does this often signal?', options: ['Uptrend continuing unchanged', 'A possible trend reversal', 'This flip has no meaning'], correct: 1 },
-    { q: 'What does the ATR indicator fundamentally measure?', options: ['Price direction', 'The market\'s current volatility level', 'Trading volume only'], correct: 1 },
-    { q: 'You noticed a severe Bollinger Band squeeze on a contract you\'re watching — what does this often precede?', options: ['A strong upcoming price move', 'Permanent stability with no movement', 'The squeeze has no relation to any future move'], correct: 0 },
-    { q: 'What is best for a beginner trader regarding the number of tools used?', options: ['Using as many indicators as possible together', 'Choosing 2-3 tools understood deeply', 'Giving up all tools entirely'], correct: 1 }
+    { q: 'Parabolic SAR dots flipped from below the candles to above them — what does this often signal?', options: ['Uptrend continuing unchanged', 'A possible trend reversal', 'This flip has no meaning'] },
+    { q: 'What does the ATR indicator fundamentally measure?', options: ['Price direction', 'The market\'s current volatility level', 'Trading volume only'] },
+    { q: 'You noticed a severe Bollinger Band squeeze on a contract you\'re watching — what does this often precede?', options: ['A strong upcoming price move', 'Permanent stability with no movement', 'The squeeze has no relation to any future move'] },
+    { q: 'What is best for a beginner trader regarding the number of tools used?', options: ['Using as many indicators as possible together', 'Choosing 2-3 tools understood deeply', 'Giving up all tools entirely'] }
   ]
 },
 {
@@ -233,11 +243,11 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Difference from trading stocks directly</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Trading stocks directly gives you real ownership with no expiry date. Options contracts give you higher leverage (relatively larger gains/losses for smaller capital) but are governed by time running out — "time decay" is a silent enemy for anyone holding a long contract with no movement.</p></div>',
   quiz: [
-    { q: 'You bought a call contract on a stock expecting it to rise — what does this contract grant you?', options: ['An obligation to buy the stock regardless of price', 'A right (not an obligation) to buy the stock at a set price before a certain date', 'Permanent ownership of the stock immediately'], correct: 1 },
-    { q: 'You expect a stock\'s price to decline — which contract fits this expectation?', options: ['Call', 'Put', 'No difference between them'], correct: 1 },
-    { q: 'Your contract reached its Expiry date unused and with no value — what happens?', options: ['It renews automatically for another period', 'It becomes worthless and you lose the premium paid', 'It automatically converts to permanent stock ownership'], correct: 1 },
-    { q: 'Your contract is currently "OTM" (out of the money) — what does this mean?', options: ['It has large real value now', 'It has no real value currently at the present price', 'It has already expired'], correct: 1 },
-    { q: 'What is the fundamental difference between buying a stock directly and buying an options contract on it?', options: ['No difference at all between them', 'The contract is governed by an expiry date and higher leverage, while the stock is permanent ownership with no expiry', 'The stock is always cheaper than the contract'], correct: 1 }
+    { q: 'You bought a call contract on a stock expecting it to rise — what does this contract grant you?', options: ['An obligation to buy the stock regardless of price', 'A right (not an obligation) to buy the stock at a set price before a certain date', 'Permanent ownership of the stock immediately'] },
+    { q: 'You expect a stock\'s price to decline — which contract fits this expectation?', options: ['Call', 'Put', 'No difference between them'] },
+    { q: 'Your contract reached its Expiry date unused and with no value — what happens?', options: ['It renews automatically for another period', 'It becomes worthless and you lose the premium paid', 'It automatically converts to permanent stock ownership'] },
+    { q: 'Your contract is currently "OTM" (out of the money) — what does this mean?', options: ['It has large real value now', 'It has no real value currently at the present price', 'It has already expired'] },
+    { q: 'What is the fundamental difference between buying a stock directly and buying an options contract on it?', options: ['No difference at all between them', 'The contract is governed by an expiry date and higher leverage, while the stock is permanent ownership with no expiry', 'The stock is always cheaper than the contract'] }
   ]
 },
 {
@@ -252,10 +262,10 @@ null,
     '</div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 Implied Volatility (IV)</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">The market\'s forecast of future price volatility, and a core element in pricing any contract. Rising IV raises the premium even if the stock itself does not move — many beginners lose because they completely ignore this factor.</p></div>',
   quiz: [
-    { q: 'Your contract loses part of its value daily despite the stock price being completely flat — which Greek is responsible?', options: ['Delta', 'Theta', 'Rho'], correct: 1 },
-    { q: 'Your contract approached the "at the money" (ATM) point and you noticed its movement became more violent and faster reacting to price — which element rose?', options: ['Gamma', 'Rho', 'This has no relation to any element'], correct: 0 },
-    { q: 'Implied volatility (IV) on a stock suddenly rose, raising your contract\'s price despite the stock price staying flat — which Greek is responsible?', options: ['Vega', 'Theta', 'Delta'], correct: 0 },
-    { q: 'What does Delta fundamentally measure?', options: ['Daily time decay only', 'How much the contract price moves against the stock and its probability of expiring in the money', 'The impact of interest rates only'], correct: 1 }
+    { q: 'Your contract loses part of its value daily despite the stock price being completely flat — which Greek is responsible?', options: ['Delta', 'Theta', 'Rho'] },
+    { q: 'Your contract approached the "at the money" (ATM) point and you noticed its movement became more violent and faster reacting to price — which element rose?', options: ['Gamma', 'Rho', 'This has no relation to any element'] },
+    { q: 'Implied volatility (IV) on a stock suddenly rose, raising your contract\'s price despite the stock price staying flat — which Greek is responsible?', options: ['Vega', 'Theta', 'Delta'] },
+    { q: 'What does Delta fundamentally measure?', options: ['Daily time decay only', 'How much the contract price moves against the stock and its probability of expiring in the money', 'The impact of interest rates only'] }
   ]
 },
 {
@@ -270,10 +280,10 @@ null,
     '</div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px;">🔑 How do you build your strategy?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Any good strategy needs three elements clear in advance: an <b>entry condition</b> (exactly when you enter), a <b>profit exit condition</b> (where you take profits), and a <b>stop-loss</b> (where you admit you were wrong and exit). Without all three together, you are gambling, not trading.</p></div>',
   quiz: [
-    { q: 'Which school focuses on reading price itself (candles, swing highs/lows) without relying on heavy indicators?', options: ['Wyckoff', 'Price Action', 'Smart Money'], correct: 1 },
-    { q: 'Tries to understand how large institutions move and where they gather liquidity — which approach is this?', options: ['Smart Money / ICT', 'The classical school', 'No approach relates to this'], correct: 0 },
-    { q: 'What are the three essential elements to define before any call or put trade?', options: ['The stock name only', 'Entry condition, profit exit condition, and stop-loss', 'The last candle\'s color only'], correct: 1 },
-    { q: 'You entered a call contract without pre-defining a stop-loss — what is the main risk?', options: ['No risk at all', 'Difficulty knowing when to admit the mistake and exit, potentially amplifying the loss', 'The contract will auto-close safely'], correct: 1 }
+    { q: 'Which school focuses on reading price itself (candles, swing highs/lows) without relying on heavy indicators?', options: ['Wyckoff', 'Price Action', 'Smart Money'] },
+    { q: 'Tries to understand how large institutions move and where they gather liquidity — which approach is this?', options: ['Smart Money / ICT', 'The classical school', 'No approach relates to this'] },
+    { q: 'What are the three essential elements to define before any call or put trade?', options: ['The stock name only', 'Entry condition, profit exit condition, and stop-loss', 'The last candle\'s color only'] },
+    { q: 'You entered a call contract without pre-defining a stop-loss — what is the main risk?', options: ['No risk at all', 'Difficulty knowing when to admit the mistake and exit, potentially amplifying the loss', 'The contract will auto-close safely'] }
   ]
 },
 {
@@ -288,10 +298,10 @@ null,
     '</div>' +
     '<div class="hl"><b style="color:#D4AF37; display:block; margin-bottom:6px;">💡 Golden rule</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">A successful trader does not excel by number of wins alone, but by managing small controlled losses against larger gains when the call is right.</p></div>',
   quiz: [
-    { q: 'What is the commonly cited golden rule for risk size per single trade from total capital?', options: ['50% of capital', '1-2% of capital', 'All capital at once'], correct: 1 },
-    { q: 'You exited a winning trade way too early out of fear despite the trend continuing in your favor — which psychological factor affected you?', options: ['Greed', 'Fear', 'No psychological factor affected this decision'], correct: 1 },
-    { q: 'What is the main benefit of a Trading Journal?', options: ['No real benefit from it', 'Documenting reasons and outcomes to develop performance and avoid repeating mistakes', 'It only speeds up trade execution'], correct: 1 },
-    { q: 'What actually distinguishes a successful trader per this lesson?', options: ['Number of wins only regardless of size', 'Smartly managing small losses against larger gains when the call is right', 'Concentrating all capital in one confident trade'], correct: 1 }
+    { q: 'What is the commonly cited golden rule for risk size per single trade from total capital?', options: ['50% of capital', '1-2% of capital', 'All capital at once'] },
+    { q: 'You exited a winning trade way too early out of fear despite the trend continuing in your favor — which psychological factor affected you?', options: ['Greed', 'Fear', 'No psychological factor affected this decision'] },
+    { q: 'What is the main benefit of a Trading Journal?', options: ['No real benefit from it', 'Documenting reasons and outcomes to develop performance and avoid repeating mistakes', 'It only speeds up trade execution'] },
+    { q: 'What actually distinguishes a successful trader per this lesson?', options: ['Number of wins only regardless of size', 'Smartly managing small losses against larger gains when the call is right', 'Concentrating all capital in one confident trade'] }
   ]
 },
 {
@@ -301,9 +311,9 @@ null,
     '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">👑 The King\'s Call</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Imagine instead of watching dozens of conflicting indicators, you look at one big clear sentence above the chart summarizing the entire market state: bullish, bearish, or neutral. That is exactly the idea of "The King\'s Call" — a weighted vote among several analytical metrics, filtered through a higher timeframe, giving you a clean reading instead of noise. Those who\'ve tried it describe it as changing how they think about the market from day one.</p></div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎯 Smart Pivot</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">Remember what you learned about support and resistance? Now imagine a tool drawing them automatically from higher timeframes, with minimal visual clutter, and ranked by their actual strength — instead of dozens of random lines flooding the chart. That is exactly what "Smart Pivot" does, one of the most relied-upon tools by OPN LIO traders daily for confidently identifying their entry points.</p></div>',
   quiz: [
-    { q: 'What is the core idea of "The King\'s Call" tool?', options: ['Displaying dozens of separate indicators together', 'One unified, clear reading summarizing market state via a weighted vote among several metrics', 'Automatically executing trades on the trader\'s behalf'], correct: 1 },
-    { q: 'What distinguishes "Smart Pivot" from manually drawing support/resistance lines?', options: ['No difference at all', 'Automatic drawing from higher timeframes with minimal visual clutter and strength ranking', 'It does not use any timeframe'], correct: 1 },
-    { q: 'Which category of elements you learned earlier does the "Smart Pivot" idea fundamentally belong to?', options: ['The Greeks', 'Support and resistance', 'Options contracts'], correct: 1 }
+    { q: 'What is the core idea of "The King\'s Call" tool?', options: ['Displaying dozens of separate indicators together', 'One unified, clear reading summarizing market state via a weighted vote among several metrics', 'Automatically executing trades on the trader\'s behalf'] },
+    { q: 'What distinguishes "Smart Pivot" from manually drawing support/resistance lines?', options: ['No difference at all', 'Automatic drawing from higher timeframes with minimal visual clutter and strength ranking', 'It does not use any timeframe'] },
+    { q: 'Which category of elements you learned earlier does the "Smart Pivot" idea fundamentally belong to?', options: ['The Greeks', 'Support and resistance', 'Options contracts'] }
   ]
 },
 {
@@ -314,10 +324,10 @@ null,
     '<div class="al" style="margin-bottom:20px;"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">☁️ The Advanced Cloud and Volume Cloud</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">The advanced cloud surrounds price as a reference momentum zone — its thickness and color reflect the strength or weakness of the area, and candle respect for its upper and lower bounds is a signal your eye trains on over time. The volume cloud reveals the real liquidity density behind the move — exactly why some traders describe it as a "third eye" on the market.</p></div>' +
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🎨 The Color Jump in Candles</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">One of the most exciting moments for OPN LIO users: a candle\'s color flipping directly from phosphorescent green to white — known as the "Color Jump" — an instant visual signal of shifting momentum, growing noticeably stronger when it aligns with the rest of the system\'s tools.</p></div>',
   quiz: [
-    { q: 'What does repeated candle respect for the core line in "Empire of the Wealthy" reveal?', options: ['No meaning at all', 'How strong it is as a real decision zone', 'It should always be ignored'], correct: 1 },
-    { q: 'What do the thickness and color of the advanced cloud reflect?', options: ['The strength or weakness of the area as a momentum reference', 'It has no relation to any zone\'s strength', 'The stock name only'], correct: 0 },
-    { q: 'What is a candle color flip from phosphorescent green to white called in the OPN LIO system?', options: ['Divergence', 'The Color Jump', 'Overbought'], correct: 1 },
-    { q: 'What does the volume cloud specifically reveal?', options: ['Interest rate direction', 'The real liquidity density behind the price move', 'Contract expiry dates'], correct: 1 }
+    { q: 'What does repeated candle respect for the core line in "Empire of the Wealthy" reveal?', options: ['No meaning at all', 'How strong it is as a real decision zone', 'It should always be ignored'] },
+    { q: 'What do the thickness and color of the advanced cloud reflect?', options: ['The strength or weakness of the area as a momentum reference', 'It has no relation to any zone\'s strength', 'The stock name only'] },
+    { q: 'What is a candle color flip from phosphorescent green to white called in the OPN LIO system?', options: ['Divergence', 'The Color Jump', 'Overbought'] },
+    { q: 'What does the volume cloud specifically reveal?', options: ['Interest rate direction', 'The real liquidity density behind the price move', 'Contract expiry dates'] }
   ]
 },
 {
@@ -328,9 +338,9 @@ null,
     '<div class="al"><b style="color:#D4AF37; display:block; margin-bottom:8px; font-size:16px;">🦁 Now, and not before</b><p style="font-size:14.5px; color:#e9edf5; margin:0; line-height:1.9;">You now have the foundation that lets you evaluate any strategy or trading system with true awareness — including the OPN LIO system itself. Your deep understanding of The King\'s Call, Smart Pivot, and Empire of the Wealthy is no longer just tool names, but a natural extension of everything you built in this program.</p></div>' +
     '<div class="hl"><b style="color:#39FF14; display:block; margin-bottom:8px;">🏆 What happens after this quiz?</b><p style="font-size:14px; color:#e9edf5; margin:0; line-height:1.8;">Upon passing, you receive the official shareable "OPN LIO Certified Trader" certificate, an exclusive 60% discount on your subscription tied only to your account, plus eligibility to apply as a certified ambassador.</p></div>',
   quiz: [
-    { q: 'What is the fundamental goal of this training program as explained at the end?', options: ['Memorizing tool names without understanding them', 'Building a real foundation that lets you evaluate any strategy or trading system consciously, including OPN LIO', 'Forcing you to subscribe immediately without thought'], correct: 1 },
-    { q: 'What do you receive immediately upon successfully passing this final level\'s quiz?', options: ['Nothing additional', 'An shareable completion certificate, an exclusive discount tied to your account, and ambassador eligibility', 'Automatic site ban'], correct: 1 },
-    { q: 'A call contract you\'re watching showed RSI overbought, alongside a "Color Jump" from phosphorescent green to white on the OPN LIO chart — how does a seasoned trader combine these signals?', options: ['Ignores all signals and enters randomly', 'Links the traditional momentum indicator with the system signal together to assess the full picture before any decision', 'Relies only on candle color without any other indicator'], correct: 1 }
+    { q: 'What is the fundamental goal of this training program as explained at the end?', options: ['Memorizing tool names without understanding them', 'Building a real foundation that lets you evaluate any strategy or trading system consciously, including OPN LIO', 'Forcing you to subscribe immediately without thought'] },
+    { q: 'What do you receive immediately upon successfully passing this final level\'s quiz?', options: ['Nothing additional', 'An shareable completion certificate, an exclusive discount tied to your account, and ambassador eligibility', 'Automatic site ban'] },
+    { q: 'A call contract you\'re watching showed RSI overbought, alongside a "Color Jump" from phosphorescent green to white on the OPN LIO chart — how does a seasoned trader combine these signals?', options: ['Ignores all signals and enters randomly', 'Links the traditional momentum indicator with the system signal together to assess the full picture before any decision', 'Relies only on candle color without any other indicator'] }
   ]
 }
 ];
@@ -347,10 +357,12 @@ function doRegister() {
   var name = document.getElementById('re_name').value.trim();
   var email = document.getElementById('re_email').value.trim();
   var pass = document.getElementById('re_pass').value;
+  var phone = document.getElementById('re_phone').value.trim();
   var agreed = document.getElementById('re_agree').checked;
   var msg = document.getElementById('authMsg');
   if (!agreed) { msg.style.color = '#ff6b6b'; msg.textContent = 'You must agree to the Terms of Use first.'; return; }
-  fetch(API, { method:'POST', body: JSON.stringify({ action:'register', name, email, password: pass, lang:'en' }) })
+  if (!phone || phone.replace(/[^0-9]/g,'').length < 8) { msg.style.color = '#ff6b6b'; msg.textContent = "Please enter a valid phone number."; return; }
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'register', name, email, phone: phone, password: pass, lang:'en' }) })
     .then(r=>r.json()).then(function(res){
       if (!res.ok) { msg.style.color = '#ff6b6b'; msg.textContent = res.error; return; }
       msg.style.color = '#39FF14';
@@ -374,6 +386,7 @@ function doLogin() {
           openVerifyModal({ email: email, lang: "en", onSuccess: function(){
       session = res;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
       renderDash();
           }, onCancel: function(){ msgEl.style.color='#ff9b9b'; msgEl.textContent = "Verification not completed — not signed in"; } });
         }).catch(function(){ msgEl.style.color='#ff6b6b'; msgEl.textContent = "Could not send the code — try again"; });
@@ -395,7 +408,7 @@ function renderDash() {
   var grid = document.getElementById('levelsGrid');
   var progress = {}; (session.progress||[]).forEach(function(p){ progress[p.level_num] = p; });
   grid.innerHTML = '';
-  for (var i=1;i<=12;i++) {
+  for (var i=1;i<=13;i++) {
     var done = progress[i] && progress[i].completed;
     var unlocked = i <= session.student.current_level;
     var el = document.createElement('div');
@@ -403,7 +416,7 @@ function renderDash() {
     el.style.cssText = 'display:flex; align-items:center; gap:16px; ' + (unlocked ? 'cursor:pointer;' : 'opacity:.45;');
     el.innerHTML =
       '<div class="level-badge" style="background:'+(done?'#39FF14':unlocked?'#D4AF37':'#2a3348')+'; color:'+(done||unlocked?'#111':'#8a93a8')+';">'+(done?'✓':i)+'</div>' +
-      '<div style="flex:1;"><div style="font-weight:800; font-size:15px;">Level '+i+': '+LEVELS[i].title.replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\s*$/u,'')+'</div><div style="font-size:12.5px; color:#8a93a8; margin-top:3px;">'+(done?'Completed — Score '+progress[i].score+'%':unlocked?'Available now':'Locked')+'</div></div>' +
+      '<div style="flex:1;"><div style="font-weight:800; font-size:15px;">'+(i===13 ? "Graduation 🎓" : 'Level '+i+': ')+LEVELS[i].title.replace(/\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\s*$/u,'')+'</div><div style="font-size:12.5px; color:#8a93a8; margin-top:3px;">'+(done?'Completed — Score '+progress[i].score+'%':unlocked?'Available now':'Locked')+'</div></div>' +
       (unlocked && !done ? '<span style="color:#D4AF37; font-weight:800; font-size:13px;">Start →</span>' : '');
     if (unlocked) el.onclick = (function(lv){ return function(){ openLesson(lv); }; })(i);
     grid.appendChild(el);
@@ -445,18 +458,13 @@ function backToDash() {
 
 function submitQuiz() {
   var lv = LEVELS[currentLevel];
-  var correct = 0;
-  lv.quiz.forEach(function(q, qi){
-    var sel = document.querySelector('input[name="q'+qi+'"]:checked');
-    if (sel && parseInt(sel.value) === q.correct) correct++;
-  });
-  var score = Math.round((correct / lv.quiz.length) * 100);
-  fetch(API, { method:'POST', body: JSON.stringify({ action:'complete-level', studentId: session.student.id, level: currentLevel, score }) })
+  var answers = lv.quiz.map(function(q, qi){ var sel = document.querySelector('input[name="q'+qi+'"]:checked'); return sel ? parseInt(sel.value) : -1; });
+  fetch(API, { method:'POST', body: JSON.stringify({ action:'complete-level', studentId: session.student.id, token: session.token, level: currentLevel, answers: answers }) })
     .then(r=>r.json()).then(function(res){
       var el = document.getElementById('quizResult');
-      if (!res.ok) { el.style.color = '#ff6b6b'; el.textContent = 'Your score ' + score + '% — ' + res.error; return; }
+      if (!res.ok) { el.style.color = '#ff6b6b'; el.textContent = 'Your score ' + res.score + '% — ' + res.error; return; }
       el.style.color = '#39FF14';
-      el.textContent = res.graduated ? 'Congratulations on graduating! 🎉 Score ' + score + '%' : 'Well done! Score ' + score + '% — you earned ' + res.pointsEarned + ' points 🎉';
+      el.textContent = res.graduated ? 'Congratulations on graduating! 🎉 Score ' + res.score + '%' : 'Well done! Score ' + res.score + '% — you earned ' + res.pointsEarned + ' points 🎉';
       session.student.points += res.pointsEarned;
       session.student.current_level = res.nextLevel;
       session.student.rank = res.rank;
@@ -464,6 +472,7 @@ function submitQuiz() {
       var lvlProg = session.progress.find(function(p){return p.level_num===currentLevel;});
       if (lvlProg) { lvlProg.completed = true; lvlProg.score = score; } else { session.progress.push({level_num:currentLevel, completed:true, score:score}); }
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+      try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
       setTimeout(function(){ backToDash(); renderDash(); }, 1600);
     });
 }
@@ -495,5 +504,6 @@ function extendSession(){
 }
 if (session && session.student) { renderDash(); } else { showTab('login'); }
 </script>
+<script>if (location.hash === "#register" && typeof showTab === "function") showTab("register");</script>
 </body>
 </html>

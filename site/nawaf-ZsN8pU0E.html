@@ -538,17 +538,24 @@ function renderAcademy(list){
   list.forEach(function(s){
     var lamp = s.graduated_at ? '<span title="خرّيج" style="color:#D4AF37;">🎓 خرّيج</span>'
       : (s.email_verified ? '<span style="color:#39FF14;">🟢 نشط</span>' : '<span style="color:#ff9b9b;">🔴 بريد غير مُفعّل</span>');
+    var pay = s.paid_at ? '<span style="color:#39FF14; font-weight:800;">💰 مدفوع</span>' : '<span style="color:#8a93a8;">🔒 غير مدفوع</span>';
     var tr = document.createElement('tr');
     tr.innerHTML = '<td>'+s.name+'</td><td style="font-size:12px; color:#8a93a8;">'+s.email+'</td>' +
       '<td>'+s.current_level+' <span style="color:#6b7488; font-size:11px;">('+s.levels_done+' مكتمل)</span></td>' +
-      '<td style="color:#39FF14; font-weight:800;">'+s.points+'</td><td style="font-size:12px;">'+s.rank+'</td><td>'+lamp+'</td>' +
+      '<td style="color:#39FF14; font-weight:800;">'+s.points+'</td><td style="font-size:12px;">'+s.rank+'</td><td>'+lamp+'<br>'+pay+'</td>' +
       '<td style="display:flex; gap:5px; flex-wrap:wrap;">' +
+      (s.paid_at ? '<button style="padding:5px 10px; font-size:11px; background:rgba(255,180,0,.12); color:#ffb400; border:1px solid rgba(255,180,0,.35); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acSetPaid('+s.id+', false)">🔒 إلغاء الدفع</button>' : '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acSetPaid('+s.id+', true)">💰 تفعيل الدفع</button>') +
       (!s.email_verified ? '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acVerify('+s.id+')">✅ تفعيل</button>' : '') +
       '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acEdit('+s.id+')">✏️ تعديل</button>' +
       '<button style="padding:5px 10px; font-size:11px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acReset('+s.id+')">🔄 تصفير</button>' +
       '<button style="padding:5px 10px; font-size:11px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acDelete('+s.id+')">🗑️</button></td>';
     tb.appendChild(tr);
   });
+}
+function acSetPaid(id, paid){
+  if (!confirm(paid ? 'تفعيل دفع البرنامج التدريبي لهذا العضو يدوياً؟ ستُفتح له المستويات والتنبيهات.' : 'إلغاء تفعيل الدفع لهذا العضو؟ ستُقفل عنه المستويات والتنبيهات.')) return;
+  authFetch('/api/admin-data?action=academy-set-paid', { method:'POST', body: JSON.stringify({id: id, paid: paid}) })
+    .then(function(r){return r.json();}).then(function(res){ if (res && !res.ok) alert(res.error || 'فشل التحديث'); loadAcademy(); });
 }
 function acVerify(id){
   authFetch('/api/admin-data?action=academy-verify-student', { method:'POST', body: JSON.stringify({id}) })

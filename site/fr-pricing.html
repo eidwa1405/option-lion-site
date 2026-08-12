@@ -27,10 +27,17 @@ a:hover { color:#f0cf6c; }
 <script>
 Paddle.Environment.set('production');
 Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
-function openCheckout(priceId){
-  Paddle.Checkout.open({ items: [{ priceId: priceId, quantity: 1 }], settings: { displayMode: 'overlay', variant: 'one-page', successUrl: window.location.origin + '/welcome.html' } });
-}
+function openCheckout(priceId){ location.href = './fr-signup.html?price=' + encodeURIComponent(priceId); }
 </script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="Tarifs — O P N  LIO">
+<meta property="og:description" content="OPN LIO subscription plans — monthly, 3-month, 6-month and yearly, with a 14-day free trial before any payment.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/fr-pricing">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 </head>
 <body>
 <div id="themeRoot" style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 20% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 100% 10%, rgba(30,58,110,.5), transparent 60%), #070d18;">
@@ -71,7 +78,7 @@ function openCheckout(priceId){
       if (wrap && menu && !wrap.contains(e.target)) menu.style.display = 'none';
     });
     </script>
-    <a href="./fr-signup.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">Rejoindre</a>
+    <a href="./fr-academy.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">Rejoindre</a>
   </div>
 </nav>
 <a href="./fr-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Nouveau : Programme Gratuit de Certification Trader — 12 niveaux, de zéro à pro, avec certificat et remise exclusive. <span style="color:#39FF14; text-decoration:underline;">Commencer gratuitement →</span></p></a>
