@@ -23,7 +23,7 @@ exports.handler = async (event) => {
     const L = (lang || 'ar').slice(0,2);
     const isAr = L === 'ar';
     const subject = isAr ? 'كود تحقق بريدك الإلكتروني — O P N LIO ⚜' : 'Your Email Verification Code — O P N LIO ⚜';
-    const bodyHtml = `<div dir="${isAr?'rtl':'ltr'}">${isAr ? 'مرحباً 👋<br><br>كود تحقق بريدك الإلكتروني هو:' : 'Hi 👋<br><br>Your email verification code is:'}<br><br><b style="font-size:26px; color:#D4AF37; letter-spacing:4px;">${code}</b><br><br>${isAr ? 'صالح لمدة 15 دقيقة.' : 'Valid for 15 minutes.'}</div>`;
+    const bodyHtml = `<div dir="${isAr?'rtl':'ltr'}">${isAr ? 'مرحباً 👋<br><br>كود تحقق بريدك الإلكتروني هو:' : 'Hi 👋<br><br>Your email verification code is:'}<br><br><b style="font-size:26px; color:#D4AF37; letter-spacing:4px;">${code}</b><br><br>${isAr ? 'صالح لمدة 120 ثانية فقط.' : 'Valid for 120 seconds only.'}</div>`;
     const mailRes = await sendMail(cleanEmail, subject, subject, bodyHtml, L);
     if (!mailRes || mailRes.ok !== true) {
       return { statusCode: 502, headers, body: JSON.stringify({ ok: false, error: 'تعذّر إرسال البريد — تحقق من إعدادات SMTP (' + ((mailRes && mailRes.error) || 'unknown') + ')' }) };

@@ -36,12 +36,9 @@ exports.handler = async (event) => {
       if (existing.length > 0) {
         return { statusCode: 409, headers, body: JSON.stringify({ ok: false, error: 'هذا البريد مسجّل بالفعل' }) };
       }
-      const rows = await sql`INSERT INTO academy_students (email, name, password_hash, lang, agreed_terms_at) VALUES (${email}, ${name}, ${hashPassword(password)}, ${lang}, now()) RETURNING id`;
-      const verifyToken = crypto.randomBytes(24).toString('hex');
-      await sql`UPDATE academy_students SET verify_token = ${verifyToken}, verify_token_created_at = now() WHERE id = ${rows[0].id}`;
-      const verifyLink = 'https://opnlio.com/.netlify/functions/verify-email?kind=academy&token=' + verifyToken;
+      const rows = await sql`INSERT INTO academy_students (email, name, password_hash, lang, agreed_terms_at, email_verified) VALUES (${email}, ${name}, ${hashPassword(password)}, ${lang}, now(), true) RETURNING id`;
       await sql`INSERT INTO academy_progress (student_id, level_num) VALUES (${rows[0].id}, 1)`;
-      sendMail(email, 'مرحباً بك في أكاديمية O P N LIO 🎓', `<div dir="rtl" style="font-family:Tajawal,Arial,sans-serif;">مرحباً ${name}،<br><br>سجّلت الآن في البرنامج التدريبي المجاني لأكاديمية O P N LIO. يرجى تأكيد بريدك الإلكتروني أولاً (الرابط صالح 120 ثانية فقط):<br><br><a href="${verifyLink}" style="color:#D4AF37; font-weight:800;">تأكيد البريد الإلكتروني ⚜</a><br><br>ثم ابدأ رحلتك من المستوى الأول لتصل إلى رتبة "محترف O P N LIO".</div>`).catch(()=>{});
+      sendMail(email, 'مرحباً بك في أكاديمية O P N LIO 🎓', `<div dir="rtl" style="font-family:Tajawal,Arial,sans-serif;">مرحباً ${name}،<br><br>تم إنشاء عضويتك في أكاديمية O P N LIO بنجاح ⚜<br><br>سجّل دخولك الآن وابدأ رحلتك من المستوى الأول — عند تسجيل الدخول سيصلك رمز تحقق سريع على هذا البريد.</div>`).catch(()=>{});
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
@@ -53,9 +50,6 @@ exports.handler = async (event) => {
         return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'بيانات الدخول غير صحيحة' }) };
       }
       const s = rows[0];
-      if (!s.email_verified) {
-        return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'يرجى تأكيد بريدك الإلكتروني أولاً — تحقق من صندوق الوارد أو اطلب رابطاً جديداً.', needsVerification: true }) };
-      }
       if (!isHashed(s.password_hash)) await sql`UPDATE academy_students SET password_hash = ${hashPassword(password)} WHERE id = ${s.id}`;
       await sql`UPDATE academy_students SET last_login_at = now() WHERE id = ${s.id}`;
       const progress = await sql`SELECT level_num, completed, score FROM academy_progress WHERE student_id = ${s.id} ORDER BY level_num ASC`;

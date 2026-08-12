@@ -13,7 +13,7 @@ exports.handler = async (event) => {
     const cleanCode = String(code || '').trim();
     if (!cleanEmail || !cleanCode) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'البيانات ناقصة' }) };
 
-    const rows = await sql`SELECT id FROM email_verifications WHERE email = ${cleanEmail} AND code = ${cleanCode} AND created_at > now() - interval '15 minutes' ORDER BY created_at DESC LIMIT 1`;
+    const rows = await sql`SELECT id FROM email_verifications WHERE email = ${cleanEmail} AND code = ${cleanCode} AND created_at > now() - interval '2 minutes' ORDER BY created_at DESC LIMIT 1`;
     if (!rows.length) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الكود غير صحيح أو منتهي الصلاحية' }) };
 
     await sql`UPDATE email_verifications SET verified = true WHERE email = ${cleanEmail}`;
