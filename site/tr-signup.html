@@ -32,6 +32,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 #su_cc option { background:#10141f; color:#fff; }
 </style>
 <script src="page-guard.js" data-page="signup"></script>
+<script src="verify-modal.js"></script>
 </head>
 <body>
 
@@ -147,17 +148,12 @@ function sendSuVerifyCode(){
   fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'tr' }) })
     .then(function(r){return r.json();}).then(function(res){
       if (!res.ok) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = res.error || 'Gönderilemedi'; return; }
-      var code = prompt('Doğrulama kodu e-postanıza gönderildi. 6 haneli kodu girin:');
-      if (!code) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Doğrulanmadı'; return; }
-      fetch('/api/check-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, code: code.trim() }) })
-        .then(function(r){return r.json();}).then(function(res2){
-          if (res2.ok) {
-            statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ Doğrulandı';
-            document.getElementById('su_emailVerified').value = email;
-          } else {
-            statusEl.style.color = '#ff9b9b'; statusEl.textContent = res2.error || 'Geçersiz kod';
-          }
-        });
+      openVerifyModal({ email: email, lang: 'tr', onSuccess: function(){
+        statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ Doğrulandı';
+        document.getElementById('su_emailVerified').value = email;
+      }, onCancel: function(){
+        statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Doğrulanmadı';
+      }});
     }).catch(function(){ statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Sunucuya bağlanılamadı'; });
 }
 

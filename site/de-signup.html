@@ -32,6 +32,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 #su_cc option { background:#10141f; color:#fff; }
 </style>
 <script src="page-guard.js" data-page="signup"></script>
+<script src="verify-modal.js"></script>
 </head>
 <body>
 
@@ -147,17 +148,12 @@ function sendSuVerifyCode(){
   fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'de' }) })
     .then(function(r){return r.json();}).then(function(res){
       if (!res.ok) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = res.error || 'Senden fehlgeschlagen'; return; }
-      var code = prompt('Ein Bestätigungscode wurde an Ihre E-Mail gesendet. Geben Sie den 6-stelligen Code ein:');
-      if (!code) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Nicht bestätigt'; return; }
-      fetch('/api/check-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, code: code.trim() }) })
-        .then(function(r){return r.json();}).then(function(res2){
-          if (res2.ok) {
-            statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ Bestätigt';
-            document.getElementById('su_emailVerified').value = email;
-          } else {
-            statusEl.style.color = '#ff9b9b'; statusEl.textContent = res2.error || 'Ungültiger Code';
-          }
-        });
+      openVerifyModal({ email: email, lang: 'de', onSuccess: function(){
+        statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ Bestätigt';
+        document.getElementById('su_emailVerified').value = email;
+      }, onCancel: function(){
+        statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Nicht bestätigt';
+      }});
     }).catch(function(){ statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'Verbindung zum Server nicht möglich'; });
 }
 

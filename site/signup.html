@@ -32,6 +32,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 #su_cc option { background:#10141f; color:#fff; }
 </style>
 <script src="page-guard.js" data-page="signup"></script>
+<script src="verify-modal.js"></script>
 </head>
 <body>
 
@@ -151,17 +152,12 @@ function sendSuVerifyCode(){
   fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'ar' }) })
     .then(function(r){return r.json();}).then(function(res){
       if (!res.ok) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = res.error || 'فشل الإرسال'; return; }
-      var code = prompt('تم إرسال كود التحقق إلى بريدك. أدخل الكود المكوّن من 6 أرقام:');
-      if (!code) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'لم يتم التحقق'; return; }
-      fetch('/api/check-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, code: code.trim() }) })
-        .then(function(r){return r.json();}).then(function(res2){
-          if (res2.ok) {
-            statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ تم التحقق';
-            document.getElementById('su_emailVerified').value = email;
-          } else {
-            statusEl.style.color = '#ff9b9b'; statusEl.textContent = res2.error || 'كود غير صحيح';
-          }
-        });
+      openVerifyModal({ email: email, lang: 'ar', onSuccess: function(){
+        statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ تم التحقق';
+        document.getElementById('su_emailVerified').value = email;
+      }, onCancel: function(){
+        statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'لم يتم التحقق';
+      }});
     }).catch(function(){ statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'تعذر الاتصال بالخادم'; });
 }
 

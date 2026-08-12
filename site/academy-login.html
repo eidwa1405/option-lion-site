@@ -16,6 +16,7 @@ a{color:#D4AF37;}
 input{width:100%; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.25); background:#10141f; color:#fff; font-family:inherit; font-size:14.5px;}
 label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bottom:6px;}
 </style>
+<script src="verify-modal.js"></script>
 </head>
 <body>
 <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(212,175,55,.15);">
@@ -71,13 +72,12 @@ function sendReVerifyCode(){
   fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: 'ar' }) })
     .then(function(r){return r.json();}).then(function(res){
       if (!res.ok) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = res.error || 'فشل الإرسال'; return; }
-      var code = prompt('تم إرسال كود التحقق إلى بريدك. أدخل الكود المكوّن من 6 أرقام:');
-      if (!code) { statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'لم يتم التحقق'; return; }
-      fetch('/api/check-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, code: code.trim() }) })
-        .then(function(r){return r.json();}).then(function(res2){
-          if (res2.ok) { statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ تم التحقق'; document.getElementById('re_emailVerified').value = email; }
-          else { statusEl.style.color = '#ff9b9b'; statusEl.textContent = res2.error || 'كود غير صحيح'; }
-        });
+      openVerifyModal({ email: email, lang: 'ar', onSuccess: function(){
+        statusEl.style.color = '#39FF14'; statusEl.textContent = '✅ تم التحقق';
+        document.getElementById('re_emailVerified').value = email;
+      }, onCancel: function(){
+        statusEl.style.color = '#ff9b9b'; statusEl.textContent = 'لم يتم التحقق';
+      }});
     });
 }
 
