@@ -111,9 +111,19 @@ function doLogin() {
         document.getElementById('authMsg').innerHTML = res.error + (res.needsVerification ? '<br><a href="#" onclick="resendVerify(\''+email+'\'); return false;" style="color:#D4AF37; font-weight:800;">إعادة إرسال رابط التحقق</a>' : '');
         return;
       }
+      var msgEl = document.getElementById('authMsg');
+      msgEl.style.color = '#8a93a8'; msgEl.textContent = "جارِ إرسال رمز التحقق إلى بريدك…";
+      fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: "ar" }) })
+        .then(function(r){ return r.json(); }).then(function(sres){
+          if (!sres.ok) { msgEl.style.color='#ff6b6b'; msgEl.textContent = sres.error || "تعذّر إرسال رمز التحقق — حاول مجدداً"; return; }
+          msgEl.textContent = '';
+          openVerifyModal({ email: email, lang: "ar", onSuccess: function(){
       var s = res; s.expiresAt = Date.now() + 24*60*60*1000;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(s));
       location.href = './academy.html';
+          }, onCancel: function(){ msgEl.style.color='#ff9b9b'; msgEl.textContent = "لم يكتمل التحقق — لم يتم تسجيل الدخول"; } });
+        }).catch(function(){ msgEl.style.color='#ff6b6b'; msgEl.textContent = "تعذّر إرسال رمز التحقق — حاول مجدداً"; });
+
     }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='تعذّر الاتصال بالخادم — حاول مجدداً'; });
 }
 

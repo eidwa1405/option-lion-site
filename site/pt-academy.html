@@ -24,6 +24,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 </style>
 <script src="page-guard.js" data-page="academy"></script>
 <script src="academy-pay.js"></script>
+<script src="verify-modal.js"></script>
 </head>
 <body>
 
@@ -364,9 +365,19 @@ function doLogin() {
   fetch(API, { method:'POST', body: JSON.stringify({ action:'login', email, password: pass }) })
     .then(r=>r.json()).then(function(res){
       if (!res.ok) { document.getElementById('authMsg').style.color='#ff6b6b'; document.getElementById('authMsg').textContent = res.error; return; }
+      var msgEl = document.getElementById('authMsg');
+      msgEl.style.color = '#8a93a8'; msgEl.textContent = "Enviando código de verificação para seu e-mail…";
+      fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: "pt" }) })
+        .then(function(r){ return r.json(); }).then(function(sres){
+          if (!sres.ok) { msgEl.style.color='#ff6b6b'; msgEl.textContent = sres.error || "Não foi possível enviar o código — tente novamente"; return; }
+          msgEl.textContent = '';
+          openVerifyModal({ email: email, lang: "pt", onSuccess: function(){
       session = res;
       localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
       renderDash();
+          }, onCancel: function(){ msgEl.style.color='#ff9b9b'; msgEl.textContent = "Verificação não concluída — login não efetuado"; } });
+        }).catch(function(){ msgEl.style.color='#ff6b6b'; msgEl.textContent = "Não foi possível enviar o código — tente novamente"; });
+
     }).catch(function(){ var m=document.getElementById('authMsg'); m.style.color='#ff6b6b'; m.textContent='Não foi possível conectar — tente novamente'; });
 }
 

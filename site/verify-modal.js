@@ -132,7 +132,7 @@
 
     function renderCd(){ resendBtn.disabled=true; resendBtn.style.opacity='.5'; resendBtn.style.cursor='default'; resendBtn.textContent=s.resendIn+' '+cooldown+s.sec; }
     function startCooldown(){
-      cooldown=30; renderCd();
+      cooldown=120; renderCd();
       cdTimer=setInterval(function(){
         cooldown--;
         if (cooldown<=0){ clearInterval(cdTimer); cdTimer=null; resendBtn.disabled=false; resendBtn.style.opacity='1'; resendBtn.style.cursor='pointer'; resendBtn.textContent=s.resend; }
