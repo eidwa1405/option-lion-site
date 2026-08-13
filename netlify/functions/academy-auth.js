@@ -12,7 +12,7 @@ function rankForLevel(level) {
   return RANKS[0];
 }
 
-const QUIZ_ANSWERS = {"1":[1,1,1,1,1],"2":[0,1,1,1],"3":[1,1,1,1],"4":[1,1,1,1],"5":[1,1,1,0],"6":[1,1,0,1],"7":[1,1,1,1,1],"8":[1,0,0,1],"9":[1,0,1,1],"10":[1,1,1,1],"11":[1,1,1],"12":[1,0,1,1],"13":[1,1,1]};
+const QUIZ_ANSWERS = {"1":[1,1,1,1,1],"2":[0,1,1,1],"3":[1,1,1,1],"4":[1,1,1,1],"5":[1,1,1,0],"6":[1,1,0,1],"7":[1,1,1,1,1],"8":[1,0,0,1],"9":[1,0,1,1],"10":[1,1,1,1],"11":[1,0,2,3,0],"12":[1,2,0,3,0,2],"13":[1,1,1]};
 
 exports.handler = async (event) => {
   const headers = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Content-Type': 'application/json' };

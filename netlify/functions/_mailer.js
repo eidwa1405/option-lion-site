@@ -4,22 +4,32 @@ const nodemailer = require('nodemailer');
 const SMTP_USER = process.env.SMTP_USER || 'info@opnlio.com';
 const SMTP_PASS = process.env.SMTP_PASS || 'ZsN8pU0E1405@';
 
-let transporter;
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: 'mail.privateemail.com',
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user: SMTP_USER, pass: SMTP_PASS },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 8000,
-      tls: { minVersion: 'TLSv1.2' }
-    });
+let workingIdx = -1;
+const SMTP_CONFIGS = [
+  { host: 'mail.privateemail.com', port: 465, secure: true },
+  { host: 'mail.privateemail.com', port: 587, secure: false, requireTLS: true }
+];
+function makeTransporter(cfg) {
+  return nodemailer.createTransport(Object.assign({}, cfg, {
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
+    socketTimeout: 8000,
+    tls: { minVersion: 'TLSv1.2' }
+  }));
+}
+// يجرّب 465 SSL أولاً ثم 587 STARTTLS — ويتذكر المنفذ الناجح لما بعده
+async function smtpSend(mail) {
+  const order = workingIdx >= 0 ? [workingIdx, 1 - workingIdx] : [0, 1];
+  let lastErr;
+  for (const i of order) {
+    try {
+      await makeTransporter(SMTP_CONFIGS[i]).sendMail(mail);
+      workingIdx = i;
+      return;
+    } catch (e) { lastErr = e; }
   }
-  return transporter;
+  throw lastErr;
 }
 
 // أيقونة CC للدولة من رمز الاتصال الهاتفي (تقريبي، يغطي الدول الأكثر استخداماً)
@@ -86,7 +96,7 @@ async function sendMail(to, subject, titleHtml, bodyHtml, lang) {
   const html = emailShell(lang || 'ar', titleHtml, bodyHtml);
   const text = String(bodyHtml || '').replace(/<br\s*\/?\s*>/gi, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
   try {
-    await getTransporter().sendMail({
+    await smtpSend({
       from: '"O P N LIO" <' + SMTP_USER + '>',
       replyTo: SMTP_USER,
       to, subject, html, text
