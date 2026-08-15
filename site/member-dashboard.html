@@ -147,6 +147,7 @@ input:focus { outline:none; border-color:#D4AF37 !important; }
   <div id="ambassadorSection" style="display:none; margin-top:24px;">
     <div class="card" style="border-color:rgba(57,255,20,.3);">
       <h3 style="margin:0 0 16px; color:#39FF14; font-size:15px;">لوحة السفير</h3>
+      <div style="margin-bottom:14px;"><button onclick="openAmbChat()" style="width:100%; padding:12px; border-radius:12px; border:1px solid rgba(57,255,20,.35); background:rgba(57,255,20,.06); color:#39FF14; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">💬 <span id="ambChatLbl">مراسلة الإدارة</span><span id="ambChatBadge" style="display:none; background:#ff5f5f; color:#fff; border-radius:11px; padding:1px 8px; font-size:11px; margin-inline-start:8px;"></span></button></div>
       <div id="ambRankCard" style="display:none; background:linear-gradient(150deg,rgba(212,175,55,.09),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.3); border-radius:16px; padding:18px; margin-bottom:16px;">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
           <div style="font-size:13px; font-weight:800; color:#D4AF37;">🏅 ترتيبك بين السفراء</div>
@@ -371,6 +372,71 @@ function openPaperTrading(){
   window._ptTimer = setInterval(ptTick, 3000);
 }
 function closePaperTrading(){ var m = document.getElementById("ptModal"); if (m) m.remove(); if (window._ptTimer){ clearInterval(window._ptTimer); window._ptTimer = null; } }
+var CHAT_T = {
+ ar:{t:"💬 مراسلة الإدارة",ph:"اكتب رسالتك للإدارة…",send:"إرسال",empty:"لا رسائل بعد — اكتب أول رسالة وسيصلك الرد هنا وعلى بريدك.",you:"أنت",admin:"الإدارة",sent:"تم إرسال رسالتك ✓ — سيصلك الرد هنا وعلى بريدك.",err:"تعذّر الإرسال — حاول لاحقاً.",btn:"مراسلة الإدارة",close:"إغلاق"},
+ en:{t:"💬 Message the team",ph:"Write your message…",send:"Send",empty:"No messages yet — write your first one; replies arrive here and by email.",you:"You",admin:"Team",sent:"Message sent ✓ — the reply will arrive here and by email.",err:"Could not send — try again later.",btn:"Message the team",close:"Close"},
+ de:{t:"💬 Team kontaktieren",ph:"Schreibe deine Nachricht…",send:"Senden",empty:"Noch keine Nachrichten — schreib die erste; Antworten kommen hier und per E-Mail an.",you:"Du",admin:"Team",sent:"Nachricht gesendet ✓ — die Antwort kommt hier und per E-Mail.",err:"Senden fehlgeschlagen — später erneut versuchen.",btn:"Team kontaktieren",close:"Schließen"},
+ fr:{t:"💬 Contacter l'équipe",ph:"Écrivez votre message…",send:"Envoyer",empty:"Aucun message — écrivez le premier ; les réponses arrivent ici et par e-mail.",you:"Vous",admin:"Équipe",sent:"Message envoyé ✓ — la réponse arrivera ici et par e-mail.",err:"Échec de l'envoi — réessayez plus tard.",btn:"Contacter l'équipe",close:"Fermer"},
+ es:{t:"💬 Contactar al equipo",ph:"Escribe tu mensaje…",send:"Enviar",empty:"Sin mensajes — escribe el primero; las respuestas llegan aquí y por correo.",you:"Tú",admin:"Equipo",sent:"Mensaje enviado ✓ — la respuesta llegará aquí y por correo.",err:"No se pudo enviar — inténtalo más tarde.",btn:"Contactar al equipo",close:"Cerrar"},
+ tr:{t:"💬 Ekibe yaz",ph:"Mesajını yaz…",send:"Gönder",empty:"Henüz mesaj yok — ilkini yaz; yanıtlar buraya ve e-postana gelir.",you:"Sen",admin:"Ekip",sent:"Mesaj gönderildi ✓ — yanıt buraya ve e-postana gelecek.",err:"Gönderilemedi — daha sonra dene.",btn:"Ekibe yaz",close:"Kapat"},
+ pt:{t:"💬 Falar com a equipe",ph:"Escreva sua mensagem…",send:"Enviar",empty:"Sem mensagens — escreva a primeira; as respostas chegam aqui e por e-mail.",you:"Você",admin:"Equipe",sent:"Mensagem enviada ✓ — a resposta chegará aqui e por e-mail.",err:"Não foi possível enviar — tente mais tarde.",btn:"Falar com a equipe",close:"Fechar"},
+ it:{t:"💬 Scrivi al team",ph:"Scrivi il tuo messaggio…",send:"Invia",empty:"Nessun messaggio — scrivi il primo; le risposte arrivano qui e via e-mail.",you:"Tu",admin:"Team",sent:"Messaggio inviato ✓ — la risposta arriverà qui e via e-mail.",err:"Invio non riuscito — riprova più tardi.",btn:"Scrivi al team",close:"Chiudi"}
+};
+function _ct(){ return CHAT_T[_dashLang()] || CHAT_T.en; }
+function renderAmbChatBadge(n){
+  var b = document.getElementById("ambChatBadge"); if (!b) return;
+  if (n > 0){ b.style.display = "inline-block"; b.textContent = n; } else b.style.display = "none";
+  var l = document.getElementById("ambChatLbl"); if (l) l.textContent = _ct().btn;
+}
+function openAmbChat(){
+  var T = _ct();
+  var m = document.createElement("div");
+  m.id = "ambChatModal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10003;display:flex;align-items:center;justify-content:center;padding:14px;";
+  m.innerHTML = '<div class="card" style="max-width:520px; width:100%; max-height:88vh; display:flex; flex-direction:column;">'
+    + '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h3 style="margin:0; color:#fff; font-size:17px;">' + T.t + '</h3><button onclick="closeAmbChat()" style="background:transparent; border:none; color:#8a93a8; font-size:22px; cursor:pointer; line-height:1;">×</button></div>'
+    + '<div id="ambChatThread" style="flex:1; overflow-y:auto; min-height:180px; max-height:46vh; padding:4px 2px; display:flex; flex-direction:column; gap:10px;"></div>'
+    + '<div style="margin-top:12px; display:flex; gap:8px; align-items:flex-end;">'
+    + '<textarea id="ambChatInput" rows="2" placeholder="' + T.ph + '" style="flex:1; resize:vertical; box-sizing:border-box; padding:10px 12px; border-radius:10px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.25); color:#fff; font-size:13.5px; font-family:inherit;"></textarea>'
+    + '<button onclick="sendAmbChat()" style="padding:11px 20px; border-radius:10px; border:none; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:13px; cursor:pointer; font-family:inherit;">' + T.send + '</button></div>'
+    + '<div id="ambChatMsg" style="font-size:12px; margin-top:8px; display:none;"></div></div>';
+  document.body.appendChild(m);
+  loadAmbChat();
+  window._chatTimer = setInterval(loadAmbChat, 20000);
+}
+function closeAmbChat(){ var m = document.getElementById("ambChatModal"); if (m) m.remove(); if (window._chatTimer){ clearInterval(window._chatTimer); window._chatTimer = null; } renderAmbChatBadge(0); }
+function loadAmbChat(){
+  var T = _ct();
+  fetch("/api/academy-auth", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"my-amb-messages", studentId: memberData.id, token: memberToken }) })
+    .then(safeJson).then(function(res){
+      var box = document.getElementById("ambChatThread"); if (!box) return;
+      if (!res || !res.ok || !res.messages || !res.messages.length){ box.innerHTML = '<div style="font-size:12.5px; color:#8a93a8; text-align:center; padding:24px 8px; line-height:1.8;">' + T.empty + '</div>'; return; }
+      box.innerHTML = res.messages.map(function(msg){
+        var mine = msg.sender === "ambassador";
+        var d = new Date(msg.created_at).toLocaleString();
+        return '<div style="align-self:' + (mine ? "flex-end" : "flex-start") + '; max-width:82%; background:' + (mine ? "rgba(212,175,55,.12)" : "rgba(57,255,20,.08)") + '; border:1px solid ' + (mine ? "rgba(212,175,55,.28)" : "rgba(57,255,20,.25)") + '; border-radius:14px; padding:10px 13px;">'
+          + '<div style="font-size:10.5px; font-weight:800; color:' + (mine ? "#D4AF37" : "#39FF14") + '; margin-bottom:4px;">' + (mine ? T.you : T.admin) + '</div>'
+          + '<div style="font-size:13px; color:#e9edf5; line-height:1.75; white-space:pre-wrap;">' + String(msg.body).replace(/</g, "&lt;") + '</div>'
+          + '<div style="font-size:10px; color:#6b7488; margin-top:5px;">' + d + '</div></div>';
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+      renderAmbChatBadge(0);
+    }).catch(function(){});
+}
+function sendAmbChat(){
+  var T = _ct();
+  var inp = document.getElementById("ambChatInput");
+  var note = document.getElementById("ambChatMsg");
+  var text = (inp.value || "").trim();
+  if (!text) return;
+  inp.value = "";
+  fetch("/api/academy-auth", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"send-amb-message", studentId: memberData.id, token: memberToken, text: text }) })
+    .then(safeJson).then(function(res){
+      note.style.display = "block";
+      if (res && res.ok){ note.style.color = "#39FF14"; note.textContent = T.sent; loadAmbChat(); }
+      else { note.style.color = "#ff9b9b"; note.textContent = (res && res.error) || T.err; inp.value = text; }
+    }).catch(function(){ note.style.display = "block"; note.style.color = "#ff9b9b"; note.textContent = T.err; inp.value = text; });
+}
 function _acadUrl(hash){ var lg = _dashLang(); return "./" + (lg === "ar" ? "academy" : lg + "-academy") + ".html" + (hash || ""); }
 function payAcademyFromDash(){ if (window.openAcademyCheckout) window.openAcademyCheckout(memberData.email, "ar"); }
 function startAlerts(creds){ window._alertCreds = creds; unlockAlertsUI(); loadAlerts(); if (!window._alertsTimer) window._alertsTimer = setInterval(loadAlerts, 60000); }
@@ -718,7 +784,7 @@ function loadAmbassadorStats(){
       if (!res || !res.ok) return;
       document.getElementById('ambassadorSection').style.display = 'block';
       document.getElementById('ambStatCustomers').textContent = res.customerCount;
-      renderAmbRank(res.rank);
+      renderAmbRank(res.rank); renderAmbChatBadge(res.unreadMsgs || 0);
       document.getElementById('ambStatCommission').textContent = '$' + parseFloat(res.totalCommission).toFixed(0);
       document.getElementById('ambStatPending').textContent = '$' + parseFloat(res.pending).toFixed(0);
       document.getElementById('ambRefLink').textContent = res.refLink;

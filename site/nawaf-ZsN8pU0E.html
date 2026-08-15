@@ -379,7 +379,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   <section class="panel" data-panel="tickets">
   <div class="card">
     <h3 style="margin:0 0 16px; color:#D4AF37;">📨 الشكاوى والاستفسارات</h3>
-    <table id="ticketsTable"><thead><tr><th>الرقم</th><th>النوع</th><th>الاسم</th><th>البريد</th><th>الرسالة</th><th>الحالة</th><th></th></tr></thead><tbody></tbody></table>
+    <table id="ticketsTable"><thead><tr><th>الرقم</th><th>التاريخ والوقت</th><th>النوع</th><th>الاسم</th><th>البريد</th><th>الرسالة</th><th>الحالة</th><th></th></tr></thead><tbody></tbody></table>
   </div>
   </section>
 
@@ -814,20 +814,49 @@ function downloadPayoutPdf(runId, month){
 function loadTickets(){
   authFetch('/api/admin-data?action=tickets').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
+    window._tickets = res.tickets || [];
     var tb = document.querySelector('#ticketsTable tbody'); tb.innerHTML = '';
-    if (!res.tickets.length) { tb.innerHTML = '<tr><td colspan="7" class="emptyState">لا توجد طلبات بعد</td></tr>'; return; }
+    if (!res.tickets.length) { tb.innerHTML = '<tr><td colspan="8" class="emptyState">لا توجد طلبات بعد</td></tr>'; return; }
     res.tickets.forEach(function(t){
       var tr = document.createElement('tr');
       var statusColor = t.status === 'resolved' ? '#39FF14' : (t.priority === 'urgent' ? '#ff4d4d' : '#ffb400');
-      tr.innerHTML = '<td style="font-family:monospace;">'+t.ref_number+'</td><td>'+t.ticket_type+'</td><td>'+(t.name||'-')+'</td><td style="direction:ltr; text-align:left;">'+t.email+'</td>' +
-        '<td style="max-width:220px; font-size:11.5px;">'+t.message.slice(0,80)+'</td>' +
-        '<td style="color:'+statusColor+'; font-weight:800;">'+(t.status==='resolved'?'✅ تم الرد':'⏳ قيد المراجعة')+'</td>' +
-        '<td><button class="btn-gold" style="padding:6px 10px; font-size:12px;" onclick="replyTicket('+t.id+')">✉️ رد</button></td>';
+      var d = t.created_at ? new Date(t.created_at) : null;
+      var dateStr = d ? (d.toLocaleDateString('ar-EG', {year:'numeric', month:'2-digit', day:'2-digit'}) + '<br><span style="color:#8a93a8; font-size:10.5px;">' + d.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) + '</span>') : '—';
+      var msg = String(t.message || '');
+      var spam = /https?:\/\/|www\.|seo|backlink|web ?design|ranking|traffic|marketing agency/i.test(msg) && msg.length > 120;
+      var short = msg.length > 90 ? msg.slice(0, 90) + '…' : msg;
+      tr.innerHTML = '<td style="font-family:monospace; font-size:11px;">' + t.ref_number + '</td>'
+        + '<td style="font-size:11px; white-space:nowrap;">' + dateStr + '</td>'
+        + '<td style="font-size:11.5px;">' + t.ticket_type + (spam ? ' <span title="يشبه رسائل السبام" style="color:#ff8a8a; font-size:10px;">⚠ سبام؟</span>' : '') + '</td>'
+        + '<td style="font-size:12px;">' + (t.name || '-') + '</td>'
+        + '<td style="direction:ltr; text-align:left; font-size:11.5px;">' + t.email + '</td>'
+        + '<td style="max-width:260px; font-size:11.5px; line-height:1.7;">' + short.replace(/</g, '&lt;') + (msg.length > 90 ? ' <a href="#" onclick="viewTicket(' + t.id + ');return false;" style="color:#D4AF37; font-weight:800; white-space:nowrap;">عرض كامل ←</a>' : '') + '</td>'
+        + '<td style="color:' + statusColor + '; font-weight:800; font-size:11.5px; white-space:nowrap;">' + (t.status === 'resolved' ? '✅ تم الرد' : '⏳ قيد المراجعة') + '</td>'
+        + '<td style="white-space:nowrap;"><button class="btn-gold" style="padding:6px 10px; font-size:12px;" onclick="replyTicket(' + t.id + ')">✉️ رد</button></td>';
       tb.appendChild(tr);
     });
   });
 }
 
+function viewTicket(id){
+  var t = (window._tickets || []).filter(function(x){ return x.id === id; })[0];
+  if (!t) return;
+  var d = t.created_at ? new Date(t.created_at).toLocaleString('ar-EG') : '—';
+  var m = document.createElement('div');
+  m.id = 'ticketModal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10005;display:flex;align-items:center;justify-content:center;padding:16px;';
+  m.innerHTML = '<div class="card" style="max-width:600px; width:100%; max-height:88vh; overflow-y:auto;">'
+    + '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><h3 style="margin:0; color:#D4AF37; font-size:16px;">📨 ' + t.ref_number + '</h3><button onclick="document.getElementById(\'ticketModal\').remove()" style="background:transparent; border:none; color:#8a93a8; font-size:22px; cursor:pointer;">×</button></div>'
+    + '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:14px; font-size:12px;">'
+    + '<div><span style="color:#8a93a8;">التاريخ:</span> <b>' + d + '</b></div>'
+    + '<div><span style="color:#8a93a8;">النوع:</span> <b>' + t.ticket_type + '</b></div>'
+    + '<div><span style="color:#8a93a8;">الاسم:</span> <b>' + (t.name || '-') + '</b></div>'
+    + '<div style="direction:ltr; text-align:right;"><span style="color:#8a93a8;">البريد:</span> <b>' + t.email + '</b></div></div>'
+    + '<div style="background:rgba(255,255,255,.04); border-radius:12px; padding:14px; font-size:13px; line-height:1.9; color:#e9edf5; white-space:pre-wrap;">' + String(t.message || '').replace(/</g, '&lt;') + '</div>'
+    + (t.reply ? '<div style="margin-top:12px; font-size:12px; color:#8a93a8;">ردّك:</div><div style="background:rgba(57,255,20,.07); border-radius:12px; padding:12px; font-size:12.5px; line-height:1.8; color:#c9d2e3; white-space:pre-wrap;">' + String(t.reply).replace(/</g, '&lt;') + '</div>' : '')
+    + '<button class="btn-gold" style="width:100%; margin-top:14px;" onclick="document.getElementById(\'ticketModal\').remove(); replyTicket(' + t.id + ')">✉️ رد على هذا الطلب</button></div>';
+  document.body.appendChild(m);
+}
 function replyTicket(id){
   var reply = prompt('اكتب ردّك على هذا الطلب:');
   if (!reply) return;
