@@ -338,6 +338,8 @@ exports.handler = async (event) => {
           COALESCE((SELECT SUM(c.amount) FROM commission_log c WHERE c.ref_code = r.code), 0)::numeric AS lifetime
         FROM ambassador_requests r WHERE r.status = 'approved' AND r.code IS NOT NULL
         ORDER BY recent DESC, lifetime DESC, r.code ASC`;
+      const renewRows = await sql`SELECT COUNT(*)::int AS c FROM commission_log WHERE ref_code = ${code}`;
+      const renewalCount = renewRows[0].c;
       const unreadRows = await sql`SELECT COUNT(*)::int AS c FROM amb_messages WHERE code = ${code} AND sender = 'admin' AND read_by_amb = false`;
       const unreadMsgs = unreadRows[0].c;
       let rank = null;
@@ -355,7 +357,7 @@ exports.handler = async (event) => {
           leadOverSecond: (myIdx === 0 && second) ? Math.max(0, num(me.recent) - num(second.recent)) : null };
       }
       const payouts = await sql`SELECT i.amount, r.month FROM payout_items i JOIN payout_runs r ON r.id = i.run_id WHERE i.ref_code = ${code} ORDER BY r.month DESC LIMIT 12`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code, customerCount: customerCount[0].c, totalCommission: totalCommission[0].total, pending: pending[0].total, refLink: 'https://opnlio.com/?ref=' + code, monthly: monthlyRows.reverse(), customers, payouts, rank, unreadMsgs }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code, customerCount: customerCount[0].c, totalCommission: totalCommission[0].total, pending: pending[0].total, refLink: 'https://opnlio.com/?ref=' + code, monthly: monthlyRows.reverse(), customers, payouts, rank, unreadMsgs, renewalCount }) };
     }
 
     if (action === 'mark-notifications-read') {
