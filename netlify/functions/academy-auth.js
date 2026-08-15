@@ -36,6 +36,7 @@ exports.handler = async (event) => {
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS cert_number text`;
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS free_graduated_at timestamptz`;
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_ip text`;
+    await sql`CREATE TABLE IF NOT EXISTS amb_messages (id serial PRIMARY KEY, code text, student_id int, sender text, body text, read_by_amb boolean DEFAULT false, created_at timestamptz DEFAULT now())`;
     await sql`CREATE TABLE IF NOT EXISTS graduation_devices (id serial PRIMARY KEY, student_id int, device_hash text, ip text, created_at timestamptz DEFAULT now())`;
     await sql`CREATE TABLE IF NOT EXISTS academy_free_progress (student_id int, level_num int, completed boolean DEFAULT false, score int, completed_at timestamptz, UNIQUE(student_id, level_num))`;
     await sql`CREATE TABLE IF NOT EXISTS ambassador_requests (id serial PRIMARY KEY, student_id int, status text DEFAULT 'pending', code text, created_at timestamptz DEFAULT now(), decided_at timestamptz)`;
@@ -279,6 +280,37 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, notifications: notifs, ambassadorStatus: ambReq.length ? ambReq[0].status : null, ambassadorCode: ambReq.length ? ambReq[0].code : null }) };
     }
 
+    if (action === 'send-amb-message' || action === 'my-amb-messages') {
+      const { studentId, token } = body;
+      if (!studentId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
+      const stM = await sql`SELECT id, name, email, password_hash FROM academy_students WHERE id = ${studentId}`;
+      if (!stM.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
+      const uM = stM[0];
+      const secM = process.env.AFFILIATE_SESSION_SECRET || uM.password_hash;
+      const dM = [new Date().toISOString().slice(0, 10), new Date(Date.now() - 86400000).toISOString().slice(0, 10)];
+      const okM = token && dM.some(d => crypto.createHmac('sha256', secM).update(d + uM.email).digest('hex') === String(token));
+      if (!okM) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, needsLogin: true }) };
+      const ambM = await sql`SELECT code FROM ambassador_requests WHERE student_id = ${studentId} AND status = 'approved' ORDER BY created_at DESC LIMIT 1`;
+      if (!ambM.length) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'لست سفيراً معتمداً' }) };
+      const codeM = ambM[0].code;
+      if (action === 'my-amb-messages') {
+        const msgs = await sql`SELECT id, sender, body, created_at FROM amb_messages WHERE code = ${codeM} ORDER BY created_at ASC LIMIT 200`;
+        await sql`UPDATE amb_messages SET read_by_amb = true WHERE code = ${codeM} AND sender = 'admin'`;
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, messages: msgs }) };
+      }
+      const textM = String(body.text || '').trim().slice(0, 2000);
+      if (!textM) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الرسالة فارغة' }) };
+      const recentM = await sql`SELECT COUNT(*)::int AS c FROM amb_messages WHERE code = ${codeM} AND sender = 'ambassador' AND created_at > now() - interval '5 minutes'`;
+      if (recentM[0].c >= 5) return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'أرسلت رسائل كثيرة — انتظر قليلاً' }) };
+      const insM = await sql`INSERT INTO amb_messages (code, student_id, sender, body) VALUES (${codeM}, ${studentId}, 'ambassador', ${textM}) RETURNING id`;
+      const tgTokM = process.env.TELEGRAM_BOT_TOKEN, tgChatM = process.env.TELEGRAM_CHAT_ID;
+      if (tgTokM && tgChatM) {
+        const noteM = '📩 رسالة من السفير ' + (uM.name || '') + ' (' + codeM + ')\n\n' + textM + '\n\n#T' + codeM + '\n↩️ ردّ على هذه الرسالة مباشرة ليصله ردّك.';
+        try { await fetch('https://api.telegram.org/bot' + tgTokM + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tgChatM, text: noteM }) }); } catch (e) {}
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, id: insM[0].id }) };
+    }
+
     if (action === 'ambassador-stats') {
       const { studentId, token } = body;
       if (!studentId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
@@ -306,6 +338,8 @@ exports.handler = async (event) => {
           COALESCE((SELECT SUM(c.amount) FROM commission_log c WHERE c.ref_code = r.code), 0)::numeric AS lifetime
         FROM ambassador_requests r WHERE r.status = 'approved' AND r.code IS NOT NULL
         ORDER BY recent DESC, lifetime DESC, r.code ASC`;
+      const unreadRows = await sql`SELECT COUNT(*)::int AS c FROM amb_messages WHERE code = ${code} AND sender = 'admin' AND read_by_amb = false`;
+      const unreadMsgs = unreadRows[0].c;
       let rank = null;
       const myIdx = board.findIndex(function(b){ return b.code === code; });
       if (myIdx !== -1) {
@@ -321,7 +355,7 @@ exports.handler = async (event) => {
           leadOverSecond: (myIdx === 0 && second) ? Math.max(0, num(me.recent) - num(second.recent)) : null };
       }
       const payouts = await sql`SELECT i.amount, r.month FROM payout_items i JOIN payout_runs r ON r.id = i.run_id WHERE i.ref_code = ${code} ORDER BY r.month DESC LIMIT 12`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code, customerCount: customerCount[0].c, totalCommission: totalCommission[0].total, pending: pending[0].total, refLink: 'https://opnlio.com/?ref=' + code, monthly: monthlyRows.reverse(), customers, payouts, rank }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code, customerCount: customerCount[0].c, totalCommission: totalCommission[0].total, pending: pending[0].total, refLink: 'https://opnlio.com/?ref=' + code, monthly: monthlyRows.reverse(), customers, payouts, rank, unreadMsgs }) };
     }
 
     if (action === 'mark-notifications-read') {
