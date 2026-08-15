@@ -154,29 +154,27 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
       <button id="ambassadorBtn" class="btn-gold" disabled style="opacity:.35;">🔒 Idoneo a diventare ambasciatore OPN LIO</button>
     </div>
 
-    <div class="card" style="margin-bottom:24px; background:linear-gradient(160deg,rgba(212,175,55,.1),rgba(255,255,255,.02)); border-color:rgba(212,175,55,.35);">
+    <div id="ambCardFree" class="card" style="margin-bottom:24px; background:linear-gradient(160deg,rgba(212,175,55,.1),rgba(255,255,255,.02)); border-color:rgba(212,175,55,.35);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
         <div>
-          <div style="font-size:14.5px; font-weight:900; color:#D4AF37; margin-bottom:4px;">⚜ Programma Ambasciatori</div>
+          <div style="font-size:14.5px; font-weight:900; color:#39FF14; margin-bottom:4px;">⚜ Percorso O P N LIO — Impara il sistema intelligente integrato</div>
           <div id="ambSpielFree" style="font-size:12.5px; color:#c9d2e3; line-height:1.8;">Completa il percorso gratuito O P N LIO (6 livelli) e apri la porta dell’ambasciata — commissioni reali su ogni abbonamento che passa da te.</div>
         </div>
         <button onclick="switchTrack('free')" style="flex:0 0 auto; padding:11px 24px; border-radius:22px; border:none; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">Inizia il percorso gratuito ←</button>
       </div>
     </div>
 
-    <div style="text-align:center; margin-bottom:16px;">
+    <div id="freeBrowseRow" style="display:none; text-align:center; margin-bottom:16px;">
       <button onclick="switchTrack('free')" style="padding:10px 22px; border-radius:20px; border:1px solid rgba(212,175,55,.3); background:transparent; color:#8a93a8; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit;">⚜ Sfoglia il percorso gratuito O P N LIO ←</button>
     </div>
 
+    <div id="trackTabs" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;"><button id="tabPaid" onclick="switchTrack('paid')" style="flex:1; min-width:190px; padding:13px 18px; border-radius:14px; border:1.5px solid rgba(212,175,55,.5); background:rgba(212,175,55,.12); color:#D4AF37; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">🎓 Programma di trading pro</button><button id="tabFree" onclick="switchTrack('free')" style="flex:1; min-width:190px; padding:13px 18px; border-radius:14px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:#8a93a8; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">⚜ Percorso sistema O P N LIO — Gratuito</button></div>
     <div id="trackPaidBody">
       <div class="card" style="margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
         <div style="font-size:14px; font-weight:800; color:#D4AF37;">📖 Glossario di trading</div>
         <button onclick="openGlossary()" style="padding:9px 20px; border-radius:20px; border:1px solid rgba(212,175,55,.4); background:transparent; color:#D4AF37; font-weight:800; font-size:13px; cursor:pointer; font-family:inherit;">Sfoglia i termini ←</button>
       </div>
-      <div class="card" style="margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
-        <div style="font-size:14px; font-weight:800; color:#D4AF37;">💹 Conto di trading di pratica (portafoglio virtuale)</div>
-        <button onclick="openPaperTrading()" style="padding:9px 20px; border-radius:20px; border:none; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:13px; cursor:pointer; font-family:inherit;">Apri il conto ←</button>
-      </div>
+      
       <div id="weakSpotsBanner"></div>
       <div id="journeyMap" class="card" style="margin-bottom:24px; overflow-x:auto;"></div>
       <div id="levelsGrid" style="display:grid; gap:14px;"></div>
@@ -187,6 +185,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
       <div class="card" style="margin-bottom:24px;">
         <p style="font-size:13.5px; color:#c9d2e3; line-height:1.9; margin:0;">Percorso <b style="color:#D4AF37;">O P N LIO per l’intelligenza di trading integrata</b> Completamente gratuito — sei livelli: quattro spiegano gli indicatori del sistema in modo completo, un quinto per la configurazione pratica su TradingView e un sesto per scenari combinati con una simulazione finale. Completarlo integralmente (superando ogni esame) ti apre l’idoneità a candidarti come ambasciatore OPN LIO.</p>
       </div>
+      <div id="journeyMapFree" class="card" style="margin-bottom:24px; overflow-x:auto;"></div>
       <div id="freeLevelsGrid" style="display:grid; gap:14px;"></div>
     </div>
   </section>
@@ -266,77 +265,6 @@ function renderWeakSpots(progress) {
     '<div style="font-weight:800; color:#ffb84d; font-size:14px; margin-bottom:8px;">🔁 Il tuo percorso suggerito — punti da rivedere</div>' +
     '<div style="font-size:13px; color:#c9d2e3; line-height:1.85; margin-bottom:12px;">Il tuo punteggio in questi livelli è stato sotto l’80% — un rapido ripasso ora consolida le basi prima di costruirvi sopra.</div>' +
     '<div style="display:flex; gap:10px; flex-wrap:wrap;">' + weak.map(function(n){ return '<button onclick="openLesson('+n+')" style="padding:8px 16px; border-radius:16px; border:1px solid rgba(255,184,77,.4); background:transparent; color:#ffb84d; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit;">Rivedi il livello '+n+' ←</button>'; }).join('') + '</div></div>';
-}
-
-var PT_SYMBOLS = [['AAPL',195],['TSLA',248],['NVDA',132],['MSFT',428],['GOOGL',178],['AMZN',186]];
-function ptState(){
-  var key = 'opnlio_paper_' + (session.student.email||'guest');
-  var s = null; try { s = JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){}
-  if (!s) { s = { cash: 10000, holdings: {}, prices: {} }; PT_SYMBOLS.forEach(function(p){ s.prices[p[0]] = p[1]; }); }
-  s._key = key;
-  return s;
-}
-function ptSave(s){ localStorage.setItem(s._key, JSON.stringify({ cash:s.cash, holdings:s.holdings, prices:s.prices })); }
-function ptTick(){
-  var s = window._ptState; if (!s) return;
-  PT_SYMBOLS.forEach(function(p){ var cur = s.prices[p[0]] || p[1]; var chg = (Math.random()-0.5) * 0.006; s.prices[p[0]] = Math.max(1, cur * (1+chg)); });
-  ptSave(s); ptRenderTable();
-}
-function ptRenderTable(){
-  var s = window._ptState; if (!s) return;
-  var equity = s.cash;
-  var rows = PT_SYMBOLS.map(function(p){
-    var sym = p[0], price = s.prices[sym], qty = s.holdings[sym] || 0;
-    equity += qty * price;
-    return '<div style="display:grid; grid-template-columns:70px 1fr 90px 90px 100px; gap:8px; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:13px;">' +
-      '<b style="color:#D4AF37;">'+sym+'</b>' +
-      '<span style="color:#c9d2e3;">$'+price.toFixed(2)+'</span>' +
-      '<span style="color:#8a93a8;">Possiedi: '+qty+'</span>' +
-      '<button onclick="ptTrade(\''+sym+'\',1)" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(57,255,20,.4); background:transparent; color:#39FF14; font-weight:800; font-size:12px; cursor:pointer; font-family:inherit;">Compra</button>' +
-      '<button onclick="ptTrade(\''+sym+'\',-1)" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(255,95,95,.4); background:transparent; color:#ff5f5f; font-weight:800; font-size:12px; cursor:pointer; font-family:inherit;" '+(qty<=0?'disabled':'')+'>Vendi</button>' +
-      '</div>';
-  }).join('');
-  var pnl = equity - 10000;
-  document.getElementById('ptBody').innerHTML =
-    '<div style="display:flex; gap:20px; margin-bottom:16px; flex-wrap:wrap;">' +
-      '<div><div style="font-size:11.5px; color:#8a93a8;">Liquidità disponibile</div><div style="font-size:20px; font-weight:900; color:#fff;">$'+s.cash.toFixed(2)+'</div></div>' +
-      '<div><div style="font-size:11.5px; color:#8a93a8;">Totale del portafoglio</div><div style="font-size:20px; font-weight:900; color:#D4AF37;">$'+equity.toFixed(2)+'</div></div>' +
-      '<div><div style="font-size:11.5px; color:#8a93a8;">Profitto/perdita virtuale</div><div style="font-size:20px; font-weight:900; color:'+(pnl>=0?'#39FF14':'#ff5f5f')+';">'+(pnl>=0?'+':'')+'$'+pnl.toFixed(2)+'</div></div>' +
-    '</div>' + rows;
-}
-function ptTrade(sym, dir){
-  var s = window._ptState;
-  var price = s.prices[sym];
-  var qty = 1;
-  if (dir > 0) { if (s.cash < price*qty) { alert('Liquidità insufficiente per questa operazione virtuale'); return; } s.cash -= price*qty; s.holdings[sym] = (s.holdings[sym]||0) + qty; }
-  else { if ((s.holdings[sym]||0) < qty) return; s.cash += price*qty; s.holdings[sym] -= qty; }
-  ptSave(s); ptRenderTable();
-}
-function ptReset(){
-  if (!confirm('Azzerare il conto demo e ripartire da 10.000$?')) return;
-  var key = window._ptState._key;
-  localStorage.removeItem(key);
-  window._ptState = ptState();
-  ptRenderTable();
-}
-function openPaperTrading(){
-  window._ptState = ptState();
-  var modal = document.createElement('div');
-  modal.id = 'ptModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;';
-  modal.innerHTML = '<div class="card" style="max-width:560px; width:100%; max-height:86vh; overflow-y:auto;">' +
-    '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><h3 style="margin:0; color:#fff; font-size:18px;">💹 Conto di trading demo</h3><button onclick="closePaperTrading()" style="background:transparent; border:none; color:#8a93a8; font-size:22px; cursor:pointer; line-height:1;">×</button></div>' +
-    '<div style="font-size:11.5px; color:#6b7488; margin-bottom:16px; line-height:1.7;">⚠️ Simulazione didattica con prezzi virtuali casuali — non sono dati di mercato reali né consulenza finanziaria. L’obiettivo è applicare ciò che hai imparato senza alcun rischio finanziario reale.</div>' +
-    '<div id="ptBody"></div>' +
-    '<button onclick="ptReset()" style="margin-top:16px; width:100%; padding:11px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#8a93a8; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit;">↺ Azzera il conto</button>' +
-    '</div>';
-  document.body.appendChild(modal);
-  ptRenderTable();
-  window._ptTimer = setInterval(ptTick, 3000);
-}
-function closePaperTrading(){
-  var m = document.getElementById('ptModal'); if (m) m.remove();
-  if (window._ptTimer) { clearInterval(window._ptTimer); window._ptTimer = null; }
 }
 
 function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }
@@ -451,11 +379,39 @@ function renderDash() {
 }
 
 function switchTrack(t){
-  document.getElementById('trackPaidBody').style.display = t==='paid' ? 'block' : 'none';
-  document.getElementById('trackFreeBody').style.display = t==='free' ? 'block' : 'none';
-  if (t==='free') renderFreeGrid();
+  var paid = t !== "free";
+  document.getElementById("trackPaidBody").style.display = paid ? "block" : "none";
+  document.getElementById("trackFreeBody").style.display = paid ? "none" : "block";
+  var amb = document.getElementById("ambCardFree"); if (amb) amb.style.display = paid ? "none" : "block";
+  var row = document.getElementById("freeBrowseRow"); if (row) row.style.display = "none";
+  var gate = document.getElementById("acadPayGate"); if (gate) gate.style.display = paid ? "block" : "none";
+  var tp = document.getElementById("tabPaid"), tf = document.getElementById("tabFree");
+  if (tp && tf){
+    tp.style.background = paid ? "rgba(212,175,55,.12)" : "transparent";
+    tp.style.color = paid ? "#D4AF37" : "#8a93a8";
+    tp.style.borderColor = paid ? "rgba(212,175,55,.5)" : "rgba(255,255,255,.12)";
+    tf.style.background = paid ? "transparent" : "rgba(57,255,20,.1)";
+    tf.style.color = paid ? "#8a93a8" : "#39FF14";
+    tf.style.borderColor = paid ? "rgba(255,255,255,.12)" : "rgba(57,255,20,.4)";
+  }
+  try { localStorage.setItem("opnlio_track", paid ? "paid" : "free"); } catch(e){}
+  if (!paid){ renderFreeJourney(); renderFreeGrid(); }
 }
 
+function renderFreeJourney(){
+  var wrap = document.getElementById("journeyMapFree"); if (!wrap) return;
+  var fp = {}; (session.freeProgress||[]).forEach(function(p){ fp[p.level_num] = p; });
+  var html = '<div style="font-size:13px; font-weight:800; color:#39FF14; margin-bottom:14px;">🗺️ Mappa del percorso sistema</div><div style="display:flex; gap:6px; align-items:flex-start; min-width:520px;">';
+  for (var i = 1; i <= 6; i++){
+    var done = fp[i] && fp[i].completed;
+    var color = done ? "#39FF14" : "#D4AF37";
+    html += '<div style="flex:1; text-align:center; position:relative;">'
+      + (i > 1 ? '<div style="position:absolute; top:15px; right:100%; width:100%; height:2px; background:rgba(57,255,20,.28);"></div>' : "")
+      + '<div style="width:30px; height:30px; border-radius:50%; background:' + color + '; color:#0a0f1a; font-weight:900; font-size:12.5px; display:flex; align-items:center; justify-content:center; margin:0 auto 6px; position:relative; z-index:1;">' + (done ? "✓" : i) + '</div>'
+      + '<div style="font-size:10px; color:#8a93a8; line-height:1.5;">Livello ' + i + '</div></div>';
+  }
+  wrap.innerHTML = html + "</div>";
+}
 function renderFreeGrid(){
   var fp = {}; (session.freeProgress||[]).forEach(function(p){ fp[p.level_num] = p; });
   var grid = document.getElementById('freeLevelsGrid');
@@ -790,7 +746,8 @@ function extendSession(){
   lastActive = Date.now();
   var m = document.getElementById('sessionPromptModal'); if (m) m.remove();
 }
-if (session && session.student) { renderDash(); }
+if (session && session.student) { renderDash(); var _h = (location.hash || '').toLowerCase(); var _saved = ''; try { _saved = localStorage.getItem('opnlio_track') || ''; } catch(e){} try { switchTrack(_h === '#free' ? 'free' : (_h === '#paid' ? 'paid' : (_saved === 'free' ? 'free' : 'paid'))); } catch(e){} }
+window.addEventListener('hashchange', function(){ var h = (location.hash || '').toLowerCase(); if (!session || !session.student) return; try { if (h === '#free') switchTrack('free'); else if (h === '#paid') switchTrack('paid'); } catch(e){} });
 </script>
 </body>
 </html>

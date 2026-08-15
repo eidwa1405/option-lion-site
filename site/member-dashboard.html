@@ -121,6 +121,7 @@ input:focus { outline:none; border-color:#D4AF37 !important; }
       </div>
       <div style="display:flex; gap:12px; flex-wrap:wrap;">
         <a id="academyCta" href="#" onclick="payAcademyFromDash(); return false;" style="display:inline-block; font-weight:900; font-size:13px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:10px 22px; border-radius:22px;">ابدأ البرنامج التدريبي — $1 +15% ←</a>
+        <button id="paperBtn" onclick="openPaperTrading()" style="font-weight:800; font-size:12.5px; color:#39FF14; border:1px solid rgba(57,255,20,.35); background:transparent; padding:9px 18px; border-radius:22px; cursor:pointer; font-family:inherit;">💹 <span id="paperBtnLbl">حساب تداول تجريبي</span></button>
         <a id="certLink" href="#" style="display:none; font-weight:800; font-size:13px; color:#D4AF37; border:1.5px solid rgba(212,175,55,.4); padding:9px 20px; border-radius:22px;">🏆 تحميل شهادتك</a>
       </div>
     </div>
@@ -261,9 +262,120 @@ function updateChecklist(){
   if (c3 && window._subActive){ c3.textContent=_T("✅ اشتراك المؤشرات"); c3.style.color="#39FF14"; }
 }
 function unlockAlertsUI(){ document.getElementById("alertsLocked").style.display="none"; document.getElementById("alertsLockBadge").style.display="none"; document.getElementById("alertsLive").style.display="flex"; document.getElementById("alertsList").style.display="flex"; }
+var PT_T = {
+ ar:{t:"💹 حساب التداول التجريبي",note:"محاكاة تعليمية بأسعار افتراضية — ليست بيانات سوق حية ولا نصيحة استثمارية. طبّق ما تعلمته بلا مخاطرة.",cash:"النقد",equity:"إجمالي المحفظة",pnl:"الربح/الخسارة",winr:"نسبة الصفقات الرابحة",qty:"الكمية",buy:"شراء",sell:"بيع",pos:"مراكزك المفتوحة",avg:"متوسط الشراء",none:"لا مراكز مفتوحة بعد — ابدأ بصفقة صغيرة.",log:"سجل صفقاتك",nolog:"لم تنفّذ أي صفقة بعد.",reset:"↺ تصفير الحساب",resetQ:"تصفير الحساب التجريبي والبدء من 10,000$ من جديد؟",nocash:"النقد غير كافٍ لهذه الصفقة الافتراضية.",risk:"مخاطرة الصفقة",riskHint:"قاعدة 1-2%: أقصى مخاطرة موصى بها",over:"⚠️ هذه الصفقة تتجاوز قاعدة 1-2% من رأس مالك",btn:"حساب تداول تجريبي"},
+ en:{t:"💹 Paper Trading Account",note:"Educational simulation with synthetic prices — not live market data nor investment advice. Practise what you learned risk-free.",cash:"Cash",equity:"Portfolio value",pnl:"P&L",winr:"Win rate",qty:"Qty",buy:"Buy",sell:"Sell",pos:"Open positions",avg:"Avg cost",none:"No open positions yet — start with a small trade.",log:"Trade journal",nolog:"No trades executed yet.",reset:"↺ Reset account",resetQ:"Reset the paper account and start again from $10,000?",nocash:"Not enough cash for this simulated trade.",risk:"Trade risk",riskHint:"1-2% rule: recommended max risk",over:"⚠️ This trade exceeds the 1-2% rule of your capital",btn:"Paper trading"},
+ de:{t:"💹 Demo-Handelskonto",note:"Lernsimulation mit synthetischen Kursen — keine Live-Marktdaten und keine Anlageberatung. Übe risikofrei.",cash:"Bargeld",equity:"Depotwert",pnl:"G/V",winr:"Trefferquote",qty:"Menge",buy:"Kaufen",sell:"Verkaufen",pos:"Offene Positionen",avg:"Ø Kaufpreis",none:"Noch keine offenen Positionen — starte klein.",log:"Handelstagebuch",nolog:"Noch keine Trades ausgeführt.",reset:"↺ Konto zurücksetzen",resetQ:"Demo-Konto zurücksetzen und neu mit 10.000$ starten?",nocash:"Nicht genug Bargeld für diesen simulierten Trade.",risk:"Trade-Risiko",riskHint:"1-2%-Regel: empfohlenes Maximalrisiko",over:"⚠️ Dieser Trade überschreitet die 1-2%-Regel deines Kapitals",btn:"Demo-Konto"},
+ fr:{t:"💹 Compte de trading démo",note:"Simulation éducative avec prix synthétiques — pas de données de marché en direct ni de conseil en investissement. Pratiquez sans risque.",cash:"Liquidités",equity:"Valeur du portefeuille",pnl:"P&L",winr:"Taux de réussite",qty:"Qté",buy:"Acheter",sell:"Vendre",pos:"Positions ouvertes",avg:"Prix moyen",none:"Aucune position ouverte — commencez petit.",log:"Journal des trades",nolog:"Aucun trade exécuté.",reset:"↺ Réinitialiser le compte",resetQ:"Réinitialiser le compte démo et repartir de 10 000 $ ?",nocash:"Liquidités insuffisantes pour ce trade simulé.",risk:"Risque du trade",riskHint:"Règle 1-2% : risque max recommandé",over:"⚠️ Ce trade dépasse la règle des 1-2% de votre capital",btn:"Compte démo"},
+ es:{t:"💹 Cuenta de trading demo",note:"Simulación educativa con precios sintéticos — no son datos de mercado en vivo ni asesoría de inversión. Practica sin riesgo.",cash:"Efectivo",equity:"Valor de la cartera",pnl:"P&L",winr:"Tasa de acierto",qty:"Cant.",buy:"Comprar",sell:"Vender",pos:"Posiciones abiertas",avg:"Precio medio",none:"Sin posiciones abiertas — empieza con poco.",log:"Diario de operaciones",nolog:"Aún no has operado.",reset:"↺ Reiniciar cuenta",resetQ:"¿Reiniciar la cuenta demo y empezar de nuevo con 10.000$?",nocash:"Efectivo insuficiente para esta operación simulada.",risk:"Riesgo de la operación",riskHint:"Regla 1-2%: riesgo máximo recomendado",over:"⚠️ Esta operación supera la regla del 1-2% de tu capital",btn:"Cuenta demo"},
+ tr:{t:"💹 Demo Trade Hesabı",note:"Sentetik fiyatlarla eğitim simülasyonu — canlı piyasa verisi veya yatırım tavsiyesi değildir. Risksiz uygula.",cash:"Nakit",equity:"Portföy değeri",pnl:"K/Z",winr:"Kazanma oranı",qty:"Adet",buy:"Al",sell:"Sat",pos:"Açık pozisyonlar",avg:"Ort. maliyet",none:"Henüz açık pozisyon yok — küçük başla.",log:"İşlem günlüğü",nolog:"Henüz işlem yapılmadı.",reset:"↺ Hesabı sıfırla",resetQ:"Demo hesabı sıfırlanıp 10.000$ ile yeniden başlansın mı?",nocash:"Bu simüle işlem için nakit yetersiz.",risk:"İşlem riski",riskHint:"1-2% kuralı: önerilen azami risk",over:"⚠️ Bu işlem sermayenin 1-2% kuralını aşıyor",btn:"Demo hesap"},
+ pt:{t:"💹 Conta de trading demo",note:"Simulação educacional com preços sintéticos — não são dados de mercado ao vivo nem recomendação de investimento. Pratique sem risco.",cash:"Caixa",equity:"Valor da carteira",pnl:"L/P",winr:"Taxa de acerto",qty:"Qtd",buy:"Comprar",sell:"Vender",pos:"Posições abertas",avg:"Preço médio",none:"Nenhuma posição aberta — comece pequeno.",log:"Diário de operações",nolog:"Nenhuma operação executada.",reset:"↺ Zerar conta",resetQ:"Zerar a conta demo e recomeçar com $10.000?",nocash:"Caixa insuficiente para esta operação simulada.",risk:"Risco da operação",riskHint:"Regra 1-2%: risco máximo recomendado",over:"⚠️ Esta operação excede a regra de 1-2% do seu capital",btn:"Conta demo"},
+ it:{t:"💹 Conto di trading demo",note:"Simulazione didattica con prezzi sintetici — non sono dati di mercato reali né consulenza finanziaria. Esercitati senza rischio.",cash:"Liquidità",equity:"Valore del portafoglio",pnl:"P&L",winr:"Tasso di successo",qty:"Qtà",buy:"Compra",sell:"Vendi",pos:"Posizioni aperte",avg:"Prezzo medio",none:"Nessuna posizione aperta — inizia in piccolo.",log:"Diario operazioni",nolog:"Nessuna operazione eseguita.",reset:"↺ Azzera conto",resetQ:"Azzerare il conto demo e ripartire da $10.000?",nocash:"Liquidità insufficiente per questa operazione simulata.",risk:"Rischio operazione",riskHint:"Regola 1-2%: rischio massimo consigliato",over:"⚠️ Questa operazione supera la regola dell'1-2% del tuo capitale",btn:"Conto demo"}
+};
+function _pt(){ return PT_T[_dashLang()] || PT_T.en; }
+var PT_SYMBOLS = [["AAPL",195],["TSLA",248],["NVDA",132],["MSFT",428],["GOOGL",178],["AMZN",186]];
+function ptState(){
+  var key = "opnlio_paper_" + (memberData.email || "guest");
+  var s = null; try { s = JSON.parse(localStorage.getItem(key) || "null"); } catch(e){}
+  if (!s) s = { cash: 10000, holdings: {}, avg: {}, prices: {}, log: [], wins: 0, losses: 0 };
+  if (!s.avg) s.avg = {}; if (!s.log) s.log = []; if (!s.prices) s.prices = {};
+  PT_SYMBOLS.forEach(function(p){ if (!s.prices[p[0]]) s.prices[p[0]] = p[1]; });
+  s._key = key; return s;
+}
+function ptSave(s){ try { localStorage.setItem(s._key, JSON.stringify({ cash:s.cash, holdings:s.holdings, avg:s.avg, prices:s.prices, log:s.log.slice(0,20), wins:s.wins||0, losses:s.losses||0 })); } catch(e){} }
+function ptTick(){ var s = window._ptState; if (!s) return;
+  PT_SYMBOLS.forEach(function(p){ var cur = s.prices[p[0]] || p[1]; s.prices[p[0]] = Math.max(1, cur * (1 + (Math.random()-0.5) * 0.006)); });
+  ptSave(s); ptRender(); }
+function ptEquity(s){ var e = s.cash; PT_SYMBOLS.forEach(function(p){ e += (s.holdings[p[0]] || 0) * s.prices[p[0]]; }); return e; }
+function ptRender(){
+  var s = window._ptState; if (!s) return; var T = _pt();
+  var eq = ptEquity(s), pnl = eq - 10000;
+  var tot = (s.wins||0) + (s.losses||0);
+  var wr = tot ? Math.round((s.wins||0) / tot * 100) : 0;
+  var maxRisk = eq * 0.02;
+  var rows = PT_SYMBOLS.map(function(p){
+    var sym = p[0], price = s.prices[sym], qty = s.holdings[sym] || 0;
+    return '<div style="display:grid; grid-template-columns:64px 88px 1fr 62px 62px; gap:7px; align-items:center; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:12.5px;">'
+      + '<b style="color:#D4AF37;">' + sym + '</b>'
+      + '<span style="color:#c9d2e3;">$' + price.toFixed(2) + '</span>'
+      + '<input id="ptq_' + sym + '" type="number" min="1" value="1" style="width:100%; box-sizing:border-box; padding:6px 8px; border-radius:7px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:12px; direction:ltr; text-align:center;">'
+      + '<button onclick="ptTrade(\'' + sym + '\',1)" style="padding:6px 4px; border-radius:7px; border:1px solid rgba(57,255,20,.4); background:transparent; color:#39FF14; font-weight:800; font-size:11.5px; cursor:pointer; font-family:inherit;">' + T.buy + '</button>'
+      + '<button onclick="ptTrade(\'' + sym + '\',-1)" ' + (qty <= 0 ? "disabled" : "") + ' style="padding:6px 4px; border-radius:7px; border:1px solid rgba(255,95,95,.4); background:transparent; color:#ff5f5f; font-weight:800; font-size:11.5px; cursor:pointer; font-family:inherit; opacity:' + (qty <= 0 ? ".4" : "1") + ';">' + T.sell + '</button></div>';
+  }).join("");
+  var open = PT_SYMBOLS.filter(function(p){ return (s.holdings[p[0]] || 0) > 0; }).map(function(p){
+    var sym = p[0], qty = s.holdings[sym], avg = s.avg[sym] || p[1], price = s.prices[sym];
+    var pp = (price - avg) * qty, pct = ((price - avg) / avg) * 100;
+    return '<div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:12.5px;">'
+      + '<span><b style="color:#D4AF37;">' + sym + '</b> <span style="color:#8a93a8;">×' + qty + '</span></span>'
+      + '<span style="color:#8a93a8; font-size:11.5px;">' + T.avg + ': $' + avg.toFixed(2) + '</span>'
+      + '<b style="color:' + (pp >= 0 ? "#39FF14" : "#ff5f5f") + ';">' + (pp >= 0 ? "+" : "") + '$' + pp.toFixed(2) + ' (' + (pct >= 0 ? "+" : "") + pct.toFixed(1) + '%)</b></div>';
+  }).join("") || '<div style="font-size:12px; color:#8a93a8; padding:8px 0;">' + T.none + '</div>';
+  var logHtml = (s.log || []).slice(0, 8).map(function(l){
+    return '<div style="display:flex; justify-content:space-between; gap:8px; padding:6px 0; font-size:11.5px; color:#8a93a8; border-bottom:1px solid rgba(255,255,255,.04);">'
+      + '<span style="color:' + (l.d > 0 ? "#39FF14" : "#ff5f5f") + '; font-weight:800;">' + (l.d > 0 ? T.buy : T.sell) + ' ' + l.s + ' ×' + l.q + '</span>'
+      + '<span>$' + l.p.toFixed(2) + (l.r !== undefined ? ' · <b style="color:' + (l.r >= 0 ? "#39FF14" : "#ff5f5f") + ';">' + (l.r >= 0 ? "+" : "") + '$' + l.r.toFixed(2) + '</b>' : "") + '</span></div>';
+  }).join("") || '<div style="font-size:12px; color:#8a93a8; padding:8px 0;">' + T.nolog + '</div>';
+  document.getElementById("ptBody").innerHTML =
+    '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:12px; margin-bottom:14px;">'
+    + '<div><div style="font-size:11px; color:#8a93a8;">' + T.cash + '</div><div style="font-size:17px; font-weight:900; color:#fff;">$' + s.cash.toFixed(0) + '</div></div>'
+    + '<div><div style="font-size:11px; color:#8a93a8;">' + T.equity + '</div><div style="font-size:17px; font-weight:900; color:#D4AF37;">$' + eq.toFixed(0) + '</div></div>'
+    + '<div><div style="font-size:11px; color:#8a93a8;">' + T.pnl + '</div><div style="font-size:17px; font-weight:900; color:' + (pnl >= 0 ? "#39FF14" : "#ff5f5f") + ';">' + (pnl >= 0 ? "+" : "") + '$' + pnl.toFixed(0) + '</div></div>'
+    + '<div><div style="font-size:11px; color:#8a93a8;">' + T.winr + '</div><div style="font-size:17px; font-weight:900; color:#c9d2e3;">' + (tot ? wr + "%" : "—") + '</div></div></div>'
+    + '<div style="font-size:11px; color:#8a93a8; background:rgba(212,175,55,.06); border-radius:8px; padding:8px 10px; margin-bottom:12px;">' + T.riskHint + ': <b style="color:#D4AF37;">$' + maxRisk.toFixed(0) + '</b></div>'
+    + rows
+    + '<div style="font-size:12px; font-weight:800; color:#D4AF37; margin:16px 0 4px;">' + T.pos + '</div>' + open
+    + '<div style="font-size:12px; font-weight:800; color:#D4AF37; margin:16px 0 4px;">' + T.log + '</div>' + logHtml;
+}
+function ptTrade(sym, dir){
+  var s = window._ptState, T = _pt();
+  var inp = document.getElementById("ptq_" + sym);
+  var qty = Math.max(1, parseInt((inp && inp.value) || "1", 10) || 1);
+  var price = s.prices[sym];
+  if (dir > 0){
+    if (s.cash < price * qty){ alert(T.nocash); return; }
+    if (price * qty > ptEquity(s) * 0.02 && !confirm(T.over + " — " + T.riskHint + ": $" + (ptEquity(s) * 0.02).toFixed(0))) return;
+    var prevQ = s.holdings[sym] || 0, prevA = s.avg[sym] || price;
+    s.holdings[sym] = prevQ + qty;
+    s.avg[sym] = ((prevA * prevQ) + (price * qty)) / s.holdings[sym];
+    s.cash -= price * qty;
+    s.log.unshift({ d: 1, s: sym, q: qty, p: price });
+  } else {
+    var have = s.holdings[sym] || 0;
+    if (have <= 0) return;
+    qty = Math.min(qty, have);
+    var avg = s.avg[sym] || price;
+    var realized = (price - avg) * qty;
+    s.cash += price * qty;
+    s.holdings[sym] = have - qty;
+    if (s.holdings[sym] === 0) delete s.avg[sym];
+    if (realized >= 0) s.wins = (s.wins || 0) + 1; else s.losses = (s.losses || 0) + 1;
+    s.log.unshift({ d: -1, s: sym, q: qty, p: price, r: realized });
+  }
+  s.log = s.log.slice(0, 20);
+  ptSave(s); ptRender();
+}
+function ptReset(){ var T = _pt(); if (!confirm(T.resetQ)) return; try { localStorage.removeItem(window._ptState._key); } catch(e){} window._ptState = ptState(); ptRender(); }
+function openPaperTrading(){
+  var T = _pt();
+  window._ptState = ptState();
+  var m = document.createElement("div");
+  m.id = "ptModal";
+  m.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10002;display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto;";
+  m.innerHTML = '<div class="card" style="max-width:560px; width:100%; max-height:92vh; overflow-y:auto;">'
+    + '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><h3 style="margin:0; color:#fff; font-size:17px;">' + T.t + '</h3><button onclick="closePaperTrading()" style="background:transparent; border:none; color:#8a93a8; font-size:22px; cursor:pointer; line-height:1;">×</button></div>'
+    + '<div style="font-size:11px; color:#6b7488; margin-bottom:14px; line-height:1.7;">⚠️ ' + T.note + '</div>'
+    + '<div id="ptBody"></div>'
+    + '<button onclick="ptReset()" style="margin-top:14px; width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#8a93a8; font-weight:700; font-size:12.5px; cursor:pointer; font-family:inherit;">' + T.reset + '</button></div>';
+  document.body.appendChild(m);
+  ptRender();
+  window._ptTimer = setInterval(ptTick, 3000);
+}
+function closePaperTrading(){ var m = document.getElementById("ptModal"); if (m) m.remove(); if (window._ptTimer){ clearInterval(window._ptTimer); window._ptTimer = null; } }
+function _acadUrl(hash){ var lg = _dashLang(); return "./" + (lg === "ar" ? "academy" : lg + "-academy") + ".html" + (hash || ""); }
 function payAcademyFromDash(){ if (window.openAcademyCheckout) window.openAcademyCheckout(memberData.email, "ar"); }
 function startAlerts(creds){ window._alertCreds = creds; unlockAlertsUI(); loadAlerts(); if (!window._alertsTimer) window._alertsTimer = setInterval(loadAlerts, 60000); }
-function markAcademyPaidUI(){ updateChecklist(); var c=document.getElementById('academyCta'); if (!c) return; c.textContent=_T('متابعة التدريب ←'); c.href='./academy.html'; c.onclick=null; }
+function markAcademyPaidUI(){ updateChecklist(); var c=document.getElementById('academyCta'); if (!c) return; c.textContent=_T('متابعة التدريب ←'); c.href=_acadUrl(); c.onclick=null; }
+function wireAcademyLinks(){ var pb = document.getElementById("paperBtnLbl"); if (pb) pb.textContent = _pt().btn; var f = document.getElementById("freeTrackCta"); if (f) f.href = _acadUrl("#free"); var a = document.getElementById("academyCta"); if (a && a.getAttribute("href") && a.getAttribute("href").indexOf("academy.html") !== -1) a.href = _acadUrl(); }
 function checkAcademyPaid(){
   if (memberData.paid) { markAcademyPaidUI(); startAlerts({ email: memberData.email }); return; }
   fetch("/api/academy-auth", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"check-paid", email: memberData.email }) })
@@ -406,6 +518,7 @@ renderMember();
 localizeDash();
 checkSubscriptionAuto();
 updateChecklist();
+wireAcademyLinks();
 checkAcademyPaid();
 loadNotifications();
 
