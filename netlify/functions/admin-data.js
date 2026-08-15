@@ -609,6 +609,13 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'GET' && action === 'ambassador-requests') {
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS signature text`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS agreement_at timestamptz`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_name text`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_iban text`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_bank text`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_swift text`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_addr text`;
       const rows = await sql`SELECT r.id, r.student_id, r.status, r.created_at, r.signature, r.agreement_at, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.status = 'pending' ORDER BY r.created_at ASC`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, requests: rows }) };
     }
