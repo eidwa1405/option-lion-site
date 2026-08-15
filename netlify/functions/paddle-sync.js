@@ -1,5 +1,7 @@
 // مزامنة يدوية مع Paddle API — يسحب آخر المعاملات ويحدّث حالات الاشتراك المطابقة
 const { getSql, ensureTables } = require('./_db');
+const { sendMail } = require('./_mailer');
+const { awardCommission } = require('./_commission');
 
 const PADDLE_API_KEY = (process.env.PADDLE_API_KEY || '').trim();
 const PADDLE_API_BASE = process.env.PADDLE_SANDBOX === 'true' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
@@ -60,10 +62,10 @@ exports.handler = async (event) => {
 
       let rows = [];
       if (customerEmail) {
-        rows = await sql`SELECT id FROM subscriptions WHERE lower(email) = ${String(customerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
+        rows = await sql`SELECT id, ref_code, self_ref_flagged FROM subscriptions WHERE lower(email) = ${String(customerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
       }
       if (!rows.length && customerName) {
-        rows = await sql`SELECT id FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
+        rows = await sql`SELECT id, ref_code, self_ref_flagged FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
       }
       if (!rows.length) { unmatched++; continue; }
 
@@ -76,6 +78,9 @@ exports.handler = async (event) => {
 
       await sql`UPDATE subscriptions SET status = ${status}, expires_at = ${expiresAt}, notified_48h = false, aff_reminder_48h_sent = false, aff_reminder_12h_sent = false, paddle_transaction_id = ${tx.id}, paddle_amount = ${amount}, last_status_source = 'paddle', updated_at = now() WHERE id = ${rows[0].id}`;
       matched++;
+      if (rows[0].ref_code && tx.id) {
+        await awardCommission(sql, { sendMail, refCode: rows[0].ref_code, customerName: customerName, selfRefFlagged: rows[0].self_ref_flagged, planLabel: status, txId: tx.id }).catch(function(){});
+      }
     }
 
     await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-manual-sync', ${'مزامنة يدوية: ' + matched + ' مطابق، ' + unmatched + ' غير مطابق من ' + transactions.length}) `;

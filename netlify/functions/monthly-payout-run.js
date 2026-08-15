@@ -20,11 +20,22 @@ exports.handler = async () => {
       WHERE to_char(c.created_at, 'YYYY-MM') = ${monthKey}
       GROUP BY a.code, a.name, a.legal_name, a.bank_account`;
 
+    // جائزة الشهر: 10% من عمولات الشهر للمركز الأول فقط
+    const PRIZE_PCT = 0.10;
+    const ranked = rows.slice().sort(function (a, b) { return parseFloat(b.amount) - parseFloat(a.amount); });
+    const prizeByCode = {};
+    if (ranked.length) {
+      const top = ranked[0];
+      const base = parseFloat(top.amount);
+      if (base > 0) prizeByCode[top.code] = { pct: PRIZE_PCT, place: 1, value: Math.round(base * PRIZE_PCT * 100) / 100 };
+    }
+
     const positiveRows = [];
     for (const r of rows) {
-      let amt = parseFloat(r.amount);
+      const prize = prizeByCode[r.code] || null;
+      let amt = parseFloat(r.amount) + (prize ? prize.value : 0);
       const floorAmt = parseFloat(r.floor_amount);
-      const bonusAmt = parseFloat(r.bonus_amount);
+      const bonusAmt = parseFloat(r.bonus_amount) + (prize ? prize.value : 0);
       const carryRows = await sql`SELECT value FROM admin_settings WHERE key = ${'carry_negative_' + r.code}`;
       const carry = carryRows.length ? parseFloat(carryRows[0].value) : 0;
       if (carry < 0) { amt += carry; }
@@ -33,7 +44,7 @@ exports.handler = async () => {
         continue;
       }
       await sql`DELETE FROM admin_settings WHERE key = ${'carry_negative_' + r.code}`;
-      positiveRows.push({ code: r.code, name: r.name, legal_name: r.legal_name, bank_account: r.bank_account, amount: amt, floor_amount: floorAmt, bonus_amount: bonusAmt });
+      positiveRows.push({ code: r.code, name: r.name, legal_name: r.legal_name, bank_account: r.bank_account, amount: amt, floor_amount: floorAmt, bonus_amount: bonusAmt, prize: prize });
     }
 
     if (!positiveRows.length) {
@@ -44,6 +55,10 @@ exports.handler = async () => {
     const runId = runRows[0].id;
     for (const r of positiveRows) {
       await sql`INSERT INTO payout_items (run_id, ref_code, name, legal_name, bank_account, amount, floor_amount, bonus_amount) VALUES (${runId}, ${r.code}, ${r.name}, ${r.legal_name||''}, ${r.bank_account||''}, ${r.amount}, ${r.floor_amount}, ${r.bonus_amount})`;
+      const ambR = await sql`SELECT student_id FROM ambassador_requests WHERE code = ${r.code} AND status = 'approved' LIMIT 1`;
+      if (ambR.length) {
+        await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${ambR[0].student_id}, '💸 تم صرف عمولتك', ${'تم صرف عمولتك عن شهر ' + monthKey + ' بمبلغ $' + r.amount.toFixed(2) + ' ✅'})`;
+      }
     }
     await sql`INSERT INTO audit_log (action, details) VALUES ('monthly-payout-run', ${'تم توليد دفعة صرف لشهر ' + monthKey + ' — ' + positiveRows.length + ' سفير'})`;
 

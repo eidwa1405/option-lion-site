@@ -2,6 +2,7 @@
 const crypto = require('crypto');
 const { getSql, ensureTables } = require('./_db');
 const { sendMail } = require('./_mailer');
+const { awardCommission } = require('./_commission');
 
 const ADMIN_ALERT_EMAIL = process.env.ADMIN_EMAIL || process.env.SMTP_USER || '';
 
@@ -112,11 +113,11 @@ exports.handler = async (event) => {
 
     let matchRow = null;
     if (customerEmail) {
-      const rows = await sql`SELECT id FROM subscriptions WHERE lower(email) = ${String(customerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
+      const rows = await sql`SELECT id, ref_code, customer_name, status, self_ref_flagged FROM subscriptions WHERE lower(email) = ${String(customerEmail).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
       if (rows.length) matchRow = rows[0];
     }
     if (!matchRow && customerName) {
-      const rows = await sql`SELECT id FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
+      const rows = await sql`SELECT id, ref_code, customer_name, status, self_ref_flagged FROM subscriptions WHERE customer_name = ${customerName} ORDER BY created_at DESC LIMIT 1`;
       if (rows.length) matchRow = rows[0];
     }
 
@@ -147,6 +148,9 @@ exports.handler = async (event) => {
         const amount = amountRaw ? (parseFloat(amountRaw) / 100) : null;
         await sql`UPDATE subscriptions SET status = ${newStatus}, expires_at = ${expiresAt}, notified_48h = false, aff_reminder_48h_sent = false, aff_reminder_12h_sent = false, paddle_transaction_id = ${txId}, paddle_amount = ${amount}, last_status_source = 'paddle', updated_at = now() WHERE id = ${matchRow.id}`;
         await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-webhook', ${'Paddle event ' + eventType + ' -> ' + newStatus + ' for customer #' + matchRow.id})`;
+        if (newStatus.indexOf('renew_') === 0 && matchRow.ref_code && txId) {
+          await awardCommission(sql, { sendMail, refCode: matchRow.ref_code, customerName: matchRow.customer_name, selfRefFlagged: matchRow.self_ref_flagged, planLabel: newStatus, txId: txId }).catch(function(){});
+        }
       }
     } else {
       await sql`INSERT INTO audit_log (action, details) VALUES ('paddle-webhook-unmatched', ${'Event ' + eventType + ' received, no matching customer found'})`;

@@ -15,11 +15,18 @@ exports.handler = async (event) => {
     await sql`INSERT INTO check_attempts (ip) VALUES (${ip})`;
     const cid = String((event.queryStringParameters && event.queryStringParameters.q) || '').trim();
     const tv = String((event.queryStringParameters && event.queryStringParameters.tv) || '').trim();
-    if (!cid || !tv) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'both fields required' }) };
-    const cleanTv = tv.replace(/^@/, '');
-    const rows = await sql`SELECT customer_name, status, plan, expires_at FROM subscriptions
-      WHERE customer_id = ${cid} AND tradingview = ${cleanTv}
-      ORDER BY created_at DESC LIMIT 1`;
+    const email = String((event.queryStringParameters && event.queryStringParameters.email) || '').trim().toLowerCase();
+
+    let rows;
+    if (email) {
+      rows = await sql`SELECT customer_name, status, plan, expires_at FROM subscriptions WHERE email = ${email} ORDER BY created_at DESC LIMIT 1`;
+    } else {
+      if (!cid || !tv) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'both fields required' }) };
+      const cleanTv = tv.replace(/^@/, '');
+      rows = await sql`SELECT customer_name, status, plan, expires_at FROM subscriptions
+        WHERE customer_id = ${cid} AND tradingview = ${cleanTv}
+        ORDER BY created_at DESC LIMIT 1`;
+    }
     if (rows.length === 0) return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customer: null }) };
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, customer: rows[0] }) };
   } catch (e) {

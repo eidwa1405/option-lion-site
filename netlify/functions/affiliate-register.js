@@ -4,8 +4,8 @@ const { getSql, ensureTables } = require('./_db');
 const { sendMail } = require('./_mailer');
 const { hashPassword } = require('./_auth');
 
-const BOT_TOKEN = '8893054915:AAEOPsa1rX38q0vb-By1aAUvH-1rL10-nR8';
-const CHAT_ID = '8485191267';
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 function notifyAdmin(msg) {
   return fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },

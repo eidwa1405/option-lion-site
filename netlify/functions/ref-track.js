@@ -2,8 +2,8 @@
 const { getSql, ensureTables } = require('./_db');
 const { sendMail, nextCustomerId } = require('./_mailer');
 
-const BOT_TOKEN = '8893054915:AAEOPsa1rX38q0vb-By1aAUvH-1rL10-nR8';
-const CHAT_ID = '8485191267';
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 function notifyAdmin(msg) {
   return fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -85,7 +85,25 @@ exports.handler = async (event) => {
         await sql`INSERT INTO events (type, page, meta) VALUES ('ref_used', 'signup', ${JSON.stringify({ code, customerName })})`;
       }
     }
-    await sql`INSERT INTO subscriptions (customer_name, ref_code, status, phone, telegram, tradingview, plan, email, lang, terms_accepted_at, terms_accepted_ip) VALUES (${customerName}, ${validCode}, 'pending_payment', ${phone}, ${telegram}, ${tradingview}, ${plan}, ${email}, ${lang}, now(), ${clientIp})`;
+    let selfRefFlagged = false;
+    if (validCode) {
+      const ambRow = await sql`SELECT s.email AS amb_email, s.phone AS amb_phone, s.last_ip AS amb_ip FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.code = ${validCode} AND r.status = 'approved' LIMIT 1`;
+      if (ambRow.length) {
+        const a = ambRow[0];
+        const emailMatch = a.amb_email && email && a.amb_email.toLowerCase() === email.toLowerCase();
+        const phoneMatch = a.amb_phone && phone && a.amb_phone.replace(/\D/g,'') === phone.replace(/\D/g,'') && phone.replace(/\D/g,'').length >= 6;
+        const ipMatch = a.amb_ip && clientIp && a.amb_ip === clientIp && clientIp !== 'unknown';
+        selfRefFlagged = !!(emailMatch || phoneMatch);
+        if (selfRefFlagged) {
+          await sql`INSERT INTO audit_log (action, details) VALUES ('self-referral-blocked', ${'اشتباه إحالة ذاتية للكود ' + validCode + ' — ' + (emailMatch?'بريد ':'') + (phoneMatch?'جوال ':'')})`;
+          notifyAdmin('⚠️ اشتباه إحالة ذاتية\nالكود: ' + validCode + '\nالعميل: ' + customerName + '\nلن تُحسب عمولة لهذه الإحالة');
+        } else if (ipMatch) {
+          await sql`INSERT INTO audit_log (action, details) VALUES ('self-referral-ip-review', ${'تطابق IP فقط للكود ' + validCode + ' — العميل ' + customerName + ' (قد يكون تطابقاً بريئاً بشبكة مشتركة) — العمولة تُحسب عادةً وتحتاج مراجعة إدارية'})`;
+          notifyAdmin('🔎 تطابق IP فقط (مراجعة يدوية)\nالكود: ' + validCode + '\nالعميل: ' + customerName + '\nالعمولة ستُحسب عادةً — راجع إن كان تطابقاً بريئاً');
+        }
+      }
+    }
+    await sql`INSERT INTO subscriptions (customer_name, ref_code, status, phone, telegram, tradingview, plan, email, lang, terms_accepted_at, terms_accepted_ip, self_ref_flagged) VALUES (${customerName}, ${validCode}, 'pending_payment', ${phone}, ${telegram}, ${tradingview}, ${plan}, ${email}, ${lang}, now(), ${clientIp}, ${selfRefFlagged})`;
     await notifyAdmin('📝 تسجيل عميل جديد\nالاسم: ' + customerName + '\nالجوال: ' + phone + '\nتيليجرام: ' + telegram + '\nكود السفير: ' + (validCode || '—'));
     return { statusCode: 200, headers, body: JSON.stringify({ ok: true, valid: !!validCode }) };
   } catch (e) {

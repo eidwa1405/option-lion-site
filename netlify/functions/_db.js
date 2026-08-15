@@ -38,6 +38,10 @@ async function ensureTables() {
     active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS bank_name text`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS bank_iban text`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS bank_swift text`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS bank_address text`;
   await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ`;
   await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS login_username TEXT`;
   await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS password TEXT`;
@@ -97,6 +101,7 @@ async function ensureTables() {
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS paddle_transaction_id TEXT`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS paddle_amount NUMERIC`;
   await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS last_status_source TEXT DEFAULT 'manual'`;
+  await sql`ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS self_ref_flagged BOOLEAN DEFAULT FALSE`;
   await sql`CREATE TABLE IF NOT EXISTS paddle_unmatched (
     id SERIAL PRIMARY KEY,
     event_type TEXT,
@@ -125,6 +130,7 @@ async function ensureTables() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`;
   await sql`ALTER TABLE commission_log ADD COLUMN IF NOT EXISTS floor_amount NUMERIC NOT NULL DEFAULT 4`;
+  await sql`ALTER TABLE commission_log ADD COLUMN IF NOT EXISTS paddle_transaction_id TEXT`;
   await sql`ALTER TABLE commission_log ADD COLUMN IF NOT EXISTS bonus_amount NUMERIC NOT NULL DEFAULT 0`;
   await sql`CREATE TABLE IF NOT EXISTS revenue_log (
     id SERIAL PRIMARY KEY,

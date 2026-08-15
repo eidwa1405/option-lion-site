@@ -20,15 +20,46 @@ exports.handler = async (event) => {
     const ADMIN_USER = userRow.length ? userRow[0].value : (process.env.ADMIN_USER || 'admin');
     const row = await sql`SELECT value FROM admin_settings WHERE key = 'admin_password'`;
     const ADMIN_PASS = row.length ? row[0].value : 'A.e.e.s1405@';
-    if (username === ADMIN_USER && verifyPassword(password, ADMIN_PASS)) {
-      if (!isHashed(ADMIN_PASS)) {
-        await sql`UPDATE admin_settings SET value = ${hashPassword(password)} WHERE key = 'admin_password'`;
-      }
+    const { otp } = JSON.parse(event.body || '{}');
+    async function issueToken(){
       const token = crypto.randomBytes(24).toString('hex');
       const nowIso = new Date().toISOString();
       await sql`INSERT INTO admin_settings (key, value) VALUES ('active_session_token', ${token}) ON CONFLICT (key) DO UPDATE SET value = ${token}`;
       await sql`INSERT INTO admin_settings (key, value) VALUES ('active_session_started_at', ${nowIso}) ON CONFLICT (key) DO UPDATE SET value = ${nowIso}`;
+      return token;
+    }
+    if (otp) {
+      const rows = await sql`SELECT value FROM admin_settings WHERE key = 'admin_otp'`;
+      if (!rows.length) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'لا يوجد رمز مُرسل — ادخل بكلمة المرور أولاً' }) };
+      let saved = {}; try { saved = JSON.parse(rows[0].value); } catch(e){}
+      if (!saved.code || Date.now() - saved.ts > 5 * 60 * 1000) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'انتهت مهلة الرمز (5 دقائق) — ادخل بكلمة المرور من جديد' }) };
+      if (String(otp).trim() !== String(saved.code)) {
+        await sql`INSERT INTO check_attempts (ip, kind) VALUES (${ip}, 'admin-login')`;
+        return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'الرمز غير صحيح' }) };
+      }
+      await sql`DELETE FROM admin_settings WHERE key = 'admin_otp'`;
+      const token = await issueToken();
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token }) };
+    }
+    if (username === ADMIN_USER && verifyPassword(password, ADMIN_PASS)) {
+      if (!isHashed(ADMIN_PASS)) {
+        await sql`UPDATE admin_settings SET value = ${hashPassword(password)} WHERE key = 'admin_password'`;
+      }
+      const tgToken = process.env.TELEGRAM_BOT_TOKEN, tgChat = process.env.TELEGRAM_CHAT_ID;
+      if (!tgToken || !tgChat) {
+        const token = await issueToken();
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, otpSkipped: true }) };
+      }
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      const payload = JSON.stringify({ code: code, ts: Date.now() });
+      await sql`INSERT INTO admin_settings (key, value) VALUES ('admin_otp', ${payload}) ON CONFLICT (key) DO UPDATE SET value = ${payload}`;
+      try {
+        await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tgChat, text: '🔐 رمز دخول لوحة إدارة OPN LIO: ' + code + '\nصالح 5 دقائق — إن لم تطلبه فغيّر كلمة المرور فوراً.' }) });
+      } catch(e) {
+        const token = await issueToken();
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, otpSkipped: true }) };
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, otpRequired: true, expiresInSec: 300 }) };
     }
     await sql`INSERT INTO check_attempts (ip, kind) VALUES (${ip}, 'admin-login')`;
     return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'بيانات الدخول غير صحيحة' }) };

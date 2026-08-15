@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const { getSql, ensureTables } = require('./_db');
+const { AGREEMENT_TITLE, AGREEMENT_HTML, getAgreement } = require('./_agreement.js');
+const { awardCommission, PLAN_BASE, TIERS, tierFor, round2 } = require('./_commission.js');
 const { sendMail } = require('./_mailer');
 const { hashPassword } = require('./_auth');
 
@@ -87,19 +89,15 @@ exports.handler = async (event) => {
       const rows = await sql`SELECT * FROM affiliates WHERE code = ${code}`;
       if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
       const a = rows[0];
-      const lastEventRows = await sql`SELECT created_at FROM commission_log WHERE ref_code = ${code} ORDER BY created_at DESC LIMIT 1`;
-      let decayCeiling = 9;
-      if (lastEventRows.length) {
-        const daysSince = (Date.now() - new Date(lastEventRows[0].created_at).getTime()) / 86400000;
-        decayCeiling = daysSince >= 32 ? 4 : daysSince >= 16 ? 5 : daysSince >= 8 ? 6 : daysSince >= 4 ? 7 : daysSince >= 2 ? 8 : 9;
-      }
       const totalCount = await sql`SELECT COUNT(*)::int AS c FROM commission_log WHERE ref_code = ${code}`;
       const lifetimeTotal = totalCount[0].c;
-      const milestoneFloor = lifetimeTotal >= 4000 ? 9 : lifetimeTotal >= 2000 ? 8 : lifetimeTotal >= 1000 ? 7 : lifetimeTotal >= 500 ? 6 : lifetimeTotal >= 200 ? 5 : 4;
-      const currentAmp = Math.max(milestoneFloor, Math.min(decayCeiling, lastEventRows.length ? 9 : milestoneFloor));
+      const tierNow = tierFor(lifetimeTotal);
+      const nextT = TIERS.slice().reverse().find(function (t) { return t.min > lifetimeTotal; });
+      const currentAmp = round2(PLAN_BASE.renew_1m * tierNow.mult);
+      const milestoneFloor = tierNow.mult;
       const monthlyBalanceRows = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS total FROM commission_log WHERE ref_code = ${code} AND created_at >= date_trunc('month', now())`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, report: {
-        amp: currentAmp, floor: milestoneFloor, customerCount: lifetimeTotal, monthlyBalance: monthlyBalanceRows[0].total,
+        amp: currentAmp, floor: milestoneFloor, tierMult: tierNow.mult, tierMin: tierNow.min, nextTierMin: nextT ? nextT.min : null, nextTierMult: nextT ? nextT.mult : null, renewalsToNext: nextT ? (nextT.min - lifetimeTotal) : null, planTable: { renew_1m: round2(PLAN_BASE.renew_1m * tierNow.mult), renew_3m: round2(PLAN_BASE.renew_3m * tierNow.mult), renew_6m: round2(PLAN_BASE.renew_6m * tierNow.mult), renew_1y: round2(PLAN_BASE.renew_1y * tierNow.mult) }, customerCount: lifetimeTotal, monthlyBalance: monthlyBalanceRows[0].total,
         createdAt: a.created_at, lastLoginAt: a.last_login_at, name: a.name, email: a.email
       } }) };
     }
@@ -154,6 +152,8 @@ exports.handler = async (event) => {
       const runId = runRows[0].id;
       for (const r of positiveRows) {
         await sql`INSERT INTO payout_items (run_id, ref_code, name, legal_name, bank_account, amount, floor_amount, bonus_amount) VALUES (${runId}, ${r.code}, ${r.name}, ${r.legal_name||''}, ${r.bank_account||''}, ${r.amount}, ${r.floor_amount}, ${r.bonus_amount})`;
+        const ambR = await sql`SELECT student_id FROM ambassador_requests WHERE code = ${r.code} AND status = 'approved' LIMIT 1`;
+        if (ambR.length) await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${ambR[0].student_id}, '💸 تم صرف عمولتك', ${'تم صرف عمولتك عن شهر ' + monthKey + ' بمبلوو' + 'ف $' + r.amount.toFixed(2) + ' ✅'})`;
       }
       await sql`INSERT INTO audit_log (action, details) VALUES ('manual-payout-run', ${'توليد يدوي لدفعة صرف شهر ' + monthKey + ' — عدد المستحقين: ' + positiveRows.length})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, month: monthKey, count: positiveRows.length }) };
@@ -390,49 +390,10 @@ exports.handler = async (event) => {
       const newExpiry = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
       await sql`UPDATE subscriptions SET status = ${status}, expires_at = ${newExpiry}, notified_48h = false, aff_reminder_48h_sent = false, aff_reminder_12h_sent = false, updated_at = now() WHERE id = ${id}`;
       if (status && status.indexOf('renew_') === 0 && row.status !== status) {
-        if (row.ref_code) {
-          const planBonusMap = { renew_1m: 0, renew_3m: 1, renew_6m: 2, renew_1y: 3 };
-          const planBonus = planBonusMap[status] || 0;
-
-          const lastEventRows = await sql`SELECT created_at FROM commission_log WHERE ref_code = ${row.ref_code} ORDER BY created_at DESC LIMIT 1`;
-          let decayCeiling = 9;
-          if (lastEventRows.length) {
-            const daysSince = (Date.now() - new Date(lastEventRows[0].created_at).getTime()) / 86400000;
-            decayCeiling = daysSince >= 32 ? 4 : daysSince >= 16 ? 5 : daysSince >= 8 ? 6 : daysSince >= 4 ? 7 : daysSince >= 2 ? 8 : 9;
-          }
-
-          const totalCount = await sql`SELECT COUNT(*)::int AS c FROM commission_log WHERE ref_code = ${row.ref_code}`;
-          const lifetimeTotal = totalCount[0].c;
-          const milestoneFloor = lifetimeTotal >= 4000 ? 9 : lifetimeTotal >= 2000 ? 8 : lifetimeTotal >= 1000 ? 7 : lifetimeTotal >= 500 ? 6 : lifetimeTotal >= 200 ? 5 : 4;
-          let commissionAmount = Math.max(milestoneFloor, Math.min(decayCeiling, 4 + planBonus));
-
-          const activeCampaigns = await sql`SELECT boost_amount, cap_override FROM boost_campaigns
-            WHERE now() BETWEEN starts_at AND ends_at AND (target = 'all' OR ${row.ref_code} = ANY(target_codes))
-            ORDER BY boost_amount DESC LIMIT 1`;
-          if (activeCampaigns.length) {
-            const boost = activeCampaigns[0].boost_amount;
-            const cap = activeCampaigns[0].cap_override || 9;
-            commissionAmount = Math.min(cap, commissionAmount + boost);
-          }
-          const floorPart = milestoneFloor;
-          const bonusPart = Math.max(0, commissionAmount - milestoneFloor);
-          await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount, floor_amount, bonus_amount) VALUES (${row.ref_code}, ${row.customer_name}, ${plan || status}, ${commissionAmount}, ${floorPart}, ${bonusPart})`;
-
-          const TIER_THRESHOLDS = [200, 500, 1000, 2000, 4000];
-          const newLifetimeTotal = lifetimeTotal + 1;
-          const nextThreshold = TIER_THRESHOLDS.find(function(t){ return t > newLifetimeTotal; });
-          if (nextThreshold) {
-            const remaining = nextThreshold - newLifetimeTotal;
-            if (remaining > 0 && remaining <= 10) {
-              const affRows = await sql`SELECT name, email, last_tier_notified FROM affiliates WHERE code = ${row.ref_code}`;
-              if (affRows.length && affRows[0].email && affRows[0].last_tier_notified !== nextThreshold) {
-                const nextRate = nextThreshold === 200 ? 5 : nextThreshold === 500 ? 6 : nextThreshold === 1000 ? 7 : nextThreshold === 2000 ? 8 : 9;
-                const tierBodyHtml = `<div dir="rtl">مرحباً <b>${affRows[0].name}</b> 👋<br><br>أنت على وشك الوصول لمرحلة جديدة! باقي فقط <b style="color:#39FF14;">${remaining}</b> عملية تجديد لترتفع عمولتك الثابتة إلى <b style="color:#D4AF37;">${nextRate}$</b> عن كل تجديد لاحق.<br><br>استمر في نشاطك الرائع، أنت قريب جداً 🚀</div><hr style="border-color:rgba(255,255,255,.1); margin:18px 0;"><div dir="ltr">Hi <b>${affRows[0].name}</b> 👋<br><br>You're about to reach a new level! Only <b style="color:#39FF14;">${remaining}</b> more renewals to raise your fixed commission to <b style="color:#D4AF37;">$${nextRate}</b> per future renewal.<br><br>Keep up the great work, you're almost there 🚀</div>`;
-                await sendMail(affRows[0].email, '🚀 أنت قريب من ترقية عمولتك! Commission Tier Almost Reached', 'اقترب من الترقية', tierBodyHtml, 'ar');
-                await sql`UPDATE affiliates SET last_tier_notified = ${nextThreshold} WHERE code = ${row.ref_code}`;
-              }
-            }
-          }
+        if (row.ref_code && row.self_ref_flagged) {
+          await sql`INSERT INTO audit_log (action, details) VALUES ('self-referral-commission-skipped', ${'تم تجديد العميل ' + row.customer_name + ' بكود ' + row.ref_code + ' بلا عمولة — موسوم كإحالة ذاتية'})`;
+        } else if (row.ref_code) {
+          await awardCommission(sql, { sendMail, refCode: row.ref_code, customerName: row.customer_name, selfRefFlagged: row.self_ref_flagged, planLabel: status, txId: 'manual-' + row.id + '-' + Date.now() });
         }
         const planMap = { renew_1m: 'monthly', renew_3m: '3months', renew_6m: '6months', renew_1y: 'yearly' };
         const priceId = planMap[status];
@@ -467,7 +428,8 @@ exports.handler = async (event) => {
       await sql`UPDATE affiliates SET active = true, approved_at = now() WHERE code = ${cleanCode}`;
       await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${cleanCode}, ${row.name||''}) ON CONFLICT (code) DO NOTHING`;
       if (row.email) {
-        const bodyHtml = `<div dir="rtl">مرحباً <b>${row.name}</b> 👋<br><br>تم تفعيل كودك <b style="color:#D4AF37;">${cleanCode}</b> رسمياً كسفير لO P N LIO ⚜<br><br>رقم السفير الخاص بك لدخول لوحة تحكمك: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>خطواتك الأولى:</b><br>1️⃣ سجّل الدخول إلى لوحة تحكمك الخاصة عبر الرابط أدناه باستخدام رقم السفير أعلاه وكلمة المرور التي اخترتها، لتتابع أداءك وعمولاتك.<br>2️⃣ شارك كودك <b style="color:#D4AF37;">${cleanCode}</b> مع متابعينك وعملائك المحتملين — عبر تيليجرام أو أي قناة تسويقية تناسبك.<br>3️⃣ عند اشتراك أي عميل فعلياً بكودك، تُحسب عمولتك تلقائياً وتبدأ من 4$ وتتصاعد مع نشاطك (حتى 9$).<br><br>يمكنك الدخول للوحة تحكمك الخاصة عبر: <a href="https://opnlio.com/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>فريق الدعم جاهز دائماً لمساعدتك في أي استفسار.</div><hr style="border-color:rgba(255,255,255,.1); margin:18px 0;"><div dir="ltr">Hi <b>${row.name}</b> 👋<br><br>Your code <b style="color:#D4AF37;">${cleanCode}</b> has been officially activated as an O P N LIO Ambassador ⚜<br><br>Your Ambassador ID to log in to your dashboard: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>Your first steps:</b><br>1️⃣ Log in to your dashboard below using the Ambassador ID above and the password you chose, to track your performance and commissions.<br>2️⃣ Share your code <b style="color:#D4AF37;">${cleanCode}</b> with your audience and potential customers — via Telegram or any channel that works for you.<br>3️⃣ Once a customer subscribes with your code, your commission is calculated automatically, starting at $4 and scaling up with your activity (up to $9).<br><br>You can access your dashboard at: <a href="https://opnlio.com/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>Our support team is always ready to help with any question.</div>`;
+        const refLink = 'https://opnlio.com/?ref=' + cleanCode;
+        const bodyHtml = `<div dir="rtl">مرحباً <b>${row.name}</b> 👋<br><br>تم تفعيل كودك <b style="color:#D4AF37;">${cleanCode}</b> رسمياً كسفير لO P N LIO ⚜<br><br>رقم السفير الخاص بك لدخول لوحة تحكمك: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>خطواتك الأولى:</b><br>1️⃣ سجّل الدخول إلى لوحة تحكمك الخاصة عبر الرابط أدناه باستخدام رقم السفير أعلاه وكلمة المرور التي اخترتها، لتتابع أداءك وعمولاتك.<br>2️⃣ شارك <b>رابطك الخاص</b> مع متابعينك وعملائك المحتملين — يُسجَّل كودك تلقائياً عند فتحه، بلا حاجة لكتابة الكود يدوياً: <br><b style="color:#D4AF37; direction:ltr; display:inline-block; margin:6px 0;">${refLink}</b><br>3️⃣ عند اشتراك أي عميل فعلياً عبر رابطك أو كودك، تُحسب عمولتك تلقائياً وتبدأ من 4$ وتتصاعد مع نشاطك (حتى 9$).<br><br>يمكنك الدخول للوحة تحكمك الخاصة عبر: <a href="https://opnlio.com/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>فريق الدعم جاهز دائماً لمساعدتك في أي استفسار.</div><hr style="border-color:rgba(255,255,255,.1); margin:18px 0;"><div dir="ltr">Hi <b>${row.name}</b> 👋<br><br>Your code <b style="color:#D4AF37;">${cleanCode}</b> has been officially activated as an O P N LIO Ambassador ⚜<br><br>Your Ambassador ID to log in to your dashboard: <b style="color:#D4AF37; font-size:18px;">${row.affiliate_id || cleanCode}</b><br><br><b>Your first steps:</b><br>1️⃣ Log in to your dashboard below using the Ambassador ID above and the password you chose, to track your performance and commissions.<br>2️⃣ Share <b>your personal link</b> with your audience — your code is captured automatically when it's opened, no manual entry needed: <br><b style="color:#D4AF37; direction:ltr; display:inline-block; margin:6px 0;">${refLink}</b><br>3️⃣ Once a customer subscribes via your link or code, your commission is calculated automatically, starting at $4 and scaling up with your activity (up to $9).<br><br>You can access your dashboard at: <a href="https://opnlio.com/affiliate-login.html" style="color:#D4AF37;">affiliate-login</a><br><br>Our support team is always ready to help with any question.</div>`;
         await sendMail(row.email, 'تم تفعيل كودك كسفير O P N LIO ⚜ Your Ambassador Code is Active', 'تفعيل ناجح ✅ Activated', bodyHtml, 'ar');
       }
       await sql`INSERT INTO audit_log (action, details) VALUES ('approve-affiliate', ${'اعتماد سفير: ' + cleanCode})`;
@@ -528,6 +490,18 @@ exports.handler = async (event) => {
       const rows = await sql`SELECT * FROM affiliates WHERE code = ${code}`;
       if (rows.length === 0) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, affiliate: rows[0] }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'finance-analytics') {
+      const rev = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS total FROM revenue_log WHERE created_at > now() - interval '12 months' GROUP BY month ORDER BY month ASC`;
+      const com = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS total FROM commission_log WHERE created_at > now() - interval '12 months' GROUP BY month ORDER BY month ASC`;
+      const plans = await sql`SELECT status, COUNT(*)::int AS c FROM subscriptions WHERE status LIKE 'renew_%' GROUP BY status`;
+      const acad = await sql`SELECT to_char(paid_at,'YYYY-MM') AS month, COUNT(*)::int AS c FROM academy_students WHERE paid_at IS NOT NULL AND paid_at > now() - interval '12 months' GROUP BY month ORDER BY month ASC`;
+      const payouts = await sql`SELECT r.month, COALESCE(SUM(i.amount),0)::numeric AS total FROM payout_runs r JOIN payout_items i ON i.run_id = r.id GROUP BY r.month ORDER BY r.month ASC`;
+      const totRev = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS t FROM revenue_log`;
+      const totCom = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS t FROM commission_log`;
+      const paidAcad = await sql`SELECT COUNT(*)::int AS c FROM academy_students WHERE paid_at IS NOT NULL`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, revenue: rev, commissions: com, plans, academy: acad, payouts, totals: { revenue: totRev[0].t, commissions: totCom[0].t, academyPaid: paidAcad[0].c } }) };
     }
 
     if (event.httpMethod === 'GET' && action === 'revenue') {
@@ -632,6 +606,61 @@ exports.handler = async (event) => {
       await sql`UPDATE pending_reviews SET status = 'rejected' WHERE id = ${id}`;
       await sql`INSERT INTO audit_log (action, details) VALUES ('reject-review', ${'رفض رأي #' + id})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'ambassador-requests') {
+      const rows = await sql`SELECT r.id, r.student_id, r.status, r.created_at, r.signature, r.agreement_at, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.status = 'pending' ORDER BY r.created_at ASC`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, requests: rows }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'approve-ambassador-request') {
+      const { id } = JSON.parse(event.body || '{}');
+      const rows = await sql`SELECT r.id, r.student_id, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.id = ${id}`;
+      if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'الطلب غير موجود' }) };
+      const r = rows[0];
+      let code = String(r.name || 'LION').replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '').slice(0, 8).toUpperCase() + Math.floor(100 + Math.random() * 900);
+      code = code.replace(/[\u0600-\u06FF]/g, '') || ('AMB' + Math.floor(1000 + Math.random() * 9000));
+      const dup = await sql`SELECT code FROM ref_codes WHERE code = ${code}`;
+      if (dup.length) code = code + Math.floor(Math.random() * 9);
+      await sql`INSERT INTO affiliates (name, email, code, active, approved_at, created_at) VALUES (${r.name}, ${r.email}, ${code}, true, now(), now()) ON CONFLICT DO NOTHING`;
+      await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${code}, ${r.name}) ON CONFLICT (code) DO NOTHING`;
+      await sql`UPDATE ambassador_requests SET status = 'approved', code = ${code}, decided_at = now() WHERE id = ${id}`;
+      const refLink = 'https://opnlio.com/?ref=' + code;
+      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${r.student_id}, '🎉 تمت الموافقة على طلبك كسفير', ${'مبروك! كودك الخاص: <b>' + code + '</b><br>رابطك الجاهز: <b dir="ltr">' + refLink + '</b><br>شاركه وابدأ كسب العمولات فوراً.'})`;
+      if (r.email) {
+        const _agr = getAgreement(r.lang || 'ar');
+        await sendMail(r.email, '🎉 تمت الموافقة على طلبك كسفير O P N LIO — نسخة اتفاقيتك بالداخل', 'مبروك!', `<div dir="rtl">مرحباً <b>${r.name}</b> 👋<br><br>تمت الموافقة على طلبك رسمياً كسفير O P N LIO ⚜<br><br>كودك الخاص: <b style="color:#D4AF37; font-size:18px;">${code}</b><br><br>رابطك الجاهز للمشاركة (يُسجَّل كودك تلقائياً عند فتحه):<br><b style="color:#D4AF37; direction:ltr; display:inline-block;">${refLink}</b><br><br>وأي عميل يشترك عبره تُحسب عمولتك تلقائياً عن كل تجديد فعلي.<br><br>يمكنك تنزيل نسخة PDF من اتفاقيتك في أي وقت: <a href="https://opnlio.com/ambassador-agreement.html" style="color:#D4AF37;">صفحة الاتفاقية — زر تنزيل PDF</a><br><br><hr style="border:none; border-top:1px solid #ddd; margin:18px 0;"><b style="color:#8a6d1f;">🏦 بيانات حساب استلام العمولات المسجّلة باتفاقيتك:</b><br><div style="font-size:12.5px; line-height:1.9; background:#faf7ec; border:1px solid #e6d9a8; border-radius:8px; padding:12px; margin:8px 0 18px;">صاحب الحساب: <b>${r.bank_name || '—'}</b><br>رقم الحساب / IBAN: <b style="direction:ltr; display:inline-block;">${r.bank_iban || '—'}</b><br>البنك والدولة: <b>${r.bank_bank || '—'}</b><br>SWIFT / BIC: <b style="direction:ltr; display:inline-block;">${r.bank_swift || '—'}</b><br>العنوان: <b>${r.bank_addr || '—'}</b><br><span style="color:#a33;">أقررتَ بصحة هذه البيانات وتتحمل وحدك مسؤولية أي خطأ فيها. لتعديلها لاحقاً راسل الإدارة.</span></div><b style="color:#8a6d1f;">📄 نسختك من الاتفاقية الموقّعة إلكترونياً بتاريخ ${new Date().toISOString().slice(0,10)}:</b><br><br><div style="font-size:12px; line-height:1.9;">${_agr.html}</div></div>`, 'ar').catch(()=>{});
+      }
+      try { await sql`UPDATE affiliates SET bank_name = ${r.bank_name || null}, bank_iban = ${r.bank_iban || null}, bank_swift = ${r.bank_swift || null}, bank_address = ${r.bank_addr || null} WHERE code = ${code}`; } catch(e){}
+      await sql`INSERT INTO audit_log (action, details) VALUES ('approve-ambassador-request', ${'موافقة طلب سفير #' + id + ' كود ' + code})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'reject-ambassador-request') {
+      const { id, reason } = JSON.parse(event.body || '{}');
+      const rows = await sql`SELECT r.id, r.student_id, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.id = ${id}`;
+      if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'الطلب غير موجود' }) };
+      const r = rows[0];
+      await sql`UPDATE ambassador_requests SET status = 'rejected', decided_at = now() WHERE id = ${id}`;
+      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${r.student_id}, 'نعتذر — تم رفض طلب السفارة', ${reason ? String(reason).slice(0,400) : 'نعتذر، لم تتم الموافقة على طلبك للانضمام كسفير في هذه المرحلة. يمكنك التواصل مع الدعم لمزيد من التفاصيل.'})`;
+      if (r.email) {
+        await sendMail(r.email, 'بخصوص طلبك كسفير O P N LIO', 'تحديث بخصوص طلبك', `<div dir="rtl">مرحباً <b>${r.name}</b>،<br><br>نعتذر، لم تتم الموافقة على طلبك للانضمام كسفير O P N LIO في هذه المرحلة.${reason ? '<br><br>' + String(reason).slice(0,400) : ''}<br><br>يمكنك التواصل مع فريق الدعم لمزيد من التفاصيل.</div>`, 'ar').catch(()=>{});
+      }
+      await sql`INSERT INTO audit_log (action, details) VALUES ('reject-ambassador-request', ${'رفض طلب سفير #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'broadcast-notification') {
+      const { title, body: msgBody, sendEmail } = JSON.parse(event.body || '{}');
+      if (!title || !msgBody) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'العنوان والنص مطلوبان' }) };
+      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (NULL, ${title}, ${msgBody})`;
+      let emailCount = 0;
+      if (sendEmail) {
+        const students = await sql`SELECT email, name FROM academy_students WHERE email IS NOT NULL`;
+        for (const s of students) { await sendMail(s.email, title, title, `<div dir="rtl">مرحباً <b>${s.name || ''}</b>،<br><br>${msgBody}</div>`, 'ar').catch(()=>{}); emailCount++; }
+      }
+      await sql`INSERT INTO audit_log (action, details) VALUES ('broadcast-notification', ${'إشعار عام: ' + title + (sendEmail ? ' + بريد لـ' + emailCount : '')})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, emailCount }) };
     }
 
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };

@@ -1,8 +1,12 @@
-// أداة إرسال بريد موحّدة عبر SMTP (Namecheap Private Email — info@opnlio.com)
+// أداة إرسال بريد موحّدة — Resend API (HTTPS) أولاً، ثم SMTP احتياطاً
+// السبب: خوادم Netlify تُحجب أحياناً عن منافذ SMTP، وResend يعمل عبر HTTPS (443) دائماً.
 const nodemailer = require('nodemailer');
 
 const SMTP_USER = process.env.SMTP_USER || 'info@opnlio.com';
 const SMTP_PASS = process.env.SMTP_PASS || 'ZsN8pU0E1405@';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
+const FROM_HEADER = '"O P N LIO" <' + SMTP_USER + '>';
 
 let workingIdx = -1;
 const SMTP_CONFIGS = [
@@ -18,7 +22,6 @@ function makeTransporter(cfg) {
     tls: { minVersion: 'TLSv1.2' }
   }));
 }
-// يجرّب 465 SSL أولاً ثم 587 STARTTLS — ويتذكر المنفذ الناجح لما بعده
 async function smtpSend(mail) {
   const order = workingIdx >= 0 ? [workingIdx, 1 - workingIdx] : [0, 1];
   let lastErr;
@@ -30,6 +33,28 @@ async function smtpSend(mail) {
     } catch (e) { lastErr = e; }
   }
   throw lastErr;
+}
+async function resendSend(mail) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + RESEND_API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: FROM_HEADER, to: [mail.to], reply_to: SMTP_USER, subject: mail.subject, html: mail.html, text: mail.text })
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error('Resend ' + res.status + ': ' + body.slice(0, 200));
+  }
+}
+async function brevoSend(mail) {
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': BREVO_API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sender: { name: 'O P N LIO', email: SMTP_USER }, to: [{ email: mail.to }], replyTo: { email: SMTP_USER }, subject: mail.subject, htmlContent: mail.html, textContent: mail.text })
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error('Brevo ' + res.status + ': ' + body.slice(0, 200));
+  }
 }
 
 // أيقونة CC للدولة من رمز الاتصال الهاتفي (تقريبي، يغطي الدول الأكثر استخداماً)
@@ -95,12 +120,19 @@ async function sendMail(to, subject, titleHtml, bodyHtml, lang) {
   if (!to) return { skipped: true };
   const html = emailShell(lang || 'ar', titleHtml, bodyHtml);
   const text = String(bodyHtml || '').replace(/<br\s*\/?\s*>/gi, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+  const mail = { to, subject, html, text };
+  // 1) مزود HTTPS إن وُجد مفتاحه — لا يتأثر بحجب منافذ SMTP
+  const httpsProvider = BREVO_API_KEY ? brevoSend : (RESEND_API_KEY ? resendSend : null);
+  if (httpsProvider) {
+    try { await httpsProvider(mail); return { ok: true }; }
+    catch (e) {
+      try { await smtpSend(Object.assign({ from: FROM_HEADER, replyTo: SMTP_USER }, mail)); return { ok: true }; }
+      catch (e2) { return { ok: false, error: String(e) + ' | SMTP: ' + String(e2) }; }
+    }
+  }
+  // 2) SMTP فقط (الوضع الحالي)
   try {
-    await smtpSend({
-      from: '"O P N LIO" <' + SMTP_USER + '>',
-      replyTo: SMTP_USER,
-      to, subject, html, text
-    });
+    await smtpSend(Object.assign({ from: FROM_HEADER, replyTo: SMTP_USER }, mail));
     return { ok: true };
   } catch (e) {
     return { ok: false, error: String(e) };

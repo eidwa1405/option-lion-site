@@ -35,7 +35,7 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'GET' && action === 'profile') {
-      const customers = await sql`SELECT s.id, s.customer_name, s.status, s.plan, s.expires_at, s.created_at, s.aff_reminder_48h_sent, s.aff_reminder_12h_sent,
+      const customers = await sql`SELECT s.id, s.status, s.plan, s.expires_at, s.created_at, s.aff_reminder_48h_sent, s.aff_reminder_12h_sent,
           COALESCE((SELECT SUM(c.amount) FROM commission_log c WHERE c.ref_code = ${affiliate.code} AND c.customer_name = s.customer_name), 0)::numeric AS customer_commission,
           COALESCE((SELECT COUNT(*) FROM commission_log c WHERE c.ref_code = ${affiliate.code} AND c.customer_name = s.customer_name), 0)::int AS customer_renewals
         FROM subscriptions s WHERE s.ref_code = ${affiliate.code} ORDER BY s.created_at DESC`;
@@ -53,7 +53,7 @@ exports.handler = async (event) => {
           else if (hoursLeft <= 12 && hoursLeft > 0 && !c.aff_reminder_12h_sent) reminderEligible = true;
         }
         return {
-          id: c.id, customer_name: c.customer_name, status: c.status, plan: c.plan, expires_at: c.expires_at,
+          id: c.id, status: c.status, plan: c.plan, expires_at: c.expires_at,
           customer_commission: c.customer_commission, customer_renewals: c.customer_renewals,
           hoursLeft: hoursLeft, reminderEligible: reminderEligible
         };
