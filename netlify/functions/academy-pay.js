@@ -73,11 +73,8 @@
       d.innerHTML = '<div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;">'+s.title+'</div>'
         + '<p style="font-size:14px;color:#c9d2e3;line-height:1.8;margin:0 0 16px;">'+s.body+'</p>'
         + '<button id="acadPayBtn" style="background:linear-gradient(135deg,#D4AF37,#f0cf6c);color:#1a1408;font-weight:900;border:none;border-radius:12px;padding:14px 34px;font-size:15px;cursor:pointer;font-family:inherit;">'+s.btn+'</button>'
-        + '<div style="font-size:12px;color:#8a93a8;margin-top:12px;">'+s.note+'</div>'
-        + (s.free ? '<div style="margin-top:14px;"><a href="#free" id="acadFreeLink" style="display:inline-block;font-size:12.5px;font-weight:800;color:#39FF14;text-decoration:none;border:1px solid rgba(57,255,20,.35);padding:8px 18px;border-radius:18px;">'+s.free+'</a></div>' : '');
+        + '<div style="font-size:12px;color:#8a93a8;margin-top:12px;">'+s.note+'</div>';
       host.insertBefore(d, host.firstChild);
-      var fl = d.querySelector('#acadFreeLink');
-      if (fl) fl.addEventListener('click', function(){ try { if (typeof switchTrack === 'function') switchTrack('free'); } catch(e){} });
       d.querySelector('#acadPayBtn').addEventListener('click', function(){
         window.openAcademyCheckout(session.student.email, lang);
       });
