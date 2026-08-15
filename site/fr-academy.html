@@ -168,7 +168,6 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
       <button onclick="switchTrack('free')" style="padding:10px 22px; border-radius:20px; border:1px solid rgba(212,175,55,.3); background:transparent; color:#8a93a8; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit;">⚜ تصفّح مسار O P N LIO المجاني ←</button>
     </div>
 
-    <div id="trackTabs" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;"><button id="tabPaid" onclick="switchTrack('paid')" style="flex:1; min-width:190px; padding:13px 18px; border-radius:14px; border:1.5px solid rgba(212,175,55,.5); background:rgba(212,175,55,.12); color:#D4AF37; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">🎓 Programme de trading pro</button><button id="tabFree" onclick="switchTrack('free')" style="flex:1; min-width:190px; padding:13px 18px; border-radius:14px; border:1.5px solid rgba(255,255,255,.12); background:transparent; color:#8a93a8; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">⚜ Parcours système O P N LIO — Gratuit</button></div>
     <div id="trackPaidBody">
       <div class="card" style="margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
         <div style="font-size:14px; font-weight:800; color:#D4AF37;">📖 Glossaire du trading</div>
@@ -181,7 +180,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
     </div>
 
     <div id="trackFreeBody" style="display:none;">
-      <button onclick="switchTrack('paid')" style="margin-bottom:16px; padding:9px 18px; border-radius:18px; border:1px solid rgba(212,175,55,.3); background:transparent; color:#D4AF37; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit;">→ رجوع لبرنامج احتراف التداول</button>
+      <a href="./member-dashboard.html" style="display:inline-block; margin-bottom:16px; padding:9px 18px; border-radius:18px; border:1px solid rgba(212,175,55,.3); background:transparent; color:#D4AF37; font-weight:800; font-size:12.5px; text-decoration:none;">↩ Tableau de bord membre</a>
       <div class="card" style="margin-bottom:24px;">
         <p style="font-size:13.5px; color:#c9d2e3; line-height:1.9; margin:0;">مسار <b style="color:#D4AF37;">O P N LIO للذكاء التداولي المتكاملة</b> مجاني بالكامل — ستة مستويات: أربعة تشرح مؤشرات المنظومة بتفصيل شامل، وخامس للإعداد العملي على TradingView، وسادس لسيناريوهات مركّبة بمحاكاة ختامية. إتمامه كاملاً (والنجاح بكل اختبار) يفتح لك أهلية الانضمام كسفير OPN LIO.</p>
       </div>
@@ -385,15 +384,6 @@ function switchTrack(t){
   var amb = document.getElementById("ambCardFree"); if (amb) amb.style.display = paid ? "none" : "block";
   var row = document.getElementById("freeBrowseRow"); if (row) row.style.display = "none";
   var gate = document.getElementById("acadPayGate"); if (gate) gate.style.display = paid ? "block" : "none";
-  var tp = document.getElementById("tabPaid"), tf = document.getElementById("tabFree");
-  if (tp && tf){
-    tp.style.background = paid ? "rgba(212,175,55,.12)" : "transparent";
-    tp.style.color = paid ? "#D4AF37" : "#8a93a8";
-    tp.style.borderColor = paid ? "rgba(212,175,55,.5)" : "rgba(255,255,255,.12)";
-    tf.style.background = paid ? "transparent" : "rgba(57,255,20,.1)";
-    tf.style.color = paid ? "#8a93a8" : "#39FF14";
-    tf.style.borderColor = paid ? "rgba(255,255,255,.12)" : "rgba(57,255,20,.4)";
-  }
   try { localStorage.setItem("opnlio_track", paid ? "paid" : "free"); } catch(e){}
   if (!paid){ renderFreeJourney(); renderFreeGrid(); }
 }
