@@ -3,7 +3,7 @@
 const nodemailer = require('nodemailer');
 
 const SMTP_USER = process.env.SMTP_USER || 'info@opnlio.com';
-const SMTP_PASS = process.env.SMTP_PASS || 'ZsN8pU0E1405@';
+const SMTP_PASS = process.env.SMTP_PASS || '';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
 const FROM_HEADER = '"O P N LIO" <' + SMTP_USER + '>';
