@@ -616,7 +616,16 @@ exports.handler = async (event) => {
       await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_bank text`;
       await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_swift text`;
       await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_addr text`;
-      const rows = await sql`SELECT r.id, r.student_id, r.status, r.created_at, r.signature, r.agreement_at, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.status = 'pending' ORDER BY r.created_at ASC`;
+      const rows = await sql`SELECT r.id, r.student_id, r.status, r.created_at, r.signature, r.agreement_at, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang, s.created_at AS joined_at FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.status = 'pending' ORDER BY r.created_at ASC`;
+      for (const r of rows) {
+        const sc = await sql`SELECT level_num, score FROM academy_free_progress WHERE student_id = ${r.student_id} AND completed = true ORDER BY level_num ASC`;
+        r.freeScores = sc;
+        const vals = sc.map(function(x){ return Number(x.score) || 0; });
+        r.avgScore = vals.length ? Math.round(vals.reduce(function(a, b){ return a + b; }, 0) / vals.length) : 0;
+        r.minScore = vals.length ? Math.min.apply(null, vals) : 0;
+        r.doneLevels = vals.length;
+        r.daysMember = r.joined_at ? Math.floor((Date.now() - new Date(r.joined_at).getTime()) / 86400000) : 0;
+      }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, requests: rows }) };
     }
 
