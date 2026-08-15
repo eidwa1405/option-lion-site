@@ -36,6 +36,9 @@ exports.handler = async (event) => {
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS cert_number text`;
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS free_graduated_at timestamptz`;
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_ip text`;
+    await sql`CREATE TABLE IF NOT EXISTS graduation_devices (id serial PRIMARY KEY, student_id int, device_hash text, ip text, created_at timestamptz DEFAULT now())`;
+    await sql`CREATE TABLE IF NOT EXISTS academy_free_progress (student_id int, level_num int, completed boolean DEFAULT false, score int, completed_at timestamptz, UNIQUE(student_id, level_num))`;
+    await sql`CREATE TABLE IF NOT EXISTS ambassador_requests (id serial PRIMARY KEY, student_id int, status text DEFAULT 'pending', code text, created_at timestamptz DEFAULT now(), decided_at timestamptz)`;
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS signature text`;
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS agreement_at timestamptz`;
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_name text`;
@@ -44,9 +47,6 @@ exports.handler = async (event) => {
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_swift text`;
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_addr text`;
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_country text`;
-    await sql`CREATE TABLE IF NOT EXISTS graduation_devices (id serial PRIMARY KEY, student_id int, device_hash text, ip text, created_at timestamptz DEFAULT now())`;
-    await sql`CREATE TABLE IF NOT EXISTS academy_free_progress (student_id int, level_num int, completed boolean DEFAULT false, score int, completed_at timestamptz, UNIQUE(student_id, level_num))`;
-    await sql`CREATE TABLE IF NOT EXISTS ambassador_requests (id serial PRIMARY KEY, student_id int, status text DEFAULT 'pending', code text, created_at timestamptz DEFAULT now(), decided_at timestamptz)`;
     await sql`CREATE TABLE IF NOT EXISTS member_notifications (id serial PRIMARY KEY, student_id int, title text, body text, created_at timestamptz DEFAULT now(), read boolean DEFAULT false)`;
     const body = JSON.parse(event.body || '{}');
     const action = body.action;
