@@ -759,6 +759,23 @@ function generatePayoutNow(){
     });
 }
 
+function loadTvAlerts(){
+  authFetch("/api/admin-data?action=tv-alerts").then(function(r){ return r.text(); }).then(function(t){
+    var res = null; try { res = t ? JSON.parse(t) : null; } catch(e){}
+    var box = document.getElementById("tvAlertsList");
+    if (!box) return;
+    if (!res || !res.ok || !res.alerts){ box.innerHTML = "<div style=\"color:#8a93a8; font-size:13px; padding:16px; text-align:center;\">تعذّر تحميل التنبيهات</div>"; return; }
+    if (!res.alerts.length){ box.innerHTML = "<div style=\"color:#8a93a8; font-size:13px; padding:16px; text-align:center;\">لا توجد تنبيهات بعد</div>"; return; }
+    box.innerHTML = res.alerts.map(function(a){
+      var col = a.direction === "up" ? "#39FF14" : a.direction === "down" ? "#ff6b6b" : "#D4AF37";
+      var when = new Date(a.created_at).toLocaleString("ar-EG");
+      var head = "<div style=\"display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:5px;\"><b style=\"color:" + col + "; font-size:13.5px;\">" + (a.symbol || "—") + (a.timeframe ? " · " + a.timeframe : "") + "</b><span style=\"font-size:11.5px; color:#8a93a8;\">" + when + "</span></div>";
+      var scriptLine = a.script_name ? "<div style=\"font-size:12px; color:#D4AF37; margin-bottom:4px;\">" + a.script_name + "</div>" : "";
+      var msg = "<div style=\"font-size:12.5px; color:#c9d2e3; line-height:1.7;\">" + (a.message || "") + "</div>";
+      return "<div style=\"background:rgba(255,255,255,.03); border-inline-start:3px solid " + col + "; border-radius:10px; padding:12px 14px;\">" + head + scriptLine + msg + "</div>";
+    }).join("");
+  }).catch(function(){});
+}
 function loadPayoutRuns(){
   authFetch('/api/admin-data?action=payout-runs').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
