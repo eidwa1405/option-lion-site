@@ -653,17 +653,38 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'POST' && action === 'reject-ambassador-request') {
-      const { id, reason } = JSON.parse(event.body || '{}');
+      const { id, reason, kind } = JSON.parse(event.body || '{}');
       const rows = await sql`SELECT r.id, r.student_id, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.id = ${id}`;
       if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'الطلب غير موجود' }) };
       const r = rows[0];
-      await sql`UPDATE ambassador_requests SET status = 'rejected', decided_at = now() WHERE id = ${id}`;
-      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${r.student_id}, 'نعتذر — تم رفض طلب السفارة', ${reason ? String(reason).slice(0,400) : 'نعتذر، لم تتم الموافقة على طلبك للانضمام كسفير في هذه المرحلة. يمكنك التواصل مع الدعم لمزيد من التفاصيل.'})`;
+      const isFix = kind === 'fix';
+      const newStatus = isFix ? 'needs_fix' : 'rejected';
+      const why = reason ? String(reason).slice(0, 600) : '';
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS reject_kind text`;
+      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS reject_reason text`;
+      await sql`UPDATE ambassador_requests SET status = ${newStatus}, decided_at = now(), reject_kind = ${isFix ? 'fix' : 'nofit'}, reject_reason = ${why} WHERE id = ${id}`;
+      const L = {
+        ar: { fixT: '📝 طلبك يحتاج تصحيح بيانات', fixB: 'راجع الملاحظات أدناه وأعد إرسال طلبك مباشرة — لا انتظار.', noT: 'نعتذر — لم تتم الموافقة على طلب السفارة', noB: 'نعتذر، لم تتم الموافقة على طلبك في هذه المرحلة.', s: 'بخصوص طلبك كسفير O P N LIO', h: 'مرحباً', again: 'أعد الإرسال من لوحة العضو بعد التصحيح ←', dir: 'rtl' },
+        en: { fixT: '📝 Your request needs corrections', fixB: 'Review the notes below and resubmit right away — no waiting period.', noT: 'Your ambassador request was not approved', noB: 'We are sorry, your request was not approved at this stage.', s: 'About your O P N LIO ambassador request', h: 'Hello', again: 'Resubmit from your member dashboard after correcting ←', dir: 'ltr' },
+        de: { fixT: '📝 Dein Antrag braucht Korrekturen', fixB: 'Prüfe die Hinweise unten und sende den Antrag direkt erneut — keine Wartezeit.', noT: 'Dein Botschafter-Antrag wurde nicht genehmigt', noB: 'Leider wurde dein Antrag derzeit nicht genehmigt.', s: 'Zu deinem O P N LIO Botschafter-Antrag', h: 'Hallo', again: 'Nach der Korrektur erneut im Dashboard einreichen ←', dir: 'ltr' },
+        fr: { fixT: '📝 Votre demande nécessite des corrections', fixB: 'Consultez les notes ci-dessous et renvoyez votre demande immédiatement — sans délai d\u2019attente.', noT: 'Votre demande d\u2019ambassadeur n\u2019a pas été approuvée', noB: 'Nous sommes désolés, votre demande n\u2019a pas été approuvée à ce stade.', s: 'À propos de votre demande d\u2019ambassadeur O P N LIO', h: 'Bonjour', again: 'Renvoyez depuis votre tableau de bord après correction ←', dir: 'ltr' },
+        es: { fixT: '📝 Tu solicitud necesita correcciones', fixB: 'Revisa las notas de abajo y reenvía tu solicitud de inmediato — sin espera.', noT: 'Tu solicitud de embajador no fue aprobada', noB: 'Lo sentimos, tu solicitud no fue aprobada en esta etapa.', s: 'Sobre tu solicitud de embajador O P N LIO', h: 'Hola', again: 'Reenvía desde tu panel tras corregir ←', dir: 'ltr' },
+        tr: { fixT: '📝 Başvurun düzeltme gerektiriyor', fixB: 'Aşağıdaki notları incele ve başvurunu hemen tekrar gönder — bekleme yok.', noT: 'Elçi başvurun onaylanmadı', noB: 'Üzgünüz, başvurun bu aşamada onaylanmadı.', s: 'O P N LIO elçi başvurun hakkında', h: 'Merhaba', again: 'Düzelttikten sonra panelinden tekrar gönder ←', dir: 'ltr' },
+        pt: { fixT: '📝 Sua solicitação precisa de correções', fixB: 'Revise as observações abaixo e reenvie sua solicitação imediatamente — sem espera.', noT: 'Sua solicitação de embaixador não foi aprovada', noB: 'Lamentamos, sua solicitação não foi aprovada nesta etapa.', s: 'Sobre sua solicitação de embaixador O P N LIO', h: 'Olá', again: 'Reenvie pelo seu painel após corrigir ←', dir: 'ltr' },
+        it: { fixT: '📝 La tua richiesta necessita correzioni', fixB: 'Controlla le note qui sotto e reinvia subito la richiesta — nessuna attesa.', noT: 'La tua richiesta da ambasciatore non è stata approvata', noB: 'Siamo spiacenti, la richiesta non è stata approvata in questa fase.', s: 'Riguardo alla tua richiesta da ambasciatore O P N LIO', h: 'Ciao', again: 'Reinvia dalla tua dashboard dopo la correzione ←', dir: 'ltr' }
+      };
+      const t = L[r.lang] || L.ar;
+      const title = isFix ? t.fixT : t.noT;
+      const bodyTxt = (isFix ? t.fixB : t.noB) + (why ? '\n\n' + why : '');
+      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${r.student_id}, ${title}, ${bodyTxt.slice(0, 600)})`;
       if (r.email) {
-        await sendMail(r.email, 'بخصوص طلبك كسفير O P N LIO', 'تحديث بخصوص طلبك', `<div dir="rtl">مرحباً <b>${r.name}</b>،<br><br>نعتذر، لم تتم الموافقة على طلبك للانضمام كسفير O P N LIO في هذه المرحلة.${reason ? '<br><br>' + String(reason).slice(0,400) : ''}<br><br>يمكنك التواصل مع فريق الدعم لمزيد من التفاصيل.</div>`, 'ar').catch(()=>{});
+        const html = '<div dir="' + t.dir + '">' + t.h + ' <b>' + r.name + '</b> 👋<br><br>' + (isFix ? t.fixB : t.noB) +
+          (why ? '<br><br><div style="background:#fdf6e3;border-inline-start:3px solid #D4AF37;padding:12px 14px;border-radius:8px;white-space:pre-wrap;">' + why.replace(/</g, '&lt;') + '</div>' : '') +
+          (isFix ? '<br><br><a href="https://opnlio.com/member-dashboard.html" style="color:#D4AF37;font-weight:800;">' + t.again + '</a>' : '') + '</div>';
+        await sendMail(r.email, t.s, title, html, r.lang || 'ar').catch(()=>{});
       }
-      await sql`INSERT INTO audit_log (action, details) VALUES ('reject-ambassador-request', ${'رفض طلب سفير #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+      await sql`INSERT INTO audit_log (action, details) VALUES ('reject-ambassador-request', ${(isFix ? 'طلب تصحيح لطلب سفير #' : 'رفض طلب سفير #') + id + (why ? ' — ' + why.slice(0, 120) : '')})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, kind: isFix ? 'fix' : 'nofit' }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'broadcast-notification') {

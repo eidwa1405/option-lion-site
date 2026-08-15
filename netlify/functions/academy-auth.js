@@ -239,7 +239,7 @@ exports.handler = async (event) => {
       const existing2 = await sql`SELECT id, status FROM ambassador_requests WHERE student_id = ${studentId} ORDER BY created_at DESC LIMIT 1`;
       if (existing2.length && existing2[0].status === 'pending') return { statusCode: 200, headers, body: JSON.stringify({ ok: true, status: 'pending' }) };
       if (existing2.length && existing2[0].status === 'approved') return { statusCode: 200, headers, body: JSON.stringify({ ok: true, status: 'approved' }) };
-      const rejs = await sql`SELECT decided_at FROM ambassador_requests WHERE student_id = ${studentId} AND status = 'rejected' AND decided_at IS NOT NULL ORDER BY decided_at DESC`;
+      const rejs = await sql`SELECT decided_at FROM ambassador_requests WHERE student_id = ${studentId} AND status = 'rejected' AND COALESCE(reject_kind,'nofit') = 'nofit' AND decided_at IS NOT NULL ORDER BY decided_at DESC`;
       if (rejs.length) {
         const waitDays = rejs.length >= 2 ? 30 : 7;
         const readyAt = new Date(rejs[0].decided_at).getTime() + waitDays * 86400000;
