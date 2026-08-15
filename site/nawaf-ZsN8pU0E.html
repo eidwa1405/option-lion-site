@@ -1714,6 +1714,17 @@ function loadAmbassadorRequests(){
       var d = new Date(q.created_at).toLocaleDateString('ar-EG');
       var ag = q.agreement_at ? new Date(q.agreement_at).toLocaleString('ar-EG') : '—';
       var sig = q.signature ? '<img src="' + q.signature + '" style="height:52px; background:rgba(255,255,255,.06); border:1px solid rgba(212,175,55,.3); border-radius:8px;">' : '<span style="color:#ff9b9b; font-size:12px;">بلا توقيع (طلب قديم)</span>';
+      var avg = q.avgScore || 0, mn = q.minScore || 0, dn = q.doneLevels || 0, dm = q.daysMember || 0;
+      var passScore = avg >= 80 && mn >= 70, passDays = dm >= 7, passLevels = dn >= 6;
+      var eligible = passScore && passDays && passLevels;
+      var chips = (q.freeScores || []).map(function(s){ var v = Number(s.score) || 0; return '<span style="display:inline-block; background:' + (v >= 80 ? 'rgba(57,255,20,.12)' : v >= 70 ? 'rgba(212,175,55,.12)' : 'rgba(255,95,95,.12)') + '; color:' + (v >= 80 ? '#39FF14' : v >= 70 ? '#D4AF37' : '#ff8a8a') + '; border-radius:8px; padding:2px 7px; font-size:10.5px; font-weight:800; margin-inline-end:4px;">م' + s.level_num + ': ' + v + '%</span>'; }).join('');
+      var verdict = '<div style="width:100%; background:' + (eligible ? 'rgba(57,255,20,.07)' : 'rgba(255,180,0,.07)') + '; border:1px solid ' + (eligible ? 'rgba(57,255,20,.3)' : 'rgba(255,180,0,.3)') + '; border-radius:10px; padding:9px 12px; margin-top:4px;">'
+        + '<div style="font-size:12px; font-weight:900; color:' + (eligible ? '#39FF14' : '#ffb400') + '; margin-bottom:6px;">' + (eligible ? '✅ مستوفٍ لشروط الأهلية' : '⚠️ تحقّق قبل الموافقة') + '</div>'
+        + '<div style="font-size:11px; color:#c9d2e3; line-height:1.9;">'
+        + (passLevels ? '✓' : '✗') + ' أنهى المستويات الستة (' + dn + '/6) &nbsp;·&nbsp; '
+        + (passScore ? '✓' : '✗') + ' المعدل ' + avg + '% (الأدنى ' + mn + '%) &nbsp;·&nbsp; '
+        + (passDays ? '✓' : '✗') + ' عضو منذ ' + dm + ' يوماً'
+        + '</div><div style="margin-top:7px;">' + chips + '</div></div>';
       return '<div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:rgba(255,255,255,.03); border-radius:12px; padding:12px 14px;">'
         + '<div style="flex:1; min-width:180px;"><b style="color:#fff; font-size:13.5px;">' + q.name + '</b><div style="font-size:11.5px; color:#8a93a8; direction:ltr; text-align:right;">' + q.email + '</div><div style="font-size:11px; color:#8a93a8; margin-top:3px;">الطلب: ' + d + ' · وقّع الاتفاقية: ' + ag + '</div></div>'
         + '<div style="text-align:center;"><div style="font-size:10.5px; color:#8a93a8; margin-bottom:3px;">التوقيع ✍</div>' + sig + '</div>'
@@ -1723,6 +1734,7 @@ function loadAmbassadorRequests(){
           + 'IBAN: <b style="color:#f0cf6c; direction:ltr; display:inline-block;">' + (q.bank_iban || '—') + '</b> · SWIFT: <b style="color:#f0cf6c; direction:ltr; display:inline-block;">' + (q.bank_swift || '—') + '</b><br>'
           + 'العنوان: <b style="color:#fff;">' + (q.bank_addr || '—') + '</b>'
         + '</div>'
+        + verdict
         + '<a href="./ambassador-agreement.html" target="_blank" style="font-size:11.5px; color:#D4AF37; border:1px solid rgba(212,175,55,.35); padding:8px 12px; border-radius:16px; text-decoration:none; font-weight:700;">📄 نص الاتفاقية</a>'
         + '<button class="btn-gold" style="padding:9px 18px; font-size:12.5px;" onclick="ambReqAction(' + q.id + ', true)">✓ موافقة</button>'
         + '<button style="padding:9px 16px; border-radius:10px; border:1px solid rgba(255,107,107,.4); background:transparent; color:#ff9b9b; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit;" onclick="ambReqAction(' + q.id + ', false)">✕ رفض</button>'
