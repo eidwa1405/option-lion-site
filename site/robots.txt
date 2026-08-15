@@ -1,8 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /nawaf-ZsN8pU0E.html
-Disallow: /affiliate-dashboard.html
 Disallow: /member-dashboard.html
-Disallow: /welcome.html
+Disallow: /academy-preview.html
 
 Sitemap: https://opnlio.com/sitemap.xml

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="ref-capture.js"></script>
 <title>دخول العضوية — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -26,6 +27,8 @@ input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3p
 <meta property="og:url" content="https://opnlio.com/member-login">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
+<link rel="canonical" href="https://opnlio.com/member-login.html">
+<meta name="robots" content="noindex">
 </head>
 <body>
 <div style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 10%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh;">
@@ -89,7 +92,7 @@ input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3p
       </div>
       <div>
         <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">رقم الجوال</label>
-        <input id="reg_phone" type="tel" inputmode="tel" placeholder="+9665xxxxxxxx" oninput="this.value=this.value.replace(/[^0-9+]/g,'');" style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
+        <input id="reg_phone" type="tel" inputmode="tel" placeholder="+966 5xxxxxxxx (مع رمز الدولة)" oninput="this.value=this.value.replace(/[^0-9+]/g,''); if(this.value && this.value[0]!=='+') this.value='+'+this.value.replace(/\+/g,'');" style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
       </div>
       <div>
         <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:7px;">كلمة المرور (6 أحرف فأكثر)</label>
@@ -183,16 +186,17 @@ function submitMemberReg(){
   var name = document.getElementById('reg_name').value.trim();
   var email = document.getElementById('reg_email').value.trim().toLowerCase();
   var phone = document.getElementById('reg_phone').value.trim();
+  var refCode = ''; try { var _r = JSON.parse(localStorage.getItem('opnlio_ref_code')||'null'); if (_r && _r.code && (Date.now()-_r.ts) < 30*24*3600000) refCode = _r.code; } catch(e){}
   var pass = document.getElementById('reg_pass').value;
   var agreed = document.getElementById('reg_agree').checked;
   var errEl = document.getElementById('reg_error');
-  if (!name || !email || !phone || phone.replace(/[^0-9]/g,'').length < 8 || !pass || pass.length < 6) { errEl.textContent = 'يرجى تعبئة جميع الحقول — رقم جوال صحيح وكلمة مرور 6 أحرف على الأقل.'; errEl.style.display = 'block'; return; }
+  if (!name || !email || !phone || !/^\+[1-9]\d{7,14}$/.test(phone) || !pass || pass.length < 6) { errEl.textContent = 'يرجى تعبئة جميع الحقول — رقم جوال دولي صحيح يبدأ برمز الدولة (مثال: +966501234567) وكلمة مرور 6 أحرف على الأقل.'; errEl.style.display = 'block'; return; }
   if (!agreed) { errEl.textContent = 'يجب الموافقة على شروط الاستخدام وسياسة الخصوصية أولاً.'; errEl.style.display = 'block'; return; }
   if (document.getElementById('reg_emailVerified').value.trim().toLowerCase() !== email) { errEl.textContent = 'يجب تفعيل البريد الإلكتروني أولاً — اضغط زر "تفعيل" بجوار البريد.'; errEl.style.display = 'block'; return; }
   errEl.style.display = 'none';
   var btn = document.getElementById('reg_submit');
   btn.disabled = true; btn.textContent = 'جارٍ الإنشاء...';
-  fetch('/api/academy-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'register', name:name, email:email, phone:phone, password:pass, lang:'ar' }) })
+  fetch('/api/academy-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'register', name:name, email:email, phone:phone, referredBy:refCode, password:pass, lang:'ar' }) })
     .then(function(r){ return r.json(); }).then(function(res){
       btn.disabled = false; btn.textContent = 'إنشاء العضوية';
       if (!res.ok) { errEl.textContent = res.error || 'تعذر إنشاء العضوية'; errEl.style.display = 'block'; return; }
@@ -237,7 +241,7 @@ function doMemberLogin(){
           try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
           sessionStorage.setItem('member_token', res.token);
           sessionStorage.setItem('member_data', JSON.stringify(res.student));
-          try { localStorage.setItem('opnlio_academy_session', JSON.stringify({ token: res.token, student: res.student, progress: res.progress || [], expiresAt: Date.now() + 24*60*60*1000 })); } catch(e){}
+          try { localStorage.setItem('opnlio_academy_session', JSON.stringify({ token: res.token, student: res.student, progress: res.progress || [], freeProgress: res.freeProgress || [], expiresAt: Date.now() + 24*60*60*1000 })); } catch(e){}
           location.href = './member-dashboard.html';
         }, onCancel: function(){ msgEl.style.display='block'; msgEl.style.color='#ff9b9b'; msgEl.textContent='لم يكتمل التحقق — لم يتم تسجيل الدخول'; } });
       }).catch(function(){ msgEl.style.display='block'; msgEl.style.color='#ff9b9b'; msgEl.textContent='تعذّر الاتصال بالخادم'; });
@@ -277,5 +281,6 @@ function submitRecoverNum(){
     });
 }
 </script>
+<script src="phone-code.js" defer></script>
 </body>
 </html>

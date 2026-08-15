@@ -55,6 +55,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
       <div style="position:relative;"><input id="loginPass" type="password" placeholder="كلمة المرور" style="width:100%; box-sizing:border-box; padding-left:38px;"><span onclick="var i=document.getElementById('loginPass'); i.type = i.type==='password'?'text':'password'; this.textContent = i.type==='password'?'👁️':'🙈';" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px;">👁️</span></div>
       <div id="loginErr" style="display:none; color:#ff9b9b; font-size:13px; text-align:center;"></div>
       <button class="btn-gold" onclick="doLogin()">دخول</button>
+      <div id="otpRow" style="display:none; flex-direction:column; gap:10px;"><input id="loginOtp" type="text" inputmode="numeric" maxlength="6" placeholder="رمز تيليجرام (6 أرقام)" style="text-align:center; letter-spacing:6px; font-size:18px; direction:ltr;"><div style="display:flex; align-items:center; justify-content:space-between;"><span id="otpTimer" style="font-size:12px; color:#8a93a8;">05:00</span><span style="font-size:11.5px; color:#8a93a8;">أُرسل الرمز إلى بوت تيليجرام 🔐</span></div><button class="btn-gold" onclick="doVerifyOtp()">تحقق وادخل</button></div>
       <div style="text-align:center; margin-top:12px;"><a href="#" onclick="doAdminForgotPassword(); return false;" style="color:#D4AF37; font-size:13px; font-weight:700;">نسيت كلمة المرور؟</a></div>
     </div>
   </div>
@@ -79,7 +80,23 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     </nav>
     <main style="flex:1; padding:30px 26px; max-width:1100px;">
 
-  <section class="panel" data-panel="overview">
+  <section class="panel" data-panel="finance">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-bottom:20px;">
+    <div class="card" style="text-align:center;"><div style="font-size:12px; color:#8a93a8; margin-bottom:6px;">إجمالي الإيراد</div><div id="fin_totRev" style="font-size:24px; font-weight:900; color:#D4AF37;">—</div></div>
+    <div class="card" style="text-align:center;"><div style="font-size:12px; color:#8a93a8; margin-bottom:6px;">إجمالي العمولات</div><div id="fin_totCom" style="font-size:24px; font-weight:900; color:#ff9b9b;">—</div></div>
+    <div class="card" style="text-align:center;"><div style="font-size:12px; color:#8a93a8; margin-bottom:6px;">الصافي التقريبي</div><div id="fin_net" style="font-size:24px; font-weight:900; color:#39FF14;">—</div></div>
+    <div class="card" style="text-align:center;"><div style="font-size:12px; color:#8a93a8; margin-bottom:6px;">مدفوعات الأكاديمية</div><div id="fin_acad" style="font-size:24px; font-weight:900; color:#f0cf6c;">—</div></div>
+  </div>
+  <div class="card" style="margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;"><h3 style="margin:0; color:#D4AF37; font-size:15px;">📈 الإيراد × العمولات × الصافي — 12 شهراً</h3><div style="display:flex; gap:14px; font-size:11.5px;"><span style="color:#D4AF37;">— إيراد</span><span style="color:#ff9b9b;">— عمولات</span><span style="color:#39FF14;">— صافي</span></div></div>
+    <canvas id="finLineChart" height="260" style="width:100%; display:block;"></canvas>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px;">
+    <div class="card"><h3 style="margin:0 0 12px; color:#D4AF37; font-size:14px;">📦 توزيع الباقات النشطة</h3><canvas id="finPlansChart" height="220" style="width:100%; display:block;"></canvas></div>
+    <div class="card"><h3 style="margin:0 0 12px; color:#D4AF37; font-size:14px;">🎓 مدفوعات الأكاديمية شهرياً</h3><canvas id="finAcadChart" height="220" style="width:100%; display:block;"></canvas></div>
+  </div>
+</section>
+<section class="panel" data-panel="overview">
   <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:30px;" id="statsGrid"></div>
   </section>
 
@@ -151,7 +168,11 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   <section class="panel" data-panel="affiliates">
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">🤝 أداء سفراء O P N  LIO</h3>
-    <div id="inactiveBanner" style="display:none; background:rgba(255,180,60,.1); border:1px solid rgba(255,180,60,.4); color:#ffcf8a; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
+    <div id="ambReqCard" style="display:none; margin-bottom:18px; background:rgba(57,255,20,.04); border:1px solid rgba(57,255,20,.3); border-radius:14px; padding:18px;">
+  <div style="font-weight:900; color:#39FF14; font-size:14.5px; margin-bottom:14px;">🤝 طلبات سفراء الخريجين <span id="ambReqCount" style="background:#39FF14; color:#0a0f1a; border-radius:12px; padding:2px 10px; font-size:12px; margin-inline-start:6px;"></span></div>
+  <div id="ambReqList" style="display:flex; flex-direction:column; gap:12px;"></div>
+</div>
+<div id="inactiveBanner" style="display:none; background:rgba(255,180,60,.1); border:1px solid rgba(255,180,60,.4); color:#ffcf8a; font-size:13px; font-weight:700; padding:12px 16px; border-radius:10px; margin-bottom:16px;"></div>
     <table id="affiliatesTable"><thead><tr><th>الحالة</th><th>الاسم</th><th>الكود</th><th>الدولة</th><th>عدد التجديدات</th><th>إجمالي العمولة</th><th>تقرير</th><th>الاتفاقية</th><th></th></tr></thead><tbody></tbody></table>
     <button class="btn-gold" style="margin-top:14px;" onclick="location.href='/api/admin-data?action=export-affiliates'.replace('/api/','/.netlify/functions/')+ '&t=' + sessionStorage.getItem(TOKEN_KEY)">⬇ تصدير CSV</button>
   </div>
@@ -314,7 +335,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   <section class="panel" data-panel="page-visibility">
   <div class="card">
     <h3 style="margin:0 0 16px; color:#D4AF37;">👁️ إظهار/إخفاء صفحات الموقع</h3>
-    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">إخفاء صفحة يعرض للزائر رسالة "غير متاحة حالياً" بدل محتواها — لا يحذف الملف.</p>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">إخفاء صفحة يعرض للزائر صفحة صيانة أنيقة بلغته بدل محتواها — لا يحذف الملف. يمكنك إخفاء قسم بكل اللغات، أو صيانة لغة واحدة فقط.</p>
     <div id="pageVisList" style="display:grid; gap:10px;"></div>
   </div>
   </section>
@@ -476,6 +497,7 @@ document.addEventListener('click', function(e){
 
 var NAV_ITEMS = [
   ['overview','📊 نظرة عامة'],
+  ['finance','💰 التحليلات المالية'],
   ['tv-alerts','📡 تنبيهات TradingView'],
   ['revenue','💵 الإيرادات'],
   ['prices','💰 الأسعار'],
@@ -593,6 +615,7 @@ function showPanel(name){
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===name); });
   document.querySelectorAll('.navBtn').forEach(function(b, i){ b.classList.toggle('active', NAV_ITEMS[i][0]===name); });
   if (name === 'academy') loadAcademy();
+  if (name === 'finance') loadFinance();
   if (name === 'broadcast') populateBcTemplates();
   if (name === 'audit') loadAuditLog();
   if (name === 'reviews') loadPendingReviews();
@@ -661,19 +684,48 @@ function doLogin(){
   fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password}) })
     .then(function(r){ return r.json(); })
     .then(function(res){
-      if (res.ok) {
-        sessionStorage.setItem(TOKEN_KEY, res.token);
-        showDash();
-        startHeartbeat();
-        startNotifications();
-      } else {
-        var e = document.getElementById('loginErr');
-        e.textContent = res.error || 'خطأ في الدخول';
-        e.style.display = 'block';
+      var err = document.getElementById('loginErr');
+      if (res.ok && res.otpRequired){
+        err.style.display = 'none';
+        document.getElementById('otpRow').style.display = 'flex';
+        document.getElementById('loginOtp').focus();
+        window._otpLeft = res.expiresInSec || 300;
+        if (window._otpT) clearInterval(window._otpT);
+        window._otpT = setInterval(function(){
+          window._otpLeft--;
+          var m = Math.floor(window._otpLeft / 60), s = window._otpLeft % 60;
+          var el = document.getElementById('otpTimer');
+          if (el) el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+          if (window._otpLeft <= 0){ clearInterval(window._otpT); document.getElementById('otpRow').style.display = 'none'; err.style.display = 'block'; err.textContent = 'انتهت مهلة الرمز — ادخل من جديد'; }
+        }, 1000);
+        return;
       }
-    }).catch(function(){ alert('تعذّر الاتصال بالخادم'); });
+      if (res.ok && res.token){
+        sessionStorage.setItem(TOKEN_KEY, res.token);
+        showDash(); startHeartbeat();
+        return;
+      }
+      err.style.display = 'block';
+      err.textContent = res.error || 'فشل الدخول';
+    }).catch(function(){ var err = document.getElementById('loginErr'); err.style.display = 'block'; err.textContent = 'تعذّر الاتصال'; });
 }
-
+function doVerifyOtp(){
+  var otp = document.getElementById('loginOtp').value.trim();
+  var err = document.getElementById('loginErr');
+  if (!/^\d{6}$/.test(otp)){ err.style.display = 'block'; err.textContent = 'أدخل الرمز المكوّن من 6 أرقام'; return; }
+  fetch('/api/admin-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ otp: otp }) })
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if (res.ok && res.token){
+        if (window._otpT) clearInterval(window._otpT);
+        sessionStorage.setItem(TOKEN_KEY, res.token);
+        document.getElementById('otpRow').style.display = 'none';
+        showDash(); startHeartbeat();
+      } else {
+        err.style.display = 'block'; err.textContent = res.error || 'الرمز غير صحيح';
+      }
+    }).catch(function(){ err.style.display = 'block'; err.textContent = 'تعذّر الاتصال'; });
+}
 function logout(){
   authFetch('/api/admin-data?action=logout', { method: 'POST' }).catch(function(){});
   sessionStorage.removeItem(TOKEN_KEY);
@@ -781,6 +833,62 @@ function syncPaddleNow(silent){
     }).catch(function(){ if (!silent && resultEl) resultEl.textContent = '❌ تعذر الاتصال بالخادم'; });
 }
 
+function _finGrid(ctx, W, H, pad){ ctx.strokeStyle = "rgba(255,255,255,.07)"; ctx.lineWidth = 1; for (var g = 0; g <= 4; g++){ var y = pad + (H - pad * 2) * g / 4; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke(); } }
+function drawFinLine(cv, months, series){
+  var W = cv.width = cv.offsetWidth * 2, H = cv.height = 520; var ctx = cv.getContext("2d"); ctx.clearRect(0, 0, W, H);
+  var pad = 60; _finGrid(ctx, W, H, pad);
+  var maxV = 10; series.forEach(function(s){ s.data.forEach(function(v){ if (v > maxV) maxV = v; }); }); maxV *= 1.15;
+  ctx.fillStyle = "#8a93a8"; ctx.font = "700 20px Tajawal"; ctx.textAlign = "center";
+  months.forEach(function(m, i){ if (months.length <= 8 || i % 2 === 0) ctx.fillText(m.slice(5), pad + (W - pad * 2) * (months.length === 1 ? 0.5 : i / (months.length - 1)), H - 18); });
+  ctx.textAlign = "right"; for (var g = 0; g <= 4; g++){ var val = Math.round(maxV * (4 - g) / 4); ctx.fillText("$" + val, pad - 10, pad + (H - pad * 2) * g / 4 + 7); }
+  series.forEach(function(s){
+    ctx.strokeStyle = s.color; ctx.lineWidth = 4; ctx.beginPath();
+    s.data.forEach(function(v, i){ var x = pad + (W - pad * 2) * (s.data.length === 1 ? 0.5 : i / (s.data.length - 1)); var y = pad + (H - pad * 2) * (1 - v / maxV); if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); });
+    ctx.stroke();
+    s.data.forEach(function(v, i){ var x = pad + (W - pad * 2) * (s.data.length === 1 ? 0.5 : i / (s.data.length - 1)); var y = pad + (H - pad * 2) * (1 - v / maxV); ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.fill(); });
+  });
+}
+function drawFinBars(cv, labels, values, color){
+  var W = cv.width = cv.offsetWidth * 2, H = cv.height = 440; var ctx = cv.getContext("2d"); ctx.clearRect(0, 0, W, H);
+  var pad = 50; _finGrid(ctx, W, H, pad);
+  var maxV = 1; values.forEach(function(v){ if (v > maxV) maxV = v; }); maxV *= 1.15;
+  var bw = Math.min(90, (W - pad * 2) / Math.max(1, values.length) * 0.55);
+  ctx.font = "700 19px Tajawal"; ctx.textAlign = "center";
+  values.forEach(function(v, i){
+    var cxx = pad + (W - pad * 2) * (i + 0.5) / values.length;
+    var bh = (H - pad * 2) * v / maxV;
+    var grd = ctx.createLinearGradient(0, H - pad - bh, 0, H - pad); grd.addColorStop(0, color); grd.addColorStop(1, "rgba(212,175,55,.25)");
+    ctx.fillStyle = grd; ctx.beginPath(); ctx.roundRect(cxx - bw / 2, H - pad - bh, bw, Math.max(4, bh), 8); ctx.fill();
+    ctx.fillStyle = "#e9edf5"; ctx.fillText(String(v), cxx, H - pad - bh - 10);
+    ctx.fillStyle = "#8a93a8"; ctx.fillText(labels[i], cxx, H - 16);
+  });
+}
+function loadFinance(){
+  authFetch("/api/admin-data?action=finance-analytics").then(function(r){ return r.json(); }).then(function(res){
+    if (!res.ok) return;
+    var months = [];
+    var now = new Date();
+    for (var i = 11; i >= 0; i--){ var d = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push(d.toISOString().slice(0, 7)); }
+    function seriesOf(rows){ var map = {}; (rows || []).forEach(function(r2){ map[r2.month] = parseFloat(r2.total || r2.c || 0); }); return months.map(function(m){ return map[m] || 0; }); }
+    var rev = seriesOf(res.revenue), com = seriesOf(res.commissions);
+    var net = rev.map(function(v, i){ return Math.max(0, v - com[i]); });
+    document.getElementById("fin_totRev").textContent = "$" + parseFloat(res.totals.revenue).toFixed(0);
+    document.getElementById("fin_totCom").textContent = "$" + parseFloat(res.totals.commissions).toFixed(0);
+    document.getElementById("fin_net").textContent = "$" + (parseFloat(res.totals.revenue) - parseFloat(res.totals.commissions)).toFixed(0);
+    document.getElementById("fin_acad").textContent = res.totals.academyPaid;
+    drawFinLine(document.getElementById("finLineChart"), months, [
+      { color: "#D4AF37", data: rev },
+      { color: "#ff9b9b", data: com },
+      { color: "#39FF14", data: net }
+    ]);
+    var planMap = { renew_1m: "شهري", renew_3m: "3 شهور", renew_6m: "6 شهور", renew_1y: "سنوي" };
+    var pl = { renew_1m: 0, renew_3m: 0, renew_6m: 0, renew_1y: 0 };
+    (res.plans || []).forEach(function(p){ if (pl[p.status] !== undefined) pl[p.status] = p.c; });
+    drawFinBars(document.getElementById("finPlansChart"), Object.keys(pl).map(function(k){ return planMap[k]; }), Object.keys(pl).map(function(k){ return pl[k]; }), "#D4AF37");
+    var acadSeries = seriesOf(res.academy);
+    drawFinBars(document.getElementById("finAcadChart"), months.map(function(m){ return m.slice(5); }), acadSeries, "#39FF14");
+  }).catch(function(){});
+}
 function loadOverview(){
   authFetch('/api/admin-data?action=overview').then(function(r){ return r.json(); }).then(function(res){
     if (!res.ok) { logout(); return; }
@@ -1550,7 +1658,46 @@ function deleteCustomer(id){
     .then(function(r){return r.json();}).then(function(){ loadCustomers(); });
 }
 
+function loadAmbassadorRequests(){
+  authFetch('/api/admin-data?action=ambassador-requests').then(function(r){return r.json();}).then(function(res){
+    var card = document.getElementById('ambReqCard'), list = document.getElementById('ambReqList');
+    if (!res.ok || !res.requests || !res.requests.length){ card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    document.getElementById('ambReqCount').textContent = res.requests.length;
+    list.innerHTML = res.requests.map(function(q){
+      var d = new Date(q.created_at).toLocaleDateString('ar-EG');
+      var ag = q.agreement_at ? new Date(q.agreement_at).toLocaleString('ar-EG') : '—';
+      var sig = q.signature ? '<img src="' + q.signature + '" style="height:52px; background:rgba(255,255,255,.06); border:1px solid rgba(212,175,55,.3); border-radius:8px;">' : '<span style="color:#ff9b9b; font-size:12px;">بلا توقيع (طلب قديم)</span>';
+      return '<div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:rgba(255,255,255,.03); border-radius:12px; padding:12px 14px;">'
+        + '<div style="flex:1; min-width:180px;"><b style="color:#fff; font-size:13.5px;">' + q.name + '</b><div style="font-size:11.5px; color:#8a93a8; direction:ltr; text-align:right;">' + q.email + '</div><div style="font-size:11px; color:#8a93a8; margin-top:3px;">الطلب: ' + d + ' · وقّع الاتفاقية: ' + ag + '</div></div>'
+        + '<div style="text-align:center;"><div style="font-size:10.5px; color:#8a93a8; margin-bottom:3px;">التوقيع ✍</div>' + sig + '</div>'
+        + '<div style="flex:1 1 100%; background:rgba(212,175,55,.06); border:1px solid rgba(212,175,55,.25); border-radius:10px; padding:10px 12px; font-size:11.5px; line-height:1.85; color:#c9d2e3;">'
+          + '<b style="color:#D4AF37;">🏦 حساب استلام العمولات (مُدرَج بالاتفاقية — العضو أقرّ بصحته)</b><br>'
+          + 'الاسم: <b style="color:#fff;">' + (q.bank_name || '—') + '</b> · البنك: <b style="color:#fff;">' + (q.bank_bank || '—') + '</b><br>'
+          + 'IBAN: <b style="color:#f0cf6c; direction:ltr; display:inline-block;">' + (q.bank_iban || '—') + '</b> · SWIFT: <b style="color:#f0cf6c; direction:ltr; display:inline-block;">' + (q.bank_swift || '—') + '</b><br>'
+          + 'العنوان: <b style="color:#fff;">' + (q.bank_addr || '—') + '</b>'
+        + '</div>'
+        + '<a href="./ambassador-agreement.html" target="_blank" style="font-size:11.5px; color:#D4AF37; border:1px solid rgba(212,175,55,.35); padding:8px 12px; border-radius:16px; text-decoration:none; font-weight:700;">📄 نص الاتفاقية</a>'
+        + '<button class="btn-gold" style="padding:9px 18px; font-size:12.5px;" onclick="ambReqAction(' + q.id + ', true)">✓ موافقة</button>'
+        + '<button style="padding:9px 16px; border-radius:10px; border:1px solid rgba(255,107,107,.4); background:transparent; color:#ff9b9b; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit;" onclick="ambReqAction(' + q.id + ', false)">✕ رفض</button>'
+        + '</div>';
+    }).join('');
+  }).catch(function(){});
+}
+function ambReqAction(id, approve){
+  if (approve){
+    if (!confirm('الموافقة على هذا الخريج كسفير؟ سيتولد كوده ويصله بريد بنسخة الاتفاقية ورابط الكود.')) return;
+    authFetch('/api/admin-data?action=approve-ambassador-request', { method:'POST', body: JSON.stringify({id:id}) })
+      .then(function(r){return r.json();}).then(function(res){ if (res && !res.ok) alert(res.error || 'فشل'); loadAmbassadorRequests(); loadAffiliates(); });
+  } else {
+    var reason = prompt('سبب الرفض (يصل للعضو — اتركه فارغاً لرسالة اعتذار عامة):') ;
+    if (reason === null) return;
+    authFetch('/api/admin-data?action=reject-ambassador-request', { method:'POST', body: JSON.stringify({id:id, reason:reason}) })
+      .then(function(r){return r.json();}).then(function(){ loadAmbassadorRequests(); });
+  }
+}
 function loadAffiliates(){
+  loadAmbassadorRequests();
   var tb = document.querySelector('#affiliatesTable tbody');
   tb.innerHTML = '<tr><td colspan="8"><div class="skeleton"></div><div class="skeleton"></div></td></tr>';
   authFetch('/api/admin-data?action=affiliates').then(function(r){return r.json();}).then(function(res){
@@ -2044,51 +2191,74 @@ function simpleBarList(containerId, items, colorFn){
 
 var STATUS_LABELS_MAP = {trial:'تجربة مجانية', canceled:'ملغى', pending_payment:'بانتظار الدفع', renew_1m:'شهري', renew_3m:'3 أشهر', renew_6m:'6 أشهر', renew_1y:'سنوي'};
 
-var PAGE_LIST = [
+var PAGE_SECTIONS = [
   {key:'academy', label:'🎓 الأكاديمية التدريبية'},
   {key:'system', label:'⚙️ المنظومة'},
   {key:'signup', label:'✍️ الاشتراك'},
-  {key:'affiliate', label:'⚜ تسجيل السفراء'},
   {key:'booklet', label:'📘 كتيب الشرح'},
   {key:'check-status', label:'🔍 التحقق من الاشتراك'}
 ];
-function loadTvAlerts(){
-  authFetch('/api/admin-data?action=tv-alerts').then(function(r){return r.json();}).then(function(res){
-    var list = document.getElementById('tvAlertsList');
-    if (!res.ok) { list.innerHTML = '<div style="text-align:center; color:#ff9b9b; font-size:13px; padding:20px;">تعذّر جلب التنبيهات</div>'; return; }
-    if (!res.alerts.length) { list.innerHTML = '<div style="text-align:center; color:#6b7488; font-size:13px; padding:20px;">لا توجد تنبيهات بعد — ستظهر هنا فور إطلاقها من TradingView</div>'; return; }
-    list.innerHTML = res.alerts.map(function(a){
-      var color = a.direction === 'up' ? '#39FF14' : a.direction === 'down' ? '#ff6b6b' : '#D4AF37';
-      var icon = a.direction === 'up' ? '▲' : a.direction === 'down' ? '▼' : '◆';
-      var t = new Date(a.created_at);
-      var mins = Math.round((Date.now() - t.getTime()) / 60000);
-      var ago = mins < 1 ? 'الآن' : mins < 60 ? ('قبل ' + mins + ' دقيقة') : ('قبل ' + Math.round(mins/60) + ' ساعة');
-      return '<div style="display:flex; gap:12px; align-items:flex-start; padding:12px 14px; background:rgba(255,255,255,.03); border-right:3px solid '+color+'; border-radius:10px;">' +
-        '<span style="color:'+color+'; font-size:15px; font-weight:900;">'+icon+'</span>' +
-        '<div style="flex:1; min-width:0;">' +
-        '<div style="font-weight:800; font-size:13.5px; color:#fff;">'+(a.symbol||'—')+(a.timeframe?' <span style="color:#8a93a8; font-weight:400; font-size:11.5px;">· '+a.timeframe+'</span>':'')+'</div>' +
-        '<div style="font-size:12.5px; color:#c9d2e3; margin-top:3px; word-break:break-word;">'+a.message+'</div>' +
-        '<div style="font-size:11px; color:#6b7488; margin-top:4px;">'+(a.script_name||'')+' · '+ago+'</div>' +
-        '</div></div>';
-    }).join('');
+var PV_LANGS = [
+  {code:'ar', name:'العربية', flag:'🇸🇦'},
+  {code:'en', name:'English', flag:'🇬🇧'},
+  {code:'de', name:'Deutsch', flag:'🇩🇪'},
+  {code:'fr', name:'Français', flag:'🇫🇷'},
+  {code:'es', name:'Español', flag:'🇪🇸'},
+  {code:'tr', name:'Türkçe', flag:'🇹🇷'},
+  {code:'pt', name:'Português', flag:'🇵🇹'},
+  {code:'it', name:'Italiano', flag:'🇮🇹'}
+];
+function pvKey(lang, section){ return lang === 'ar' ? section : (lang + '-' + section); }
+function loadPageVisibility(){
+  authFetch('/api/admin-data?action=page-visibility').then(function(r){ return r.text(); }).then(function(t){
+    var res = null; try { res = t ? JSON.parse(t) : null; } catch(e){}
+    if (!res || !res.ok) return;
+    var hid = res.hidden || {};
+    var el = document.getElementById('pageVisList');
+    var html = '';
+    // صف الإخفاء الشامل لكل قسم
+    html += '<div style="font-size:12.5px; font-weight:800; color:#D4AF37; margin:4px 0 10px;">🌍 إخفاء شامل (كل اللغات معاً)</div>';
+    PAGE_SECTIONS.forEach(function(s){
+      var isHidden = !!hid[s.key];
+      html += '<div style="display:flex; align-items:center; justify-content:space-between; padding:11px 15px; background:rgba(255,255,255,.03); border-radius:10px; margin-bottom:8px;">' +
+        '<span style="font-size:13.5px; font-weight:700;">' + s.label + '</span>' +
+        '<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12.5px; font-weight:800; color:' + (isHidden ? '#ff9b9b' : '#39FF14') + ';">' +
+        '<input type="checkbox" ' + (isHidden ? '' : 'checked') + ' onchange="togglePageVisibility(&quot;' + s.key + '&quot;, !this.checked)" style="width:auto;">' +
+        (isHidden ? 'مخفية' : 'ظاهرة') + '</label></div>';
+    });
+    // لغة لغة
+    html += '<div style="font-size:12.5px; font-weight:800; color:#D4AF37; margin:22px 0 8px;">🈯 إخفاء لغة بعينها (صيانة لغة واحدة)</div>';
+    html += '<div style="font-size:11.5px; color:#8a93a8; margin-bottom:12px;">الإخفاء الشامل أعلاه يتجاوز هذه الخيارات — أي قسم مخفي شاملاً يبقى مخفياً بكل اللغات.</div>';
+    html += '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">' + PV_LANGS.map(function(l){
+      return '<button data-pvlang="' + l.code + '" onclick="pvShowLang(&quot;' + l.code + '&quot;)" style="padding:6px 13px; border-radius:16px; border:1px solid rgba(212,175,55,.4); background:transparent; color:#c9d2e3; font-size:12px; font-weight:800; cursor:pointer; font-family:inherit;">' + l.flag + ' ' + l.name + '</button>';
+    }).join('') + '</div>';
+    html += '<div id="pvLangRows"></div>';
+    el.innerHTML = html;
+    window._pvHidden = hid;
+    pvShowLang(window._pvLang || 'ar');
   }).catch(function(){});
 }
-var _tvAlertsTimer = setInterval(function(){ var p = document.querySelector('.panel[data-panel="tv-alerts"]'); if (p && p.classList.contains('active')) loadTvAlerts(); }, 60000);
-
-function loadPageVisibility(){
-  authFetch('/api/admin-data?action=page-visibility').then(function(r){return r.json();}).then(function(res){
-    if (!res.ok) return;
-    var el = document.getElementById('pageVisList');
-    el.innerHTML = PAGE_LIST.map(function(p){
-      var isHidden = !!res.hidden[p.key];
-      return '<div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(255,255,255,.03); border-radius:10px;">' +
-        '<span style="font-size:13.5px; font-weight:700;">'+p.label+'</span>' +
-        '<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:'+(isHidden?'#ff9b9b':'#39FF14')+'; font-weight:800;">' +
-        (isHidden ? 'مخفية' : 'ظاهرة') +
-        '<input type="checkbox" '+(isHidden?'':'checked')+' onchange="togglePageVisibility(\''+p.key+'\', !this.checked)" style="width:auto;">' +
-        '</label></div>';
-    }).join('');
+function pvShowLang(lang){
+  window._pvLang = lang;
+  var hid = window._pvHidden || {};
+  document.querySelectorAll('[data-pvlang]').forEach(function(b){
+    var on = b.getAttribute('data-pvlang') === lang;
+    b.style.background = on ? 'linear-gradient(120deg,#D4AF37,#f0cf6c)' : 'transparent';
+    b.style.color = on ? '#070d18' : '#c9d2e3';
   });
+  var rows = PAGE_SECTIONS.map(function(s){
+    var k = pvKey(lang, s.key);
+    var globalOff = !!hid[s.key] && lang !== 'ar';
+    var isHidden = !!hid[k];
+    var color = globalOff ? '#8a93a8' : (isHidden ? '#ff9b9b' : '#39FF14');
+    var txt = globalOff ? 'مخفية شاملاً' : (isHidden ? 'مخفية' : 'ظاهرة');
+    return '<div style="display:flex; align-items:center; justify-content:space-between; padding:11px 15px; background:rgba(255,255,255,.03); border-radius:10px; margin-bottom:8px;' + (globalOff ? ' opacity:.5;' : '') + '">' +
+      '<span style="font-size:13.5px; font-weight:700;">' + s.label + '</span>' +
+      '<label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12.5px; font-weight:800; color:' + color + ';">' +
+      '<input type="checkbox" ' + (isHidden ? '' : 'checked') + (globalOff ? ' disabled' : '') + ' onchange="togglePageVisibility(&quot;' + k + '&quot;, !this.checked)" style="width:auto;">' +
+      txt + '</label></div>';
+  }).join('');
+  document.getElementById('pvLangRows').innerHTML = rows;
 }
 function togglePageVisibility(page, hidden){
   authFetch('/api/admin-data?action=set-page-visibility', { method:'POST', body: JSON.stringify({page, hidden}) })

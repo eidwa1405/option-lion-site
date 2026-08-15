@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="top">
+<head>
+<meta charset="utf-8">
+<script src="ref-capture.js"></script>
+<meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة تحكم العضوية — O P N  LIO</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; }
+a { color:#D4AF37; text-decoration:none; }
+.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:18px; padding:24px; }
+input { font-family:inherit; }
+input:focus { outline:none; border-color:#D4AF37 !important; }
+.stat-num { font-size:28px; font-weight:900; color:#D4AF37; }
+.stat-lbl { font-size:12px; color:#8a93a8; margin-top:4px; }
+@media (max-width:900px){ #dashCols{grid-template-columns:1fr !important;} #colSide{position:static !important;} }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+</style>
+<script src="academy-pay.js"></script>
+<script>
+/* PREVIEW — بيانات تجريبية بلا سيرفر */
+(function(){
+  var SAMPLE = [
+    { symbol:'AAPL', timeframe:'1H', script_name:'نداء الملك', direction:'up', message:'شراء — نداء الملك: تحول صاعد مؤكد مع دعم الفوليوم', created_at: new Date(Date.now()-4*60000).toISOString() },
+    { symbol:'TSLA', timeframe:'15m', script_name:'امبراطورية الأثرياء', direction:'down', message:'بيع — كسر الخط الجوهري مع قفز لوني هابط', created_at: new Date(Date.now()-22*60000).toISOString() },
+    { symbol:'QQQ', timeframe:'4H', script_name:'البايفت الذكي', direction:'neutral', message:'لمس نقطة الارتكاز الأسبوعية المركزية — ترقّب', created_at: new Date(Date.now()-65*60000).toISOString() },
+    { symbol:'NVDA', timeframe:'1D', script_name:'نداء الملك', direction:'up', message:'CALL — الدرع المزدوج: ارتداد ناجح عن الدرع مع زخم', created_at: new Date(Date.now()-3*3600000).toISOString() },
+    { symbol:'AMZN', timeframe:'1H', script_name:'سحابة الأحجام', direction:'down', message:'تحول هابط — سحابة الأحجام تكشف تصريف مؤسسي', created_at: new Date(Date.now()-5*3600000).toISOString() }
+  ];
+  var orig = window.fetch;
+  window.fetch = function(url, opts){
+    var u = String(url);
+    function json(o){ return Promise.resolve({ status:200, json:function(){ return Promise.resolve(o); } }); }
+    if (u.indexOf('/api/tv-alerts')!==-1) return json({ ok:true, alerts: SAMPLE });
+    if (u.indexOf('/api/customer-status')!==-1) return json({ ok:true, status:'active', expires_at: new Date(Date.now()+30*86400000).toISOString() });
+    if (u.indexOf('/api/academy-auth')!==-1) return json({ ok:true, paid:false });
+    if (u.indexOf('/api/')!==-1 || u.indexOf('/.netlify/')!==-1) return json({ ok:true });
+    return orig.apply(this, arguments);
+  };
+})();
+window.__demoActivate = function(){
+  document.getElementById('subDot').style.background='#39FF14';
+  document.getElementById('subDot').style.boxShadow='0 0 10px #39FF14';
+  document.getElementById('subLine1').textContent='اشتراك فعّال ✅';
+  document.getElementById('subLine2').textContent='ينتهي في: ' + new Date(Date.now()+30*86400000).toLocaleDateString('ar-SA');
+  startAlerts({ cid:'sa1234567', tv:'demo_trader' });
+  document.getElementById('pvOn').style.opacity='1';
+  document.getElementById('pvOff').style.opacity='.45';
+};
+window.__demoGraduate = function(){
+  memberData.graduated_at = new Date().toISOString();
+  memberData.discount_code = 'dsc_PREVIEW60';
+  memberData.current_level = 13; memberData.points = 1240; memberData.rank = 'خرّيج O P N LIO';
+  renderMember();
+  var g = document.getElementById('graduateDiscountCard');
+  g.style.boxShadow = '0 0 0 4px rgba(57,255,20,.35)';
+  setTimeout(function(){ g.style.boxShadow='none'; }, 900);
+  document.getElementById('pvGrad').style.opacity='1';
+  document.getElementById('pvOn').style.opacity='.45';
+  document.getElementById('pvOff').style.opacity='.45';
+};
+document.addEventListener('DOMContentLoaded', function(){
+  var bar = document.createElement('div');
+  bar.setAttribute('dir','rtl');
+  bar.style.cssText='position:fixed;bottom:16px;left:16px;z-index:99999;background:#10141f;border:1px solid rgba(212,175,55,.45);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);font-family:Tajawal,sans-serif;';
+  bar.innerHTML = '<span style="font-size:11.5px;color:#8a93a8;font-weight:700;">وضع المعاينة:</span>'
+    + '<button id="pvOn" onclick="__demoActivate()" style="background:linear-gradient(135deg,#39FF14,#7dff5c);color:#070d18;border:none;border-radius:8px;padding:7px 14px;font-weight:900;font-size:12px;cursor:pointer;font-family:inherit;opacity:.45;">اشتراك مفعّل ✅</button>'
+    + '<button id="pvGrad" onclick="__demoGraduate()" style="background:linear-gradient(135deg,#39FF14,#D4AF37);color:#070d18;border:none;border-radius:8px;padding:7px 14px;font-weight:900;font-size:12px;cursor:pointer;font-family:inherit;opacity:.45;">خرّيج 🎓</button>'
+    + '<button id="pvOff" onclick="location.reload()" style="background:linear-gradient(135deg,#D4AF37,#f0cf6c);color:#1a1408;border:none;border-radius:8px;padding:7px 14px;font-weight:900;font-size:12px;cursor:pointer;font-family:inherit;">مقفلة 🔒</button>';
+  document.body.appendChild(bar);
+});
+</script>
+<link rel="canonical" href="https://opnlio.com/member-preview.html">
+</head>
+<body>
+<div style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 10%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh;">
+
+<nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
+  <a href="./index.html" style="display:flex; align-items:center; gap:10px;">
+    <img src="assets/lion-logo.jpg" alt="O P N LIO" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
+    <span style="font-weight:900; letter-spacing:.5px; color:#f4f0e4; white-space:nowrap;"><span style="color:#f4f0e4; font-size:22px;">O</span> <span style="color:#f4f0e4; font-size:24px;">P</span> <span style="color:#f4f0e4; font-size:26px;">N</span> <span style="color:#D4AF37; font-size:32px;">LIO</span></span>
+  </a>
+  <button onclick="doLogout()" style="font-size:13px; font-weight:700; color:#ff9b9b; background:transparent; border:1px solid rgba(255,80,80,.3); padding:8px 18px; border-radius:20px; cursor:pointer; font-family:inherit;">تسجيل خروج ↩</button>
+</nav>
+
+<section style="padding:clamp(30px,6vw,60px) clamp(20px,6vw,64px); max-width:1000px; margin:0 auto;">
+
+  <div style="display:flex; align-items:center; gap:14px; margin-bottom:28px; flex-wrap:wrap;">
+    <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:900; color:#070d18;" id="avatarInitial">؟</div>
+    <div>
+      <div style="font-size:13px; color:#8a93a8;">أهلاً بك يا عضو OPN LIO</div>
+      <h1 id="memberName" style="font-size:22px; font-weight:900; color:#fff; margin:2px 0 0;">—</h1>
+    </div>
+  </div>
+
+  <div id="dashCols" style="display:grid; grid-template-columns:340px 1fr; gap:24px; align-items:start;">
+  <div id="colSide" style="position:sticky; top:90px; min-width:0;">
+  <div class="card" id="alertsCard">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+      <h3 style="margin:0; color:#D4AF37; font-size:15px;">📡 تنبيهات الشركات المباشرة</h3>
+      <span id="alertsLive" style="display:none; align-items:center; gap:6px; font-size:11.5px; color:#39FF14; font-weight:700;"><span style="width:7px; height:7px; border-radius:50%; background:#39FF14; box-shadow:0 0 8px #39FF14; animation:pulse 1.6s infinite;"></span>مباشر</span>
+      <span id="alertsLockBadge" style="font-size:11.5px; color:#8a93a8; font-weight:700;">🔒 مقفلة</span>
+    </div>
+    <div id="alertsLocked" style="text-align:center; padding:16px 6px;">
+      <div style="font-size:30px; margin-bottom:10px;">🔒</div>
+      <p style="font-size:13px; color:#c9d2e3; line-height:1.9; margin:0 0 16px;">تتفعّل تلقائياً بعد <b style="color:#D4AF37;">اشتراك مؤشرات المنظومة</b> أو <b style="color:#D4AF37;">دفع رسم الأكاديمية $1 +15%</b>.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <a href="./pricing.html" style="display:block; font-weight:900; font-size:13px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:11px 18px; border-radius:22px;">اشترك بالمؤشرات ←</a>
+        <button onclick="payAcademyFromDash()" style="border:1.5px solid rgba(212,175,55,.45); background:transparent; color:#D4AF37; font-weight:900; font-size:13px; padding:10px 18px; border-radius:22px; cursor:pointer; font-family:inherit;">ادفع رسم الأكاديمية — $1 +15%</button>
+      </div>
+    </div>
+    <div id="alertsList" style="display:none; flex-direction:column; gap:10px; max-height:520px; overflow-y:auto;"></div>
+  </div>
+  </div>
+  <div id="colMain" style="min-width:0;">
+  <!-- ===== حالة الاشتراك ===== -->
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 16px; color:#D4AF37; font-size:15px;">💳 حالة اشتراكك</h3>
+    <div id="subStatusBox" style="display:flex; align-items:center; gap:12px; padding:14px; background:rgba(255,255,255,.03); border-radius:12px; margin-bottom:14px;">
+      <span id="subDot" style="width:12px; height:12px; border-radius:50%; flex-shrink:0; background:#7a8296; box-shadow:0 0 10px #7a8296;"></span>
+      <div>
+        <div id="subLine1" style="font-weight:800; font-size:14.5px; color:#fff;">الاشتراك غير مفعّل ⚪</div>
+        <div id="subLine2" style="font-size:12.5px; color:#8a93a8; margin-top:3px;">فعّل اشتراك المؤشرات لفتح التنبيهات — أو تحقق من حالتك برقم العميل وحساب TradingView.</div>
+      </div>
+    </div>
+    <div id="subLookupForm" style="display:flex; gap:10px; flex-wrap:wrap;">
+      <input id="sub_cid" placeholder="رقم العميل (مثال: sa1234567)" style="flex:1; min-width:180px; box-sizing:border-box; padding:11px 14px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:13.5px; direction:ltr; text-align:left;">
+      <input id="sub_tv" placeholder="حساب TradingView" style="flex:1; min-width:180px; box-sizing:border-box; padding:11px 14px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:13.5px; direction:ltr; text-align:left;">
+      <button onclick="checkSubscription()" style="padding:11px 22px; border:none; border-radius:10px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:13.5px; font-family:inherit; cursor:pointer;">تحقق</button>
+    </div>
+    <div id="subError" style="display:none; color:#ff9b9b; font-size:12.5px; margin-top:10px;"></div>
+    <p style="font-size:12px; color:#6b7488; margin:14px 0 0;">لا اشتراك بعد؟ <a href="./pricing.html" style="font-weight:700;">اشترك الآن</a></p>
+  </div>
+
+  <!-- ===== الأكاديمية ===== -->
+  <div class="card" style="margin-bottom:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;">
+      <h3 style="margin:0; color:#D4AF37; font-size:15px;">🎓 أكاديمية OPN LIO</h3>
+      <span id="rankBadge" style="font-size:12px; font-weight:800; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:5px 14px; border-radius:14px;">—</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:14px; margin-bottom:18px;">
+      <div style="text-align:center;"><div class="stat-num" id="statLevel">-</div><div class="stat-lbl">المستوى الحالي</div></div>
+      <div style="text-align:center;"><div class="stat-num" id="statPoints">-</div><div class="stat-lbl">النقاط</div></div>
+      <div style="text-align:center;"><div class="stat-num" id="statDone">-</div><div class="stat-lbl">مستويات مكتملة</div></div>
+    </div>
+    <div style="background:rgba(255,255,255,.06); border-radius:10px; height:10px; overflow:hidden; margin-bottom:16px;">
+      <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg,#D4AF37,#f0cf6c); transition:width .4s;"></div>
+    </div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <a id="academyCta" href="#" onclick="payAcademyFromDash(); return false;" style="display:inline-block; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:11px 24px; border-radius:22px;">ابدأ البرنامج التدريبي — $1 +15% ←</a>
+      <a id="certLink" href="#" style="display:none; font-weight:800; font-size:13.5px; color:#D4AF37; border:1.5px solid rgba(212,175,55,.4); padding:10px 22px; border-radius:22px;">🏆 تحميل شهادتك</a>
+    </div>
+  </div>
+
+
+  <!-- ===== أهلية السفير ===== -->
+  <div class="card" style="text-align:center; margin-bottom:24px;">
+    <div id="ambIcon" style="font-size:34px; margin-bottom:10px; opacity:.35;">🤝</div>
+    <h3 id="ambTitle" style="margin:0 0 8px; font-size:15px; color:#8a93a8;">أكمل الأكاديمية لتصبح مؤهلاً</h3>
+    <p id="ambDesc" style="font-size:12.5px; color:#6b7488; margin:0 0 14px;">إتمام جميع المستويات الـ12 يفتح لك أهلية الانضمام كسفير OPN LIO + خصم حصري 60% على اشتراك مؤشرات منظومة الذكاء التداولي المتكاملة التي تسهّل تداولك.</p>
+    <a id="ambBtn" href="./affiliate.html" style="display:none; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:11px 26px; border-radius:22px;">مؤهل لتصبح سفير OPN LIO ⚜</a>
+  </div>
+
+  <!-- ===== خصم الخريج ===== -->
+  <div class="card" id="graduateDiscountCard" style="display:none; text-align:center; background:linear-gradient(160deg,rgba(57,255,20,.08),rgba(255,255,255,.03)); border-color:rgba(57,255,20,.3);">
+    <div style="font-size:34px; margin-bottom:10px;">🎁</div>
+    <h3 style="margin:0 0 8px; font-size:16px; color:#39FF14;">خصم 60% حصري بانتظارك</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">خصم مرتبط بحسابك فقط، يُطبَّق تلقائياً عند الدفع — لا يمكن مشاركته أو استخدامه من قِبل غيرك.</p>
+    <input id="grad_tv" type="text" placeholder="اسم مستخدم TradingView (لمنحك صلاحية المؤشرات)" oninput="this.value=this.value.replace(/^@+/,'').toLowerCase(); this.style.borderColor='rgba(57,255,20,.35)';" style="width:100%; max-width:340px; box-sizing:border-box; padding:12px 14px; border-radius:10px; border:1px solid rgba(57,255,20,.35); background:rgba(0,0,0,.3); color:#fff; font-size:13.5px; font-family:inherit; direction:ltr; text-align:left; margin-bottom:6px;">
+    <div id="grad_err" style="display:none; color:#ff9b9b; font-size:12px; margin:4px 0 8px;"></div>
+    <div style="margin-top:8px;">
+    <button onclick="openGraduateCheckout()" style="border:none; cursor:pointer; font-family:inherit; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#39FF14,#7dff5c); padding:12px 28px; border-radius:22px;">اشترك الآن بخصمك ←</button>
+    </div>
+  </div>
+
+  </div>
+  </div>
+</section>
+</div>
+
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+Paddle.Environment.set('production');
+Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
+var GRAD_PRICES = { monthly:'pri_01kzqtjyc5g7zgsq2jx4zemct4', '3months':'pri_01kzqts6vcqf74zensqq44aag3', '6months':'pri_01kzqtw9thakwfw15qgf8m09nd', yearly:'pri_01kzqtyccr1txf89rfpdzb0edm' };
+function openGraduateCheckout(){
+  var tv = document.getElementById('grad_tv').value.trim().replace(/^@+/,'').toLowerCase();
+  var err = document.getElementById('grad_err');
+  if (!tv || tv.length < 3){ err.textContent = 'أدخل اسم مستخدم TradingView أولاً — به نمنحك صلاحية المؤشرات بعد الدفع.'; err.style.display='block'; document.getElementById('grad_tv').style.borderColor='#ff4d4d'; return; }
+  err.style.display='none';
+  fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code:'', customerName: memberData.name, phone:'', telegram:'', tradingview: tv, email: memberData.email, lang:'ar', plan: 'سنوي — خصم الخريج 60%', termsAccepted: true }) }).catch(function(){});
+  Paddle.Checkout.open({
+    items: [{ priceId: GRAD_PRICES.yearly, quantity: 1 }],
+    discountId: memberData.discount_code,
+    customer: { email: memberData.email },
+    settings: { displayMode: 'overlay', variant: 'one-page', successUrl: window.location.origin + '/welcome.html' }
+  });
+}
+</script>
+
+<script>
+var memberData = { id:0, name:'حساب معاينة', email:'preview@opnlio.com', points:180, current_level:5, rank:'مبتدئ', paid:false, graduated_at:null, discount_code:null };
+var memberToken = 'preview';
+if (false) {} else {
+
+function unlockAlertsUI(){ document.getElementById("alertsLocked").style.display="none"; document.getElementById("alertsLockBadge").style.display="none"; document.getElementById("alertsLive").style.display="flex"; document.getElementById("alertsList").style.display="flex"; }
+function payAcademyFromDash(){ if (window.openAcademyCheckout) window.openAcademyCheckout(memberData.email, "ar"); }
+function startAlerts(creds){ window._alertCreds = creds; unlockAlertsUI(); loadAlerts(); if (!window._alertsTimer) window._alertsTimer = setInterval(loadAlerts, 60000); }
+function markAcademyPaidUI(){ var c=document.getElementById('academyCta'); if (!c) return; c.textContent='متابعة التدريب ←'; c.href='./academy.html'; c.onclick=null; }
+function checkAcademyPaid(){
+  if (memberData.paid) { markAcademyPaidUI(); startAlerts({ email: memberData.email }); return; }
+  fetch("/api/academy-auth", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ action:"check-paid", email: memberData.email }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+      if (res && res.ok && res.paid){ memberData.paid = true; try { sessionStorage.setItem("member_data", JSON.stringify(memberData)); } catch(e){} markAcademyPaidUI(); startAlerts({ email: memberData.email }); }
+    }).catch(function(){});
+}
+
+function doLogout(){ sessionStorage.removeItem('member_token'); sessionStorage.removeItem('member_data'); location.href = './member-login.html'; }
+
+function renderMember(){
+  document.getElementById('memberName').textContent = memberData.name;
+  document.getElementById('avatarInitial').textContent = (memberData.name || '؟').trim().charAt(0);
+  document.getElementById('statLevel').textContent = memberData.current_level || 1;
+  document.getElementById('statPoints').textContent = memberData.points || 0;
+  document.getElementById('rankBadge').textContent = memberData.rank || 'مبتدئ';
+  var completedLevels = Math.max(0, (memberData.current_level || 1) - 1);
+  document.getElementById('statDone').textContent = completedLevels;
+  document.getElementById('progressBar').style.width = Math.min(100, Math.round((completedLevels / 12) * 100)) + '%';
+
+  if (memberData.graduated_at) {
+    document.getElementById('ambIcon').style.opacity = '1';
+    document.getElementById('ambTitle').textContent = '🎉 أنت مؤهل الآن!';
+    document.getElementById('ambTitle').style.color = '#39FF14';
+    document.getElementById('ambDesc').style.display = 'none';
+    document.getElementById('ambBtn').style.display = 'inline-block';
+    document.getElementById('certLink').style.display = 'inline-block';
+    document.getElementById('certLink').href = './certificate-preview.html?name=' + encodeURIComponent(memberData.name);
+    if (memberData.discount_code) document.getElementById('graduateDiscountCard').style.display = 'block';
+  }
+}
+
+function checkSubscription(){
+  var cid = document.getElementById('sub_cid').value.trim();
+  var tv = document.getElementById('sub_tv').value.trim();
+  var errEl = document.getElementById('subError');
+  if (!cid || !tv) { errEl.textContent = 'أدخل رقم العميل وحساب TradingView معاً.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  fetch('/api/customer-status?q=' + encodeURIComponent(cid) + '&tv=' + encodeURIComponent(tv)).then(function(r){
+    if (r.status === 429) { errEl.textContent = 'عدد المحاولات كثير جداً، حاول بعد قليل.'; errEl.style.display = 'block'; return Promise.reject(); }
+    return r.json();
+  }).then(function(res){
+    if (!res || !res.ok) { errEl.textContent = (res && res.error) || 'لم يتم العثور على اشتراك مطابق.'; errEl.style.display = 'block'; return; }
+    var box = document.getElementById('subStatusBox');
+    box.style.display = 'flex';
+    var dot = document.getElementById('subDot');
+    var statusColors = { active:'#39FF14', trial:'#2196f3', pending_payment:'#ffb400', expired:'#7a8296', canceled:'#7a8296' };
+    var st = res.status || 'expired';
+    dot.style.background = statusColors[st] || '#7a8296';
+    dot.style.boxShadow = '0 0 10px ' + (statusColors[st] || '#7a8296');
+    var statusLabels = { active:'اشتراك فعّال ✅', trial:'فترة تجربة مجانية 🔵', pending_payment:'بانتظار الدفع ⏳', expired:'منتهي ⚪', canceled:'ملغى ⚪' };
+    document.getElementById('subLine1').textContent = statusLabels[st] || st;
+    document.getElementById('subLine2').textContent = res.expires_at ? ('ينتهي في: ' + new Date(res.expires_at).toLocaleDateString('ar-SA')) : '';
+    if (st === 'active' || st === 'trial') { startAlerts({ cid: cid, tv: tv }); }
+  }).catch(function(){
+    errEl.textContent = 'تعذر الاتصال بالخادم.'; errEl.style.display = 'block';
+  });
+}
+
+function loadAlerts(){
+  if (!window._alertCreds) return;
+  var q = window._alertCreds.email ? ('email=' + encodeURIComponent(window._alertCreds.email)) : ('cid=' + encodeURIComponent(window._alertCreds.cid) + '&tv=' + encodeURIComponent(window._alertCreds.tv));
+  fetch('/api/tv-alerts?' + q)
+    .then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) return;
+      unlockAlertsUI();
+      var list = document.getElementById('alertsList');
+      if (!res.alerts.length) { list.innerHTML = '<div style="text-align:center; color:#6b7488; font-size:13px; padding:20px;">لا توجد تنبيهات جديدة حتى الآن</div>'; return; }
+      list.innerHTML = res.alerts.map(function(a){
+        var color = a.direction === 'up' ? '#39FF14' : a.direction === 'down' ? '#ff6b6b' : '#D4AF37';
+        var icon = a.direction === 'up' ? '▲' : a.direction === 'down' ? '▼' : '◆';
+        var t = new Date(a.created_at);
+        var mins = Math.round((Date.now() - t.getTime()) / 60000);
+        var ago = mins < 1 ? 'الآن' : mins < 60 ? ('قبل ' + mins + ' دقيقة') : ('قبل ' + Math.round(mins/60) + ' ساعة');
+        return '<div style="display:flex; gap:12px; align-items:flex-start; padding:12px 14px; background:rgba(255,255,255,.03); border-right:3px solid '+color+'; border-radius:10px;">' +
+          '<span style="color:'+color+'; font-size:15px; font-weight:900;">'+icon+'</span>' +
+          '<div style="flex:1; min-width:0;">' +
+          '<div style="font-weight:800; font-size:13.5px; color:#fff;">'+(a.symbol||'—')+(a.timeframe?' <span style="color:#8a93a8; font-weight:400; font-size:11.5px;">· '+a.timeframe+'</span>':'')+'</div>' +
+          '<div style="font-size:12.5px; color:#c9d2e3; margin-top:3px; word-break:break-word;">'+a.message+'</div>' +
+          '<div style="font-size:11px; color:#6b7488; margin-top:4px;">'+(a.script_name||'')+' · '+ago+'</div>' +
+          '</div></div>';
+      }).join('');
+    });
+}
+
+renderMember();
+checkAcademyPaid();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+<head>
+<meta charset="utf-8">
+<script src="ref-capture.js"></script>
+<meta name="description" content="Controlla lo stato del tuo abbonamento OPN LIO tramite il numero di iscrizione e l’account TradingView.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verifica lo stato dell’abbonamento | OPN LIO</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+a{color:#D4AF37;}
+.card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:34px 30px; max-width:440px; width:100%;}
+input{width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left; margin-bottom:14px;}
+input:focus{outline:none; border-color:#D4AF37;}
+button{width:100%; padding:14px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15px; font-family:inherit; cursor:pointer;}
+.row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.08); font-size:14px;}
+.row span:first-child{color:#8a93a8;}
+</style>
+<script src="page-guard.js" data-page="it-check-status"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="O P N LIO">
+<meta property="og:title" content="Verifica lo stato dell’abbonamento | OPN LIO">
+<meta property="og:description" content="Controlla lo stato del tuo abbonamento OPN LIO tramite il numero di iscrizione e l’account TradingView.">
+<meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
+<meta property="og:url" content="https://opnlio.com/en-check-status">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
+<link rel="canonical" href="https://opnlio.com/it-check-status.html">
+<link rel="alternate" hreflang="de" href="https://opnlio.com/de-check-status.html">
+<link rel="alternate" hreflang="en" href="https://opnlio.com/en-check-status.html">
+<link rel="alternate" hreflang="es" href="https://opnlio.com/es-check-status.html">
+<link rel="alternate" hreflang="fr" href="https://opnlio.com/fr-check-status.html">
+<link rel="alternate" hreflang="pt" href="https://opnlio.com/pt-check-status.html">
+<link rel="alternate" hreflang="tr" href="https://opnlio.com/tr-check-status.html">
+<link rel="alternate" hreflang="ar" href="https://opnlio.com/check-status.html">
+<link rel="alternate" hreflang="it" href="https://opnlio.com/it-check-status.html">
+<link rel="alternate" hreflang="x-default" href="https://opnlio.com/check-status.html">
+</head>
+<body>
+<div class="card">
+  <div style="text-align:center; margin-bottom:24px;">
+    <div style="font-size:30px; margin-bottom:8px;">⚜</div>
+    <h1 style="font-size:20px; color:#fff; margin:0 0 6px;">Verifica lo stato del tuo abbonamento</h1>
+    <p style="font-size:13px; color:#aab3c5; margin:0;">Inserisci il tuo numero di iscrizione (inviato per e-mail all’attivazione)</p>
+  </div>
+  <input id="tv2" placeholder="TradingView Username" style="margin-bottom:14px;">
+  <input id="q" placeholder="Membership Number (e.g. sa1234567)">
+  <button onclick="checkStatus()">Verifica ora</button>
+  <div id="result" style="margin-top:20px; display:none;"></div>
+  <div id="notFound" style="display:none; color:#ff9b9b; font-size:13.5px; text-align:center; margin-top:16px;">Nessun abbonamento corrispondente. Controlla i dati o contatta l’assistenza.</div>
+</div>
+<script>
+function playClickSound(){
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+    g.gain.setValueAtTime(0.12, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.1);
+  } catch(e){}
+}
+
+function checkStatus(){
+  playClickSound();
+  var q = document.getElementById('q').value.trim();
+  var tv = document.getElementById('tv2').value.trim();
+  if (!q || !tv) { document.getElementById('result').style.display='none'; document.getElementById('notFound').style.display='block'; return; }
+  fetch('/api/customer-status?q=' + encodeURIComponent(q) + '&tv=' + encodeURIComponent(tv)).then(function(r){return r.json();}).then(function(res){
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('notFound').style.display = 'none';
+    if (!res.ok || !res.customer) { document.getElementById('notFound').style.display = 'block'; return; }
+    var c = res.customer;
+    var statusLabels = {"pending_payment":"Pagamento non completato","trial":"Prova gratuita","canceled":"Annullato","renew_1m":"Abbonato mensile","renew_3m":"Abbonato 3 mesi","renew_6m":"Abbonato 6 mesi","renew_1y":"Abbonato annuale"};
+    var expiry = c.expires_at ? new Date(c.expires_at).toLocaleString('it-IT') : '-';
+    document.getElementById('result').innerHTML =
+      '<div class="row"><span>Nome</span><span>'+c.customer_name+'</span></div>' +
+      '<div class="row"><span>Stato</span><span>'+(statusLabels[c.status]||c.status)+'</span></div>' +
+      '<div class="row"><span>Piano</span><span>'+(c.plan||'-')+'</span></div>' +
+      '<div class="row"><span>Data di scadenza</span><span>'+expiry+'</span></div>';
+    document.getElementById('result').style.display = 'block';
+  }).catch(function(){ document.getElementById('notFound').style.display = 'block'; });
+}
+</script>
+</body>
+</html>
