@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <script src="ref-capture.js"></script>
-<meta name="description" content="برنامج تأهيل المتداول: 13 مستوى احتراف + 6 مستويات لمنظومة المؤشرات، اختبارات مصوّرة وشهادة اجتياز للاحتراف كمتداول برسم رمزي $1 +15%.">
+<meta name="description" content="برنامج تأهيل المتداول من OPN LIO برسم تسجيل رمزي $1 +15% — 11 مستوى من الصفر إلى الاحتراف + مسار مجاني منفصل لشرح مؤشرات المنظومة، اختبارات وشهادة إتمام.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أكاديمية التداول — 17 مستوى من الصفر للاحتراف | OPN LIO</title>
+<title>أكاديمية O P N  LIO — البرنامج التدريبي</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -28,25 +28,52 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="O P N LIO">
-<meta property="og:title" content="أكاديمية التداول — 17 مستوى من الصفر للاحتراف | OPN LIO">
-<meta property="og:description" content="برنامج تأهيل المتداول: 13 مستوى احتراف + 6 مستويات لمنظومة المؤشرات، اختبارات مصوّرة وشهادة اجتياز للاحتراف كمتداول برسم رمزي $1 +15%.">
+<meta property="og:title" content="أكاديمية O P N  LIO — البرنامج التدريبي">
+<meta property="og:description" content="برنامج تأهيل المتداول من OPN LIO برسم تسجيل رمزي $1 +15% — 11 مستوى من الصفر إلى الاحتراف + مسار مجاني منفصل لشرح مؤشرات المنظومة، اختبارات وشهادة إتمام.">
 <meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
 <meta property="og:url" content="https://opnlio.com/academy">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 <style>@keyframes jmPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.55);}50%{box-shadow:0 0 0 9px rgba(212,175,55,0);}}</style>
-<link rel="canonical" href="https://opnlio.com/academy.html">
-<link rel="alternate" hreflang="de" href="https://opnlio.com/de-academy.html">
-<link rel="alternate" hreflang="en" href="https://opnlio.com/en-academy.html">
-<link rel="alternate" hreflang="es" href="https://opnlio.com/es-academy.html">
-<link rel="alternate" hreflang="fr" href="https://opnlio.com/fr-academy.html">
-<link rel="alternate" hreflang="pt" href="https://opnlio.com/pt-academy.html">
-<link rel="alternate" hreflang="tr" href="https://opnlio.com/tr-academy.html">
-<link rel="alternate" hreflang="ar" href="https://opnlio.com/academy.html">
-<link rel="alternate" hreflang="it" href="https://opnlio.com/it-academy.html">
-<link rel="alternate" hreflang="x-default" href="https://opnlio.com/academy.html">
-<meta name="keywords" content="تعلم التداول, دورة تداول, أكاديمية تداول, شهادة تداول, التحليل الفني, الشموع اليابانية, إدارة المخاطر">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"أكاديمية التداول — 17 مستوى من الصفر للاحتراف | OPN LIO","description":"برنامج تأهيل المتداول: 13 مستوى احتراف + 6 مستويات لمنظومة المؤشرات، اختبارات مصوّرة وشهادة اجتياز للاحتراف كمتداول برسم رمزي $1 +15%.","provider":{"@type":"Organization","name":"OPN LIO","url":"https://opnlio.com/"},"offers":{"@type":"Offer","price":"1.15","priceCurrency":"USD"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online"}}</script>
+<script>
+window.__previewSession = { token:"preview", expiresAt: Date.now()+86400000,
+  student:{ id:123, name:"حساب معاينة", email:"preview@opnlio.com", points:1100, current_level:11, rank:"خبير", paid:true, graduated_at:null, discount_code:null, cert_number:null, free_graduated_at:null },
+  progress:[1,2,3,4,5,6,7,8,9,10].map(function(n){ return {level_num:n, completed:true, score:90, ts: Date.now()-25*3600000}; }),
+  freeProgress:[] };
+try { localStorage.setItem("opnlio_academy_preview_session", JSON.stringify(window.__previewSession)); } catch(e){}
+(function(){
+  var orig = window.fetch;
+  window.fetch = function(url, opts){
+    var u = String(url);
+    if (u.indexOf("academy-auth") !== -1){
+      var body = {}; try { body = JSON.parse((opts&&opts.body)||"{}"); } catch(e){}
+      var res = { ok:true };
+      if (body.action === "complete-level"){
+        var grad = body.level >= 11;
+        var corr = (body.picks||[]).slice(0,1).map(function(p){ return { i: p.i, correct: (p.a===0?1:0) }; });
+        res = { ok:true, score: 83, pointsEarned: 92, nextLevel: Math.min(body.level+1, 12), rank: grad ? "خرّيج O P N LIO" : "خبير", graduated: grad, discountCode: grad ? "PREVIEW60" : null, certNumber: grad ? "OPNLIO-000123-PRV0" : null, corrections: corr };
+      } else if (body.action === "complete-free-level"){
+        var corr2 = (body.picks||[]).slice(0,1).map(function(p){ return { i: p.i, correct: (p.a===0?1:0) }; });
+        res = { ok:true, score: 85, graduated: body.level >= 6, corrections: corr2 };
+      } else if (body.action === "check-paid"){ res = { ok:true, paid:true }; }
+      else if (body.action === "verify-cert"){ res = { ok:true, valid:true, name:"حساب معاينة", graduated_at:new Date().toISOString(), cert_number: body.certNumber }; }
+      return Promise.resolve({ json: function(){ return Promise.resolve(res); } });
+    }
+    if (u.indexOf("/.netlify/") !== -1 || u.indexOf("/api/") === 0){
+      return Promise.resolve({ json: function(){ return Promise.resolve({ ok:true }); } });
+    }
+    return orig.apply(this, arguments);
+  };
+})();
+document.addEventListener("DOMContentLoaded", function(){
+  var bar = document.createElement("div"); bar.setAttribute("dir","rtl");
+  bar.style.cssText = "position:fixed;bottom:16px;left:16px;z-index:99999;background:#10141f;border:1px solid rgba(212,175,55,.45);border-radius:14px;padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5);font-family:Tajawal,sans-serif;max-width:310px;";
+  bar.innerHTML = "<span style='font-size:11.5px;color:#8a93a8;font-weight:700;'>وضع المعاينة — بنوك أسئلة موسّعة (حتى 12 سؤالاً) بأسئلة مصوّرة 📊، والمسار المجاني 6 مستويات بمحاكاة ختامية 🎮</span>";
+  document.body.appendChild(bar);
+});
+</script>
+<link rel="canonical" href="https://opnlio.com/academy-preview.html">
+<meta name="robots" content="noindex">
 </head>
 <body>
 
@@ -58,7 +85,6 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
     </a>
   </div>
   <div style="display:flex; align-items:center; gap:14px;">
-    <a id="dashBackBtn" href="./member-dashboard.html" style="font-size:13px; font-weight:800; color:#D4AF37; border:1px solid rgba(212,175,55,.45); padding:8px 18px; border-radius:20px; white-space:nowrap;">⚜ لوحة تحكم العضو</a>
     <a href="./index.html" style="font-size:13px; font-weight:700; color:#c9d2e3; border:1px solid #2a3348; padding:8px 18px; border-radius:20px; white-space:nowrap;">↩ الرئيسية</a>
     <a href="./member-login.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 20px; border-radius:24px; white-space:nowrap;">انضم للنخبة</a>
     <div id="authStatus" style="font-size:13px; color:#8a93a8;"></div>
@@ -74,7 +100,7 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
   <section id="authScreen">
     <div style="text-align:center; margin-bottom:32px;">
       <h1 style="font-size:clamp(26px,4vw,36px); font-weight:900; margin:0 0 12px;">برنامج تأهيل المتداول</h1>
-      <p style="color:#aab3c5; font-size:15px; line-height:1.8; max-width:600px; margin:0 auto;">17 مستوى (11 للاحتراف + 6 لمنظومتنا) برسم تسجيل رمزي $1 +15% لمرة واحدة، مبسّطة وبدون ملل: الأسواق، التحليل الفني، إدارة رأس المال، سيكولوجية التداول، عقود الخيارات والـ Greeks — لتخرج بأساس يمكّنك من تقييم أي استراتيجية أو منظومة تداول، بما فيها منظومتنا. بشهادة اجتياز للاحتراف كمتداول، وربما فرصة لتصبح سفير OPN LIO.</p>
+      <p style="color:#aab3c5; font-size:15px; line-height:1.8; max-width:600px; margin:0 auto;">12 مستوى برسم تسجيل رمزي $1 +15% لمرة واحدة، مبسّطة وبدون ملل: الأسواق، التحليل الفني، إدارة رأس المال، سيكولوجية التداول، عقود الخيارات والـ Greeks — لتخرج بأساس يمكّنك من تقييم أي استراتيجية أو منظومة تداول، بما فيها منظومتنا. بشهادة اجتياز للاحتراف كمتداول، وربما فرصة لتصبح سفير OPN LIO.</p>
     </div>
 
     <div style="display:grid; grid-template-columns:minmax(200px,260px) 1fr; gap:24px; max-width:960px; margin:0 auto 40px; align-items:start;">
@@ -108,8 +134,8 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
           </ul>
         </div>
         <div id="detail-content" style="display:none;">
-          <h3 style="margin:0 0 14px; font-size:17px; color:#fff;">📚 محتوى المستويات (17 مستوى)</h3>
-          <p style="font-size:13.5px; color:#aab3c5; line-height:2; margin:0;">أساسيات الشموع ← بنية الاتجاه ← الكسر والاختراق ← المتوسطات والفوليوم ← المذبذبات (RSI/MACD..) ← أدوات متقدمة (SAR/بولينجر/فيبوناتشي) ← عالم الخيارات ← اليونانيات (Greeks) ← بناء استراتيجية ← إدارة رأس المال والنفسية ← التخرّج، ثم مسار منظومة OPN LIO المجاني (6 مستويات): المنظومة المتكاملة، امبراطورية الأثرياء، البايفت الذكي، قرار الملك، الإعداد العملي، والسيناريوهات المركّبة.</p>
+          <h3 style="margin:0 0 14px; font-size:17px; color:#fff;">📚 محتوى المستويات (12 مستوى)</h3>
+          <p style="font-size:13.5px; color:#aab3c5; line-height:2; margin:0;">أساسيات الشموع ← بنية الاتجاه ← الكسر والاختراق ← المتوسطات والفوليوم ← المذبذبات (RSI/MACD..) ← أدوات متقدمة (SAR/بولينجر/فيبوناتشي) ← عالم الخيارات ← اليونانيات (Greeks) ← بناء استراتيجية ← إدارة رأس المال والنفسية ← نداء الملك والبايفت الذكي ← امبراطورية الأثرياء والتخرّج.</p>
         </div>
         <div id="detail-perks" style="display:none;">
           <h3 style="margin:0 0 14px; font-size:17px; color:#fff;">🏆 الشهادة والمزايا</h3>
@@ -217,8 +243,8 @@ label{display:block; font-size:13px; font-weight:700; color:#D4AF37; margin-bott
 
 <script>
 var API = '/.netlify/functions/academy-auth';
-var session = JSON.parse(localStorage.getItem('opnlio_academy_session') || 'null');
-if (session && session.expiresAt && Date.now() > session.expiresAt) { localStorage.removeItem('opnlio_academy_session'); session = null; }
+var session = window.__previewSession;
+if (session && session.expiresAt && Date.now() > session.expiresAt) { localStorage.removeItem('opnlio_academy_preview_session'); session = null; }
 var currentLevel = 1;
 var currentTrack = 'paid';
 
@@ -338,7 +364,7 @@ function closePaperTrading(){
   if (window._ptTimer) { clearInterval(window._ptTimer); window._ptTimer = null; }
 }
 
-function logout() { localStorage.removeItem('opnlio_academy_session'); session = null; location.reload(); }
+function logout() { localStorage.removeItem('opnlio_academy_preview_session'); session = null; location.reload(); }
 
 var LEVEL_DURATIONS = {1:'10 د',2:'12 د',3:'12 د',4:'15 د',5:'15 د',6:'15 د',7:'12 د',8:'15 د',9:'22 د',10:'12 د',11:'25 د'};
 function renderJourney(progress) {
@@ -548,7 +574,6 @@ function openLesson(level) {
   document.getElementById('lessonLevelTag').textContent = 'المستوى ' + level;
   document.getElementById('lessonTitle').textContent = lv.title;
   document.getElementById('lessonBody').innerHTML = lv.body + ((typeof DIAGRAMS !== 'undefined' && typeof level !== 'undefined' && DIAGRAMS[level]) || '');
-  document.getElementById('lessonBody').setAttribute('dir', /[\u0600-\u06FF]/.test(String(lv.body || '').slice(0, 300)) ? 'rtl' : 'ltr');
   var _rv = document.createElement('div'); _rv.innerHTML = lv.body;
   var _terms = []; Array.prototype.forEach.call(_rv.querySelectorAll('b'), function(b){ var t=(b.textContent||'').trim().replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu,'').trim(); if (t && t.length>=3 && t.length<=54 && _terms.indexOf(t)===-1) _terms.push(t); });
   window._reviewPoints = _terms.slice(0,6);
@@ -602,7 +627,6 @@ function showReview(){
   document.body.appendChild(modal);
 }
 function closeReview(go){ var m=document.getElementById('reviewModal'); if(m) m.remove(); if(go) showQuiz(); }
-function _deviceId(){ try { var d = localStorage.getItem("opnlio_device"); if (!d){ d = "dev-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10); localStorage.setItem("opnlio_device", d); } return d; } catch(e){ return "dev-na"; } }
 function showQuiz(){ startQuizEngine(currentTrack); }
 function _qShuffle(n){ var a=[],k; for(k=0;k<n;k++)a.push(k); for(k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[j];a[j]=t;} return a; }
 function startQuizEngine(track){
@@ -667,7 +691,7 @@ function finishQuizEngine(){
   var picks = z.order.map(function(qi){ return { i: qi, a: (z.answers[qi] === undefined ? -1 : z.answers[qi]) }; });
   var act = z.track==='free' ? 'complete-free-level' : 'complete-level';
   document.getElementById('quizBox').innerHTML = '<div style="text-align:center; color:#8a93a8; padding:30px 0;">جارِ التصحيح…</div>';
-  fetch(API, { method:'POST', body: JSON.stringify({ action: act, studentId: session.student.id, token: session.token, level: currentLevel, picks: picks, deviceId: _deviceId() }) })
+  fetch(API, { method:'POST', body: JSON.stringify({ action: act, studentId: session.student.id, token: session.token, level: currentLevel, picks: picks }) })
     .then(function(r){ return r.json(); })
     .then(function(res){ if (z.track==='free') handleFreeQuizResult(res); else handlePaidQuizResult(res); })
     .catch(function(){ var el = document.getElementById('quizResult'); el.style.color = '#ff6b6b'; el.textContent = 'تعذّر الاتصال — حاول مجدداً'; });
@@ -731,7 +755,7 @@ function handlePaidQuizResult(res){
   if (res.graduated){ session.student.graduated_at = new Date().toISOString(); session.student.discount_code = res.discountCode; session.student.cert_number = res.certNumber; }
   var lvlProg = session.progress.find(function(p){ return p.level_num === currentLevel; });
   if (lvlProg){ lvlProg.completed = true; lvlProg.score = res.score; lvlProg.ts = Date.now(); } else { session.progress.push({ level_num: currentLevel, completed: true, score: res.score, ts: Date.now() }); }
-  localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+  localStorage.setItem('opnlio_academy_preview_session', JSON.stringify(session));
   box.innerHTML = '<div style="text-align:center; padding:14px 0;"><div style="font-size:40px; margin-bottom:8px;">🎉</div><div style="font-weight:900; font-size:18px; color:#39FF14;">' + (res.graduated ? 'مبروك التخرّج! نتيجتك ' : 'أحسنت! نتيجتك ') + res.score + '%</div>' + (res.pointsEarned ? '<div style="font-size:13px; color:#D4AF37; margin-top:6px;">+' + res.pointsEarned + ' نقطة</div>' : '') + '</div>' + renderCorrections(res, lv) + '<button class="btn-gold" style="width:100%; margin-top:18px;" onclick="backToDash(); renderDash();' + (res.graduated ? ' showCertificate();' : '') + '">متابعة ←</button>';
 }
 function openFreeLesson(level){
@@ -743,7 +767,6 @@ function openFreeLesson(level){
   document.getElementById('lessonLevelTag').textContent = 'مسار مجاني — المستوى ' + level;
   document.getElementById('lessonTitle').textContent = lv.title;
   document.getElementById('lessonBody').innerHTML = lv.body;
-  document.getElementById('lessonBody').setAttribute('dir', /[\u0600-\u06FF]/.test(String(lv.body || '').slice(0, 300)) ? 'rtl' : 'ltr');
   var _rv = document.createElement('div'); _rv.innerHTML = lv.body;
   var _terms = []; Array.prototype.forEach.call(_rv.querySelectorAll('b'), function(b){ var t = (b.textContent||'').trim().replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu,'').trim(); if (t && t.length >= 3 && t.length <= 54 && _terms.indexOf(t) === -1) _terms.push(t); });
   window._reviewPoints = _terms.slice(0, 6);
@@ -768,7 +791,7 @@ function handleFreeQuizResult(res){
   var lvlProg = session.freeProgress.find(function(p){ return p.level_num === currentLevel; });
   if (lvlProg){ lvlProg.completed = true; lvlProg.score = res.score; } else { session.freeProgress.push({ level_num: currentLevel, completed: true, score: res.score }); }
   if (res.graduated) session.student.free_graduated_at = new Date().toISOString();
-  localStorage.setItem('opnlio_academy_session', JSON.stringify(session));
+  localStorage.setItem('opnlio_academy_preview_session', JSON.stringify(session));
   box.innerHTML = '<div style="text-align:center; padding:14px 0;"><div style="font-size:40px; margin-bottom:8px;">' + (res.graduated ? '⛜' : '🎉') + '</div><div style="font-weight:900; font-size:18px; color:#39FF14;">' + (res.graduated ? 'مبروك! أتممت المسار المجاني — أنت مؤهل للسفارة الآن' : 'أحسنت! نتيجتك ' + res.score + '%') + '</div></div>' + renderCorrections(res, lv) + '<button class="btn-gold" style="width:100%; margin-top:18px;" onclick="backToDash(); renderDash(); switchTrack(&quot;free&quot;);">متابعة ←</button>';
 }
 function showExtendPrompt(){

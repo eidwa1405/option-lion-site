@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="utf-8">
+<script src="ref-capture.js"></script>
 <meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title id="pageTitle">لوحة تحكم السفير — O P N  LIO</title>
@@ -36,8 +37,11 @@ td{padding:10px; border-bottom:1px solid rgba(255,255,255,.06);}
 <meta property="og:url" content="https://opnlio.com/affiliate-dashboard">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
+<link rel="canonical" href="https://opnlio.com/affiliate-dashboard.html">
 </head>
 <body>
+<div dir="rtl" style="background:rgba(212,175,55,.1); border-bottom:1px solid rgba(212,175,55,.35); padding:11px 16px; text-align:center; font-family:Tajawal,sans-serif; font-size:12.5px; color:#e9edf5;">🔔 نظام السفراء الجديد أصبح داخل <a href="./member-login.html" style="color:#D4AF37; font-weight:800;">لوحة العضو</a> — هذه اللوحة تبقى لدخول السفراء المسجّلين سابقاً فقط.</div>
+
 <div class="wrap">
   <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
     <img src="assets/lion-logo.jpg" alt="O P N  LIO" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:1.5px solid #D4AF37;">
@@ -133,7 +137,7 @@ td{padding:10px; border-bottom:1px solid rgba(255,255,255,.06);}
   <div class="card">
     <h3 id="customersTitle" style="color:#D4AF37; margin:0 0 14px;"></h3>
     <table>
-      <thead><tr><th id="thStatus"></th><th id="thName"></th><th id="thPlan"></th><th id="thExpiry"></th><th id="thCommission"></th><th></th></tr></thead>
+      <thead><tr><th id="thStatus"></th><th id="thPlan"></th><th id="thExpiry"></th><th id="thCommission"></th><th></th></tr></thead>
       <tbody id="customersBody"></tbody>
     </table>
   </div>
@@ -272,7 +276,6 @@ function setLang(code){
   document.getElementById('btnSaveCred').textContent = t.saveBtn;
   document.getElementById('customersTitle').textContent = t.customersTitle;
   document.getElementById('thStatus').textContent = t.thStatus;
-  document.getElementById('thName').textContent = t.thName;
   document.getElementById('thPlan').textContent = t.thPlan;
   document.getElementById('thExpiry').textContent = t.thExpiry;
   document.getElementById('thCommission').textContent = t.thCommission;
@@ -410,7 +413,7 @@ function renderProfile(res){
     var reminderBtn = (c.reminderEligible && !isFrozen)
       ? '<button class="btn" style="padding:7px 12px; font-size:11.5px;" onclick="sendCustomerReminder('+c.id+', this)">'+t.reminderBtn+'</button>'
       : '<button class="btn" style="padding:7px 12px; font-size:11.5px; opacity:.4; cursor:not-allowed;" disabled>'+t.reminderBtn+'</button>';
-    tr.innerHTML = '<td>'+statusIcon(c)+'</td><td>'+c.customer_name+'</td><td>'+(c.plan||'-')+'</td><td>'+expiryTxt+'</td><td>'+commissionTxt+'</td><td>'+reminderBtn+'</td>';
+    tr.innerHTML = '<td>'+statusIcon(c)+'</td><td>'+(c.plan||'-')+'</td><td>'+expiryTxt+'</td><td>'+commissionTxt+'</td><td>'+reminderBtn+'</td>';
     tb.appendChild(tr);
   });
 
