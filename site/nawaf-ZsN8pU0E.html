@@ -1747,12 +1747,63 @@ function ambReqAction(id, approve){
     if (!confirm('الموافقة على هذا الخريج كسفير؟ سيتولد كوده ويصله بريد بنسخة الاتفاقية ورابط الكود.')) return;
     authFetch('/api/admin-data?action=approve-ambassador-request', { method:'POST', body: JSON.stringify({id:id}) })
       .then(function(r){return r.json();}).then(function(res){ if (res && !res.ok) alert(res.error || 'فشل'); loadAmbassadorRequests(); loadAffiliates(); });
-  } else {
-    var reason = prompt('سبب الرفض (يصل للعضو — اتركه فارغاً لرسالة اعتذار عامة):') ;
-    if (reason === null) return;
-    authFetch('/api/admin-data?action=reject-ambassador-request', { method:'POST', body: JSON.stringify({id:id, reason:reason}) })
-      .then(function(r){return r.json();}).then(function(){ loadAmbassadorRequests(); });
+    return;
   }
+  openRejectModal(id);
+}
+var REJ_PRESETS = [
+  'رقم الحساب (IBAN) غير صحيح أو ناقص',
+  'اسم صاحب الحساب لا يطابق اسم العضو',
+  'التوقيع غير واضح — أعد رسمه بوضوح',
+  'بيانات البنك ناقصة (اسم البنك أو SWIFT)',
+  'عنوان صاحب الحساب ناقص أو غير مكتمل',
+  'الدولة المختارة لا تطابق بيانات الحساب'
+];
+function openRejectModal(id){
+  var m = document.createElement('div');
+  m.id = 'rejModal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10006;display:flex;align-items:center;justify-content:center;padding:16px;';
+  m.innerHTML = '<div class="card" style="max-width:520px; width:100%; max-height:90vh; overflow-y:auto;">'
+    + '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;"><h3 style="margin:0; color:#ff9b9b; font-size:16.5px;">✕ رفض طلب السفارة</h3><button onclick="document.getElementById(\'rejModal\').remove()" style="background:transparent; border:none; color:#8a93a8; font-size:22px; cursor:pointer;">×</button></div>'
+    + '<div style="font-size:12.5px; font-weight:800; color:#D4AF37; margin-bottom:8px;">نوع الرفض</div>'
+    + '<label style="display:flex; gap:9px; align-items:flex-start; background:rgba(255,180,0,.06); border:1px solid rgba(255,180,0,.28); border-radius:11px; padding:11px 13px; margin-bottom:9px; cursor:pointer;">'
+    + '<input type="radio" name="rejKind" value="fix" checked style="width:auto; margin-top:3px;" onchange="rejToggle()">'
+    + '<span><b style="color:#ffb400; font-size:13px;">📝 تصحيح بيانات</b><div style="font-size:11.5px; color:#c9d2e3; line-height:1.7; margin-top:3px;">يعيد الإرسال فوراً بلا انتظار — تصله ملاحظاتك بلوحته وبريده.</div></span></label>'
+    + '<label style="display:flex; gap:9px; align-items:flex-start; background:rgba(255,95,95,.06); border:1px solid rgba(255,95,95,.28); border-radius:11px; padding:11px 13px; margin-bottom:14px; cursor:pointer;">'
+    + '<input type="radio" name="rejKind" value="nofit" style="width:auto; margin-top:3px;" onchange="rejToggle()">'
+    + '<span><b style="color:#ff8a8a; font-size:13px;">🚫 لعدم الحاجة</b><div style="font-size:11.5px; color:#c9d2e3; line-height:1.7; margin-top:3px;">تُطبَّق مهلة التهدئة: أسبوع بعد الرفض الأول، شهر بعد المتكرر.</div></span></label>'
+    + '<div id="rejPresets"><div style="font-size:12.5px; font-weight:800; color:#D4AF37; margin-bottom:7px;">أسباب جاهزة (اضغط لإضافتها)</div>'
+    + '<div style="display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px;">' + REJ_PRESETS.map(function(p, i){ return '<button onclick="rejAdd(' + i + ')" style="padding:7px 12px; border-radius:16px; border:1px solid rgba(212,175,55,.3); background:transparent; color:#c9d2e3; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;">+ ' + p + '</button>'; }).join('') + '</div></div>'
+    + '<div style="font-size:12.5px; font-weight:800; color:#D4AF37; margin-bottom:7px;">الملاحظات التي تصل العضو</div>'
+    + '<textarea id="rejReason" rows="5" placeholder="اكتب السبب بوضوح ليعرف ما يصححه…" style="width:100%; box-sizing:border-box; padding:11px 13px; border-radius:10px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.25); color:#fff; font-size:13px; font-family:inherit; line-height:1.8;"></textarea>'
+    + '<div style="display:flex; gap:9px; margin-top:14px;">'
+    + '<button onclick="rejSubmit(' + id + ')" style="flex:1; padding:12px; border-radius:11px; border:none; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">إرسال القرار</button>'
+    + '<button onclick="document.getElementById(\'rejModal\').remove()" style="padding:12px 20px; border-radius:11px; border:1px solid rgba(255,255,255,.18); background:transparent; color:#8a93a8; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit;">إلغاء</button></div>'
+    + '<div id="rejErr" style="font-size:12px; color:#ff9b9b; margin-top:9px; display:none;"></div></div>';
+  document.body.appendChild(m);
+}
+function rejToggle(){
+  var kind = (document.querySelector('input[name="rejKind"]:checked') || {}).value;
+  var p = document.getElementById('rejPresets');
+  if (p) p.style.display = kind === 'fix' ? 'block' : 'none';
+}
+function rejAdd(i){
+  var ta = document.getElementById('rejReason');
+  var line = '• ' + REJ_PRESETS[i];
+  if (ta.value.indexOf(line) !== -1) return;
+  ta.value = (ta.value ? ta.value.replace(/\s*$/, '\n') : '') + line;
+}
+function rejSubmit(id){
+  var kind = (document.querySelector('input[name="rejKind"]:checked') || {}).value || 'fix';
+  var reason = (document.getElementById('rejReason').value || '').trim();
+  var err = document.getElementById('rejErr');
+  if (kind === 'fix' && !reason){ err.style.display = 'block'; err.textContent = 'اكتب الملاحظات ليعرف العضو ما يصححه.'; return; }
+  authFetch('/api/admin-data?action=reject-ambassador-request', { method:'POST', body: JSON.stringify({ id:id, reason:reason, kind:kind }) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (res && !res.ok){ err.style.display = 'block'; err.textContent = res.error || 'فشل الإرسال'; return; }
+      var m = document.getElementById('rejModal'); if (m) m.remove();
+      loadAmbassadorRequests();
+    }).catch(function(){ err.style.display = 'block'; err.textContent = 'تعذّر الاتصال'; });
 }
 function loadAffiliates(){
   loadAmbassadorRequests();
