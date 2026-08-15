@@ -17,7 +17,7 @@ input { font-family:inherit; }
 input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3px rgba(212,175,55,.15); }
 .linklike { background:none; border:none; color:#D4AF37; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:0; }
 </style>
-<script src="verify-modal.js"></script>
+<script src="verify-modal.js?v=3"></script>
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="O P N LIO">
@@ -169,18 +169,29 @@ function showTab(t){
 }
 function openLegalModal(u){ document.getElementById('legalModalFrame').src = u; document.getElementById('legalModalOverlay').style.display = 'flex'; }
 function sendRegVerify(){
-  var email = document.getElementById('reg_email').value.trim().toLowerCase();
-  var st = document.getElementById('reg_verifyStatus');
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { st.style.color = '#ff9b9b'; st.textContent = _L('أدخل بريداً صحيحاً أولاً'); return; }
-  st.style.color = '#8a93a8'; st.textContent = _L('جارِ الإرسال…');
-  fetch('/api/send-verify-code', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, lang: LG }) })
-    .then(function(r){ return r.json(); }).then(function(res){
-      if (!res.ok) { st.style.color = '#ff9b9b'; st.textContent = res.error || 'فشل الإرسال'; return; }
-      openVerifyModal({ email: email, lang: LG, onSuccess: function(){
-        st.style.color = '#39FF14'; st.textContent = _L('✅ تم التحقق');
-        document.getElementById('reg_emailVerified').value = email;
-      }, onCancel: function(){ st.style.color = '#ff9b9b'; st.textContent = _L('لم يتم التحقق'); } });
-    }).catch(function(){ st.style.color = '#ff9b9b'; st.textContent = _L('تعذّر الاتصال بالخادم'); });
+  var st = document.getElementById("reg_verifyStatus");
+  try {
+    var email = document.getElementById("reg_email").value.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { st.style.color = "#ff9b9b"; st.textContent = _L("أدخل بريداً صحيحاً أولاً"); return; }
+    if (typeof openVerifyModal !== "function") {
+      st.style.color = "#ff9b9b";
+      st.textContent = _L("تعذّر تحميل نافذة التحقق — حدّث الصفحة (Ctrl+Shift+R) وحاول مجدداً");
+      return;
+    }
+    st.style.color = "#8a93a8"; st.textContent = _L("جارِ الإرسال…");
+    fetch("/api/send-verify-code", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ email: email, lang: LG }) })
+      .then(function(r){ return r.json().catch(function(){ return { ok:false, error: "HTTP " + r.status }; }); })
+      .then(function(res){
+        if (!res || !res.ok) { st.style.color = "#ff9b9b"; st.textContent = (res && res.error) || _L("فشل الإرسال"); return; }
+        openVerifyModal({ email: email, lang: LG, onSuccess: function(){
+          st.style.color = "#39FF14"; st.textContent = _L("✅ تم التحقق");
+          document.getElementById("reg_emailVerified").value = email;
+        }, onCancel: function(){ st.style.color = "#ff9b9b"; st.textContent = _L("لم يتم التحقق"); } });
+      })
+      .catch(function(){ st.style.color = "#ff9b9b"; st.textContent = _L("تعذّر الاتصال بالخادم"); });
+  } catch (err) {
+    if (st) { st.style.color = "#ff9b9b"; st.textContent = "خطأ: " + (err && err.message ? err.message : err); }
+  }
 }
 function submitMemberReg(){
   var name = document.getElementById('reg_name').value.trim();
@@ -289,7 +300,7 @@ function _lgLang(){
   var n = (navigator.language || "ar").slice(0,2).toLowerCase();
   return ["ar","en","de","fr","es","tr","pt","it"].indexOf(n) !== -1 ? n : "en"; }
 var LG = _lgLang();
-function _L(s){ if (LG === "ar") return s; var e = LOGIN_I18N[s]; return (e && e[LG]) ? e[LG] : s; }
+function _L(s){ if (typeof LOGIN_I18N === "undefined") return s; if (LG === "ar") return s; var e = LOGIN_I18N[s]; return (e && e[LG]) ? e[LG] : s; }
 function applyLoginI18N(){
   if (LG === "ar") return;
   document.documentElement.lang = LG;
@@ -310,7 +321,7 @@ function applyLoginI18N(){
   if (ttl && ttl[LG]) document.title = ttl[LG];
   document.querySelectorAll("input, [style*=text-align]").forEach(function(el){ if (getComputedStyle(el).textAlign === "right") el.style.textAlign = "left"; });
 }
-document.addEventListener("DOMContentLoaded", applyLoginI18N);
+document.addEventListener("DOMContentLoaded", function(){ try { applyLoginI18N(); } catch(e){ console.warn("i18n:", e); } });
 </script>
 </body>
 </html>
