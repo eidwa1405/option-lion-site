@@ -6,10 +6,11 @@ const PADDLE_ENV = (process.env.PADDLE_ENV || 'production').trim();
 const API_BASE = PADDLE_ENV === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
 const ACADEMY_PRICE_ID = process.env.PADDLE_ACADEMY_PRICE_ID || 'pri_01kzsw7et11f5r4nf08ea7yz5p';
 
-exports.handler = async () => {
+exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json' };
+  const debug = !!(event && event.queryStringParameters && event.queryStringParameters.debug);
   try {
-    if (!PADDLE_API_KEY) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'PADDLE_API_KEY غير مضبوط' }) };
+    if (!PADDLE_API_KEY) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'PADDLE_API_KEY غير مضبوط في متغيرات البيئة' }) };
     await ensureTables();
     const sql = getSql();
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
@@ -19,7 +20,9 @@ exports.handler = async () => {
     const url = API_BASE + '/transactions?status=completed&per_page=100&created_at[GTE]=' + encodeURIComponent(since);
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + PADDLE_API_KEY } });
     const json = await res.json();
+    if (!res.ok) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'Paddle API رفض الطلب', status: res.status, detail: json && json.error ? json.error : json }) };
     const rows = (json && json.data) || [];
+    const seen = [];
 
     let activated = 0, checked = 0;
     for (const tx of rows) {
@@ -29,6 +32,7 @@ exports.handler = async () => {
         const pid = typeof p === 'string' ? p : (p && p.id);
         return pid === ACADEMY_PRICE_ID;
       });
+      if (debug) seen.push({ id: tx.id, custom: tx.custom_data || null, prices: items.map(function (it) { const p = it && (it.price || it.price_id); return typeof p === 'string' ? p : (p && p.id); }), isAcademy: isAcademy });
       if (!isAcademy) continue;
       checked++;
       const emails = [];
@@ -46,7 +50,7 @@ exports.handler = async () => {
         }
       }
     }
-    return { statusCode: 200, headers, body: JSON.stringify({ ok: true, scanned: rows.length, academyTx: checked, activated }) };
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true, scanned: rows.length, academyTx: checked, activated, priceId: ACADEMY_PRICE_ID, transactions: debug ? seen : undefined }) };
   } catch (e) {
     return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: e.message }) };
   }
