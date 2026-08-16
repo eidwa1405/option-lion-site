@@ -41,16 +41,28 @@ exports.handler = async (event) => {
 
     // رسوم الأكاديمية ($1) — تُعالج وتُنهى هنا حتى لا تختلط بمطابقة الاشتراكات
     const acadCustom = data.custom_data || {};
-    if (acadCustom.product === 'academy') {
+    const ACADEMY_PRICE_ID = process.env.PADDLE_ACADEMY_PRICE_ID || 'pri_01kzsw7et11f5r4nf08ea7yz5p';
+    const _items = (data.items || data.line_items || []);
+    const _hasAcadPrice = _items.some(function (it) {
+      const p = it && (it.price || it.price_id || (it.product && it.product.id));
+      const pid = typeof p === 'string' ? p : (p && p.id);
+      return pid === ACADEMY_PRICE_ID;
+    });
+    if (acadCustom.product === 'academy' || _hasAcadPrice) {
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paddle_transaction_id text`;
       const acadEmail = String(acadCustom.email || (data.customer && data.customer.email) || '').trim().toLowerCase();
       if (eventType === 'transaction.completed' && acadEmail) {
-        const upd = await sql`UPDATE academy_students SET paid_at = now(), paddle_transaction_id = ${data.id || null} WHERE lower(email) = ${acadEmail} RETURNING id`;
+        const _alt = String((data.customer && data.customer.email) || (data.billing_details && data.billing_details.email) || '').trim().toLowerCase();
+        let upd = await sql`UPDATE academy_students SET paid_at = now(), paddle_transaction_id = ${data.id || null} WHERE lower(email) = ${acadEmail} RETURNING id`;
+        if (!upd.length && _alt && _alt !== acadEmail) {
+          upd = await sql`UPDATE academy_students SET paid_at = now(), paddle_transaction_id = ${data.id || null} WHERE lower(email) = ${_alt} RETURNING id`;
+        }
         if (upd.length) {
           await sql`INSERT INTO audit_log (action, details) VALUES ('academy-fee-paid', ${'دفع رسم تسجيل الأكاديمية — الطالب #' + upd[0].id + ' (' + acadEmail + ')'})`;
         } else {
           await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES (${eventType || ''}, ${acadEmail || null}, ${null}, ${JSON.stringify(payload)})`;
+          if (ADMIN_ALERT_EMAIL) await sendMail(ADMIN_ALERT_EMAIL, '⚠️ دفع أكاديمية بلا مطابقة', 'تنبيه', `<div dir="rtl">دفعة رسم أكاديمية لم تُطابق أي عضو.<br>البريد: <b>${acadEmail || '—'}</b><br>بريد بديل: <b>${_alt || '—'}</b><br>رقم العملية: ${data.id || '—'}<br><br>فعّلها يدوياً من لوحة الإدارة.</div>`, 'ar').catch(function(){});
         }
       } else if ((eventType === 'transaction.refunded' || eventType === 'adjustment.created') && acadEmail) {
         await sql`UPDATE academy_students SET paid_at = NULL WHERE lower(email) = ${acadEmail}`;
