@@ -1,7 +1,7 @@
 // مزامنة رسوم الأكاديمية مع Paddle — تعمل تلقائياً كل ساعة وتفعّل أي دفعة فاتت الويبهوك
 const { getSql, ensureTables } = require('./_db');
 
-const PADDLE_API_KEY = (process.env.PADDLE_API_KEY || '').trim();
+const PADDLE_API_KEY = String(process.env.PADDLE_API_KEY || '').replace(/^\s*bearer\s+/i, '').replace(/^['"]|['"]$/g, '').replace(/[\r\n\t]/g, '').trim();
 const PADDLE_ENV = (process.env.PADDLE_ENV || 'production').trim();
 const API_BASE = PADDLE_ENV === 'sandbox' ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com';
 const ACADEMY_PRICE_ID = process.env.PADDLE_ACADEMY_PRICE_ID || 'pri_01kzsw7et11f5r4nf08ea7yz5p';
@@ -20,7 +20,7 @@ async function runSync(event) {
     const url = API_BASE + '/transactions?status=completed&per_page=100&created_at[GTE]=' + encodeURIComponent(since);
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + PADDLE_API_KEY } });
     const json = await res.json();
-    if (!res.ok) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'Paddle API رفض الطلب', status: res.status, detail: json && json.error ? json.error : json }) };
+    if (!res.ok) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'Paddle API رفض الطلب', status: res.status, keyLen: PADDLE_API_KEY.length, keyPrefix: PADDLE_API_KEY.slice(0, 12), env: PADDLE_ENV, hint: 'تأكد أن المفتاح من نوع API Key يبدأ بـ pdl_live_apikey_ وأنه لبيئة الإنتاج', detail: json && json.error ? json.error : json }) };
     const rows = (json && json.data) || [];
     const seen = [];
 
