@@ -7,6 +7,14 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: 'Method not allowed' };
   try {
     await ensureTables();
+    const _ip = String((event.headers && (event.headers['x-nf-client-connection-ip'] || (event.headers['x-forwarded-for'] || '').split(',')[0])) || '').trim().slice(0, 45);
+    if (_ip) {
+      const _sqlRL = getSql();
+      await _sqlRL`CREATE TABLE IF NOT EXISTS check_attempts (id serial PRIMARY KEY, ip text, kind text, created_at timestamptz DEFAULT now())`;
+      const _tries = await _sqlRL`SELECT COUNT(*)::int AS c FROM check_attempts WHERE ip = ${_ip} AND kind = 'review' AND created_at > now() - interval '1 hour'`;
+      if (_tries[0].c >= 3) return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'محاولات كثيرة — حاول بعد قليل' }) };
+      await _sqlRL`INSERT INTO check_attempts (ip, kind) VALUES (${_ip}, 'review')`;
+    }
     const sql = getSql();
     const b = JSON.parse(event.body || '{}');
     const name = String(b.name || '').trim().slice(0, 80);

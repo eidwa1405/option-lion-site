@@ -29,6 +29,21 @@ exports.handler = async (event) => {
 
     const action = event.queryStringParameters && event.queryStringParameters.action;
 
+    // نبض حضور السفير: يحدّث آخر ظهور لسجله الطلابي (إن كان سفيراً من الأكاديمية) وجدول السفراء
+    if (action === 'heartbeat' || action === 'go-offline') {
+      await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS last_seen_at timestamptz`;
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_seen_at timestamptz`;
+      const ts = action === 'heartbeat' ? "now()" : "now() - interval '10 minutes'";
+      if (action === 'heartbeat') {
+        await sql`UPDATE affiliates SET last_seen_at = now() WHERE code = ${affiliate.code}`;
+        await sql`UPDATE academy_students SET last_seen_at = now() WHERE id IN (SELECT student_id FROM ambassador_requests WHERE code = ${affiliate.code} AND status = 'approved')`;
+      } else {
+        await sql`UPDATE affiliates SET last_seen_at = now() - interval '10 minutes' WHERE code = ${affiliate.code}`;
+        await sql`UPDATE academy_students SET last_seen_at = now() - interval '10 minutes' WHERE id IN (SELECT student_id FROM ambassador_requests WHERE code = ${affiliate.code} AND status = 'approved')`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'my-payouts') {
       const items = await sql`SELECT i.amount, i.floor_amount, i.bonus_amount, r.month, r.id AS run_id FROM payout_items i JOIN payout_runs r ON r.id = i.run_id WHERE i.ref_code = ${affiliate.code} ORDER BY r.month DESC`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items }) };

@@ -53,11 +53,21 @@ exports.handler = async (event) => {
       const code = String(Math.floor(100000 + Math.random() * 900000));
       const payload = JSON.stringify({ code: code, ts: Date.now() });
       await sql`INSERT INTO admin_settings (key, value) VALUES ('admin_otp', ${payload}) ON CONFLICT (key) DO UPDATE SET value = ${payload}`;
+      let tgOk = false, tgErr = '';
       try {
-        await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tgChat, text: '🔐 رمز دخول لوحة إدارة OPN LIO: ' + code + '\nصالح 5 دقائق — إن لم تطلبه فغيّر كلمة المرور فوراً.' }) });
+        const tgRes = await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tgChat, text: '🔐 رمز دخول لوحة إدارة OPN LIO: ' + code + '\nصالح 5 دقائق — إن لم تطلبه فغيّر كلمة المرور فوراً.' }) });
+        const tgBody = await tgRes.text();
+        try { tgOk = !!JSON.parse(tgBody).ok; } catch(e2){ tgOk = false; }
+        if (!tgOk) tgErr = 'HTTP ' + tgRes.status + ' — ' + tgBody.slice(0, 300);
       } catch(e) {
+        tgErr = String(e).slice(0, 300);
+      }
+      if (!tgOk) {
+        // فشل الإرسال فعلياً: سجّل السبب ولا تحبس المدير خارج اللوحة
+        try { await sql`INSERT INTO audit_log (action, details) VALUES ('admin-otp-telegram-failed', ${tgErr || 'unknown'})`; } catch(e3){}
+        await sql`DELETE FROM admin_settings WHERE key = 'admin_otp'`;
         const token = await issueToken();
-        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, otpSkipped: true }) };
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, otpSkipped: true, otpError: tgErr }) };
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, otpRequired: true, expiresInSec: 300 }) };
     }

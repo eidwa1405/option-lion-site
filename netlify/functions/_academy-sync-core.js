@@ -41,6 +41,10 @@ async function runSync(event) {
       if (tx.billing_details && tx.billing_details.email) emails.push(String(tx.billing_details.email).trim().toLowerCase());
       for (const em of emails) {
         if (!em) continue;
+        if (debug) {
+          const st = await sql`SELECT id, paid_at FROM academy_students WHERE lower(email) = ${em} LIMIT 1`;
+          seen.push({ email: em, accountExists: st.length > 0, alreadyPaid: st.length ? !!st[0].paid_at : null, studentId: st.length ? st[0].id : null });
+        }
         const upd = await sql`UPDATE academy_students SET paid_at = COALESCE(paid_at, now()), paddle_transaction_id = COALESCE(paddle_transaction_id, ${tx.id})
           WHERE lower(email) = ${em} AND paid_at IS NULL RETURNING id`;
         if (upd.length) {

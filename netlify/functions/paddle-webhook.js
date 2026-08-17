@@ -71,6 +71,30 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, academy: true }) };
     }
 
+    // ⏱ ساعة الجلسة الذكية — شراء لمرة واحدة يفتح المؤشر ومسار الأكاديمية
+    const CLOCK_PRICE_ID = process.env.PADDLE_CLOCK_PRICE_ID || 'pri_01m04rf4x0d06y0aeb4m74230v';
+    const _hasClockPrice = _items.some(function (it) {
+      const p = it && (it.price || it.price_id || (it.product && it.product.id));
+      const pid = typeof p === 'string' ? p : (p && p.id);
+      return pid === CLOCK_PRICE_ID;
+    });
+    if (acadCustom.product === 'clock' || _hasClockPrice) {
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS clock_paid_at timestamptz`;
+      const clockEmail = String(acadCustom.email || acadCustom.customerEmail || (data.customer && data.customer.email) || '').trim().toLowerCase();
+      if (eventType === 'transaction.completed' && clockEmail) {
+        const upd = await sql`UPDATE academy_students SET clock_paid_at = now() WHERE lower(email) = ${clockEmail} RETURNING id`;
+        if (upd.length) {
+          await sql`INSERT INTO audit_log (action, details) VALUES ('clock-paid', ${'شراء ساعة الجلسة — الطالب #' + upd[0].id + ' (' + clockEmail + ')'})`;
+        } else {
+          await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES (${eventType || ''}, ${clockEmail || null}, ${acadCustom.customerName || null}, ${JSON.stringify(payload)})`;
+        }
+      } else if ((eventType === 'transaction.refunded' || eventType === 'adjustment.created') && clockEmail) {
+        await sql`UPDATE academy_students SET clock_paid_at = NULL WHERE lower(email) = ${clockEmail}`;
+        await sql`INSERT INTO audit_log (action, details) VALUES ('clock-refunded', ${'استرجاع ساعة الجلسة — ' + clockEmail})`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, clock: true }) };
+    }
+
     // حماية خصم الخريجين: عملية بخصم 60% من بريد غير خريج → تنبيه إداري + تسجيل
     const GRAD_DSC = process.env.PADDLE_GRADUATE_DISCOUNT_ID || 'dsc_01kzqv94x5d3t04dt15g43pths';
     const txDiscount = data.discount_id || (data.details && data.details.discount && data.details.discount.id) || null;

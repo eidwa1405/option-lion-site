@@ -102,6 +102,35 @@ exports.handler = async (event) => {
       } }) };
     }
 
+    // 💬 مراقبة محادثات الأعضاء (مع سفرائهم أو مع الإدارة) — قراءة فقط
+    if (event.httpMethod === 'GET' && action === 'member-chats') {
+      await sql`CREATE TABLE IF NOT EXISTS member_messages (id serial PRIMARY KEY, student_id int, ref_code text, sender text, body text, read_by_member boolean DEFAULT false, read_by_peer boolean DEFAULT false, created_at timestamptz DEFAULT now())`;
+      const threads = await sql`SELECT m.student_id, s.name AS member_name, s.email AS member_email,
+        COALESCE(MAX(m.ref_code), '') AS ref_code,
+        COUNT(*)::int AS msg_count,
+        MAX(m.created_at) AS last_at,
+        (SELECT body FROM member_messages x WHERE x.student_id = m.student_id ORDER BY x.created_at DESC LIMIT 1) AS last_body,
+        (SELECT sender FROM member_messages x2 WHERE x2.student_id = m.student_id ORDER BY x2.created_at DESC LIMIT 1) AS last_sender
+        FROM member_messages m LEFT JOIN academy_students s ON s.id = m.student_id
+        GROUP BY m.student_id, s.name, s.email ORDER BY last_at DESC LIMIT 300`;
+      const codes = [...new Set(threads.map(r => r.ref_code).filter(Boolean))];
+      let ambNames = {};
+      if (codes.length) {
+        const affs = await sql`SELECT code, name FROM affiliates WHERE code = ANY(${codes})`;
+        affs.forEach(r => { ambNames[r.code] = r.name; });
+      }
+      threads.forEach(r => { r.amb_name = r.ref_code ? (ambNames[r.ref_code] || r.ref_code) : null; });
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, threads }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'member-chat-thread') {
+      const sid = parseInt((event.queryStringParameters && event.queryStringParameters.studentId) || '0', 10);
+      if (!sid) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'العضو غير محدد' }) };
+      const msgs = await sql`SELECT id, sender, body, created_at FROM member_messages WHERE student_id = ${sid} ORDER BY created_at ASC LIMIT 500`;
+      const st = await sql`SELECT id, name, email, member_ref FROM academy_students WHERE id = ${sid} LIMIT 1`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, messages: msgs, member: st[0] || null }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'payout-runs') {
       const runs = await sql`SELECT r.id, r.month, r.created_at, COALESCE(SUM(i.amount),0)::numeric AS total, COUNT(i.id)::int AS affiliate_count
         FROM payout_runs r LEFT JOIN payout_items i ON i.run_id = r.id GROUP BY r.id ORDER BY r.month DESC`;
@@ -114,6 +143,37 @@ exports.handler = async (event) => {
       if (!run.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
       const items = await sql`SELECT * FROM payout_items WHERE run_id = ${runId} ORDER BY amount DESC`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, month: run[0].month, items }) };
+    }
+
+    // 🧨 تصفير كل المبالغ — يمسح سجلات العمولات والإيرادات ودفعات الصرف (لا يمس العملاء ولا السفراء)
+    if (event.httpMethod === 'POST' && action === 'reset-all-amounts') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { confirm } = JSON.parse(event.body || '{}');
+      if (confirm !== 'تصفير') return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'أرسل كلمة التأكيد "تصفير"' }) };
+      const before = {
+        commissions: (await sql`SELECT COALESCE(SUM(amount),0)::numeric AS t, COUNT(*)::int AS c FROM commission_log`)[0],
+        revenue:     (await sql`SELECT COALESCE(SUM(amount),0)::numeric AS t, COUNT(*)::int AS c FROM revenue_log`)[0],
+        payouts:     (await sql`SELECT COALESCE(SUM(amount),0)::numeric AS t, COUNT(*)::int AS c FROM payout_items`)[0]
+      };
+      await sql`DELETE FROM payout_items`;
+      await sql`DELETE FROM payout_runs`;
+      await sql`DELETE FROM commission_log`;
+      await sql`DELETE FROM revenue_log`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('reset-all-amounts', ${'تصفير كل المبالغ — عمولات: $' + before.commissions.t + ' (' + before.commissions.c + ' سجل) · إيرادات: $' + before.revenue.t + ' (' + before.revenue.c + ') · صرف: $' + before.payouts.t + ' (' + before.payouts.c + ')'})`;
+      const BOT = process.env.TELEGRAM_BOT_TOKEN, CHAT = process.env.TELEGRAM_CHAT_ID;
+      let tgOk = false;
+      if (BOT && CHAT) {
+        const msg = '🧨 تم تصفير كل المبالغ من لوحة الإدارة\n\n' +
+          '💰 العمولات الممسوحة: $' + before.commissions.t + ' (' + before.commissions.c + ' سجل)\n' +
+          '📈 الإيرادات الممسوحة: $' + before.revenue.t + ' (' + before.revenue.c + ' سجل)\n' +
+          '💸 دفعات الصرف الممسوحة: $' + before.payouts.t + ' (' + before.payouts.c + ' بند)\n\n' +
+          '🕒 ' + new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' });
+        try {
+          const r = await fetch('https://api.telegram.org/bot' + BOT + '/sendMessage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ chat_id: CHAT, text: msg }) });
+          tgOk = !!(await r.json()).ok;
+        } catch(e){}
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, wiped: before, telegram: tgOk }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'generate-payout-now') {
@@ -348,8 +408,21 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
+    if (event.httpMethod === 'GET' && action === 'broadcast-recipients') {
+      const aud = (event.queryStringParameters && event.queryStringParameters.audience) || 'customers';
+      let list;
+      if (aud === 'affiliates') {
+        list = await sql`SELECT code AS id, name, email, COALESCE(lang,'ar') AS lang, status FROM affiliates WHERE email IS NOT NULL AND email != '' ORDER BY name ASC`;
+      } else if (aud === 'academy') {
+        list = await sql`SELECT id::text AS id, name, email, COALESCE(lang,'ar') AS lang, CASE WHEN paid_at IS NOT NULL THEN 'مدفوع' ELSE 'مسجّل' END AS status FROM academy_students WHERE email IS NOT NULL AND email != '' ORDER BY name ASC`;
+      } else {
+        list = await sql`SELECT id::text AS id, COALESCE(name,'') AS name, email, COALESCE(lang,'ar') AS lang, COALESCE(status,'') AS status, COALESCE(client_id,'') AS ref, expires_at FROM subscriptions WHERE email IS NOT NULL AND email != '' ORDER BY name ASC`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, recipients: list }) };
+    }
+
     if (event.httpMethod === 'POST' && action === 'broadcast-email') {
-      const { subject, message, audience, codes, translations } = JSON.parse(event.body || '{}');
+      const { subject, message, audience, codes, ids, translations } = JSON.parse(event.body || '{}');
       if (!subject || !message) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الموضوع والرسالة مطلوبان' }) };
       let rows;
       if (audience === 'affiliates') {
@@ -357,9 +430,13 @@ exports.handler = async (event) => {
           ? await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM affiliates WHERE email IS NOT NULL AND email != '' AND code = ANY(${codes})`
           : await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM affiliates WHERE email IS NOT NULL AND email != ''`;
       } else if (audience === 'academy') {
-        rows = await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM academy_students WHERE email IS NOT NULL AND email != ''`;
+        rows = (ids && ids.length)
+          ? await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM academy_students WHERE email IS NOT NULL AND email != '' AND id = ANY(${ids.map(Number)})`
+          : await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM academy_students WHERE email IS NOT NULL AND email != ''`;
       } else {
-        rows = await sql`SELECT email, lang FROM subscriptions WHERE email IS NOT NULL AND email != '' AND email_verified = true`;
+        rows = (ids && ids.length)
+          ? await sql`SELECT email, COALESCE(lang,'ar') AS lang FROM subscriptions WHERE email IS NOT NULL AND email != '' AND id = ANY(${ids.map(Number)})`
+          : await sql`SELECT email, lang FROM subscriptions WHERE email IS NOT NULL AND email != '' AND email_verified = true`;
       }
       let sent = 0;
       for (const r of rows) {
@@ -412,7 +489,8 @@ exports.handler = async (event) => {
       await sql`UPDATE affiliates a SET active = false
         WHERE a.active = true AND a.approved_at IS NOT NULL AND a.created_at < now() - interval '14 days'
         AND NOT EXISTS (SELECT 1 FROM commission_log c WHERE c.ref_code = a.code)`;
-      const affiliates = await sql`SELECT a.*, COALESCE(SUM(c.amount),0)::numeric AS total_commission, COUNT(c.id)::int AS renewals
+      const affiliates = await sql`SELECT a.*, COALESCE(SUM(c.amount),0)::numeric AS total_commission, COUNT(c.id)::int AS renewals,
+        (SELECT s3.last_seen_at FROM ambassador_requests ar3 JOIN academy_students s3 ON s3.id = ar3.student_id WHERE ar3.code = a.code AND ar3.status = 'approved' ORDER BY ar3.created_at DESC LIMIT 1) AS last_seen_at
         FROM affiliates a LEFT JOIN commission_log c ON c.ref_code = a.code
         GROUP BY a.code ORDER BY (a.approved_at IS NULL) DESC, a.active DESC, total_commission DESC`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, affiliates }) };
@@ -515,7 +593,8 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET' && action === 'academy-students') {
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS phone text`;
-      const rows = await sql`SELECT s.id, s.name, s.email, s.phone, s.paid_at, s.lang, s.points, s.current_level, s.rank, s.graduated_at,
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_seen_at timestamptz`;
+      const rows = await sql`SELECT s.id, s.name, s.email, s.phone, s.paid_at, s.lang, s.points, s.current_level, s.rank, s.graduated_at, s.last_seen_at,
         s.discount_code, s.email_verified, s.created_at, s.last_login_at,
         (SELECT COUNT(*)::int FROM academy_progress p WHERE p.student_id = s.id AND p.completed = true) AS levels_done
         FROM academy_students s ORDER BY s.created_at DESC LIMIT 300`;

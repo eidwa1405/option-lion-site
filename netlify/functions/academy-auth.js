@@ -19,6 +19,8 @@ function certNumberFor(id) {
 }
 
 const QUIZ_ANSWERS = {"1":[1,1,1,1,1,1,0,1,0,1,0,0],"2":[0,1,1,1,2,0,0,1,0,1,1,0],"3":[1,1,1,1,1,0,0,1,0,0,0,0],"4":[1,1,1,1,1,0,0,0,1,0,0,0],"5":[1,1,1,0,1,2,0,0,0,0,0,0],"6":[1,1,0,1,0,1,0,0,0,0,0,0],"7":[1,1,1,1,1,0,0,0,0,0],"8":[1,0,0,1,1,1,0,0,0,0],"9":[1,0,1,1,0,1,0,0,0,0],"10":[1,1,1,1,0,1,0,0,0,0],"11":[1,1,1,0,1,0,0,1,0,0,0,0]};
+const CLOCK_QUIZ_ANSWERS = {"1":[1,1,1,0,0,1],"2":[1,1,1,1,1,0],"3":[1,0,0,1,1,1],"4":[1,1,0,0,1,1],"5":[1,1,1,0,1,1],"6":[1,1,0,0,1,1],"7":[1,0,1,1,0,0],"8":[0,1,0,0,0,1],"9":[0,1,1,1,1,0],"10":[1,1,1,1,1,0]};
+
 const FREE_QUIZ_ANSWERS = {"1":[1,2,1,0,0,0,0],"2":[2,0,3,0,0,0,0,0],"3":[3,0,1,0,0,0,0],"4":[1,0,2,1,0,0,0,0],"5":[1,1,0,1,1,1],"6":[1,0,1,0,0,1]};
 
 exports.handler = async (event) => {
@@ -37,7 +39,11 @@ exports.handler = async (event) => {
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS free_graduated_at timestamptz`;
     await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_ip text`;
     await sql`CREATE TABLE IF NOT EXISTS amb_messages (id serial PRIMARY KEY, code text, student_id int, sender text, body text, read_by_amb boolean DEFAULT false, created_at timestamptz DEFAULT now())`;
+    await sql`CREATE TABLE IF NOT EXISTS member_messages (id serial PRIMARY KEY, student_id int, ref_code text, sender text, body text, read_by_member boolean DEFAULT false, read_by_peer boolean DEFAULT false, created_at timestamptz DEFAULT now())`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_mm_student ON member_messages (student_id)`;
     await sql`CREATE TABLE IF NOT EXISTS graduation_devices (id serial PRIMARY KEY, student_id int, device_hash text, ip text, created_at timestamptz DEFAULT now())`;
+    await sql`CREATE TABLE IF NOT EXISTS academy_clock_progress (student_id int, level_num int, completed boolean DEFAULT false, score int, completed_at timestamptz, UNIQUE(student_id, level_num))`;
+    await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS clock_graduated_at timestamptz`;
     await sql`CREATE TABLE IF NOT EXISTS academy_free_progress (student_id int, level_num int, completed boolean DEFAULT false, score int, completed_at timestamptz, UNIQUE(student_id, level_num))`;
     await sql`CREATE TABLE IF NOT EXISTS ambassador_requests (id serial PRIMARY KEY, student_id int, status text DEFAULT 'pending', code text, created_at timestamptz DEFAULT now(), decided_at timestamptz)`;
     await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS signature text`;
@@ -89,9 +95,15 @@ exports.handler = async (event) => {
       await sql`UPDATE academy_students SET last_login_at = now(), last_ip = COALESCE(${event.headers['x-nf-client-connection-ip'] || event.headers['client-ip'] || event.headers['x-forwarded-for'] || null}, last_ip) WHERE id = ${s.id}`;
       const progress = await sql`SELECT level_num, completed, score FROM academy_progress WHERE student_id = ${s.id} ORDER BY level_num ASC`;
       const freeProgress = await sql`SELECT level_num, completed, score FROM academy_free_progress WHERE student_id = ${s.id} ORDER BY level_num ASC`;
+      const clockProgress = await sql`SELECT level_num, completed, score FROM academy_clock_progress WHERE student_id = ${s.id} ORDER BY level_num ASC`;
+      let subActive = false;
+      try {
+        const subRows = await sql`SELECT status FROM subscriptions WHERE lower(email) = ${String(s.email).toLowerCase()} ORDER BY created_at DESC LIMIT 1`;
+        if (subRows.length){ const st = String(subRows[0].status || '').toLowerCase(); subActive = st === 'active' || st === 'trial' || st.indexOf('renew_') === 0; }
+      } catch(e){}
       const secret = process.env.AFFILIATE_SESSION_SECRET || s.password_hash;
       const token = crypto.createHmac('sha256', secret).update(new Date().toISOString().slice(0, 10) + s.email).digest('hex');
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, student: { id: s.id, name: s.name, email: s.email, paid: !!s.paid_at, points: s.points, current_level: s.current_level, rank: s.rank, graduated_at: s.graduated_at, discount_code: s.discount_code, cert_number: s.cert_number, referred_by: s.referred_by, member_ref: s.member_ref || s.id, free_graduated_at: s.free_graduated_at }, progress, freeProgress }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, token, student: { id: s.id, name: s.name, email: s.email, paid: !!s.paid_at, points: s.points, current_level: s.current_level, rank: s.rank, graduated_at: s.graduated_at, discount_code: s.discount_code, cert_number: s.cert_number, referred_by: s.referred_by, member_ref: s.member_ref || s.id, free_graduated_at: s.free_graduated_at , subActive: subActive, clockPaid: !!s.clock_paid_at }, progress, freeProgress, clockProgress }) };
     }
 
     if (action === 'complete-level') {
@@ -265,6 +277,15 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, status: 'pending' }) };
     }
 
+    if (action === 'heartbeat' || action === 'go-offline') {
+      const { studentId } = body;
+      if (!studentId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false }) };
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_seen_at timestamptz`;
+      if (action === 'heartbeat') await sql`UPDATE academy_students SET last_seen_at = now() WHERE id = ${studentId}`;
+      else await sql`UPDATE academy_students SET last_seen_at = now() - interval '10 minutes' WHERE id = ${studentId}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (action === 'get-notifications') {
       const { studentId, token } = body;
       if (!studentId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
@@ -309,6 +330,92 @@ exports.handler = async (event) => {
         try { await fetch('https://api.telegram.org/bot' + tgTokM + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tgChatM, text: noteM }) }); } catch (e) {}
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, id: insM[0].id }) };
+    }
+
+    if (action === 'complete-clock-level') {
+      const { studentId, level, picks } = body;
+      if (!studentId || !level) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
+      const key = CLOCK_QUIZ_ANSWERS[String(level)];
+      if (!key) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'مستوى غير معروف' }) };
+      const arr = Array.isArray(picks) ? picks : [];
+      let correct = 0;
+      const wrong = [];
+      for (let i = 0; i < key.length; i++) { if (Number(arr[i]) === key[i]) correct++; else wrong.push(i); }
+      const score = Math.round((correct / key.length) * 100);
+      if (score < 70) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, score, wrong, error: 'النتيجة أقل من 70% — راجع الدرس وحاول مجدداً' }) };
+      await sql`INSERT INTO academy_clock_progress (student_id, level_num, completed, score, completed_at) VALUES (${studentId}, ${level}, true, ${score}, now()) ON CONFLICT (student_id, level_num) DO UPDATE SET completed = true, score = GREATEST(academy_clock_progress.score, ${score}), completed_at = now()`;
+      const doneRows = await sql`SELECT COUNT(*)::int AS c FROM academy_clock_progress WHERE student_id = ${studentId} AND completed = true`;
+      const graduated = doneRows[0].c >= 10;
+      if (graduated) await sql`UPDATE academy_students SET clock_graduated_at = COALESCE(clock_graduated_at, now()) WHERE id = ${studentId}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, score, wrong, nextLevel: Math.min(level + 1, 11), graduated }) };
+    }
+
+    if (action === 'member-thread' || action === 'member-chat-send') {
+      const { studentId } = body;
+      if (!studentId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
+      const meRows = await sql`SELECT id, name, email, member_ref FROM academy_students WHERE id = ${studentId} LIMIT 1`;
+      if (!meRows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'الحساب غير موجود' }) };
+      const me = meRows[0];
+      const myRef = me.member_ref || null;
+      let peerName = null;
+      if (myRef) {
+        const aff = await sql`SELECT name FROM affiliates WHERE code = ${myRef} LIMIT 1`;
+        peerName = aff.length ? aff[0].name : null;
+      }
+      if (action === 'member-thread') {
+        const msgs = await sql`SELECT id, sender, body, created_at FROM member_messages WHERE student_id = ${studentId} ORDER BY created_at ASC LIMIT 200`;
+        await sql`UPDATE member_messages SET read_by_member = true WHERE student_id = ${studentId} AND sender <> 'member'`;
+        let peerOnline = false;
+        if (myRef) {
+          const po = await sql`SELECT s2.last_seen_at FROM ambassador_requests ar JOIN academy_students s2 ON s2.id = ar.student_id WHERE ar.code = ${myRef} AND ar.status = 'approved' ORDER BY ar.created_at DESC LIMIT 1`;
+          peerOnline = !!(po.length && po[0].last_seen_at && (Date.now() - new Date(po[0].last_seen_at).getTime()) < 120000);
+        }
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, messages: msgs, hasAmbassador: !!myRef, peerName: peerName, peerOnline: peerOnline }) };
+      }
+      const txt = String(body.text || '').trim().slice(0, 2000);
+      if (!txt) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الرسالة فارغة' }) };
+      const recent = await sql`SELECT COUNT(*)::int AS c FROM member_messages WHERE student_id = ${studentId} AND sender = 'member' AND created_at > now() - interval '5 minutes'`;
+      if (recent[0].c >= 5) return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'أرسلت رسائل كثيرة — انتظر قليلاً' }) };
+      await sql`INSERT INTO member_messages (student_id, ref_code, sender, body) VALUES (${studentId}, ${myRef}, 'member', ${txt})`;
+      if (!myRef) {
+        const tgT = process.env.TELEGRAM_BOT_TOKEN, tgC = process.env.TELEGRAM_CHAT_ID;
+        if (tgT && tgC) {
+          const note = '💬 رسالة عضو (بلا سفير)\n' + (me.name || '') + ' — ' + (me.email || '') + '\nرقم العضوية: ' + me.id + '\n\n' + txt + '\n\n#M' + me.id + '\n↩️ ردّ على هذه الرسالة مباشرة ليصله ردك بلوحته وبريده';
+          await fetch('https://api.telegram.org/bot' + tgT + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tgC, text: note }) }).catch(function () {});
+        }
+      } else {
+        await sql`INSERT INTO audit_log (action, details) VALUES ('member-message', ${'رسالة من العضو #' + me.id + ' إلى سفيره ' + myRef})`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (action === 'amb-threads' || action === 'amb-thread' || action === 'amb-thread-send') {
+      const { studentId } = body;
+      if (!studentId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'بيانات ناقصة' }) };
+      const ambR = await sql`SELECT code FROM ambassador_requests WHERE student_id = ${studentId} AND status = 'approved' AND code IS NOT NULL ORDER BY decided_at DESC LIMIT 1`;
+      if (!ambR.length) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'لست سفيراً معتمداً' }) };
+      const myCode = ambR[0].code;
+      if (action === 'amb-threads') {
+        const rows = await sql`SELECT s.id, s.name, (SELECT COUNT(*)::int FROM member_messages m WHERE m.student_id = s.id AND m.sender = 'member' AND m.read_by_peer = false) AS unread, (SELECT MAX(created_at) FROM member_messages m2 WHERE m2.student_id = s.id) AS last_at, s.last_seen_at FROM academy_students s WHERE s.member_ref = ${myCode} ORDER BY last_at DESC NULLS LAST LIMIT 100`;
+      rows.forEach(r => { r.online = !!(r.last_seen_at && (Date.now() - new Date(r.last_seen_at).getTime()) < 120000); });
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, threads: rows }) };
+      }
+      const peerId = parseInt(body.peerId, 10);
+      if (!peerId) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'العضو غير محدد' }) };
+      const own = await sql`SELECT id FROM academy_students WHERE id = ${peerId} AND member_ref = ${myCode} LIMIT 1`;
+      if (!own.length) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'هذا العضو ليس من عملائك' }) };
+      if (action === 'amb-thread') {
+        const msgs = await sql`SELECT id, sender, body, created_at FROM member_messages WHERE student_id = ${peerId} ORDER BY created_at ASC LIMIT 200`;
+        await sql`UPDATE member_messages SET read_by_peer = true WHERE student_id = ${peerId} AND sender = 'member'`;
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true, messages: msgs }) };
+      }
+      const rtxt = String(body.text || '').trim().slice(0, 2000);
+      if (!rtxt) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الرسالة فارغة' }) };
+      const rc = await sql`SELECT COUNT(*)::int AS c FROM member_messages WHERE student_id = ${peerId} AND sender = 'ambassador' AND created_at > now() - interval '5 minutes'`;
+      if (rc[0].c >= 10) return { statusCode: 429, headers, body: JSON.stringify({ ok: false, error: 'أرسلت رسائل كثيرة — انتظر قليلاً' }) };
+      await sql`INSERT INTO member_messages (student_id, ref_code, sender, body) VALUES (${peerId}, ${myCode}, 'ambassador', ${rtxt})`;
+      try { await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${peerId}, '📩 رد جديد من سفيرك', ${rtxt.slice(0, 300)})`; } catch (eN) {}
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (action === 'ambassador-stats') {
