@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="ref-capture.js"></script>
-<meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
+<meta name="description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وأكاديمية بثلاثة مسارات تدريبية.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title id="pageTitle">لوحة تحكم السفير — O P N  LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
@@ -31,8 +31,8 @@ td{padding:10px; border-bottom:1px solid rgba(255,255,255,.06);}
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="O P N LIO">
-<meta property="og:title" content="' + month + '">
-<meta property="og:description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وبرنامج تأهيل مجاني بـ12 مستوى.">
+<meta property="og:title" content="لوحة تحكم السفير — O P N LIO">
+<meta property="og:description" content="منصة OPN LIO التعليمية لتحليل السوق — أدوات تحليل فني متكاملة على TradingView وأكاديمية بثلاثة مسارات تدريبية.">
 <meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
 <meta property="og:url" content="https://opnlio.com/affiliate-dashboard">
 <meta name="twitter:card" content="summary_large_image">
@@ -58,6 +58,7 @@ td{padding:10px; border-bottom:1px solid rgba(255,255,255,.06);}
         <button onclick="setLang('pt'); toggleLangDD(false);">🇵🇹 Português</button>
         <button onclick="setLang('tr'); toggleLangDD(false);">🇹🇷 Türkçe</button>
         <button onclick="setLang('fr'); toggleLangDD(false);">🇫🇷 Français</button>
+        <button onclick="setLang('it'); toggleLangDD(false);">🇮🇹 Italiano</button>
       </div>
     </div>
   </div>
@@ -235,6 +236,19 @@ var T = {
     customersTitle:'Clients Parrainés via votre Code', thStatus:'Statut', thName:'Nom', thPlan:'Forfait', thExpiry:'Date d\'Expiration', thCommission:'Votre Commission', noCustomers:'Aucun client parrainé pour le moment',
     reminderBtn:'📧 Envoyer un Rappel', reminderSending:'Envoi...', reminderOk:'✅ Envoyé', reminderFail:'Échec de l\'envoi',
     agreementTitle:'Accord Ambassadeur -', agAlias:'Nom d\'Affichage', agLegal:'Nom Légal', agCountryCity:'Pays / Ville', agEmail:'E-mail', agPhone:'Téléphone', agCode:'Code Ambassadeur', agBank:'Compte Bancaire', floorLabel:'Commission Permanente', bonusLabel:'Points Bonus', agDate:'Date d\'Approbation', agSig:'Signature de l\'Ambassadeur :', agNoSig:'Aucune signature enregistrée'
+  },
+  it:{dir:'ltr',flag:'🇮🇹',label:'Italiano',
+    active:'Attivo', frozen:'Sospeso', logout:'Esci',
+    frozenTitle:'Il tuo account è attualmente sospeso', frozenBody:'Tutti i campi sono temporaneamente disattivati. Puoi inviare una richiesta di riattivazione; ti contatteremo dopo la verifica.', reqBtn:'📨 Invia richiesta di riattivazione', reqSending:'Invio...', reqOk:'✅ La tua richiesta è stata inviata con successo.', reqFail:'Invio non riuscito',
+    lblCustomers:'Clienti segnalati', lblCommission:'Provvigione totale ($)', lblPending:'💰 Prossimo pagamento',
+    gaugeTitle:'🎯 Indicatore provvigioni', gaugeFloorLabel:'Minimo attuale: $', gaugeRemain:function(n,f){return 'Ancora ' + n + ' clienti per raggiungere un minimo di $' + f;}, gaugeMax:'🏆 Hai raggiunto il livello massimo — minimo garantito di $9!',
+    perfTitle:'⚡ Indicatore di performance', perfUp:'📈 In crescita', perfUpHint:'Questo mese superi il mese scorso — continua così!', perfFlat:'⚖️ Stabile', perfFlatHint:'La tua performance è stabile — condividi più spesso il tuo codice.', perfDown:'⏳ Serve più attività', perfDownHint:'La tua attività è rallentata questo mese — condividi più spesso il tuo codice.', perfStart:'🔥 Buon inizio', perfStartHint:'Continua a condividere il tuo codice per prendere slancio.', perfZero:'🚀 Inizia ora', perfZeroHint:'Condividi il tuo codice con il tuo primo cliente.',
+    perfChartTitle:'La tua performance negli ultimi 6 mesi', chartEmpty:'Dati non ancora sufficienti',
+    profileTitle:'I tuoi dati', legalName:'Nome legale:', country:'Paese / Città:', email:'E-mail:', phone:'Telefono:', telegram:'Telegram:', yourCode:'Il tuo codice:', downloadAgreement:'📄 Scarica il tuo accordo',
+    credTitle:'Modifica credenziali', newUsername:'Nuovo nome utente', newPassword:'Nuova password (lascia vuoto per non cambiarla)', saveBtn:'Salva', savingMsg:'Salvataggio...', saveOk:'✅ Modifiche salvate con successo', saveFail:'Salvataggio non riuscito', usernameShort:'⚠️ Il nome utente deve contenere almeno 3 caratteri', passwordShort:'⚠️ La password deve contenere almeno 6 caratteri',
+    customersTitle:'Clienti arrivati con il tuo codice', thStatus:'Stato', thName:'Nome', thPlan:'Piano', thExpiry:'Data di scadenza', thCommission:'La tua provvigione', noCustomers:'Nessun cliente segnalato per ora',
+    reminderBtn:'📧 Invia promemoria', reminderSending:'Invio...', reminderOk:'✅ Inviato', reminderFail:'Invio non riuscito',
+    agreementTitle:'Accordo Ambasciatore -', agAlias:'Nome visualizzato', agLegal:'Nome legale', agCountryCity:'Paese / Città', agEmail:'E-mail', agPhone:'Telefono', agCode:'Codice ambasciatore', agBank:'Conto bancario', floorLabel:'Provvigione permanente', bonusLabel:'Punti bonus', agDate:'Data di approvazione', agSig:'Firma dell’ambasciatore:', agNoSig:'Nessuna firma registrata'
   }
 };
 var currentLang = localStorage.getItem('aff_lang') || 'ar';
@@ -282,8 +296,8 @@ function setLang(code){
   if (lastProfileRes) renderProfile(lastProfileRes);
 }
 
-var TOKEN = sessionStorage.getItem('aff_token');
-var CODE = sessionStorage.getItem('aff_code');
+var TOKEN = localStorage.getItem('aff_token');
+var CODE = localStorage.getItem('aff_code');
 if (!TOKEN || !CODE) location.href = './affiliate-login.html';
 
 function authFetch(url, opts){
@@ -291,7 +305,18 @@ function authFetch(url, opts){
   opts.headers = Object.assign({'Content-Type':'application/json','X-Affiliate-Token':TOKEN,'X-Affiliate-Code':CODE}, opts.headers||{});
   return fetch(url.replace('/api/','/.netlify/functions/'), opts);
 }
-function logout(){ sessionStorage.removeItem('aff_token'); sessionStorage.removeItem('aff_code'); location.href = './affiliate-login.html'; }
+function _affBeat(off){
+  try {
+    if (off) {
+      fetch('/.netlify/functions/affiliate-data?action=go-offline', { method:'GET', keepalive:true, headers:{'X-Affiliate-Token':TOKEN,'X-Affiliate-Code':CODE} }).catch(function(){});
+      return;
+    }
+    authFetch('/api/affiliate-data?action=heartbeat').catch(function(){});
+  } catch(e){}
+}
+_affBeat(); setInterval(function(){ _affBeat(); }, 60000);
+window.addEventListener('pagehide', function(){ _affBeat(true); });
+function logout(){ localStorage.removeItem('aff_token'); localStorage.removeItem('aff_code'); location.href = './affiliate-login.html'; }
 
 function statusIcon(c){
   if (c.status === 'canceled' || (c.hoursLeft !== null && c.hoursLeft <= 0)) return '😞';

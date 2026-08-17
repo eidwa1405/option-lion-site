@@ -32,6 +32,7 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 <link rel="canonical" href="https://opnlio.com/affiliate-login.html">
+<script>try{ if (localStorage.getItem("aff_token") && localStorage.getItem("aff_code")) location.replace("./affiliate-dashboard.html"); }catch(e){}</script>
 </head>
 <body>
 <div dir="rtl" style="background:rgba(212,175,55,.1); border-bottom:1px solid rgba(212,175,55,.35); padding:11px 16px; text-align:center; font-family:Tajawal,sans-serif; font-size:12.5px; color:#e9edf5;">🔔 نظام السفراء الجديد أصبح داخل <a href="./member-login.html" style="color:#D4AF37; font-weight:800;">لوحة العضو</a> — هذه اللوحة تبقى لدخول السفراء المسجّلين سابقاً فقط.</div>
@@ -47,6 +48,7 @@ button{width:100%; padding:14px; border:none; border-radius:12px; background:lin
       <button onclick="setLang('pt'); toggleLangDD(false);">🇵🇹 Português</button>
       <button onclick="setLang('tr'); toggleLangDD(false);">🇹🇷 Türkçe</button>
       <button onclick="setLang('fr'); toggleLangDD(false);">🇫🇷 Français</button>
+        <button onclick="setLang('it'); toggleLangDD(false);">🇮🇹 Italiano</button>
     </div>
   </div>
   <div style="text-align:center; margin-bottom:24px;">
@@ -69,7 +71,8 @@ var T = {
   es:{dir:'ltr',flag:'🇪🇸',label:'Español',title:'Panel del Embajador',username:'Número de Embajador',password:'Contraseña',login:'Iniciar sesión',err:'No se pudo conectar al servidor',forgot:'¿Olvidaste tu contraseña?',forgotPrompt:'Ingresa tu usuario, código o correo registrado:',forgotSent:'Si los datos son correctos, se enviará una nueva contraseña a tu correo registrado.'},
   pt:{dir:'ltr',flag:'🇵🇹',label:'Português',title:'Painel do Embaixador',username:'Número do Embaixador',password:'Senha',login:'Entrar',err:'Não foi possível conectar ao servidor',forgot:'Esqueceu a senha?',forgotPrompt:'Digite seu nome de usuário, código ou e-mail registrado:',forgotSent:'Se os dados estiverem corretos, uma nova senha será enviada ao seu e-mail registrado.'},
   tr:{dir:'ltr',flag:'🇹🇷',label:'Türkçe',title:'Elçi Panosu',username:'Elçi Numarası',password:'Şifre',login:'Giriş Yap',err:'Sunucuya bağlanılamadı',forgot:'Şifrenizi mi unuttunuz?',forgotPrompt:'Kullanıcı adınızı, kodunuzu veya kayıtlı e-postanızı girin:',forgotSent:'Bilgiler doğruysa, kayıtlı e-postanıza yeni bir şifre gönderilecektir.'},
-  fr:{dir:'ltr',flag:'🇫🇷',label:'Français',title:'Tableau de Bord Ambassadeur',username:'Numéro d\'Ambassadeur',password:'Mot de passe',login:'Connexion',err:'Impossible de se connecter au serveur',forgot:'Mot de passe oublié ?',forgotPrompt:'Entrez votre nom d\'utilisateur, code ou e-mail enregistré :',forgotSent:'Si les informations sont correctes, un nouveau mot de passe sera envoyé à votre e-mail enregistré.'}
+  fr:{dir:'ltr',flag:'🇫🇷',label:'Français',title:'Tableau de Bord Ambassadeur',username:'Numéro d\'Ambassadeur',password:'Mot de passe',login:'Connexion',err:'Impossible de se connecter au serveur',forgot:'Mot de passe oublié ?',forgotPrompt:'Entrez votre nom d\'utilisateur, code ou e-mail enregistré :',forgotSent:'Si les informations sont correctes, un nouveau mot de passe sera envoyé à votre e-mail enregistré.'},
+  it:{dir:'ltr',flag:'🇮🇹',label:'Italiano',title:'Area Ambasciatore',username:'Numero ambasciatore',password:'Password',login:'Accedi',err:'Impossibile connettersi al server',forgot:'Password dimenticata?',forgotPrompt:'Inserisci il tuo nome utente, codice o e-mail registrata:',forgotSent:'Se i dati sono corretti, una nuova password verrà inviata alla tua e-mail registrata.'}
 };
 var currentLang = localStorage.getItem('aff_lang') || 'ar';
 function setLang(code){
@@ -115,8 +118,8 @@ function doLogin(){
   fetch('/api/affiliate-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: code, password }) })
     .then(function(r){ return r.json(); }).then(function(res){
       if (res.ok) {
-        sessionStorage.setItem('aff_token', res.token);
-        sessionStorage.setItem('aff_code', res.code);
+        localStorage.setItem('aff_token', res.token);
+        localStorage.setItem('aff_code', res.code);
         location.href = './affiliate-dashboard.html';
       } else {
         err.textContent = res.error || T[currentLang].err;
