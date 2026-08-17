@@ -10,6 +10,7 @@
   <url><loc>https://opnlio.com/booklet-fr.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/booklet-pt.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/booklet-tr.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/booklet-it.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/booklet.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/certificate-preview.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/contact.html</loc><lastmod>2026-08-14</lastmod><priority>0.8</priority></url>
@@ -68,7 +69,14 @@
   <url><loc>https://opnlio.com/pt-signup.html</loc><lastmod>2026-08-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://opnlio.com/pt-system.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/pt-testimonials.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
-  <url><loc>https://opnlio.com/refund.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/en-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/de-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/fr-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/es-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/tr-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/pt-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
+  <url><loc>https://opnlio.com/it-refund.html</loc><lastmod>2026-08-17</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/results.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>
   <url><loc>https://opnlio.com/signup.html</loc><lastmod>2026-08-14</lastmod><priority>0.8</priority></url>
   <url><loc>https://opnlio.com/system.html</loc><lastmod>2026-08-14</lastmod><priority>0.5</priority></url>

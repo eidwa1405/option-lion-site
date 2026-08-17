@@ -66,21 +66,6 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
 <body>
 
 <div id="themeRoot" style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 20% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 100% 10%, rgba(30,58,110,.5), transparent 60%), #070d18;">
-<script>
-(function(){
-  var presets = [
-    'hue-rotate(0deg) saturate(1) brightness(1)',
-    'hue-rotate(45deg) saturate(1.05) brightness(1.02)',
-    'hue-rotate(-40deg) saturate(1.1) brightness(1)',
-    'hue-rotate(90deg) saturate(0.9) brightness(1.03)',
-    'hue-rotate(180deg) saturate(0.85) brightness(1)',
-    'hue-rotate(-90deg) saturate(1.15) brightness(0.98)'
-  ];
-  var idx = Math.floor(Date.now() / (8 * 60 * 60 * 1000)) % presets.length;
-  var root = document.getElementById('themeRoot');
-  if (root) root.style.filter = presets[idx];
-})();
-</script>
 
 <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; row-gap:10px; flex-wrap:wrap; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
   <a href="./it-lion.html" style="display:flex; align-items:center; gap:10px;">
@@ -101,7 +86,7 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
     <a href="./it-academy.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">Unisciti ora</a>
   </div>
 </nav>
-<a href="./it-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Novità: programma di qualificazione del trader — 17 livelli, dal principiante al professionista, con certificato e sconto esclusivo. <span style="color:#39FF14; text-decoration:underline;">Inizia ora →</span></p></a>
+<a href="./it-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Accademia — il percorso Sistema di Indicatori è totalmente gratis: sei livelli su ogni strumento. <span style="color:#39FF14; text-decoration:underline;">Inizia ora →</span></p></a>
 
 <a href="#top" id="backToTop" style="position:fixed; bottom:24px; right:24px; z-index:60; width:48px; height:48px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(212,175,55,.4); font-size:20px; color:#070d18; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;">↑</a>
 <script>
@@ -114,34 +99,254 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
 })();
 </script>
 
-<section id="pricing" style="padding:clamp(50px,8vw,100px) clamp(20px,6vw,64px);">
-  <div style="max-width:1180px; margin:0 auto;">
-    <div style="text-align:center; margin-bottom:20px;">
-      <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">PREZZI</div>
-      <h1 style="font-size:clamp(28px,3.8vw,42px); font-weight:900; color:#fff; margin:0 0 14px;">Investi nel tuo vantaggio prima della prossima operazione</h1>
-      <div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(120deg,rgba(212,175,55,.18),rgba(212,175,55,.06)); border:1px solid rgba(212,175,55,.4); color:#f0cf6c; font-weight:800; font-size:13.5px; padding:8px 20px; border-radius:24px; margin-bottom:40px;">⚜ Quattro strumenti integrati in un solo abbonamento</div>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px;">
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">Mensile</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$39<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15% </span><span style="font-size:14px; color:#8a93a8;">/mo</span></div><div style="font-size:12px; color:#6b7488; margin-bottom:22px;">fatturazione mensile</div><a href="./it-signup.html?price=pri_01kyhe6m178pfmv5p755mkhpf0" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >Inizia</a></div>
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">3 mesi</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$99<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#146817; font-weight:700; margin-bottom:22px;">Risparmi il 15%</div><a href="./it-signup.html?price=pri_01kyheh9wpxzfvv1b452h176y3" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >Inizia</a></div>
-      <div style="position:relative; background:linear-gradient(160deg,rgba(212,175,55,.16),rgba(212,175,55,.03)); border:1.5px solid #D4AF37; border-radius:18px; padding:34px 24px 30px; text-align:center; transform:scale(1.04); box-shadow:0 20px 50px rgba(212,175,55,.15);"><div style="position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-size:11px; font-weight:900; padding:5px 16px; border-radius:14px; white-space:nowrap;">Il più scelto</div><div style="font-size:13px; font-weight:700; color:#e8cf85; margin-bottom:14px;">6 mesi</div><div style="font-size:38px; font-weight:900; color:#fff; margin-bottom:4px;">$179<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#39FF14; font-weight:700; margin-bottom:22px;">Risparmi il 23%</div><a href="./it-signup.html?price=pri_01kyhen533mmstsyr1gf81qb94" style="display:block; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:12px; border-radius:22px;" >Inizia</a></div>
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">Annuale</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$299<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#146817; font-weight:700; margin-bottom:22px;">Risparmi il 36%</div><a href="./it-signup.html?price=pri_01kyherxxbtt9kvb0hgevs3h3n" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >Inizia</a></div>
-    </div>
-    <p style="text-align:center; font-size:12px; color:#8a93a8; margin-top:10px;">💳 I prezzi indicati sopra sono al netto delle imposte — calcolate automaticamente al pagamento in base al tuo Paese.</p>
-  <p style="text-align:center; font-size:12.5px; color:#6b7488; margin-top:26px;">Tutti i piani includono i quattro strumenti (O P N LIO, Smart Pivot, Empire of the Wealthy, King’s Call) e ogni aggiornamento futuro.</p>
-  </div>
+<section id="pricing" style="padding:clamp(64px,9vw,120px) clamp(18px,5vw,60px);">
+  <div style="max-width:1060px; margin:0 auto;">
 
-  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:34px;">
-    <div style="font-size:11.5px; font-weight:700; color:#6b7488; letter-spacing:1px; text-transform:uppercase;">Metodi di pagamento accettati</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#1a1f71; font-weight:900; font-size:13px; font-style:italic; letter-spacing:.5px;">VISA</span>
-      <span style="display:inline-flex; align-items:center; gap:2px; padding:7px 14px; border-radius:8px; background:#fff;"><span style="width:14px; height:14px; border-radius:50%; background:#eb001b; display:inline-block;"></span><span style="width:14px; height:14px; border-radius:50%; background:#f79e1b; display:inline-block; margin-inline-start:-6px;"></span></span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#000; color:#fff; font-weight:700; font-size:13px; gap:3px;"><span style="font-size:11px;"></span> Pay</span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#5f6368; font-weight:700; font-size:13px;">G Pay</span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#006fcf; font-weight:900; font-size:12.5px;">AMEX</span>
+    <div style="margin-bottom:58px; max-width:680px;">
+      <div style="font-size:11px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:#8a7434; margin-bottom:16px;">Prezzi</div>
+      <h1 style="font-size:clamp(30px,4.2vw,48px); font-weight:900; color:#fff; margin:0 0 18px; line-height:1.15; letter-spacing:-.4px;">Scegli il tuo piano e inizia oggi</h1>
+      <p style="font-size:15px; color:#96a0b4; line-height:2; margin:0;">Due prodotti: <b style="color:#e9edf5;">l’abbonamento ai quattro indicatori del sistema</b> e <b style="color:#e9edf5;">l’Orologio di Sessione</b> (indicatore + percorso formativo) in acquisto unico. L’accesso su TradingView è concesso appena il pagamento è completato.</p>
     </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:44px; align-items:start;">
+
+      <div>
+        <div style="font-size:11px; font-weight:700; color:#6b7488; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:16px;">① Scegli la durata dell’abbonamento</div>
+        <div id="planList" style="display:flex; flex-direction:column; border:1px solid #1a2130; border-bottom:none; border-radius:12px; overflow:hidden;">
+
+          <button type="button" class="planRow" data-plan="m" onclick="pickPlan('m')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">Mensile</span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Si rinnova ogni mese · fermalo quando vuoi</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$39</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="q" onclick="pickPlan('q')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">3 mesi <span style="font-size:10.5px; font-weight:700; color:#8fdc7a; border:1px solid rgba(57,255,20,.25); border-radius:2px; padding:2px 7px; margin-inline-start:8px; letter-spacing:.3px;">Risparmi 15%</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Equivale a $33/mese IVA esclusa</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$99</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="h" onclick="pickPlan('h')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">6 mesi <span style="font-size:10.5px; font-weight:800; color:#070d18; background:#D4AF37; border-radius:2px; padding:2px 8px; margin-inline-start:8px; letter-spacing:.3px;">Il più scelto</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Equivale a $29,83/mese IVA esclusa · risparmi 23%</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$179</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="y" onclick="pickPlan('y')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">Annuale <span style="font-size:10.5px; font-weight:700; color:#8fdc7a; border:1px solid rgba(57,255,20,.25); border-radius:2px; padding:2px 7px; margin-inline-start:8px; letter-spacing:.3px;">Risparmi 36%</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Equivale a $24,92/mese IVA esclusa — costo più basso</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$299</span></span>
+          </button>
+
+        </div>
+
+        
+      </div>
+
+      <div style="position:sticky; top:100px; border:1px solid rgba(212,175,55,.38); border-radius:12px; background:#0c1424; padding:32px 30px;">
+        <div style="font-size:11px; font-weight:700; color:#8a7434; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:22px;">② Revisione e pagamento</div>
+        <div id="memberStrip" style="display:none; border:1px solid rgba(57,255,20,.22); background:rgba(57,255,20,.05); border-radius:10px; padding:13px 15px; margin-bottom:20px;">
+          <div style="font-size:12.5px; font-weight:800; color:#c9ffb0;">✓ Sei nel tuo account — <span id="memberWho"></span></div>
+          <div style="font-size:11.5px; color:#8a93a8; margin-top:4px;">Non ti richiederemo i dati: li prendiamo direttamente dalla tua iscrizione.</div>
+        </div>
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding-bottom:20px; border-bottom:1px solid rgba(212,175,55,.18);">
+          <span id="sumLabel" style="font-size:15px; font-weight:800; color:#e9edf5;">6 mesi</span>
+          <span id="sumTotal" style="font-size:36px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.5px;">$179</span>
+        </div>
+        
+        
+
+        <ul style="list-style:none; padding:0; margin:22px 0 24px; display:flex; flex-direction:column; gap:13px; font-size:13.5px; color:#b6c0d2; line-height:1.65;">
+          <li>⚜ I quattro strumenti: Sistema O P N LIO · Smart Pivot · Impero dei Ricchi · King's Call</li>
+          <li>🔔 Alert TradingView pronti per ogni segnale</li>
+          <li>🔄 Tutti gli aggiornamenti futuri inclusi</li>
+          <li>🎓 Percorso Sistema di Indicatori in accademia — gratis per tutti</li>
+        </ul>
+
+        <div id="tvWrap" style="display:none; margin-bottom:14px;">
+          <label for="tvUser" style="display:block; font-size:11px; font-weight:700; color:#8a7434; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px;">Nome utente TradingView</label>
+          <input id="tvUser" type="text" placeholder="username" style="width:100%; box-sizing:border-box; padding:13px 15px; border-radius:10px; border:1px solid rgba(212,175,55,.22); background:rgba(0,0,0,.28); color:#fff; font-size:14px; direction:ltr; text-align:left; font-family:inherit;">
+          <div style="font-size:11.5px; color:#8a93a8; margin-top:6px;">L’accesso viene concesso a questo nome utente subito dopo il pagamento.</div>
+          <div id="tvErr" style="display:none; font-size:11.5px; color:#ff5f5f; margin-top:6px;"></div>
+        </div>
+        <a id="payBtn" href="./it-signup.html?price=pri_01kyhen533mmstsyr1gf81qb94" style="display:block; text-align:center; font-weight:900; font-size:15px; color:#070d18; background:#D4AF37; padding:17px; border-radius:10px; letter-spacing:.3px;">Abbonati ora — 6 mesi</a>
+        <div style="font-size:11.5px; color:#5c6579; text-align:center; margin-top:10px; letter-spacing:.2px;">Prezzi in USD IVA esclusa · aggiunta al pagamento</div>
+        <div style="font-size:12px; color:#7d8798; text-align:center; margin-top:16px; line-height:1.9;">🔓 <b style="color:#c9d2e3;">Disdici quando vuoi</b> dalla tua area membri — il rinnovo si ferma subito e l’accesso resta fino alla fine del periodo pagato. <a href="./it-refund.html" style="color:#8a93a8; text-decoration:underline;">Politica di disdetta</a></div>
+      </div>
+    </div>
+
+    <div id="clockOffer" style="margin-top:44px; border:1px solid rgba(47,143,191,.4); border-radius:12px; background:rgba(47,143,191,.05); padding:34px 32px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:34px; align-items:center;">
+      <div>
+        <div style="font-size:11px; font-weight:700; color:#79c0e8; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:12px;">Prodotto indipendente</div>
+        <h2 style="font-size:22px; font-weight:800; color:#fff; margin:0 0 14px; letter-spacing:-.2px;">⏱ Orologio di Sessione — indicatore + percorso formativo</h2>
+        <p style="font-size:13.5px; color:#b6c0d2; line-height:2; margin:0 0 14px;">L’indicatore di timing della seduta su TradingView (cinque finestre · contatore theta · range d’apertura · range atteso · classificazione del tipo di giornata) <b style="color:#e9edf5;">insieme al percorso Orologio di Sessione in accademia — dieci livelli</b>, con un unico pagamento. Il percorso si apre solo dopo l’acquisto.</p>
+        <div style="font-size:12.5px; color:#8a93a8; line-height:1.8;">Del tutto separato dall’abbonamento ai quattro indicatori — puoi prenderlo da solo.</div>
+      </div>
+      <div style="text-align:center; min-width:190px;">
+        <div id="clockOld" style="font-size:15px; color:#6b7488; text-decoration:line-through; font-variant-numeric:tabular-nums;">$99</div>
+        <div id="clockNow" style="font-size:38px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; line-height:1.15; letter-spacing:-.5px;">$79</div>
+        <div id="clockNote" style="font-size:11.5px; color:#8a93a8; margin-bottom:14px;">Pagamento unico</div>
+        <a id="clockBtn" href="./it-signup.html?price=pri_01m04rf4x0d06y0aeb4m74230v" style="display:block; font-weight:900; font-size:14.5px; color:#070d18; background:#8fcbea; padding:15px 26px; border-radius:10px; letter-spacing:.3px;">Prendilo ora</a>
+      </div>
+    </div>
+<div style="margin-top:40px; border:1px solid #1a2130; border-radius:12px;">
+          <div style="padding:16px 22px; border-bottom:1px solid #1a2130; font-size:11px; font-weight:700; color:#6b7488; letter-spacing:2.5px; text-transform:uppercase;">Tutto ciò che è a pagamento sulla piattaforma — senza eccezioni</div>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:14px 18px; padding:20px 22px; font-size:13.5px; line-height:1.8;">
+            <div style="color:#e9edf5;">Abbonamento agli indicatori — i quattro strumenti</div><div style="color:#f0cf6c; font-weight:800; white-space:nowrap;">Da $39 / mese</div>
+            <div style="color:#e9edf5;">Orologio di Sessione — indicatore + i suoi dieci livelli d’accademia (acquisto unico)</div><div id="ledgerClock" style="color:#f0cf6c; font-weight:800; white-space:nowrap;">$79</div>
+            <div style="color:#e9edf5;">Quota d’iscrizione al percorso Maestria del Trader — una sola volta</div><div style="color:#f0cf6c; font-weight:800; white-space:nowrap;">$1</div>
+            <div style="color:#8a93a8;">Percorso Sistema di Indicatori in accademia</div><div style="color:#39FF14; font-weight:800;">Gratis</div>
+            <div style="color:#8a93a8;">Adesione al programma ambasciatori e provvigioni</div><div style="color:#39FF14; font-weight:800;">Gratis</div>
+          </div>
+          <div style="padding:16px 22px; border-top:1px solid #1a2130; font-size:12px; color:#69738a; line-height:1.9;">Nessun costo di attivazione, nessun costo di setup, nulla d’altro. Chi completa il percorso Maestria del Trader riceve uno sconto applicato automaticamente a qualsiasi piano scelga.</div>
+        </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:#151b27; border:1px solid #151b27; border-radius:12px; margin-top:44px; overflow:hidden;">
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Accesso immediato</div><div style="font-size:12px; color:#6b7488;">Concesso al tuo account TradingView dopo il pagamento</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Disdici quando vuoi</div><div style="font-size:12px; color:#6b7488;">Un clic dall’area membri, senza telefonate</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Nessun costo nascosto</div><div style="font-size:12px; color:#6b7488;">Nessun costo di attivazione o setup</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Pagamento sicuro</div><div style="font-size:12px; color:#6b7488;">Tramite Paddle — la tua carta non passa da noi</div></div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-top:52px;">
+      <div style="font-size:10.5px; font-weight:700; color:#5c6579; letter-spacing:2.5px; text-transform:uppercase;">Metodi di pagamento accettati</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#1a1f71; font-weight:900; font-size:13px; font-style:italic;">VISA</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff;"><span style="width:14px; height:14px; border-radius:50%; background:#eb001b; display:inline-block;"></span><span style="width:14px; height:14px; border-radius:50%; background:#f79e1b; display:inline-block; margin-inline-start:-6px;"></span></span>
+        <span style="display:inline-flex; align-items:center; gap:3px; padding:7px 14px; border-radius:6px; background:#000; color:#fff; font-weight:700; font-size:13px;">Apple Pay</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#5f6368; font-weight:700; font-size:13px;">Google Pay</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#006fcf; font-weight:900; font-size:12.5px;">AMEX</span>
+      </div>
+    </div>
+
+    <div style="max-width:740px; margin:68px auto 0; display:flex; flex-direction:column; gap:8px;">
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0 0 20px; text-align:center; letter-spacing:-.2px;">Domande prima di pagare</h2>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Come disdico?</span><span class="faq-icon">+</span></div><div class="faq-a">Dalla tua area membri, pulsante Disdici: il rinnovo automatico si ferma immediatamente e i tuoi indicatori restano attivi fino alla fine del periodo pagato. Nessuna telefonata, nessuna motivazione.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Quanto pago davvero con l’imposta?</span><span class="faq-icon">+</span></div><div class="faq-a">I prezzi qui sono IVA esclusa. L’IVA viene aggiunta automaticamente al pagamento in base al tuo paese e l’importo finale appare prima della conferma.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Quando vengono attivati gli indicatori sul mio account?</span><span class="faq-icon">+</span></div><div class="faq-a">L’accesso viene concesso al nome utente TradingView inserito al pagamento e gli strumenti compaiono in Invite-only scripts. Se tarda, scrivici: si risolve in pochi minuti.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">L’accademia è inclusa nell’abbonamento?</span><span class="faq-icon">+</span></div><div class="faq-a">Il percorso Sistema di Indicatori è gratis per tutti, senza abbonamento. Il percorso Maestria del Trader ha una quota simbolica una tantum di $1,15. Il percorso Orologio di Sessione si apre acquistando l’Orologio — indicatore e percorso a un solo prezzo.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">L’Orologio di Sessione è incluso nell’abbonamento?</span><span class="faq-icon">+</span></div><div class="faq-a">No. L’Orologio di Sessione è un prodotto indipendente in acquisto unico e comprende l’indicatore su TradingView più i dieci livelli d’accademia a un solo prezzo. Il percorso si apre solo dopo l’acquisto.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Gli indicatori danno raccomandazioni?</span><span class="faq-icon">+</span></div><div class="faq-a">No. Il sistema è un insieme di strumenti di lettura del mercato che mostrano probabilità e stati tecnici; la decisione e la responsabilità sono solo tue. Il contenuto è didattico e analitico, non è consulenza d’investimento.</div></div>
+    </div>
+
+    <div style="text-align:center; margin-top:64px; padding-top:52px; border-top:1px solid #151b27;">
+      <p style="font-size:17px; font-weight:800; color:#e9edf5; margin:0 0 22px; letter-spacing:-.1px;">Pronto? Parti dal piano che ti calza — la disdetta resta sempre nelle tue mani.</p>
+      <a href="#pricing" onclick="document.getElementById('payBtn').focus();" style="display:inline-block; font-weight:900; font-size:14.5px; color:#070d18; background:#D4AF37; padding:15px 40px; border-radius:10px; letter-spacing:.3px; white-space:nowrap;">Scegli il tuo piano ↑</a>
+      <p style="font-size:12.5px; color:#69738a; margin:24px auto 0; max-width:580px; line-height:2;">Oppure parti dal gratuito: <a href="./it-academy.html">il percorso Sistema di Indicatori</a> in accademia — spiega ogni indicatore nel dettaglio prima che tu paghi qualsiasi cosa.</p>
+    </div>
+
   </div>
 </section>
+
+<script>
+/* ── Orologio di Sessione: cambia discountOn per attivare il prezzo scontato ── */
+var CLOCK = {
+  discountOn : true,
+  base       : 99,
+  sale       : 79,
+  priceIdFull: 'pri_01m04rf4x0d06y0aeb4m74230v',
+  discountId : 'dsc_01m04rj0ggg5gvh3728m6c9naf'
+};
+(function(){
+  var now = CLOCK.discountOn ? CLOCK.sale : CLOCK.base;
+  document.getElementById('clockNow').textContent = '$' + now;
+  document.getElementById('clockNote').textContent = 'Pagamento unico';
+  document.getElementById('ledgerClock').textContent = '$' + now;
+  var old = document.getElementById('clockOld');
+  if (CLOCK.discountOn) { old.textContent = '$' + CLOCK.base; old.style.display = 'block'; }
+  else { old.style.display = 'none'; }
+  var cbtn = document.getElementById('clockBtn');
+  var cid = CLOCK.priceIdFull;
+  if (/^pri_/.test(cid)) { cbtn.href = './it-signup.html?price=' + cid + (CLOCK.discountOn ? '&discount=' + CLOCK.discountId : ''); }
+  else {
+    cbtn.removeAttribute('href');
+    cbtn.textContent = 'Presto — l’acquisto apre nei prossimi giorni';
+    cbtn.style.background = 'rgba(121,192,232,.18)';
+    cbtn.style.color = '#bfe4f7';
+    cbtn.style.cursor = 'default';
+    cbtn.style.border = '1px solid rgba(121,192,232,.4)';
+  }
+})();
+
+var PLANS = {
+  m:{ label:'Mensile',  base:39,  id:'pri_01kyhe6m178pfmv5p755mkhpf0' },
+  q:{ label:'3 mesi', base:99, id:'pri_01kyheh9wpxzfvv1b452h176y3' },
+  h:{ label:'6 mesi', base:179, id:'pri_01kyhen533mmstsyr1gf81qb94' },
+  y:{ label:'Annuale',  base:299, id:'pri_01kyherxxbtt9kvb0hgevs3h3n' }
+};
+function pickPlan(k){
+  var p = PLANS[k];
+  document.querySelectorAll('.planRow').forEach(function(row){
+    var on = row.getAttribute('data-plan') === k;
+    var rtl = document.documentElement.dir === 'rtl';
+    row.style.background = on ? 'rgba(212,175,55,.06)' : 'transparent';
+    row.style.boxShadow = on ? 'inset ' + (rtl ? '-' : '') + '2px 0 0 #D4AF37' : 'none';
+    var dot = row.querySelector('.dot');
+    dot.style.borderColor = on ? '#D4AF37' : '#3a4358';
+    dot.style.background = on ? '#D4AF37' : 'transparent';
+    dot.style.boxShadow = on ? 'inset 0 0 0 3px #070d18' : 'none';
+  });
+  document.getElementById('sumLabel').textContent = p.label;
+  document.getElementById('sumTotal').textContent = '$' + p.base;
+  window._planKey = k;
+  var btn = document.getElementById('payBtn');
+  btn.textContent = 'Abbonati ora — ' + p.label;
+  if (MEMBER) { btn.removeAttribute('href'); btn.style.cursor = 'pointer'; }
+  else { btn.href = './it-signup.html?price=' + p.id; }
+}
+
+var MEMBER = null, MTOKEN = null;
+try { MEMBER = JSON.parse(localStorage.getItem('member_data') || 'null'); } catch(e){}
+MTOKEN = localStorage.getItem('member_token');
+if (!MTOKEN) MEMBER = null;
+
+if (MEMBER) {
+  document.getElementById('memberStrip').style.display = 'block';
+  document.getElementById('memberWho').textContent = (MEMBER.name || '') + ' · ' + (MEMBER.email || '');
+  document.getElementById('tvWrap').style.display = 'block';
+  var tvSaved = MEMBER.tradingview || MEMBER.tv_username || '';
+  if (tvSaved) document.getElementById('tvUser').value = tvSaved;
+  document.getElementById('payBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    memberBuy(PLANS[window._planKey || 'h'].id, PLANS[window._planKey || 'h'].label);
+  });
+  var cb = document.getElementById('clockBtn');
+  if (cb && cb.getAttribute('href')) {
+    cb.addEventListener('click', function(e){
+      e.preventDefault();
+      memberBuy(CLOCK.priceIdFull, 'l’Orologio di Sessione', CLOCK.discountOn ? CLOCK.discountId : '');
+    });
+  }
+}
+
+function memberBuy(priceId, planLabel, discountId){
+  var el = document.getElementById('tvUser');
+  var err = document.getElementById('tvErr');
+  var tv = (el.value || '').trim().replace(/^@+/, '').toLowerCase();
+  if (tv.length < 3) {
+    err.textContent = 'Inserisci il tuo nome utente TradingView — è a lui che concediamo l’accesso dopo il pagamento.';
+    err.style.display = 'block';
+    el.style.borderColor = '#ff5f5f';
+    el.focus();
+    return;
+  }
+  err.style.display = 'none';
+  el.style.borderColor = 'rgba(212,175,55,.28)';
+  fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: MEMBER.referred_by || '', customerName: MEMBER.name, phone:'', telegram:'', tradingview: tv, email: MEMBER.email, lang:'it', plan: planLabel, termsAccepted: true }) }).catch(function(){});
+  Paddle.Checkout.open({
+    items: [{ priceId: priceId, quantity: 1 }],
+    discountId: discountId || undefined,
+    customer: { email: MEMBER.email },
+    customData: { tradingview: tv, member_ref: MEMBER.member_ref || '', plan: planLabel },
+    settings: { displayMode:'overlay', variant:'one-page', successUrl: window.location.origin + '/welcome.html?lang=it&name=' + encodeURIComponent(MEMBER.name || '') + '&price=' + encodeURIComponent(priceId) + '&regdate=' + encodeURIComponent(new Date().toISOString()) }
+  });
+}
+pickPlan('h');
+if (MEMBER) {
+  var nj = document.getElementById('navJoin');
+  if (nj) { nj.href = './member-dashboard.html'; nj.textContent = '↩ La mia area'; }
+}
+</script>
 
 <footer style="padding:44px clamp(20px,6vw,64px) 34px; border-top:1px solid rgba(255,255,255,.08); text-align:center;">
   <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px;">
@@ -150,7 +355,7 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
   </div>
   <p style="font-size:12.5px; color:#6b7488; max-width:520px; margin:0 auto 18px; line-height:1.8;">Il contenuto è fornito solo a scopo educativo e analitico e non costituisce consulenza finanziaria. Il trading comporta rischi.</p>
   <div style="font-size:12.5px; color:#4d5468;">© 2026 O P N  LIO ⚜ Tutti i diritti riservati</div>
-<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#en-section'); return false;" style="color:#8a93a8;">Termini di servizio</a><a href="#" onclick="openLegalModal('./privacy.html#en-section'); return false;" style="color:#8a93a8;">Privacy policy</a><a href="#" onclick="openLegalModal('./refund.html#en-section'); return false;" style="color:#8a93a8;">Politica di rimborso</a></div>
+<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#it-section'); return false;" style="color:#8a93a8;">Termini di servizio</a><a href="#" onclick="openLegalModal('./privacy.html#it-section'); return false;" style="color:#8a93a8;">Privacy policy</a><a href="#" onclick="openLegalModal('./it-refund.html'); return false;" style="color:#8a93a8;">Politica di disdetta</a></div>
 </footer>
 
 </div>

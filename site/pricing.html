@@ -14,8 +14,8 @@
 <meta charset="utf-8">
 <script src="ref-capture.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>باقات الاشتراك — مؤشرات المنظومة | OPN LIO</title>
-<meta name="description" content="اشترك بمنظومة مؤشرات OPN LIO على TradingView: شهري، ربع سنوي، نصف سنوي أو سنوي — وتجربة مجانية 14 يوماً.">
+<title>الأسعار — اشتراك مؤشرات المنظومة وساعة الجلسة | OPN LIO</title>
+<meta name="description" content="أسعار مؤشرات OPN LIO: شهري $39، 3 أشهر $99، 6 أشهر $179، سنوي $299 (قبل الضريبة) — إلغاء في أي وقت وصلاحية فورية على TradingView.">
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -34,18 +34,15 @@ a:hover { color:#f0cf6c; }
 .faq-item.open .faq-a { display:block; }
 .faq-item.open .faq-icon { transform:rotate(45deg); }
 .faq-icon { color:#D4AF37; font-size:18px; flex-shrink:0; transition:transform .2s; }
+@media (max-width:820px){ #pricing > div > div[style*="grid-template-columns:minmax(0,1.15fr)"] { grid-template-columns:1fr !important; } #pricing div[style*="position:sticky"] { position:static !important; } }
+.planRow:hover { border-color:#3d4763 !important; }
+@media (max-width:700px){ #clockOffer { grid-template-columns:1fr !important; } }
 </style>
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<script>
-Paddle.Environment.set('production');
-Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
-function openCheckout(priceId){ location.href = './signup.html?price=' + encodeURIComponent(priceId); }
-</script>
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="O P N LIO">
-<meta property="og:title" content="باقات الاشتراك — مؤشرات المنظومة | OPN LIO">
-<meta property="og:description" content="اشترك بمنظومة مؤشرات OPN LIO على TradingView: شهري، ربع سنوي، نصف سنوي أو سنوي — وتجربة مجانية 14 يوماً.">
+<meta property="og:title" content="الأسعار — اشتراك مؤشرات المنظومة وساعة الجلسة | OPN LIO">
+<meta property="og:description" content="أسعار مؤشرات OPN LIO: شهري $39، 3 أشهر $99، 6 أشهر $179، سنوي $299 (قبل الضريبة) — إلغاء في أي وقت وصلاحية فورية على TradingView.">
 <meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
 <meta property="og:url" content="https://opnlio.com/pricing">
 <meta name="twitter:card" content="summary_large_image">
@@ -60,26 +57,16 @@ function openCheckout(priceId){ location.href = './signup.html?price=' + encodeU
 <link rel="alternate" hreflang="ar" href="https://opnlio.com/pricing.html">
 <link rel="alternate" hreflang="x-default" href="https://opnlio.com/pricing.html">
 <meta name="keywords" content="اشتراك مؤشرات, أسعار مؤشرات TradingView, تجربة مجانية, مؤشرات الأوبشن">
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+Paddle.Environment.set('production');
+Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
+</script>
 <script>try{localStorage.setItem("opnlio_amb_lang","ar");}catch(e){}</script>
 </head>
 <body>
 
 <div id="themeRoot" style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 10%, rgba(30,58,110,.5), transparent 60%), #070d18;">
-<script>
-(function(){
-  var presets = [
-    'hue-rotate(0deg) saturate(1) brightness(1)',
-    'hue-rotate(45deg) saturate(1.05) brightness(1.02)',
-    'hue-rotate(-40deg) saturate(1.1) brightness(1)',
-    'hue-rotate(90deg) saturate(0.9) brightness(1.03)',
-    'hue-rotate(180deg) saturate(0.85) brightness(1)',
-    'hue-rotate(-90deg) saturate(1.15) brightness(0.98)'
-  ];
-  var idx = Math.floor(Date.now() / (8 * 60 * 60 * 1000)) % presets.length;
-  var root = document.getElementById('themeRoot');
-  if (root) root.style.filter = presets[idx];
-})();
-</script>
 
 <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; row-gap:10px; flex-wrap:wrap; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
   <a href="./index.html" style="display:flex; align-items:center; gap:10px;">
@@ -97,10 +84,10 @@ function openCheckout(priceId){ location.href = './signup.html?price=' + encodeU
       if (wrap && menu && !wrap.contains(e.target)) menu.style.display = 'none';
     });
     </script>
-    <a href="./member-login.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">انضم معنا</a>
+    <a id="navJoin" href="./member-login.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">انضم معنا</a>
   </div>
 </nav>
-<a href="./academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 جديد: برنامج تأهيل المتداول المجاني — 12 مستوى من الصفر للاحتراف، مع خصم حصري بالنهاية. <span style="color:#39FF14; text-decoration:underline;">ابدأ مجاناً ←</span></p></a>
+<a href="./academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0;">🎓 الأكاديمية — مسار منظومة المؤشرات مجاني بالكامل، ستة مستويات تشرح كل أداة. <span style="color:#39FF14; text-decoration:underline;">ابدأ الآن ←</span></p></a>
 
 <a href="#top" id="backToTop" style="position:fixed; bottom:24px; left:24px; z-index:60; width:48px; height:48px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(212,175,55,.4); font-size:20px; color:#070d18; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;">↑</a>
 <script>
@@ -113,34 +100,254 @@ function openCheckout(priceId){ location.href = './signup.html?price=' + encodeU
 })();
 </script>
 
-<section id="pricing" style="padding:clamp(50px,8vw,100px) clamp(20px,6vw,64px);">
-  <div style="max-width:1180px; margin:0 auto;">
-    <div style="text-align:center; margin-bottom:20px;">
-      <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">الأسعار</div>
-      <h1 style="font-size:clamp(28px,3.8vw,42px); font-weight:900; color:#fff; margin:0 0 14px;">استثمر في أدواتك قبل صفقتك القادمة</h1>
-      <div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(120deg,rgba(212,175,55,.18),rgba(212,175,55,.06)); border:1px solid rgba(212,175,55,.4); color:#f0cf6c; font-weight:800; font-size:13.5px; padding:8px 20px; border-radius:24px; margin-bottom:40px;">⚜ صلاحية فورية على أدوات TradingView بعد الدفع</div>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px;">
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">شهري</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$39<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15% </span><span style="font-size:14px; color:#8a93a8;">/mo</span></div><div style="font-size:12px; color:#6b7488; margin-bottom:22px;">كل شهر</div><a href="./signup.html?price=pri_01kyhe6m178pfmv5p755mkhpf0" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >ابدأ الآن</a></div>
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">3 أشهر</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$99<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#146817; font-weight:700; margin-bottom:22px;">وفّر 15%</div><a href="./signup.html?price=pri_01kyheh9wpxzfvv1b452h176y3" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >ابدأ الآن</a></div>
-      <div style="position:relative; background:linear-gradient(160deg,rgba(212,175,55,.16),rgba(212,175,55,.03)); border:1.5px solid #D4AF37; border-radius:18px; padding:34px 24px 30px; text-align:center; transform:scale(1.04); box-shadow:0 20px 50px rgba(212,175,55,.15);"><div style="position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-size:11px; font-weight:900; padding:5px 16px; border-radius:14px; white-space:nowrap;">الأكثر طلباً</div><div style="font-size:13px; font-weight:700; color:#e8cf85; margin-bottom:14px;">6 أشهر</div><div style="font-size:38px; font-weight:900; color:#fff; margin-bottom:4px;">$179<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#39FF14; font-weight:700; margin-bottom:22px;">وفّر 23%</div><a href="./signup.html?price=pri_01kyhen533mmstsyr1gf81qb94" style="display:block; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:12px; border-radius:22px;" >ابدأ الآن</a></div>
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">سنوي</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$299<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#146817; font-weight:700; margin-bottom:22px;">وفّر 36%</div><a href="./signup.html?price=pri_01kyherxxbtt9kvb0hgevs3h3n" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >ابدأ الآن</a></div>
-    </div>
-    <p style="text-align:center; font-size:12px; color:#8a93a8; margin-top:10px;">💳 الأسعار المعروضة أعلاه لا تشمل الضريبة المضافة — تُحتسب تلقائياً حسب دولتك عند الدفع (مثال: 15% داخل السعودية).</p>
-<p style="text-align:center; font-size:12.5px; color:#6b7488; margin-top:26px;">جميع الباقات تشمل الأدوات الأربع (منظومة O P N  LIO، البايفت الذكي، سلطان الأثرياء، نداء الملك) وكل التحديثات المستقبلية.</p>
-  </div>
+<section id="pricing" style="padding:clamp(64px,9vw,120px) clamp(18px,5vw,60px);">
+  <div style="max-width:1060px; margin:0 auto;">
 
-  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:34px;">
-    <div style="font-size:11.5px; font-weight:700; color:#6b7488; letter-spacing:1px; text-transform:uppercase;">طرق الدفع المتاحة</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#1a1f71; font-weight:900; font-size:13px; font-style:italic; letter-spacing:.5px;">VISA</span>
-      <span style="display:inline-flex; align-items:center; gap:2px; padding:7px 14px; border-radius:8px; background:#fff;"><span style="width:14px; height:14px; border-radius:50%; background:#eb001b; display:inline-block;"></span><span style="width:14px; height:14px; border-radius:50%; background:#f79e1b; display:inline-block; margin-inline-start:-6px;"></span></span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#000; color:#fff; font-weight:700; font-size:13px; gap:3px;"><span style="font-size:11px;"></span> Pay</span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#5f6368; font-weight:700; font-size:13px;">G Pay</span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#006fcf; font-weight:900; font-size:12.5px;">AMEX</span>
+    <div style="margin-bottom:58px; max-width:680px;">
+      <div style="font-size:11px; font-weight:700; color:#8a7434; margin-bottom:16px;">الأسعار</div>
+      <h1 style="font-size:clamp(30px,4.2vw,48px); font-weight:900; color:#fff; margin:0 0 18px; line-height:1.15;">اختر باقتك وابدأ اليوم</h1>
+      <p style="font-size:15px; color:#96a0b4; line-height:2; margin:0;">منتجان: <b style="color:#e9edf5;">اشتراك مؤشرات المنظومة الأربعة</b>، و<b style="color:#e9edf5;">ساعة الجلسة الذكية</b> (مؤشر + مساره التعليمي) شراءً لمرة واحدة. صلاحية المؤشرات على TradingView تُمنح فور اكتمال العملية.</p>
     </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:44px; align-items:start;">
+
+      <div>
+        <div style="font-size:11px; font-weight:700; color:#6b7488; margin-bottom:16px;">① اختر مدة اشتراك المؤشرات</div>
+        <div id="planList" style="display:flex; flex-direction:column; border:1px solid #1a2130; border-bottom:none; border-radius:12px; overflow:hidden;">
+
+          <button type="button" class="planRow" data-plan="m" onclick="pickPlan('m')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5;">شهري</span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">يتجدد كل شهر · أوقفه وقت ما تشاء</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums;">$39</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="q" onclick="pickPlan('q')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5;">3 أشهر <span style="font-size:10.5px; font-weight:700; color:#8fdc7a; border:1px solid rgba(57,255,20,.25); border-radius:2px; padding:2px 7px; margin-inline-start:8px;">توفير 15%</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">ما يعادل $33 شهرياً قبل الضريبة</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums;">$99</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="h" onclick="pickPlan('h')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5;">6 أشهر <span style="font-size:10.5px; font-weight:800; color:#070d18; background:#D4AF37; border-radius:2px; padding:2px 8px; margin-inline-start:8px;">الأكثر طلباً</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">ما يعادل $29.83 شهرياً قبل الضريبة · توفير 23%</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums;">$179</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="y" onclick="pickPlan('y')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5;">سنوي <span style="font-size:10.5px; font-weight:700; color:#8fdc7a; border:1px solid rgba(57,255,20,.25); border-radius:2px; padding:2px 7px; margin-inline-start:8px;">توفير 36%</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">ما يعادل $24.92 شهرياً قبل الضريبة — أقل تكلفة</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums;">$299</span></span>
+          </button>
+
+        </div>
+
+        
+      </div>
+
+      <div style="position:sticky; top:100px; border:1px solid rgba(212,175,55,.38); border-radius:12px; background:#0c1424; padding:32px 30px;">
+        <div style="font-size:11px; font-weight:700; color:#8a7434; margin-bottom:22px;">② المراجعة والدفع</div>
+        <div id="memberStrip" style="display:none; border:1px solid rgba(57,255,20,.22); background:rgba(57,255,20,.05); border-radius:10px; padding:13px 15px; margin-bottom:20px;">
+          <div style="font-size:12.5px; font-weight:800; color:#c9ffb0;">✓ أنت داخل حسابك — <span id="memberWho"></span></div>
+          <div style="font-size:11.5px; color:#8a93a8; margin-top:4px;">لن نطلب بياناتك من جديد؛ نأخذها من عضويتك مباشرة.</div>
+        </div>
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding-bottom:20px; border-bottom:1px solid rgba(212,175,55,.18);">
+          <span id="sumLabel" style="font-size:15px; font-weight:800; color:#e9edf5;">6 أشهر</span>
+          <span id="sumTotal" style="font-size:36px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums;">$179</span>
+        </div>
+        
+        
+
+        <ul style="list-style:none; padding:0; margin:22px 0 24px; display:flex; flex-direction:column; gap:13px; font-size:13.5px; color:#b6c0d2; line-height:1.65;">
+          <li>⚜ الأدوات الأربع: منظومة O P N LIO · البايفت الذكي · امبراطورية الأثرياء · قرار الملك</li>
+          <li>🔔 تنبيهات TradingView الجاهزة لكل الإشارات</li>
+          <li>🔄 كل التحديثات المستقبلية داخل الاشتراك</li>
+          <li>🎓 مسار منظومة المؤشرات في الأكاديمية — مجاني للجميع</li>
+        </ul>
+
+        <div id="tvWrap" style="display:none; margin-bottom:14px;">
+          <label for="tvUser" style="display:block; font-size:11px; font-weight:700; color:#8a7434; margin-bottom:8px;">اسم مستخدم TradingView</label>
+          <input id="tvUser" type="text" placeholder="username" style="width:100%; box-sizing:border-box; padding:13px 15px; border-radius:10px; border:1px solid rgba(212,175,55,.22); background:rgba(0,0,0,.28); color:#fff; font-size:14px; direction:ltr; text-align:left; font-family:inherit;">
+          <div style="font-size:11.5px; color:#8a93a8; margin-top:6px;">به تُمنح صلاحية المؤشرات بعد الدفع مباشرة.</div>
+          <div id="tvErr" style="display:none; font-size:11.5px; color:#ff5f5f; margin-top:6px;"></div>
+        </div>
+        <a id="payBtn" href="./signup.html?price=pri_01kyhen533mmstsyr1gf81qb94" style="display:block; text-align:center; font-weight:900; font-size:15px; color:#070d18; background:#D4AF37; padding:17px; border-radius:10px;">اشترك الآن — 6 أشهر</a>
+        <div style="font-size:11.5px; color:#5c6579; text-align:center; margin-top:10px;">الأسعار بالدولار قبل الضريبة · تُضاف عند الدفع</div>
+        <div style="font-size:12px; color:#7d8798; text-align:center; margin-top:16px; line-height:1.9;">🔓 <b style="color:#c9d2e3;">إلغاء الاشتراك في أي وقت</b> من لوحة عضويتك — يتوقف التجديد فوراً وتبقى الصلاحية حتى نهاية المدة المدفوعة. <a href="./refund.html" style="color:#8a93a8; text-decoration:underline;">سياسة الإلغاء</a></div>
+      </div>
+    </div>
+
+    <div id="clockOffer" style="margin-top:44px; border:1px solid rgba(47,143,191,.4); border-radius:12px; background:rgba(47,143,191,.05); padding:34px 32px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:34px; align-items:center;">
+      <div>
+        <div style="font-size:11px; font-weight:700; color:#79c0e8; margin-bottom:12px;">منتج مستقل</div>
+        <h2 style="font-size:22px; font-weight:800; color:#fff; margin:0 0 14px;">⏱ ساعة الجلسة الذكية — المؤشر + مساره التعليمي</h2>
+        <p style="font-size:13.5px; color:#b6c0d2; line-height:2; margin:0 0 14px;">مؤشر توقيت الجلسة على TradingView (النوافذ الخمس · عدّاد الثيتا · نطاق الافتتاح · المدى المتوقع · تصنيف نوع اليوم) <b style="color:#e9edf5;">ومعه مسار ساعة الجلسة في الأكاديمية — عشرة مستويات</b>، بسعر واحد لمرة واحدة. لا يُفتح المسار إلا بعد الشراء.</p>
+        <div style="font-size:12.5px; color:#8a93a8; line-height:1.8;">شراء منفصل تماماً عن اشتراك المؤشرات الأربعة — يمكنك أخذه وحده.</div>
+      </div>
+      <div style="text-align:center; min-width:190px;">
+        <div id="clockOld" style="font-size:15px; color:#6b7488; text-decoration:line-through; font-variant-numeric:tabular-nums;">$99</div>
+        <div id="clockNow" style="font-size:38px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; line-height:1.15;">$79</div>
+        <div id="clockNote" style="font-size:11.5px; color:#8a93a8; margin-bottom:14px;">دفعة واحدة</div>
+        <a id="clockBtn" href="./signup.html?price=pri_01m04rf4x0d06y0aeb4m74230v" style="display:block; font-weight:900; font-size:14.5px; color:#070d18; background:#8fcbea; padding:15px 26px; border-radius:10px;">احصل عليها الآن</a>
+      </div>
+    </div>
+<div style="margin-top:40px; border:1px solid #1a2130; border-radius:12px;">
+          <div style="padding:16px 22px; border-bottom:1px solid #1a2130; font-size:11.5px; font-weight:700; color:#6b7488;">كل ما هو مدفوع في المنصة — بلا استثناء</div>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:14px 18px; padding:20px 22px; font-size:13.5px; line-height:1.8;">
+            <div style="color:#e9edf5;">اشتراك مؤشرات المنظومة — الأدوات الأربع</div><div style="color:#f0cf6c; font-weight:800; white-space:nowrap;">من $39 / شهر</div>
+            <div style="color:#e9edf5;">ساعة الجلسة الذكية — المؤشر + مسار الأكاديمية العشرة (شراء لمرة واحدة)</div><div id="ledgerClock" style="color:#f0cf6c; font-weight:800; white-space:nowrap;">$79</div>
+            <div style="color:#e9edf5;">رسم تسجيل مسار احتراف المتداول في الأكاديمية — مرة واحدة</div><div style="color:#f0cf6c; font-weight:800; white-space:nowrap;">$1</div>
+            <div style="color:#8a93a8;">مسار منظومة المؤشرات في الأكاديمية</div><div style="color:#39FF14; font-weight:800;">مجاني</div>
+            <div style="color:#8a93a8;">الانضمام لبرنامج السفراء والعمولات</div><div style="color:#39FF14; font-weight:800;">مجاني</div>
+          </div>
+          <div style="padding:16px 22px; border-top:1px solid #1a2130; font-size:12px; color:#69738a; line-height:1.9;">لا رسوم تفعيل ولا رسوم إعداد ولا أي مبالغ أخرى. ومن يتخرّج من مسار احتراف المتداول يحصل على خصم يُطبَّق تلقائياً على أي باقة يختارها.</div>
+        </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:#151b27; border:1px solid #151b27; border-radius:12px; margin-top:44px; overflow:hidden;">
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px;">صلاحية فورية</div><div style="font-size:12px; color:#6b7488;">تُمنح على حساب TradingView بعد الدفع</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px;">إلغاء في أي وقت</div><div style="font-size:12px; color:#6b7488;">بضغطة من لوحة العضوية، بلا مكالمات</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px;">بلا رسوم خفية</div><div style="font-size:12px; color:#6b7488;">لا رسوم تفعيل ولا إعداد</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px;">دفع آمن</div><div style="font-size:12px; color:#6b7488;">عبر Paddle — بطاقتك لا تمر علينا</div></div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-top:52px;">
+      <div style="font-size:11px; font-weight:700; color:#5c6579;">طرق الدفع المتاحة</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#1a1f71; font-weight:900; font-size:13px; font-style:italic;">VISA</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff;"><span style="width:14px; height:14px; border-radius:50%; background:#eb001b; display:inline-block;"></span><span style="width:14px; height:14px; border-radius:50%; background:#f79e1b; display:inline-block; margin-inline-start:-6px;"></span></span>
+        <span style="display:inline-flex; align-items:center; gap:3px; padding:7px 14px; border-radius:6px; background:#000; color:#fff; font-weight:700; font-size:13px;">Apple Pay</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#5f6368; font-weight:700; font-size:13px;">Google Pay</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#006fcf; font-weight:900; font-size:12.5px;">AMEX</span>
+      </div>
+    </div>
+
+    <div style="max-width:740px; margin:68px auto 0; display:flex; flex-direction:column; gap:8px;">
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0 0 20px; text-align:center;">أسئلة قبل الدفع</h2>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">كيف ألغي الاشتراك؟</span><span class="faq-icon">+</span></div><div class="faq-a">من لوحة عضويتك، زر إلغاء الاشتراك — يتوقف التجديد التلقائي في الحال، وتبقى صلاحية المؤشرات عاملة حتى نهاية المدة التي دفعتها. لا نطلب اتصالاً ولا سبباً.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">كم أدفع فعلياً بعد الضريبة؟</span><span class="faq-icon">+</span></div><div class="faq-a">الأسعار هنا قبل الضريبة. تُضاف ضريبة القيمة المضافة تلقائياً في صفحة الدفع حسب بلدك، ويظهر المبلغ النهائي قبل التأكيد.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">متى تُفعّل المؤشرات على حسابي؟</span><span class="faq-icon">+</span></div><div class="faq-a">تُمنح الصلاحية على اسم مستخدم TradingView الذي تُدخله عند الاشتراك، وتظهر لك الأدوات في قائمة Invite-only scripts. إن تأخرت، راسلنا وتُحل في دقائق.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">هل الأكاديمية داخلة في الاشتراك؟</span><span class="faq-icon">+</span></div><div class="faq-a">مسار منظومة المؤشرات مجاني للجميع بلا اشتراك. ومسار احتراف المتداول له رسم تسجيل رمزي لمرة واحدة $1. أما مسار ساعة الجلسة الذكية فيُفتح بشراء ساعة الجلسة — المؤشر والمسار معاً بسعر واحد.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">هل ساعة الجلسة داخلة في اشتراك المؤشرات؟</span><span class="faq-icon">+</span></div><div class="faq-a">لا. ساعة الجلسة منتج مستقل يُشترى مرة واحدة، ويشمل المؤشر على TradingView ومسار الأكاديمية العشرة معاً بسعر واحد. ومسار ساعة الجلسة لا يُفتح إلا بعد الشراء.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">هل المؤشرات تعطي توصيات؟</span><span class="faq-icon">+</span></div><div class="faq-a">لا. المنظومة أدوات قراءة للسوق تعرض احتمالات وحالات فنية، والقرار ومسؤوليته عليك وحدك. المحتوى تعليمي وتحليلي وليس توصية استثمارية.</div></div>
+    </div>
+
+    <div style="text-align:center; margin-top:64px; padding-top:52px; border-top:1px solid #151b27;">
+      <p style="font-size:17px; font-weight:800; color:#e9edf5; margin:0 0 22px;">جاهز؟ ابدأ بالباقة التي تناسبك — والإلغاء بيدك في أي لحظة.</p>
+      <a href="#pricing" onclick="document.getElementById('payBtn').focus();" style="display:inline-block; font-weight:900; font-size:14.5px; color:#070d18; background:#D4AF37; padding:15px 40px; border-radius:10px; white-space:nowrap;">اختر باقتك ↑</a>
+      <p style="font-size:12.5px; color:#69738a; margin:24px auto 0; max-width:580px; line-height:2;">أو ابدأ بالمجاني: <a href="./academy.html">مسار منظومة المؤشرات</a> في الأكاديمية — يشرح كل مؤشر بالتفصيل قبل أن تدفع شيئاً.</p>
+    </div>
+
   </div>
 </section>
+
+<script>
+/* ── ساعة الجلسة: بدّل discountOn لتفعيل/إيقاف سعر الخصم ── */
+var CLOCK = {
+  discountOn : true,
+  base       : 99,
+  sale       : 79,
+  priceIdFull: 'pri_01m04rf4x0d06y0aeb4m74230v',
+  discountId : 'dsc_01m04rj0ggg5gvh3728m6c9naf'
+};
+(function(){
+  var now = CLOCK.discountOn ? CLOCK.sale : CLOCK.base;
+  document.getElementById('clockNow').textContent = '$' + now;
+  document.getElementById('clockNote').textContent = 'دفعة واحدة';
+  document.getElementById('ledgerClock').textContent = '$' + now;
+  var old = document.getElementById('clockOld');
+  if (CLOCK.discountOn) { old.textContent = '$' + CLOCK.base; old.style.display = 'block'; }
+  else { old.style.display = 'none'; }
+  var cbtn = document.getElementById('clockBtn');
+  var cid = CLOCK.priceIdFull;
+  if (/^pri_/.test(cid)) { cbtn.href = './signup.html?price=' + cid + (CLOCK.discountOn ? '&discount=' + CLOCK.discountId : ''); }
+  else {
+    cbtn.removeAttribute('href');
+    cbtn.textContent = 'قريباً — يُفتح الشراء خلال أيام';
+    cbtn.style.background = 'rgba(121,192,232,.18)';
+    cbtn.style.color = '#bfe4f7';
+    cbtn.style.cursor = 'default';
+    cbtn.style.border = '1px solid rgba(121,192,232,.4)';
+  }
+})();
+
+var PLANS = {
+  m:{ label:'شهري',  base:39,  id:'pri_01kyhe6m178pfmv5p755mkhpf0' },
+  q:{ label:'3 أشهر', base:99, id:'pri_01kyheh9wpxzfvv1b452h176y3' },
+  h:{ label:'6 أشهر', base:179, id:'pri_01kyhen533mmstsyr1gf81qb94' },
+  y:{ label:'سنوي',  base:299, id:'pri_01kyherxxbtt9kvb0hgevs3h3n' }
+};
+function pickPlan(k){
+  var p = PLANS[k];
+  document.querySelectorAll('.planRow').forEach(function(row){
+    var on = row.getAttribute('data-plan') === k;
+    var rtl = document.documentElement.dir === 'rtl';
+    row.style.background = on ? 'rgba(212,175,55,.06)' : 'transparent';
+    row.style.boxShadow = on ? 'inset ' + (rtl ? '-' : '') + '2px 0 0 #D4AF37' : 'none';
+    var dot = row.querySelector('.dot');
+    dot.style.borderColor = on ? '#D4AF37' : '#3a4358';
+    dot.style.background = on ? '#D4AF37' : 'transparent';
+    dot.style.boxShadow = on ? 'inset 0 0 0 3px #070d18' : 'none';
+  });
+  document.getElementById('sumLabel').textContent = p.label;
+  document.getElementById('sumTotal').textContent = '$' + p.base;
+  window._planKey = k;
+  var btn = document.getElementById('payBtn');
+  btn.textContent = 'اشترك الآن — ' + p.label;
+  if (MEMBER) { btn.removeAttribute('href'); btn.style.cursor = 'pointer'; }
+  else { btn.href = './signup.html?price=' + p.id; }
+}
+
+var MEMBER = null, MTOKEN = null;
+try { MEMBER = JSON.parse(localStorage.getItem('member_data') || 'null'); } catch(e){}
+MTOKEN = localStorage.getItem('member_token');
+if (!MTOKEN) MEMBER = null;
+
+if (MEMBER) {
+  document.getElementById('memberStrip').style.display = 'block';
+  document.getElementById('memberWho').textContent = (MEMBER.name || '') + ' · ' + (MEMBER.email || '');
+  document.getElementById('tvWrap').style.display = 'block';
+  var tvSaved = MEMBER.tradingview || MEMBER.tv_username || '';
+  if (tvSaved) document.getElementById('tvUser').value = tvSaved;
+  document.getElementById('payBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    memberBuy(PLANS[window._planKey || 'h'].id, PLANS[window._planKey || 'h'].label);
+  });
+  var cb = document.getElementById('clockBtn');
+  if (cb && cb.getAttribute('href')) {
+    cb.addEventListener('click', function(e){
+      e.preventDefault();
+      memberBuy(CLOCK.priceIdFull, 'ساعة الجلسة الذكية', CLOCK.discountOn ? CLOCK.discountId : '');
+    });
+  }
+}
+
+function memberBuy(priceId, planLabel, discountId){
+  var el = document.getElementById('tvUser');
+  var err = document.getElementById('tvErr');
+  var tv = (el.value || '').trim().replace(/^@+/, '').toLowerCase();
+  if (tv.length < 3) {
+    err.textContent = 'أدخل اسم مستخدم TradingView — به نمنحك صلاحية المؤشرات بعد الدفع.';
+    err.style.display = 'block';
+    el.style.borderColor = '#ff5f5f';
+    el.focus();
+    return;
+  }
+  err.style.display = 'none';
+  el.style.borderColor = 'rgba(212,175,55,.28)';
+  fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: MEMBER.referred_by || '', customerName: MEMBER.name, phone:'', telegram:'', tradingview: tv, email: MEMBER.email, lang:'ar', plan: planLabel, termsAccepted: true }) }).catch(function(){});
+  Paddle.Checkout.open({
+    items: [{ priceId: priceId, quantity: 1 }],
+    discountId: discountId || undefined,
+    customer: { email: MEMBER.email },
+    customData: { tradingview: tv, member_ref: MEMBER.member_ref || '', plan: planLabel },
+    settings: { displayMode:'overlay', variant:'one-page', successUrl: window.location.origin + '/welcome.html?lang=ar&name=' + encodeURIComponent(MEMBER.name || '') + '&price=' + encodeURIComponent(priceId) + '&regdate=' + encodeURIComponent(new Date().toISOString()) }
+  });
+}
+pickPlan('h');
+if (MEMBER) {
+  var nj = document.getElementById('navJoin');
+  if (nj) { nj.href = './member-dashboard.html'; nj.textContent = '↩ لوحة عضويتي'; }
+}
+</script>
 
 <footer style="padding:44px clamp(20px,6vw,64px) 34px; border-top:1px solid rgba(255,255,255,.08); text-align:center;">
   <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px;">

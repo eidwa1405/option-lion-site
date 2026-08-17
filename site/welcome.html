@@ -23,7 +23,7 @@ a{color:#D4AF37;}
   <div style="background:rgba(212,175,55,.08); border:1px solid rgba(212,175,55,.3); border-radius:16px; padding:22px 24px; text-align:right; margin-bottom:22px;">
     <div id="rowPlan" style="display:flex; justify-content:space-between; font-size:14.5px; margin-bottom:10px;"><span id="lblPlan" style="color:#8a93a8;">الباقة</span><span id="valPlan" style="font-weight:800;"></span></div>
     <div id="rowPrice" style="display:flex; justify-content:space-between; font-size:14.5px; margin-bottom:10px;"><span id="lblPrice" style="color:#8a93a8;">المبلغ (بدون الضرائب)</span><span id="valPrice" style="font-weight:800;"></span></div>
-    <div id="rowTrial" style="display:flex; justify-content:space-between; font-size:14.5px;"><span id="lblTrial" style="color:#8a93a8;">فترتك المجانية سارية حتى</span><span id="valTrial" style="font-weight:800; color:#39FF14;"></span></div>
+    <div id="rowTrial" style="display:flex; justify-content:space-between; font-size:14.5px;"><span id="lblTrial" style="color:#8a93a8;">اشتراكك ساري حتى</span><span id="valTrial" style="font-weight:800; color:#39FF14;"></span></div>
   </div>
 
   <p id="instructions" style="color:#aab3c5; font-size:14.5px; line-height:1.9; margin:0 0 26px;"></p>
@@ -32,26 +32,35 @@ a{color:#D4AF37;}
 
 <script>
 var T = {
-  ar: { h1:'مرحباً بك في O P N  LIO', hello:function(n){return 'أهلاً ' + n + ' 👋 تم تفعيل اشتراكك بنجاح ⚜';}, lblPlan:'الباقة', lblPrice:'المبلغ (بدون الضرائب)', lblTrial:'فترتك المجانية سارية حتى',
+  ar: { h1:'مرحباً بك في O P N  LIO', hello:function(n){return 'أهلاً ' + n + ' 👋 تم تفعيل اشتراكك بنجاح ⚜';}, lblPlan:'الباقة', lblPrice:'المبلغ (بدون الضرائب)', lblTrial:'اشتراكك ساري حتى',
     instructions:'سيتواصل معك فريقنا عبر البريد الإلكتروني خلال دقائق لمنحك وصول السكربتات الأربعة وشرح طريقة التفعيل على TradingView.', back:'↩ الرجوع للرئيسية', home:'./index.html',
     plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['شهري','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 أشهر','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 أشهر','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['سنوي','299'] } },
-  en: { h1:'Welcome to O P N  LIO', hello:function(n){return 'Hi ' + n + ' 👋 Your subscription is now active ⚜';}, lblPlan:'Plan', lblPrice:'Amount (excl. tax)', lblTrial:'Your free period is valid until',
+  en: { h1:'Welcome to O P N  LIO', hello:function(n){return 'Hi ' + n + ' 👋 Your subscription is now active ⚜';}, lblPlan:'Plan', lblPrice:'Amount (excl. tax)', lblTrial:'Your subscription is valid until',
     instructions:'Our team will reach out to you via email within minutes to grant access to all four scripts and walk you through activation on TradingView.', back:'↩ Back to home', home:'./option-lion.html',
     plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Monthly','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 Months','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 Months','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Yearly','299'] } },
-  de: { h1:'Willkommen bei O P N  LIO', hello:function(n){return 'Hallo ' + n + ' 👋 Ihr Abonnement ist jetzt aktiv ⚜';}, lblPlan:'Paket', lblPrice:'Betrag (ohne Steuern)', lblTrial:'Ihre kostenlose Phase gilt bis',
+  fr: { h1:'Bienvenue chez O P N  LIO', hello:function(n){return 'Bonjour ' + n + ' 👋 Votre abonnement est maintenant actif ⚜';}, lblPlan:'Formule', lblPrice:'Montant (hors taxes)', lblTrial:'Votre abonnement est valable jusqu\u2019au',
+    instructions:'Notre équipe vous contactera par e-mail dans quelques minutes pour vous donner accès aux quatre scripts et vous expliquer l\u2019activation sur TradingView.', back:'↩ Retour à l\u2019accueil', home:'./fr-lion.html',
+    plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Mensuel','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 mois','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 mois','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Annuel','299'] } },
+  it: { h1:'Benvenuto in O P N  LIO', hello:function(n){return 'Ciao ' + n + ' 👋 Il tuo abbonamento è attivo ⚜';}, lblPlan:'Piano', lblPrice:'Importo (IVA esclusa)', lblTrial:'Il tuo abbonamento è valido fino al',
+    instructions:'Il nostro team ti contatterà via e-mail entro pochi minuti per darti accesso ai quattro script e spiegarti l\u2019attivazione su TradingView.', back:'↩ Torna alla home', home:'./it-lion.html',
+    plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Mensile','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 mesi','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 mesi','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Annuale','299'] } },
+  de: { h1:'Willkommen bei O P N  LIO', hello:function(n){return 'Hallo ' + n + ' 👋 Ihr Abonnement ist jetzt aktiv ⚜';}, lblPlan:'Paket', lblPrice:'Betrag (ohne Steuern)', lblTrial:'Ihr Abonnement gilt bis',
     instructions:'Unser Team kontaktiert Sie innerhalb weniger Minuten per E-Mail, um Ihnen Zugang zu allen vier Skripten zu geben und die Aktivierung auf TradingView zu erklären.', back:'↩ Zurück zur Startseite', home:'./de-lion.html',
     plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Monatlich','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 Monate','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 Monate','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Jährlich','299'] } },
-  es: { h1:'Bienvenido a O P N  LIO', hello:function(n){return 'Hola ' + n + ' 👋 Tu suscripción ya está activa ⚜';}, lblPlan:'Plan', lblPrice:'Monto (sin impuestos)', lblTrial:'Tu periodo gratuito es válido hasta',
+  es: { h1:'Bienvenido a O P N  LIO', hello:function(n){return 'Hola ' + n + ' 👋 Tu suscripción ya está activa ⚜';}, lblPlan:'Plan', lblPrice:'Monto (sin impuestos)', lblTrial:'Tu suscripción es válida hasta',
     instructions:'Nuestro equipo se pondrá en contacto contigo por correo en minutos para darte acceso a los cuatro scripts y explicarte la activación en TradingView.', back:'↩ Volver al inicio', home:'./es-lion.html',
     plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Mensual','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 Meses','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 Meses','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Anual','299'] } },
-  pt: { h1:'Bem-vindo ao O P N  LIO', hello:function(n){return 'Olá ' + n + ' 👋 Sua assinatura já está ativa ⚜';}, lblPlan:'Plano', lblPrice:'Valor (sem impostos)', lblTrial:'Seu período gratuito é válido até',
+  pt: { h1:'Bem-vindo ao O P N  LIO', hello:function(n){return 'Olá ' + n + ' 👋 Sua assinatura já está ativa ⚜';}, lblPlan:'Plano', lblPrice:'Valor (sem impostos)', lblTrial:'Sua assinatura é válida até',
     instructions:'Nossa equipe entrará em contato por e-mail em minutos para liberar seu acesso aos quatro scripts e explicar a ativação no TradingView.', back:'↩ Voltar ao início', home:'./pt-lion.html',
     plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Mensal','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 Meses','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 Meses','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Anual','299'] } },
-  tr: { h1:'O P N  LIO\'a Hoş Geldiniz', hello:function(n){return 'Merhaba ' + n + ' 👋 Aboneliğiniz artık aktif ⚜';}, lblPlan:'Paket', lblPrice:'Tutar (vergiler hariç)', lblTrial:'Ücretsiz süreniz şu tarihe kadar geçerli',
+  tr: { h1:'O P N  LIO\'a Hoş Geldiniz', hello:function(n){return 'Merhaba ' + n + ' 👋 Aboneliğiniz artık aktif ⚜';}, lblPlan:'Paket', lblPrice:'Tutar (vergiler hariç)', lblTrial:'Aboneliğiniz şu tarihe kadar geçerli',
     instructions:'Ekibimiz dakikalar içinde e-posta ile sizinle iletişime geçip dört scripte erişim sağlayacak ve TradingView\'de etkinleştirmeyi anlatacak.', back:'↩ Ana sayfaya dön', home:'./tr-lion.html',
     plans:{ 'pri_01kyhe6m178pfmv5p755mkhpf0':['Aylık','39'], 'pri_01kyheh9wpxzfvv1b452h176y3':['3 Ay','99'], 'pri_01kyhen533mmstsyr1gf81qb94':['6 Ay','179'], 'pri_01kyherxxbtt9kvb0hgevs3h3n':['Yıllık','299'] } }
 };
 
+// ساعة الجلسة الذكية — شراء لمرة واحدة (بدّل المفتاحين بمعرّفي Paddle الحقيقيين)
+var CLOCK_PLANS = { 'pri_01m04rf4x0d06y0aeb4m74230v':['⏱ Session Clock','79'] };
+var PLAN_MONTHS = { 'pri_01kyhe6m178pfmv5p755mkhpf0':1, 'pri_01kyheh9wpxzfvv1b452h176y3':3, 'pri_01kyhen533mmstsyr1gf81qb94':6, 'pri_01kyherxxbtt9kvb0hgevs3h3n':12 };
 function qs(name){
   var m = location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
   return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : '';
@@ -69,9 +78,10 @@ function fmtDate(d){
   var priceId = qs('price') || '';
   var regdate = qs('regdate');
   var regDateObj = regdate ? new Date(regdate) : new Date();
-  var trialEndObj = new Date(regDateObj.getTime() + 14*24*60*60*1000);
-  var trialEnd = fmtDate(trialEndObj);
-  var planInfo = t.plans[priceId] || ['-','-'];
+  var planInfo = t.plans[priceId] || CLOCK_PLANS[priceId] || ['-','-'];
+  var months = PLAN_MONTHS[priceId] || 0;
+  var periodEnd = '';
+  if (months) { var e = new Date(regDateObj.getTime()); e.setMonth(e.getMonth() + months); periodEnd = fmtDate(e); }
 
   document.documentElement.lang = lang;
   document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
@@ -82,7 +92,8 @@ function fmtDate(d){
   document.getElementById('lblTrial').textContent = t.lblTrial;
   document.getElementById('valPlan').textContent = planInfo[0];
   document.getElementById('valPrice').textContent = '$' + planInfo[1];
-  document.getElementById('valTrial').textContent = trialEnd;
+  if (periodEnd) { document.getElementById('valTrial').textContent = periodEnd; }
+  else { document.getElementById('rowTrial').style.display = 'none'; }
   document.getElementById('instructions').textContent = t.instructions;
   document.getElementById('backHome').textContent = t.back;
   document.getElementById('backHome').href = t.home;

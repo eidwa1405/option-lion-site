@@ -11,9 +11,9 @@
 </script>
 <meta charset="utf-8">
 <script src="ref-capture.js"></script>
-<meta name="description" content="Cadastre-se e ative 14 dias de teste grátis do sistema de indicadores OPN LIO no TradingView.">
+<meta name="description" content="Complete seus dados e conclua sua assinatura do sistema de indicadores OPN LIO no TradingView.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Teste grátis de 14 dias | OPN LIO</title>
+<title>Conclua sua assinatura | OPN LIO</title>
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
@@ -37,8 +37,8 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="O P N LIO">
-<meta property="og:title" content="Teste grátis de 14 dias | OPN LIO">
-<meta property="og:description" content="Cadastre-se e ative 14 dias de teste grátis do sistema de indicadores OPN LIO no TradingView.">
+<meta property="og:title" content="Conclua sua assinatura | OPN LIO">
+<meta property="og:description" content="Complete seus dados e conclua sua assinatura do sistema de indicadores OPN LIO no TradingView.">
 <meta property="og:image" content="https://opnlio.com/assets/og-card.jpg">
 <meta property="og:url" content="https://opnlio.com/pt-signup">
 <meta name="twitter:card" content="summary_large_image">
@@ -67,7 +67,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
   </a>
   <a href="./pt-lion.html" style="font-size:13px; font-weight:700; color:#c9d2e3; border:1px solid #2a3348; padding:8px 18px; border-radius:20px;">↩ Início</a>
 </nav>
-<a href="./pt-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Novo: Programa Gratuito de Certificação de Traders — 12 níveis, do zero ao profissional, com certificado e desconto exclusivo. <span style="color:#39FF14; text-decoration:underline;">Comece grátis →</span></p></a>
+<a href="./pt-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Academia — a trilha Sistema de Indicadores é totalmente grátis: seis níveis explicando cada ferramenta. <span style="color:#39FF14; text-decoration:underline;">Começar agora →</span></p></a>
 
 <section style="padding:clamp(60px,9vw,110px) clamp(20px,6vw,64px);">
   <div style="max-width:640px; margin:0 auto;">
@@ -106,13 +106,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
         <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; letter-spacing:.5px; margin-bottom:7px; text-transform:uppercase;">Usuário do TradingView (para conceder acesso ao script)</label>
         <input id="su_tv" type="text" placeholder="TradingView Username" required style="width:100%; box-sizing:border-box; padding:13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
       </div>
-<div>
-        <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; letter-spacing:.5px; margin-bottom:7px; text-transform:uppercase;">Código de indicação (opcional)</label>
-        <div style="position:relative;">
-          <input id="su_ref" type="text" placeholder="ex: LION10" oninput="checkRefCode()" style="width:100%; box-sizing:border-box; padding:13px 40px 13px 16px; border-radius:10px; border:1px solid rgba(212,175,55,.2); background:rgba(0,0,0,.25); color:#fff; font-size:14.5px; direction:ltr; text-align:left;">
-          <span id="su_ref_check" style="display:none; position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#39FF14; font-size:16px; font-weight:900;">✓</span>
-        </div>
-      </div>
+<input id="su_ref" type="hidden" value="">
       <div id="su_error" style="display:none; background:rgba(255,60,60,.1); border:1px solid rgba(255,80,80,.4); color:#ff9b9b; font-size:13px; font-weight:600; padding:12px 16px; border-radius:10px; text-align:center;"></div>
       <button id="su_submit" onclick="submitSignup()" style="margin-top:10px; width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; font-size:15.5px; font-family:inherit; cursor:pointer; letter-spacing:.3px; box-shadow:0 6px 20px rgba(212,175,55,.25);">Junte-se à Elite</button>
       <p style="font-size:12px; color:#6b7488; text-align:center; margin:2px 0 0;">Seus dados vão direto para nossa equipe — entraremos em contato em horas para ativar sua assinatura.</p>
@@ -141,7 +135,7 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
   <p style="font-size:12.5px; color:#6b7488; max-width:520px; margin:0 auto 18px; line-height:1.8;">O conteúdo é fornecido apenas para fins educacionais e analíticos e não constitui aconselhamento de investimento. Negociar envolve risco.</p>
   <div style="font-size:12.5px; color:#4d5468; margin-bottom:14px;">© 2026 O P N  LIO ⚜ Todos os direitos reservados</div>
   <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;">
-    <a href="#" onclick="openLegalModal('./terms.html#pt-section'); return false;">Termos de Serviço</a><a href="#" onclick="openLegalModal('./privacy.html#pt-section'); return false;">Política de Privacidade</a><a href="#" onclick="openLegalModal('./refund.html#pt-section'); return false;">Política de Reembolso</a>
+    <a href="#" onclick="openLegalModal('./terms.html#pt-section'); return false;">Termos de Serviço</a><a href="#" onclick="openLegalModal('./privacy.html#pt-section'); return false;">Política de Privacidade</a><a href="#" onclick="openLegalModal('./pt-refund.html'); return false;">Política de cancelamento</a>
   </div>
   <p style="font-size:12px; color:#6b7488; margin:0;">© O P N  LIO</p>
 </footer>
@@ -150,14 +144,18 @@ input:focus, select:focus { outline:none; border-color:#D4AF37 !important; box-s
 
 <script>
 // أكواد المسوّقين — أضف/عدّل من هنا فقط
-var REF_CODES = ['LION10','AHMED20','SARA15'];
-function checkRefCode(){
-  var val = document.getElementById('su_ref').value.trim().toUpperCase();
-  var mark = document.getElementById('su_ref_check');
-  mark.style.display = (val && REF_CODES.indexOf(val) !== -1) ? 'inline' : 'none';
-}
+var REF_CODES = [];
+function checkRefCode(){}
 var CC_FLAGS = {"+93":"🇦🇫","+355":"🇦🇱","+213":"🇩🇿","+376":"🇦🇩","+244":"🇦🇴","+1268":"🇦🇬","+54":"🇦🇷","+374":"🇦🇲","+61":"🇦🇺","+43":"🇦🇹","+994":"🇦🇿","+1242":"🇧🇸","+973":"🇧🇭","+880":"🇧🇩","+1246":"🇧🇧","+375":"🇧🇾","+32":"🇧🇪","+501":"🇧🇿","+229":"🇧🇯","+975":"🇧🇹","+591":"🇧🇴","+387":"🇧🇦","+267":"🇧🇼","+55":"🇧🇷","+673":"🇧🇳","+359":"🇧🇬","+226":"🇧🇫","+257":"🇧🇮","+238":"🇨🇻","+855":"🇰🇭","+237":"🇨🇲","+1":"🇨🇦","+236":"🇨🇫","+235":"🇹🇩","+56":"🇨🇱","+86":"🇨🇳","+57":"🇨🇴","+269":"🇰🇲","+242":"🇨🇬","+243":"🇨🇩","+506":"🇨🇷","+225":"🇨🇮","+385":"🇭🇷","+53":"🇨🇺","+357":"🇨🇾","+420":"🇨🇿","+45":"🇩🇰","+253":"🇩🇯","+1767":"🇩🇲","+1809":"🇩🇴","+593":"🇪🇨","+20":"🇪🇬","+503":"🇸🇻","+240":"🇬🇶","+291":"🇪🇷","+372":"🇪🇪","+268":"🇸🇿","+251":"🇪🇹","+679":"🇫🇯","+358":"🇫🇮","+33":"🇫🇷","+241":"🇬🇦","+220":"🇬🇲","+995":"🇬🇪","+49":"🇩🇪","+233":"🇬🇭","+30":"🇬🇷","+1473":"🇬🇩","+502":"🇬🇹","+224":"🇬🇳","+245":"🇬🇼","+592":"🇬🇾","+509":"🇭🇹","+504":"🇭🇳","+36":"🇭🇺","+354":"🇮🇸","+91":"🇮🇳","+62":"🇮🇩","+98":"🇮🇷","+964":"🇮🇶","+353":"🇮🇪","+972":"🇮🇱","+39":"🇮🇹","+1876":"🇯🇲","+81":"🇯🇵","+962":"🇯🇴","+7":"🇰🇿","+254":"🇰🇪","+686":"🇰🇮","+965":"🇰🇼","+996":"🇰🇬","+856":"🇱🇦","+371":"🇱🇻","+961":"🇱🇧","+266":"🇱🇸","+231":"🇱🇷","+218":"🇱🇾","+423":"🇱🇮","+370":"🇱🇹","+352":"🇱🇺","+261":"🇲🇬","+265":"🇲🇼","+60":"🇲🇾","+960":"🇲🇻","+223":"🇲🇱","+356":"🇲🇹","+692":"🇲🇭","+222":"🇲🇷","+230":"🇲🇺","+52":"🇲🇽","+691":"🇫🇲","+373":"🇲🇩","+377":"🇲🇨","+976":"🇲🇳","+382":"🇲🇪","+212":"🇲🇦","+258":"🇲🇿","+95":"🇲🇲","+264":"🇳🇦","+674":"🇳🇷","+977":"🇳🇵","+31":"🇳🇱","+64":"🇳🇿","+505":"🇳🇮","+227":"🇳🇪","+234":"🇳🇬","+850":"🇰🇵","+389":"🇲🇰","+47":"🇳🇴","+968":"🇴🇲","+92":"🇵🇰","+680":"🇵🇼","+507":"🇵🇦","+675":"🇵🇬","+595":"🇵🇾","+51":"🇵🇪","+63":"🇵🇭","+48":"🇵🇱","+351":"🇵🇹","+974":"🇶🇦","+40":"🇷🇴","+250":"🇷🇼","+1869":"🇰🇳","+1758":"🇱🇨","+1784":"🇻🇨","+685":"🇼🇸","+378":"🇸🇲","+239":"🇸🇹","+966":"🇸🇦","+221":"🇸🇳","+381":"🇷🇸","+248":"🇸🇨","+232":"🇸🇱","+65":"🇸🇬","+421":"🇸🇰","+386":"🇸🇮","+677":"🇸🇧","+252":"🇸🇴","+27":"🇿🇦","+82":"🇰🇷","+211":"🇸🇸","+34":"🇪🇸","+94":"🇱🇰","+249":"🇸🇩","+597":"🇸🇷","+46":"🇸🇪","+41":"🇨🇭","+963":"🇸🇾","+886":"🇹🇼","+992":"🇹🇯","+255":"🇹🇿","+66":"🇹🇭","+670":"🇹🇱","+228":"🇹🇬","+676":"🇹🇴","+1868":"🇹🇹","+216":"🇹🇳","+90":"🇹🇷","+993":"🇹🇲","+688":"🇹🇻","+256":"🇺🇬","+380":"🇺🇦","+971":"🇦🇪","+44":"🇬🇧","+598":"🇺🇾","+998":"🇺🇿","+678":"🇻🇺","+58":"🇻🇪","+84":"🇻🇳","+967":"🇾🇪","+260":"🇿🇲","+263":"🇿🇼"};
 var CC_NAMES = {"+93":"Afghanistan","+355":"Albania","+213":"Algeria","+376":"Andorra","+244":"Angola","+1268":"Antigua and Barbuda","+54":"Argentina","+374":"Armenia","+61":"Australia","+43":"Austria","+994":"Azerbaijan","+1242":"Bahamas","+973":"Bahrain","+880":"Bangladesh","+1246":"Barbados","+375":"Belarus","+32":"Belgium","+501":"Belize","+229":"Benin","+975":"Bhutan","+591":"Bolivia","+387":"Bosnia and Herzegovina","+267":"Botswana","+55":"Brazil","+673":"Brunei","+359":"Bulgaria","+226":"Burkina Faso","+257":"Burundi","+238":"Cabo Verde","+855":"Cambodia","+237":"Cameroon","+1":"Canada","+236":"Central African Republic","+235":"Chad","+56":"Chile","+86":"China","+57":"Colombia","+269":"Comoros","+242":"Congo","+243":"DR Congo","+506":"Costa Rica","+225":"Côte d'Ivoire","+385":"Croatia","+53":"Cuba","+357":"Cyprus","+420":"Czechia","+45":"Denmark","+253":"Djibouti","+1767":"Dominica","+1809":"Dominican Republic","+593":"Ecuador","+20":"Egypt","+503":"El Salvador","+240":"Equatorial Guinea","+291":"Eritrea","+372":"Estonia","+268":"Eswatini","+251":"Ethiopia","+679":"Fiji","+358":"Finland","+33":"France","+241":"Gabon","+220":"Gambia","+995":"Georgia","+49":"Germany","+233":"Ghana","+30":"Greece","+1473":"Grenada","+502":"Guatemala","+224":"Guinea","+245":"Guinea-Bissau","+592":"Guyana","+509":"Haiti","+504":"Honduras","+36":"Hungary","+354":"Iceland","+91":"India","+62":"Indonesia","+98":"Iran","+964":"Iraq","+353":"Ireland","+972":"Israel","+39":"Italy","+1876":"Jamaica","+81":"Japan","+962":"Jordan","+7":"Kazakhstan","+254":"Kenya","+686":"Kiribati","+965":"Kuwait","+996":"Kyrgyzstan","+856":"Laos","+371":"Latvia","+961":"Lebanon","+266":"Lesotho","+231":"Liberia","+218":"Libya","+423":"Liechtenstein","+370":"Lithuania","+352":"Luxembourg","+261":"Madagascar","+265":"Malawi","+60":"Malaysia","+960":"Maldives","+223":"Mali","+356":"Malta","+692":"Marshall Islands","+222":"Mauritania","+230":"Mauritius","+52":"Mexico","+691":"Micronesia","+373":"Moldova","+377":"Monaco","+976":"Mongolia","+382":"Montenegro","+212":"Morocco","+258":"Mozambique","+95":"Myanmar","+264":"Namibia","+674":"Nauru","+977":"Nepal","+31":"Netherlands","+64":"New Zealand","+505":"Nicaragua","+227":"Niger","+234":"Nigeria","+850":"North Korea","+389":"North Macedonia","+47":"Norway","+968":"Oman","+92":"Pakistan","+680":"Palau","+507":"Panama","+675":"Papua New Guinea","+595":"Paraguay","+51":"Peru","+63":"Philippines","+48":"Poland","+351":"Portugal","+974":"Qatar","+40":"Romania","+250":"Rwanda","+1869":"Saint Kitts and Nevis","+1758":"Saint Lucia","+1784":"Saint Vincent and the Grenadines","+685":"Samoa","+378":"San Marino","+239":"São Tomé and Príncipe","+966":"Saudi Arabia","+221":"Senegal","+381":"Serbia","+248":"Seychelles","+232":"Sierra Leone","+65":"Singapore","+421":"Slovakia","+386":"Slovenia","+677":"Solomon Islands","+252":"Somalia","+27":"South Africa","+82":"South Korea","+211":"South Sudan","+34":"Spain","+94":"Sri Lanka","+249":"Sudan","+597":"Suriname","+46":"Sweden","+41":"Switzerland","+963":"Syria","+886":"Taiwan","+992":"Tajikistan","+255":"Tanzania","+66":"Thailand","+670":"Timor-Leste","+228":"Togo","+676":"Tonga","+1868":"Trinidad and Tobago","+216":"Tunisia","+90":"Turkey","+993":"Turkmenistan","+688":"Tuvalu","+256":"Uganda","+380":"Ukraine","+971":"United Arab Emirates","+44":"United Kingdom","+598":"Uruguay","+998":"Uzbekistan","+678":"Vanuatu","+58":"Venezuela","+84":"Vietnam","+967":"Yemen","+260":"Zambia","+263":"Zimbabwe"};
+function PLAN_LABEL(){
+  var ids = { 'pri_01kyhe6m178pfmv5p755mkhpf0':'Monthly', 'pri_01kyheh9wpxzfvv1b452h176y3':'3 Months', 'pri_01kyhen533mmstsyr1gf81qb94':'6 Months', 'pri_01kyherxxbtt9kvb0hgevs3h3n':'Yearly' };
+  return ids[getPriceFromURL()] || getPriceFromURL();
+}
+function getDiscountFromURL(){
+  var m = location.search.match(/[?&]discount=(dsc_[a-zA-Z0-9]+)/);
+  return m ? m[1] : '';
+}
 function getPriceFromURL(){
   var m = location.search.match(/[?&]price=([a-zA-Z0-9_]+)/);
   return m ? m[1] : 'pri_01kyhe6m178pfmv5p755mkhpf0';
@@ -212,15 +210,16 @@ function submitSignup(){
   var btn = document.getElementById('su_submit');
   btn.disabled = true; btn.textContent = 'Enviando...';
 
-  var refValid = ref && REF_CODES.indexOf(ref.toUpperCase()) !== -1;
-  var refLine = ref ? ('\nRef Code: ' + ref + (refValid ? ' ✅' : ' ❌')) : '';
+  var refValid = !!ref;
+  var refLine = ref ? ('\nRef Code: ' + ref) : '';
 
       fetch('/api/ref-track', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'pt', plan: 'Free Trial', termsAccepted: true })
+      body: JSON.stringify({ code: ref, customerName: name, phone: cc + phone, telegram: tg, tradingview: tv, email: email, lang: 'pt', plan: PLAN_LABEL(), termsAccepted: true })
     }).catch(function(){});
     Paddle.Checkout.open({
       items: [{ priceId: getPriceFromURL(), quantity: 1 }],
+      discountId: getDiscountFromURL() || undefined,
       customer: { email: email },
       customData: { customerEmail: email, customerName: name },
       settings: { displayMode: 'overlay', variant: 'one-page', successUrl: location.origin + '/welcome.html?lang=pt&name=' + encodeURIComponent(name) + '&price=' + encodeURIComponent(getPriceFromURL()) + '&regdate=' + encodeURIComponent(new Date().toISOString()) + (refValid ? '&ref=' + encodeURIComponent(ref) : '') }
@@ -248,5 +247,37 @@ document.addEventListener('click', function(e){
 });
 </script>
 <script src="phone-code.js" defer></script>
+<script>
+/* عضو مسجّل: بياناته تُجلب وتُقفل — لا إعادة إدخال. TradingView يبقى متاحاً لأن المنتج مؤشر */
+(function(){
+  var INDICATOR_PRICES = ['pri_01kyhe6m178pfmv5p755mkhpf0','pri_01kyheh9wpxzfvv1b452h176y3','pri_01kyhen533mmstsyr1gf81qb94','pri_01kyherxxbtt9kvb0hgevs3h3n','pri_01m04rf4x0d06y0aeb4m74230v'];
+  var priceId = (location.search.match(/[?&]price=(pri_[a-zA-Z0-9]+)/)||[])[1] || '';
+  var tvEl = document.getElementById('su_tv');
+  if (tvEl && priceId && INDICATOR_PRICES.indexOf(priceId) === -1) {
+    var wrap = tvEl.closest('div'); if (wrap) wrap.style.display = 'none';
+    tvEl.removeAttribute('required');
+  }
+  var M = null; try { M = JSON.parse(localStorage.getItem('member_data') || 'null'); } catch(e){}
+  if (!M || !localStorage.getItem('member_token')) return;
+  function lock(id, val){
+    var el = document.getElementById(id);
+    if (!el || !val) return;
+    el.value = val;
+    el.readOnly = true;
+    el.setAttribute('tabindex','-1');
+    el.style.opacity = '.65';
+    el.style.pointerEvents = 'none';
+    el.style.borderStyle = 'dashed';
+  }
+  lock('su_name', M.name || '');
+  lock('su_email', M.email || '');
+  lock('su_phone', (M.phone || '').replace(/^\+?\d{1,4}(?=\d{7})/, ''));
+  lock('su_tg', M.telegram || M.tg_username || '');
+  if (M.phone) { var cc = document.getElementById('su_cc'); if (cc) { cc.style.opacity='.65'; cc.style.pointerEvents='none'; cc.setAttribute('tabindex','-1'); } }
+  var ref = document.getElementById('su_ref'); if (ref && M.referred_by) ref.value = M.referred_by;
+  var tv2 = document.getElementById('su_tv');
+  if (tv2 && (M.tradingview || M.tv_username) && !tv2.value) tv2.value = M.tradingview || M.tv_username;
+})();
+</script>
 </body>
 </html>

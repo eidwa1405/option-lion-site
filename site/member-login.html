@@ -30,6 +30,7 @@ input:focus { outline:none; border-color:#D4AF37 !important; box-shadow:0 0 0 3p
 <meta name="twitter:image" content="https://opnlio.com/assets/og-card.jpg">
 <link rel="canonical" href="https://opnlio.com/member-login.html">
 <meta name="robots" content="noindex">
+<script>try{ if (localStorage.getItem("member_token") && localStorage.getItem("member_data")) location.replace("./member-dashboard.html"); }catch(e){}</script>
 </head>
 <body>
 <div style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 80% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 0% 10%, rgba(30,58,110,.5), transparent 60%), #070d18; min-height:100vh;">
@@ -251,8 +252,8 @@ function doMemberLogin(){
         msgEl.style.display = 'none';
         openVerifyModal({ email: email, lang: LG, onSuccess: function(){
           try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
-          sessionStorage.setItem('member_token', res.token);
-          sessionStorage.setItem('member_data', JSON.stringify(res.student));
+          localStorage.setItem('member_token', res.token);
+          localStorage.setItem('member_data', JSON.stringify(res.student));
           try { localStorage.setItem('opnlio_academy_session', JSON.stringify({ token: res.token, student: res.student, progress: res.progress || [], freeProgress: res.freeProgress || [], expiresAt: Date.now() + 24*60*60*1000 })); } catch(e){}
           location.href = './member-dashboard.html';
         }, onCancel: function(){ msgEl.style.display='block'; msgEl.style.color='#ff9b9b'; msgEl.textContent=_L('لم يكتمل التحقق — لم يتم تسجيل الدخول'); } });

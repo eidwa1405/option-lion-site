@@ -140,9 +140,15 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
         <option value="academy">🎓 أعضاء الأكاديمية</option>
       </select>
     </div>
-    <div id="bc_aff_list" style="display:none; margin-bottom:14px; max-height:220px; overflow-y:auto; background:#10141f; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;">
-      <label style="display:flex; align-items:center; gap:8px; padding:6px 4px; font-weight:800; color:#D4AF37; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:6px;"><input type="checkbox" id="bc_aff_all" onchange="toggleAllAff()"> الكل</label>
-      <div id="bc_aff_items"></div>
+    <div id="bc_rcp_box" style="display:none; margin-bottom:14px;">
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap;">
+        <input id="bc_rcp_search" oninput="filterRecipients()" placeholder="🔍 ابحث بالاسم أو البريد أو رقم العضوية…" style="flex:1; min-width:200px; box-sizing:border-box; padding:10px 12px; border-radius:8px; background:#10141f; color:#fff; border:1px solid rgba(212,175,55,.25); font-size:13px; font-family:inherit;">
+        <span id="bc_rcp_count" style="font-size:11.5px; color:#8a93a8; font-weight:700;"></span>
+      </div>
+      <div style="max-height:260px; overflow-y:auto; background:#10141f; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;">
+        <label style="display:flex; align-items:center; gap:8px; padding:7px 4px; font-weight:800; color:#D4AF37; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:6px; cursor:pointer;"><input type="checkbox" id="bc_rcp_all" onchange="toggleAllRecipients()" checked style="width:auto;">اختيار الكل</label>
+        <div id="bc_rcp_items"></div>
+      </div>
     </div>
     <div style="margin-bottom:14px;">
       <label style="display:block; font-size:12.5px; font-weight:700; color:#D4AF37; margin-bottom:6px;">قوالب جاهزة</label>
@@ -347,6 +353,12 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <button class="btn-gold" onclick="generatePayoutNow()">⚡ توليد دفعة الشهر السابق الآن</button>
     <span id="payoutGenResult" style="margin-right:12px; font-size:12.5px; color:#8a93a8;"></span>
   </div>
+    <div class="card" style="margin-bottom:24px; border:1px solid rgba(255,80,80,.35);">
+      <h3 style="margin:0 0 10px; color:#ff8a8a;">🧨 منطقة الخطر — تصفير كل المبالغ</h3>
+      <p style="font-size:12.5px; color:#8a93a8; margin:0 0 14px; line-height:1.9;">يمسح نهائياً كل سجلات العمولات والإيرادات ودفعات الصرف من قاعدة البيانات ويعيدها للصفر. لا يمس العملاء ولا السفراء ولا الاشتراكات. يصلك تأكيد على التلقرام فور التنفيذ.</p>
+      <button onclick="resetAllAmounts()" style="padding:12px 24px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.4); border-radius:10px; cursor:pointer; font-family:inherit; font-weight:900; font-size:14px;">🧨 تصفير كل المبالغ</button>
+      <span id="resetAmountsResult" style="margin-right:12px; font-size:12.5px; color:#8a93a8;"></span>
+    </div>
   <div class="card">
     <h3 style="margin:0 0 16px; color:#D4AF37;">📋 دفعات الصرف</h3>
     <table id="payoutRunsTable"><thead><tr><th>الشهر</th><th>عدد السفراء</th><th>الإجمالي</th><th>تاريخ التوليد</th><th></th></tr></thead><tbody></tbody></table>
@@ -376,7 +388,22 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
   </section>
 
-  <section class="panel" data-panel="tickets">
+  <section class="panel" data-panel="member-chats">
+  <div class="card">
+    <h3 style="margin:0 0 6px; color:#D4AF37;">💬 محادثات الأعضاء</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 16px;">اطّلاع فقط — محادثات كل عضو مع سفيره، أو مع الإدارة إن لم يكن له سفير. مرتّبة بالأحدث.</p>
+    <input id="mcSearch" placeholder="🔍 ابحث بالاسم أو البريد أو كود السفير…" oninput="renderMemberChats()" style="margin-bottom:14px;">
+    <div style="display:grid; grid-template-columns:minmax(240px,340px) 1fr; gap:14px; align-items:start;">
+      <div id="mcList" style="display:flex; flex-direction:column; gap:8px; max-height:560px; overflow-y:auto;"></div>
+      <div>
+        <div id="mcHead" style="font-size:13px; font-weight:800; color:#D4AF37; margin-bottom:10px;">اختر محادثة من القائمة</div>
+        <div id="mcThread" style="display:flex; flex-direction:column; gap:8px; max-height:520px; overflow-y:auto; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:14px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" data-panel="tickets">
   <div class="card">
     <h3 style="margin:0 0 16px; color:#D4AF37;">📨 الشكاوى والاستفسارات</h3>
     <table id="ticketsTable"><thead><tr><th>الرقم</th><th>التاريخ والوقت</th><th>النوع</th><th>الاسم</th><th>البريد</th><th>الرسالة</th><th>الحالة</th><th></th></tr></thead><tbody></tbody></table>
@@ -514,6 +541,7 @@ var NAV_ITEMS = [
   ['page-visibility','👁️ إظهار الصفحات'],
   ['payouts','💸 الصرف'],
   ['tickets','📨 الشكاوى والاستفسارات'],
+  ['member-chats','💬 محادثات الأعضاء'],
   ['academy','🎓 الأكاديمية'],
   ['settings','🔑 الإعدادات']
 ];
@@ -562,7 +590,8 @@ function renderAcademy(list){
       : (s.email_verified ? '<span style="color:#39FF14;">🟢 نشط</span>' : '<span style="color:#ff9b9b;">🔴 بريد غير مُفعّل</span>');
     var pay = s.paid_at ? '<span style="color:#39FF14; font-weight:800;">💰 مدفوع</span>' : '<span style="color:#8a93a8;">🔒 غير مدفوع</span>';
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td>'+s.name+'</td><td style="font-size:12px; color:#8a93a8;">'+s.email+'</td>' +
+    var _on = s.last_seen_at && (Date.now() - new Date(s.last_seen_at).getTime()) < 120000;
+    tr.innerHTML = '<td><span title="' + (_on ? 'نشط الآن' : 'غير متصل') + '" style="color:' + (_on ? '#39FF14' : '#59637a') + '; font-size:10px;">●</span> '+s.name+'</td><td style="font-size:12px; color:#8a93a8;">'+s.email+'</td>' +
       '<td>'+s.current_level+' <span style="color:#6b7488; font-size:11px;">('+s.levels_done+' مكتمل)</span></td>' +
       '<td style="color:#39FF14; font-weight:800;">'+s.points+'</td><td style="font-size:12px;">'+s.rank+'</td><td>'+lamp+'<br>'+pay+'</td>' +
       '<td style="display:flex; gap:5px; flex-wrap:wrap;">' +
@@ -616,6 +645,7 @@ function showPanel(name){
   document.querySelectorAll('.navBtn').forEach(function(b, i){ b.classList.toggle('active', NAV_ITEMS[i][0]===name); });
   if (name === 'academy') loadAcademy();
   if (name === 'finance') loadFinance();
+  if (name === 'broadcast' && !BC_RECIPIENTS.length) loadRecipients();
   if (name === 'broadcast') populateBcTemplates();
   if (name === 'audit') loadAuditLog();
   if (name === 'reviews') loadPendingReviews();
@@ -625,6 +655,7 @@ function showPanel(name){
   if (name === 'tv-alerts') loadTvAlerts();
   if (name === 'payouts') loadPayoutRuns();
   if (name === 'tickets') loadTickets();
+  if (name === 'member-chats') loadMemberChats();
   if (name === 'settings') loadErrorLog();
 }
 
@@ -776,6 +807,23 @@ function loadTvAlerts(){
     }).join("");
   }).catch(function(){});
 }
+function resetAllAmounts(){
+  if (!confirm('⚠️ سيُمسح نهائياً: كل العمولات + كل الإيرادات + كل دفعات الصرف.\nلا يمكن التراجع. هل أنت متأكد؟')) return;
+  var word = prompt('للتأكيد النهائي اكتب: تصفير');
+  if (word !== 'تصفير') { alert('لم يتم التصفير — الكلمة غير مطابقة.'); return; }
+  var el = document.getElementById('resetAmountsResult');
+  el.textContent = 'جارٍ التصفير…'; el.style.color = '#8a93a8';
+  authFetch('/api/admin-data?action=reset-all-amounts', { method:'POST', body: JSON.stringify({ confirm: word }) })
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if (!res.ok) { el.textContent = '❌ ' + (res.error || 'فشل التصفير'); el.style.color = '#ff9b9b'; return; }
+      var w = res.wiped;
+      el.textContent = '✅ تم التصفير — عمولات $' + w.commissions.t + ' · إيرادات $' + w.revenue.t + ' · صرف $' + w.payouts.t + (res.telegram ? ' · 📨 وصل تأكيد التلقرام' : ' · ⚠️ لم يُرسل للتلقرام');
+      el.style.color = '#8fdc7a';
+      loadPayoutRuns(); if (typeof loadStats === 'function') loadStats();
+    })
+    .catch(function(){ el.textContent = '❌ تعذر الاتصال بالخادم'; el.style.color = '#ff9b9b'; });
+}
 function loadPayoutRuns(){
   authFetch('/api/admin-data?action=payout-runs').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
@@ -811,6 +859,54 @@ function downloadPayoutPdf(runId, month){
   });
 }
 
+var MC_CACHE = [];
+function loadMemberChats(){
+  var list = document.getElementById('mcList');
+  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+  authFetch('/api/admin-data?action=member-chats').then(function(r){ return r.json(); }).then(function(res){
+    if (!res.ok) { list.innerHTML = '<div class="emptyState">تعذر التحميل</div>'; return; }
+    MC_CACHE = res.threads || [];
+    renderMemberChats();
+  }).catch(function(){ list.innerHTML = '<div class="emptyState">تعذر الاتصال</div>'; });
+}
+function renderMemberChats(){
+  var list = document.getElementById('mcList');
+  var q = (document.getElementById('mcSearch').value || '').trim().toLowerCase();
+  var rows = MC_CACHE.filter(function(r){
+    if (!q) return true;
+    return ((r.member_name||'') + ' ' + (r.member_email||'') + ' ' + (r.ref_code||'') + ' ' + (r.amb_name||'')).toLowerCase().indexOf(q) !== -1;
+  });
+  if (!rows.length) { list.innerHTML = '<div class="emptyState">لا محادثات</div>'; return; }
+  list.innerHTML = rows.map(function(r){
+    var who = r.amb_name ? ('🤝 مع سفيره: ' + r.amb_name) : '🏛️ مع الإدارة';
+    var when = r.last_at ? new Date(r.last_at).toLocaleString('ar-SA', {dateStyle:'short', timeStyle:'short'}) : '';
+    var prev = (r.last_sender === 'member' ? '👤 ' : '↩️ ') + String(r.last_body || '').slice(0, 46);
+    return '<button onclick="openMemberChat(' + r.student_id + ')" style="all:unset; cursor:pointer; display:block; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:11px 13px; font-family:inherit;">'
+      + '<div style="display:flex; justify-content:space-between; gap:8px;"><b style="color:#fff; font-size:13px;">' + (r.member_name || ('عضو #' + r.student_id)) + '</b><span style="font-size:10.5px; color:#6b7488; white-space:nowrap;">' + when + '</span></div>'
+      + '<div style="font-size:11.5px; color:#D4AF37; margin:3px 0 4px;">' + who + ' · ' + r.msg_count + ' رسالة</div>'
+      + '<div style="font-size:11.5px; color:#8a93a8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + prev.replace(/</g,'&lt;') + '</div></button>';
+  }).join('');
+}
+function openMemberChat(sid){
+  var box = document.getElementById('mcThread');
+  box.innerHTML = '<div class="skeleton"></div>';
+  authFetch('/api/admin-data?action=member-chat-thread&studentId=' + sid).then(function(r){ return r.json(); }).then(function(res){
+    if (!res.ok) { box.innerHTML = '<div class="emptyState">تعذر التحميل</div>'; return; }
+    var m = res.member || {};
+    document.getElementById('mcHead').textContent = '👤 ' + (m.name || ('عضو #' + sid)) + (m.email ? ' · ' + m.email : '') + (m.member_ref ? ' · سفيره: ' + m.member_ref : ' · بلا سفير (تصل الإدارة)');
+    if (!res.messages.length) { box.innerHTML = '<div class="emptyState">لا رسائل</div>'; return; }
+    box.innerHTML = res.messages.map(function(msg){
+      var mine = msg.sender === 'member';
+      var who = mine ? '👤 العضو' : (msg.sender === 'ambassador' ? '🤝 السفير' : '🏛️ الإدارة');
+      var col = mine ? 'rgba(212,175,55,.10)' : (msg.sender === 'ambassador' ? 'rgba(57,255,20,.07)' : 'rgba(121,192,232,.08)');
+      var when = new Date(msg.created_at).toLocaleString('ar-SA', {dateStyle:'short', timeStyle:'short'});
+      return '<div style="align-self:' + (mine ? 'flex-start' : 'flex-end') + '; max-width:78%; background:' + col + '; border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:9px 12px;">'
+        + '<div style="display:flex; justify-content:space-between; gap:14px; margin-bottom:4px;"><b style="font-size:11px; color:#D4AF37;">' + who + '</b><span style="font-size:10px; color:#6b7488;">' + when + '</span></div>'
+        + '<div style="font-size:12.5px; color:#e9edf5; line-height:1.8; white-space:pre-wrap;">' + String(msg.body||'').replace(/</g,'&lt;') + '</div></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  }).catch(function(){ box.innerHTML = '<div class="emptyState">تعذر الاتصال</div>'; });
+}
 function loadTickets(){
   authFetch('/api/admin-data?action=tickets').then(function(r){return r.json();}).then(function(res){
     if (!res.ok) return;
@@ -1218,31 +1314,63 @@ function populateBcTemplates(){
   Object.keys(set).forEach(function(k){ opts += '<option value="'+k+'">'+set[k].label+'</option>'; });
   sel.innerHTML = opts;
 }
+var BC_RECIPIENTS = [];
 function onAudienceChange(){
-  var audience = document.getElementById('bc_audience').value;
-  var listEl = document.getElementById('bc_aff_list');
-  if (audience === 'affiliates') {
-    listEl.style.display = 'block';
-    loadAffiliateCheckboxList();
-  } else {
-    listEl.style.display = 'none';
-  }
+  loadRecipients();
   populateBcTemplates();
-  document.getElementById('bc_subject').value = '';
-  document.getElementById('bc_message').value = '';
-  document.getElementById('bc_translations_preview').innerHTML = '';
+  document.getElementById("bc_subject").value = "";
+  document.getElementById("bc_message").value = "";
+  document.getElementById("bc_translations_preview").innerHTML = "";
 }
 
-function loadAffiliateCheckboxList(){
-  authFetch('/api/admin-data?action=overview').then(function(r){return r.json();}).then(function(res){
-    if (!res.ok) return;
-    var itemsEl = document.getElementById('bc_aff_items');
-    itemsEl.innerHTML = (res.affiliates||[]).map(function(a){
-      return '<label style="display:flex; align-items:center; gap:8px; padding:5px 4px; font-size:13px; color:#c9d2e3;"><input type="checkbox" class="bc_aff_item" value="'+a.code+'"> '+a.name+' ('+a.code+')</label>';
-    }).join('') || '<p style="color:#6b7488; font-size:12.5px;">لا يوجد سفراء بعد.</p>';
+function loadRecipients(){
+  var aud = document.getElementById("bc_audience").value;
+  var box = document.getElementById("bc_rcp_box");
+  box.style.display = "block";
+  document.getElementById("bc_rcp_items").innerHTML = '<div style="color:#8a93a8; font-size:12.5px; padding:8px;">جارِ التحميل…</div>';
+  authFetch("/api/admin-data?action=broadcast-recipients&audience=" + aud)
+    .then(function(r){ return r.json(); }).then(function(res){
+      BC_RECIPIENTS = (res && res.ok) ? (res.recipients || []) : [];
+      document.getElementById("bc_rcp_search").value = "";
+      document.getElementById("bc_rcp_all").checked = true;
+      renderRecipients();
+    }).catch(function(){ document.getElementById("bc_rcp_items").innerHTML = '<div style="color:#ff9b9b; font-size:12.5px; padding:8px;">تعذّر التحميل</div>'; });
+}
+
+function renderRecipients(){
+  var q = (document.getElementById("bc_rcp_search").value || "").trim().toLowerCase();
+  var aud = document.getElementById("bc_audience").value;
+  var shown = BC_RECIPIENTS.filter(function(p){
+    if (!q) return true;
+    return String(p.name||"").toLowerCase().indexOf(q) !== -1
+        || String(p.email||"").toLowerCase().indexOf(q) !== -1
+        || String(p.id||"").toLowerCase().indexOf(q) !== -1
+        || String(p.ref||"").toLowerCase().indexOf(q) !== -1;
   });
+  var allOn = document.getElementById("bc_rcp_all").checked;
+  var flags = { "ar":"🇸🇦","en":"🇬🇧","de":"🇩🇪","fr":"🇫🇷","es":"🇪🇸","tr":"🇹🇷","pt":"🇵🇹","it":"🇮🇹" };
+  document.getElementById("bc_rcp_count").textContent = shown.length + " من " + BC_RECIPIENTS.length;
+  if (!shown.length){ document.getElementById("bc_rcp_items").innerHTML = '<div style="color:#8a93a8; font-size:12.5px; padding:8px;">لا نتائج' + (q ? " لـ\"" + q + "\"" : "") + '</div>'; return; }
+  document.getElementById("bc_rcp_items").innerHTML = shown.map(function(p){
+    var meta = [];
+    if (p.ref) meta.push("#" + p.ref);
+    else if (aud !== "affiliates") meta.push("#" + p.id);
+    else meta.push(p.id);
+    if (p.status) meta.push(p.status);
+    if (p.expires_at) meta.push("ينتهي " + String(p.expires_at).slice(0,10));
+    return '<label style="display:flex; align-items:center; gap:9px; padding:7px 4px; font-size:12.5px; color:#c9d2e3; cursor:pointer; border-bottom:1px solid rgba(255,255,255,.04);">'
+      + '<input type="checkbox" class="bc_rcp_item" value="' + p.id + '" ' + (allOn ? "checked" : "") + ' style="width:auto;">'
+      + '<span style="flex:1; min-width:0;"><b style="color:#fff;">' + (p.name || "—") + '</b>'
+      + '<span style="display:block; font-size:11px; color:#8a93a8; direction:ltr; text-align:right;">' + (p.email||"") + '</span></span>'
+      + '<span style="font-size:11px; color:#8a93a8; white-space:nowrap;">' + (flags[p.lang]||"") + " " + meta.join(" · ") + '</span></label>';
+  }).join("");
 }
 
+function filterRecipients(){ renderRecipients(); }
+function toggleAllRecipients(){
+  var on = document.getElementById("bc_rcp_all").checked;
+  document.querySelectorAll(".bc_rcp_item").forEach(function(cb){ cb.checked = on; });
+}
 function toggleAllAff(){
   var checked = document.getElementById('bc_aff_all').checked;
   document.querySelectorAll('.bc_aff_item').forEach(function(cb){ cb.checked = checked; });
@@ -1678,13 +1806,16 @@ function sendBroadcast(){
   var resultEl = document.getElementById('bc_result');
   if (!subject || !message) { resultEl.textContent = '⚠️ الموضوع والرسالة مطلوبان'; return; }
   var payload = { subject: subject, message: message, audience: audience, translations: bcTranslations };
-  if (audience === 'affiliates') {
-    var selectedCodes = Array.prototype.map.call(document.querySelectorAll('.bc_aff_item:checked'), function(cb){ return cb.value; });
-    if (!document.getElementById('bc_aff_all').checked && selectedCodes.length === 0) { resultEl.textContent = '⚠️ اختر سفيراً واحداً على الأقل أو الكل'; return; }
-    if (!document.getElementById('bc_aff_all').checked) payload.codes = selectedCodes;
+  var picked = Array.prototype.map.call(document.querySelectorAll(".bc_rcp_item:checked"), function(cb){ return cb.value; });
+  var allOn = document.getElementById("bc_rcp_all").checked;
+  var total = BC_RECIPIENTS.length;
+  if (!allOn || picked.length !== total){
+    if (!picked.length) { resultEl.textContent = "⚠️ اختر مستلماً واحداً على الأقل أو الكل"; return; }
+    if (audience === "affiliates") payload.codes = picked; else payload.ids = picked;
   }
-  var audienceLabel = audience === 'affiliates' ? 'السفراء المحدَّدين' : 'العملاء';
-  if (!confirm('تأكيد إرسال الرسالة إلى ' + audienceLabel + '؟')) return;
+  var audLbl = audience === 'affiliates' ? 'السفراء' : (audience === 'academy' ? 'أعضاء الأكاديمية' : 'المشتركين');
+  var cnt = (payload.ids || payload.codes) ? (payload.ids || payload.codes).length : BC_RECIPIENTS.length;
+  if (!confirm('تأكيد إرسال الرسالة إلى ' + cnt + ' من ' + audLbl + '؟')) return;
   resultEl.textContent = 'جارِ الإرسال...';
   authFetch('/api/admin-data?action=broadcast-email', { method:'POST', body: JSON.stringify(payload) })
     .then(function(r){return r.json();}).then(function(res){
@@ -1824,7 +1955,7 @@ function loadAffiliates(){
       var actionBtn = pending
         ? '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="approveAffiliate(\''+a.code+'\')">✅ تفعيل</button>'
         : (a.active ? '' : '<button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="reactivateAffiliate(\''+a.code+'\')">تنشيط</button>');
-      tr.innerHTML = '<td>'+dot+'</td><td>'+a.name+'</td><td>'+a.code+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
+      tr.innerHTML = '<td>'+dot+'</td><td><span title="' + ((a.last_seen_at && (Date.now() - new Date(a.last_seen_at).getTime()) < 120000) ? 'نشط الآن' : 'غير متصل') + '" style="color:' + ((a.last_seen_at && (Date.now() - new Date(a.last_seen_at).getTime()) < 120000) ? '#39FF14' : '#59637a') + '; font-size:10px;">●</span> '+a.name+'</td><td>'+a.code+'</td><td>'+(a.country||'-')+'</td><td>'+a.renewals+'</td>' +
         '<td style="font-weight:900; color:#39FF14;">$'+parseFloat(a.total_commission).toFixed(0)+'</td>' +
         '<td><button class="btn-gold" style="padding:6px 10px; font-size:16px;" onclick="openAffiliateReport(\''+a.code+'\')" title="تقرير السفير">📊</button></td>' +
         '<td><button class="btn-gold" style="padding:6px 12px; font-size:12px;" onclick="downloadAgreement(\''+a.code+'\')">📄 تحميل</button></td>' +

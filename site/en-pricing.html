@@ -66,21 +66,6 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
 <body>
 
 <div id="themeRoot" style="position:relative; overflow:hidden; background:radial-gradient(1200px 700px at 20% -10%, rgba(212,175,55,.14), transparent 60%), radial-gradient(900px 600px at 100% 10%, rgba(30,58,110,.5), transparent 60%), #070d18;">
-<script>
-(function(){
-  var presets = [
-    'hue-rotate(0deg) saturate(1) brightness(1)',
-    'hue-rotate(45deg) saturate(1.05) brightness(1.02)',
-    'hue-rotate(-40deg) saturate(1.1) brightness(1)',
-    'hue-rotate(90deg) saturate(0.9) brightness(1.03)',
-    'hue-rotate(180deg) saturate(0.85) brightness(1)',
-    'hue-rotate(-90deg) saturate(1.15) brightness(0.98)'
-  ];
-  var idx = Math.floor(Date.now() / (8 * 60 * 60 * 1000)) % presets.length;
-  var root = document.getElementById('themeRoot');
-  if (root) root.style.filter = presets[idx];
-})();
-</script>
 
 <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px; row-gap:10px; flex-wrap:wrap; padding:14px clamp(16px,5vw,64px); background:rgba(7,13,24,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(212,175,55,.18);">
   <a href="./option-lion.html" style="display:flex; align-items:center; gap:10px;">
@@ -101,7 +86,7 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
     <a href="./en-academy.html" style="font-size:13px; font-weight:900; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:9px 18px; border-radius:24px; box-shadow:0 6px 20px rgba(212,175,55,.3); white-space:nowrap;">Join Now</a>
   </div>
 </nav>
-<a href="./en-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 New: Free Trader Certification Program — 12 levels, from zero to pro, with a certificate + exclusive discount. <span style="color:#39FF14; text-decoration:underline;">Start free →</span></p></a>
+<a href="./en-academy.html" style="display:block; text-decoration:none; background:linear-gradient(120deg,rgba(57,255,20,.1),rgba(212,175,55,.08)); border-bottom:1px solid rgba(57,255,20,.25); padding:13px clamp(16px,5vw,64px); text-align:center;"><p style="margin:0; font-size:13.5px; font-weight:800; color:#c9ffb0; letter-spacing:.2px;">🎓 Academy — the Indicator System track is completely free: six levels explaining every tool. <span style="color:#39FF14; text-decoration:underline;">Start now →</span></p></a>
 
 <a href="#top" id="backToTop" style="position:fixed; bottom:24px; right:24px; z-index:60; width:48px; height:48px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(212,175,55,.4); font-size:20px; color:#070d18; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;">↑</a>
 <script>
@@ -114,34 +99,254 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
 })();
 </script>
 
-<section id="pricing" style="padding:clamp(50px,8vw,100px) clamp(20px,6vw,64px);">
-  <div style="max-width:1180px; margin:0 auto;">
-    <div style="text-align:center; margin-bottom:20px;">
-      <div style="color:#D4AF37; font-weight:800; font-size:13px; letter-spacing:2px; margin-bottom:12px;">PRICING</div>
-      <h1 style="font-size:clamp(28px,3.8vw,42px); font-weight:900; color:#fff; margin:0 0 14px;">Invest in your edge before your next trade</h1>
-      <div style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(120deg,rgba(212,175,55,.18),rgba(212,175,55,.06)); border:1px solid rgba(212,175,55,.4); color:#f0cf6c; font-weight:800; font-size:13.5px; padding:8px 20px; border-radius:24px; margin-bottom:40px;">⚜ 14-day free trial for every new user</div>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px;">
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">Monthly</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$39<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15% </span><span style="font-size:14px; color:#8a93a8;">/mo</span></div><div style="font-size:12px; color:#6b7488; margin-bottom:22px;">billed monthly</div><a href="./en-signup.html?price=pri_01kyhe6m178pfmv5p755mkhpf0" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >Get started</a></div>
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">3 Months</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$99<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#146817; font-weight:700; margin-bottom:22px;">Save 15%</div><a href="./en-signup.html?price=pri_01kyheh9wpxzfvv1b452h176y3" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >Get started</a></div>
-      <div style="position:relative; background:linear-gradient(160deg,rgba(212,175,55,.16),rgba(212,175,55,.03)); border:1.5px solid #D4AF37; border-radius:18px; padding:34px 24px 30px; text-align:center; transform:scale(1.04); box-shadow:0 20px 50px rgba(212,175,55,.15);"><div style="position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-size:11px; font-weight:900; padding:5px 16px; border-radius:14px; white-space:nowrap;">Most popular</div><div style="font-size:13px; font-weight:700; color:#e8cf85; margin-bottom:14px;">6 Months</div><div style="font-size:38px; font-weight:900; color:#fff; margin-bottom:4px;">$179<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#39FF14; font-weight:700; margin-bottom:22px;">Save 23%</div><a href="./en-signup.html?price=pri_01kyhen533mmstsyr1gf81qb94" style="display:block; font-weight:900; font-size:13.5px; color:#070d18; background:linear-gradient(120deg,#D4AF37,#f0cf6c); padding:12px; border-radius:22px;" >Get started</a></div>
-      <div style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:30px 24px; text-align:center;"><div style="font-size:13px; font-weight:700; color:#8a93a8; margin-bottom:14px;">Yearly</div><div style="font-size:36px; font-weight:900; color:#fff; margin-bottom:4px;">$299<span style="font-size:15px; font-weight:700; color:#8a93a8;"> +15%</span></div><div style="font-size:12px; color:#146817; font-weight:700; margin-bottom:22px;">Save 36%</div><a href="./en-signup.html?price=pri_01kyherxxbtt9kvb0hgevs3h3n" style="display:block; font-weight:800; font-size:13.5px; color:#e9edf5; border:1.5px solid #2a3348; padding:11px; border-radius:22px;" >Get started</a></div>
-    </div>
-    <p style="text-align:center; font-size:12px; color:#8a93a8; margin-top:10px;">💳 Prices shown above exclude tax — calculated automatically at checkout based on your country.</p>
-  <p style="text-align:center; font-size:12.5px; color:#6b7488; margin-top:26px;">All plans include all four tools (O P N  LIO, Smart Pivot, Empire of the Wealthy, The King's Call) and every future update.</p>
-  </div>
+<section id="pricing" style="padding:clamp(64px,9vw,120px) clamp(18px,5vw,60px);">
+  <div style="max-width:1060px; margin:0 auto;">
 
-  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:34px;">
-    <div style="font-size:11.5px; font-weight:700; color:#6b7488; letter-spacing:1px; text-transform:uppercase;">Accepted payment methods</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#1a1f71; font-weight:900; font-size:13px; font-style:italic; letter-spacing:.5px;">VISA</span>
-      <span style="display:inline-flex; align-items:center; gap:2px; padding:7px 14px; border-radius:8px; background:#fff;"><span style="width:14px; height:14px; border-radius:50%; background:#eb001b; display:inline-block;"></span><span style="width:14px; height:14px; border-radius:50%; background:#f79e1b; display:inline-block; margin-inline-start:-6px;"></span></span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#000; color:#fff; font-weight:700; font-size:13px; gap:3px;"><span style="font-size:11px;"></span> Pay</span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#5f6368; font-weight:700; font-size:13px;">G Pay</span>
-      <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:8px; background:#fff; color:#006fcf; font-weight:900; font-size:12.5px;">AMEX</span>
+    <div style="margin-bottom:58px; max-width:680px;">
+      <div style="font-size:11px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:#8a7434; margin-bottom:16px;">Pricing</div>
+      <h1 style="font-size:clamp(30px,4.2vw,48px); font-weight:900; color:#fff; margin:0 0 18px; line-height:1.15; letter-spacing:-.4px;">Pick your plan and start today</h1>
+      <p style="font-size:15px; color:#96a0b4; line-height:2; margin:0;">Two products: <b style="color:#e9edf5;">the four-indicator system subscription</b>, and <b style="color:#e9edf5;">the Smart Session Clock</b> (indicator + its learning track) as a one-time purchase. TradingView access is granted the moment payment completes.</p>
     </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:44px; align-items:start;">
+
+      <div>
+        <div style="font-size:11px; font-weight:700; color:#6b7488; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:16px;">① Choose your subscription length</div>
+        <div id="planList" style="display:flex; flex-direction:column; border:1px solid #1a2130; border-bottom:none; border-radius:12px; overflow:hidden;">
+
+          <button type="button" class="planRow" data-plan="m" onclick="pickPlan('m')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">Monthly</span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Renews monthly · stop whenever you want</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$39</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="q" onclick="pickPlan('q')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">3 Months <span style="font-size:10.5px; font-weight:700; color:#8fdc7a; border:1px solid rgba(57,255,20,.25); border-radius:2px; padding:2px 7px; margin-inline-start:8px; letter-spacing:.3px;">Save 15%</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Works out to $33/month before tax</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$99</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="h" onclick="pickPlan('h')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">6 Months <span style="font-size:10.5px; font-weight:800; color:#070d18; background:#D4AF37; border-radius:2px; padding:2px 8px; margin-inline-start:8px; letter-spacing:.3px;">Most chosen</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Works out to $29.83/month before tax · save 23%</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$179</span></span>
+          </button>
+
+          <button type="button" class="planRow" data-plan="y" onclick="pickPlan('y')" style="all:unset; cursor:pointer; display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:18px; padding:22px 24px; border-bottom:1px solid #1a2130; background:transparent; font-family:inherit; transition:background .18s ease;">
+            <span class="dot" style="width:14px; height:14px; border-radius:50%; border:1.5px solid #3a4358; display:inline-block;"></span>
+            <span><span style="display:block; font-size:15.5px; font-weight:800; color:#e9edf5; letter-spacing:.2px;">Yearly <span style="font-size:10.5px; font-weight:700; color:#8fdc7a; border:1px solid rgba(57,255,20,.25); border-radius:2px; padding:2px 7px; margin-inline-start:8px; letter-spacing:.3px;">Save 36%</span></span><span style="display:block; font-size:12.5px; color:#69738a; margin-top:5px;">Works out to $24.92/month before tax — lowest cost</span></span>
+            <span style="text-align:end;"><span style="display:block; font-size:22px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.3px;">$299</span></span>
+          </button>
+
+        </div>
+
+        
+      </div>
+
+      <div style="position:sticky; top:100px; border:1px solid rgba(212,175,55,.38); border-radius:12px; background:#0c1424; padding:32px 30px;">
+        <div style="font-size:11px; font-weight:700; color:#8a7434; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:22px;">② Review and pay</div>
+        <div id="memberStrip" style="display:none; border:1px solid rgba(57,255,20,.22); background:rgba(57,255,20,.05); border-radius:10px; padding:13px 15px; margin-bottom:20px;">
+          <div style="font-size:12.5px; font-weight:800; color:#c9ffb0;">✓ You are signed in — <span id="memberWho"></span></div>
+          <div style="font-size:11.5px; color:#8a93a8; margin-top:4px;">We won't ask for your details again — they come straight from your membership.</div>
+        </div>
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding-bottom:20px; border-bottom:1px solid rgba(212,175,55,.18);">
+          <span id="sumLabel" style="font-size:15px; font-weight:800; color:#e9edf5;">6 Months</span>
+          <span id="sumTotal" style="font-size:36px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.5px;">$179</span>
+        </div>
+        
+        
+
+        <ul style="list-style:none; padding:0; margin:22px 0 24px; display:flex; flex-direction:column; gap:13px; font-size:13.5px; color:#b6c0d2; line-height:1.65;">
+          <li>⚜ All four tools: O P N LIO System · Smart Pivot · Empire of the Wealthy · King's Call</li>
+          <li>🔔 Ready-made TradingView alerts for every signal</li>
+          <li>🔄 Every future update included</li>
+          <li>🎓 Indicator System track in the academy — free for everyone</li>
+        </ul>
+
+        <div id="tvWrap" style="display:none; margin-bottom:14px;">
+          <label for="tvUser" style="display:block; font-size:11px; font-weight:700; color:#8a7434; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px;">TradingView username</label>
+          <input id="tvUser" type="text" placeholder="username" style="width:100%; box-sizing:border-box; padding:13px 15px; border-radius:10px; border:1px solid rgba(212,175,55,.22); background:rgba(0,0,0,.28); color:#fff; font-size:14px; direction:ltr; text-align:left; font-family:inherit;">
+          <div style="font-size:11.5px; color:#8a93a8; margin-top:6px;">Access is granted to this username right after payment.</div>
+          <div id="tvErr" style="display:none; font-size:11.5px; color:#ff5f5f; margin-top:6px;"></div>
+        </div>
+        <a id="payBtn" href="./en-signup.html?price=pri_01kyhen533mmstsyr1gf81qb94" style="display:block; text-align:center; font-weight:900; font-size:15px; color:#070d18; background:#D4AF37; padding:17px; border-radius:10px; letter-spacing:.3px;">Subscribe now — 6 Months</a>
+        <div style="font-size:11.5px; color:#5c6579; text-align:center; margin-top:10px; letter-spacing:.2px;">Prices in USD before tax · added at checkout</div>
+        <div style="font-size:12px; color:#7d8798; text-align:center; margin-top:16px; line-height:1.9;">🔓 <b style="color:#c9d2e3;">Cancel anytime</b> from your member dashboard — renewal stops immediately and access stays until the paid period ends. <a href="./en-refund.html" style="color:#8a93a8; text-decoration:underline;">Cancellation policy</a></div>
+      </div>
+    </div>
+
+    <div id="clockOffer" style="margin-top:44px; border:1px solid rgba(47,143,191,.4); border-radius:12px; background:rgba(47,143,191,.05); padding:34px 32px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:34px; align-items:center;">
+      <div>
+        <div style="font-size:11px; font-weight:700; color:#79c0e8; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:12px;">Standalone product</div>
+        <h2 style="font-size:22px; font-weight:800; color:#fff; margin:0 0 14px; letter-spacing:-.2px;">⏱ Smart Session Clock — indicator + its learning track</h2>
+        <p style="font-size:13.5px; color:#b6c0d2; line-height:2; margin:0 0 14px;">The session-timing indicator on TradingView (five windows · theta counter · opening range · expected range · day-type classifier) <b style="color:#e9edf5;">plus the Session Clock track in the academy — ten levels</b>, for one single payment. The track opens only after purchase.</p>
+        <div style="font-size:12.5px; color:#8a93a8; line-height:1.8;">Completely separate from the four-indicator subscription — you can buy it on its own.</div>
+      </div>
+      <div style="text-align:center; min-width:190px;">
+        <div id="clockOld" style="font-size:15px; color:#6b7488; text-decoration:line-through; font-variant-numeric:tabular-nums;">$99</div>
+        <div id="clockNow" style="font-size:38px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; line-height:1.15; letter-spacing:-.5px;">$79</div>
+        <div id="clockNote" style="font-size:11.5px; color:#8a93a8; margin-bottom:14px;">One-time payment</div>
+        <a id="clockBtn" href="./en-signup.html?price=pri_01m04rf4x0d06y0aeb4m74230v" style="display:block; font-weight:900; font-size:14.5px; color:#070d18; background:#8fcbea; padding:15px 26px; border-radius:10px; letter-spacing:.3px;">Get it now</a>
+      </div>
+    </div>
+<div style="margin-top:40px; border:1px solid #1a2130; border-radius:12px;">
+          <div style="padding:16px 22px; border-bottom:1px solid #1a2130; font-size:11px; font-weight:700; color:#6b7488; letter-spacing:2.5px; text-transform:uppercase;">Everything paid on the platform — no exceptions</div>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:14px 18px; padding:20px 22px; font-size:13.5px; line-height:1.8;">
+            <div style="color:#e9edf5;">System indicators subscription — the four tools</div><div style="color:#f0cf6c; font-weight:800; white-space:nowrap;">From $39 / month</div>
+            <div style="color:#e9edf5;">Smart Session Clock — indicator + its ten academy levels (one-time)</div><div id="ledgerClock" style="color:#f0cf6c; font-weight:800; white-space:nowrap;">$79</div>
+            <div style="color:#e9edf5;">Trader Mastery track registration fee — one time</div><div style="color:#f0cf6c; font-weight:800; white-space:nowrap;">$1</div>
+            <div style="color:#8a93a8;">Indicator System track in the academy</div><div style="color:#39FF14; font-weight:800;">Free</div>
+            <div style="color:#8a93a8;">Joining the ambassador and commission program</div><div style="color:#39FF14; font-weight:800;">Free</div>
+          </div>
+          <div style="padding:16px 22px; border-top:1px solid #1a2130; font-size:12px; color:#69738a; line-height:1.9;">No activation fees, no setup fees, nothing else. Graduates of the Trader Mastery track get a discount applied automatically to any plan they choose.</div>
+        </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:#151b27; border:1px solid #151b27; border-radius:12px; margin-top:44px; overflow:hidden;">
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Instant access</div><div style="font-size:12px; color:#6b7488;">Granted to your TradingView account after payment</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Cancel anytime</div><div style="font-size:12px; color:#6b7488;">One click in your dashboard — no phone calls</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">No hidden fees</div><div style="font-size:12px; color:#6b7488;">No activation or setup fees</div></div>
+      <div style="background:#0a1020; padding:16px 18px;"><div style="font-size:13px; font-weight:800; color:#e9edf5; margin-bottom:6px; letter-spacing:.2px;">Secure payment</div><div style="font-size:12px; color:#6b7488;">Through Paddle — your card never touches us</div></div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; align-items:center; gap:16px; margin-top:52px;">
+      <div style="font-size:10.5px; font-weight:700; color:#5c6579; letter-spacing:2.5px; text-transform:uppercase;">Accepted payment methods</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#1a1f71; font-weight:900; font-size:13px; font-style:italic;">VISA</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff;"><span style="width:14px; height:14px; border-radius:50%; background:#eb001b; display:inline-block;"></span><span style="width:14px; height:14px; border-radius:50%; background:#f79e1b; display:inline-block; margin-inline-start:-6px;"></span></span>
+        <span style="display:inline-flex; align-items:center; gap:3px; padding:7px 14px; border-radius:6px; background:#000; color:#fff; font-weight:700; font-size:13px;">Apple Pay</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#5f6368; font-weight:700; font-size:13px;">Google Pay</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px; border-radius:6px; background:#fff; color:#006fcf; font-weight:900; font-size:12.5px;">AMEX</span>
+      </div>
+    </div>
+
+    <div style="max-width:740px; margin:68px auto 0; display:flex; flex-direction:column; gap:8px;">
+      <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0 0 20px; text-align:center; letter-spacing:-.2px;">Questions before you pay</h2>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">How do I cancel?</span><span class="faq-icon">+</span></div><div class="faq-a">From your member dashboard, hit cancel — auto-renewal stops instantly and your indicator access keeps working until the end of the period you paid for. No call, no reason needed.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">What do I actually pay after tax?</span><span class="faq-icon">+</span></div><div class="faq-a">Prices here are before tax. VAT is added automatically at checkout according to your country, and the final amount is shown before you confirm.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">When are the indicators activated on my account?</span><span class="faq-icon">+</span></div><div class="faq-a">Access is granted to the TradingView username you enter at checkout, and the tools appear under Invite-only scripts. If it is delayed, message us and it is sorted in minutes.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Is the academy part of the subscription?</span><span class="faq-icon">+</span></div><div class="faq-a">The Indicator System track is free for everyone, no subscription. The Trader Mastery track has a token one-time registration fee of $1. The Smart Session Clock track opens when you buy the Session Clock — indicator and track together for one price.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Is the Session Clock included in the indicators subscription?</span><span class="faq-icon">+</span></div><div class="faq-a">No. The Session Clock is a standalone one-time purchase covering both the TradingView indicator and its ten academy levels for one price. The track opens only after purchase.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span style="font-weight:700; font-size:14.5px; color:#fff;">Do the indicators give recommendations?</span><span class="faq-icon">+</span></div><div class="faq-a">No. The system is a set of market-reading tools showing probabilities and technical conditions; the decision and its responsibility are yours alone. The content is educational and analytical, not investment advice.</div></div>
+    </div>
+
+    <div style="text-align:center; margin-top:64px; padding-top:52px; border-top:1px solid #151b27;">
+      <p style="font-size:17px; font-weight:800; color:#e9edf5; margin:0 0 22px; letter-spacing:-.1px;">Ready? Start with the plan that fits you — cancelling is always in your hands.</p>
+      <a href="#pricing" onclick="document.getElementById('payBtn').focus();" style="display:inline-block; font-weight:900; font-size:14.5px; color:#070d18; background:#D4AF37; padding:15px 40px; border-radius:10px; letter-spacing:.3px; white-space:nowrap;">Choose your plan ↑</a>
+      <p style="font-size:12.5px; color:#69738a; margin:24px auto 0; max-width:580px; line-height:2;">Or start with the free part: <a href="./en-academy.html">the Indicator System track</a> in the academy — it explains every indicator in detail before you pay anything.</p>
+    </div>
+
   </div>
 </section>
+
+<script>
+/* ── Session Clock: flip discountOn to enable/disable the sale price ── */
+var CLOCK = {
+  discountOn : true,
+  base       : 99,
+  sale       : 79,
+  priceIdFull: 'pri_01m04rf4x0d06y0aeb4m74230v',
+  discountId : 'dsc_01m04rj0ggg5gvh3728m6c9naf'
+};
+(function(){
+  var now = CLOCK.discountOn ? CLOCK.sale : CLOCK.base;
+  document.getElementById('clockNow').textContent = '$' + now;
+  document.getElementById('clockNote').textContent = 'One-time payment';
+  document.getElementById('ledgerClock').textContent = '$' + now;
+  var old = document.getElementById('clockOld');
+  if (CLOCK.discountOn) { old.textContent = '$' + CLOCK.base; old.style.display = 'block'; }
+  else { old.style.display = 'none'; }
+  var cbtn = document.getElementById('clockBtn');
+  var cid = CLOCK.priceIdFull;
+  if (/^pri_/.test(cid)) { cbtn.href = './en-signup.html?price=' + cid + (CLOCK.discountOn ? '&discount=' + CLOCK.discountId : ''); }
+  else {
+    cbtn.removeAttribute('href');
+    cbtn.textContent = 'Coming soon — purchase opens in days';
+    cbtn.style.background = 'rgba(121,192,232,.18)';
+    cbtn.style.color = '#bfe4f7';
+    cbtn.style.cursor = 'default';
+    cbtn.style.border = '1px solid rgba(121,192,232,.4)';
+  }
+})();
+
+var PLANS = {
+  m:{ label:'Monthly',  base:39,  id:'pri_01kyhe6m178pfmv5p755mkhpf0' },
+  q:{ label:'3 Months', base:99, id:'pri_01kyheh9wpxzfvv1b452h176y3' },
+  h:{ label:'6 Months', base:179, id:'pri_01kyhen533mmstsyr1gf81qb94' },
+  y:{ label:'Yearly',  base:299, id:'pri_01kyherxxbtt9kvb0hgevs3h3n' }
+};
+function pickPlan(k){
+  var p = PLANS[k];
+  document.querySelectorAll('.planRow').forEach(function(row){
+    var on = row.getAttribute('data-plan') === k;
+    var rtl = document.documentElement.dir === 'rtl';
+    row.style.background = on ? 'rgba(212,175,55,.06)' : 'transparent';
+    row.style.boxShadow = on ? 'inset ' + (rtl ? '-' : '') + '2px 0 0 #D4AF37' : 'none';
+    var dot = row.querySelector('.dot');
+    dot.style.borderColor = on ? '#D4AF37' : '#3a4358';
+    dot.style.background = on ? '#D4AF37' : 'transparent';
+    dot.style.boxShadow = on ? 'inset 0 0 0 3px #070d18' : 'none';
+  });
+  document.getElementById('sumLabel').textContent = p.label;
+  document.getElementById('sumTotal').textContent = '$' + p.base;
+  window._planKey = k;
+  var btn = document.getElementById('payBtn');
+  btn.textContent = 'Subscribe now — ' + p.label;
+  if (MEMBER) { btn.removeAttribute('href'); btn.style.cursor = 'pointer'; }
+  else { btn.href = './en-signup.html?price=' + p.id; }
+}
+
+var MEMBER = null, MTOKEN = null;
+try { MEMBER = JSON.parse(localStorage.getItem('member_data') || 'null'); } catch(e){}
+MTOKEN = localStorage.getItem('member_token');
+if (!MTOKEN) MEMBER = null;
+
+if (MEMBER) {
+  document.getElementById('memberStrip').style.display = 'block';
+  document.getElementById('memberWho').textContent = (MEMBER.name || '') + ' · ' + (MEMBER.email || '');
+  document.getElementById('tvWrap').style.display = 'block';
+  var tvSaved = MEMBER.tradingview || MEMBER.tv_username || '';
+  if (tvSaved) document.getElementById('tvUser').value = tvSaved;
+  document.getElementById('payBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    memberBuy(PLANS[window._planKey || 'h'].id, PLANS[window._planKey || 'h'].label);
+  });
+  var cb = document.getElementById('clockBtn');
+  if (cb && cb.getAttribute('href')) {
+    cb.addEventListener('click', function(e){
+      e.preventDefault();
+      memberBuy(CLOCK.priceIdFull, 'the Smart Session Clock', CLOCK.discountOn ? CLOCK.discountId : '');
+    });
+  }
+}
+
+function memberBuy(priceId, planLabel, discountId){
+  var el = document.getElementById('tvUser');
+  var err = document.getElementById('tvErr');
+  var tv = (el.value || '').trim().replace(/^@+/, '').toLowerCase();
+  if (tv.length < 3) {
+    err.textContent = 'Enter your TradingView username — we grant indicator access to it after payment.';
+    err.style.display = 'block';
+    el.style.borderColor = '#ff5f5f';
+    el.focus();
+    return;
+  }
+  err.style.display = 'none';
+  el.style.borderColor = 'rgba(212,175,55,.28)';
+  fetch('/api/ref-track', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: MEMBER.referred_by || '', customerName: MEMBER.name, phone:'', telegram:'', tradingview: tv, email: MEMBER.email, lang:'en', plan: planLabel, termsAccepted: true }) }).catch(function(){});
+  Paddle.Checkout.open({
+    items: [{ priceId: priceId, quantity: 1 }],
+    discountId: discountId || undefined,
+    customer: { email: MEMBER.email },
+    customData: { tradingview: tv, member_ref: MEMBER.member_ref || '', plan: planLabel },
+    settings: { displayMode:'overlay', variant:'one-page', successUrl: window.location.origin + '/welcome.html?lang=en&name=' + encodeURIComponent(MEMBER.name || '') + '&price=' + encodeURIComponent(priceId) + '&regdate=' + encodeURIComponent(new Date().toISOString()) }
+  });
+}
+pickPlan('h');
+if (MEMBER) {
+  var nj = document.getElementById('navJoin');
+  if (nj) { nj.href = './member-dashboard.html'; nj.textContent = '↩ My dashboard'; }
+}
+</script>
 
 <footer style="padding:44px clamp(20px,6vw,64px) 34px; border-top:1px solid rgba(255,255,255,.08); text-align:center;">
   <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px;">
@@ -150,7 +355,7 @@ function openCheckout(priceId){ location.href = './en-signup.html?price=' + enco
   </div>
   <p style="font-size:12.5px; color:#6b7488; max-width:520px; margin:0 auto 18px; line-height:1.8;">Content is provided for educational and analytical purposes only and does not constitute investment advice. Trading involves risk.</p>
   <div style="font-size:12.5px; color:#4d5468;">© 2026 O P N  LIO ⚜ All rights reserved</div>
-<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#en-section'); return false;" style="color:#8a93a8;">Terms of Service</a><a href="#" onclick="openLegalModal('./privacy.html#en-section'); return false;" style="color:#8a93a8;">Privacy Policy</a><a href="#" onclick="openLegalModal('./refund.html#en-section'); return false;" style="color:#8a93a8;">Refund Policy</a></div>
+<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:11.5px; margin-bottom:14px;"><a href="#" onclick="openLegalModal('./terms.html#en-section'); return false;" style="color:#8a93a8;">Terms of Service</a><a href="#" onclick="openLegalModal('./privacy.html#en-section'); return false;" style="color:#8a93a8;">Privacy Policy</a><a href="#" onclick="openLegalModal('./en-refund.html'); return false;" style="color:#8a93a8;">Cancellation Policy</a></div>
 </footer>
 
 </div>
