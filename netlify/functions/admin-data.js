@@ -594,7 +594,7 @@ exports.handler = async (event) => {
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS phone text`;
       await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_seen_at timestamptz`;
-      const rows = await sql`SELECT s.id, s.name, s.email, s.phone, s.paid_at, s.lang, s.points, s.current_level, s.rank, s.graduated_at, s.last_seen_at,
+      const rows = await sql`SELECT s.id, s.name, s.email, s.phone, s.paid_at, s.lang, s.points, s.current_level, s.rank, s.graduated_at, s.last_seen_at, s.clock_paid_at,
         s.discount_code, s.email_verified, s.created_at, s.last_login_at,
         (SELECT COUNT(*)::int FROM academy_progress p WHERE p.student_id = s.id AND p.completed = true) AS levels_done
         FROM academy_students s ORDER BY s.created_at DESC LIMIT 300`;
@@ -613,6 +613,34 @@ exports.handler = async (event) => {
       const progress = await sql`SELECT level_num, completed, score, completed_at FROM academy_progress WHERE student_id = ${id} ORDER BY level_num`;
       const st = rows[0]; delete st.password_hash; delete st.verify_token;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, student: st, progress }) };
+    }
+
+    // ⏱ تفعيل/إلغاء ساعة الجلسة يدوياً من الإدارة
+    // ⏱ حالة خصم ساعة الجلسة — قراءة عامة (تستهلكها صفحات الأسعار بلا توكن)
+    if (event.httpMethod === 'GET' && action === 'clock-discount') {
+      const rows = await sql`SELECT value FROM admin_settings WHERE key = 'clock_discount_on'`;
+      const on = rows.length ? rows[0].value === '1' : true; // الافتراضي: الخصم مفعّل
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, on }) };
+    }
+
+    // تفعيل/إيقاف خصم الساعة من الإدارة
+    if (event.httpMethod === 'POST' && action === 'set-clock-discount') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { on } = JSON.parse(event.body || '{}');
+      await sql`INSERT INTO admin_settings (key, value) VALUES ('clock_discount_on', ${on ? '1' : '0'})
+        ON CONFLICT (key) DO UPDATE SET value = ${on ? '1' : '0'}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('clock-discount', ${on ? 'تفعيل خصم ساعة الجلسة ($79)' : 'إيقاف الخصم — رجوع للسعر الأصلي ($99)'})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, on: !!on }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'academy-set-clock') {
+      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { id, paid } = JSON.parse(event.body || '{}');
+      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS clock_paid_at timestamptz`;
+      if (paid) await sql`UPDATE academy_students SET clock_paid_at = now() WHERE id = ${id}`;
+      else await sql`UPDATE academy_students SET clock_paid_at = NULL WHERE id = ${id}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-set-clock', ${(paid ? 'تفعيل يدوي لساعة الجلسة' : 'إلغاء تفعيل ساعة الجلسة') + ' — الطالب #' + id})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'academy-set-paid') {
