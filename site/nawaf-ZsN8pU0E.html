@@ -109,6 +109,15 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </section>
 
   <section class="panel" data-panel="prices">
+  
+  <div class="card" style="margin-bottom:24px; border:1px solid rgba(121,192,232,.35);">
+    <h3 style="margin:0 0 8px; color:#8fcbea;">⏱ خصم ساعة الجلسة الذكية</h3>
+    <p style="font-size:12.5px; color:#8a93a8; margin:0 0 14px; line-height:1.9;">السعر الأصلي <b style="color:#fff;">$99</b> · سعر الخصم <b style="color:#39FF14;">$79</b>. التبديل هنا يطبَّق فوراً على صفحات الأسعار بكل اللغات (زائر وعضو).</p>
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <button id="clockDiscToggle" onclick="toggleClockDisc()" style="padding:11px 24px; border-radius:10px; border:1px solid rgba(121,192,232,.4); background:rgba(121,192,232,.12); color:#bfe4f7; font-weight:900; font-size:13.5px; cursor:pointer; font-family:inherit;">…</button>
+      <span id="clockDiscState" style="font-size:12.5px; color:#8a93a8;"></span>
+    </div>
+  </div>
   <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 16px; color:#D4AF37;">💰 أسعار الباقات</h3>
     <table id="pricesTable"><thead><tr><th>الاسم</th><th>السعر ($)</th><th></th></tr></thead><tbody></tbody></table>
@@ -597,6 +606,7 @@ function renderAcademy(list){
       '<td style="display:flex; gap:5px; flex-wrap:wrap;">' +
       (s.paid_at ? '<button style="padding:5px 10px; font-size:11px; background:rgba(255,180,0,.12); color:#ffb400; border:1px solid rgba(255,180,0,.35); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acSetPaid('+s.id+', false)">🔒 إلغاء الدفع</button>' : '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acSetPaid('+s.id+', true)">💰 تفعيل الدفع</button>') +
       (!s.email_verified ? '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acVerify('+s.id+')">✅ تفعيل</button>' : '') +
+      '<button style="padding:5px 10px; font-size:11px; background:rgba(121,192,232,.15); color:#8fcbea; border:1px solid rgba(121,192,232,.35); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acClock('+s.id+','+(s.clock_paid_at?'false':'true')+')">'+(s.clock_paid_at?'⏱ إلغاء الساعة':'⏱ تفعيل الساعة')+'</button>' +
       '<button class="btn-gold" style="padding:5px 10px; font-size:11px;" onclick="acEdit('+s.id+')">✏️ تعديل</button>' +
       '<button style="padding:5px 10px; font-size:11px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acReset('+s.id+')">🔄 تصفير</button>' +
       '<button style="padding:5px 10px; font-size:11px; background:rgba(255,80,80,.15); color:#ff9b9b; border:1px solid rgba(255,80,80,.3); border-radius:7px; cursor:pointer; font-family:inherit;" onclick="acDelete('+s.id+')">🗑️</button></td>';
@@ -611,6 +621,11 @@ function acSetPaid(id, paid){
 function acVerify(id){
   authFetch('/api/admin-data?action=academy-verify-student', { method:'POST', body: JSON.stringify({id}) })
     .then(function(r){return r.json();}).then(function(){ loadAcademy(); });
+}
+function acClock(id, paid){
+  if (!confirm(paid ? 'تفعيل مسار ومؤشر ساعة الجلسة لهذا العضو يدوياً؟' : 'إلغاء تفعيل ساعة الجلسة عن هذا العضو؟')) return;
+  authFetch('/api/admin-data?action=academy-set-clock', { method:'POST', body: JSON.stringify({ id: id, paid: paid }) })
+    .then(function(r){ return r.json(); }).then(function(){ loadAcademy(); });
 }
 function acReset(id){
   if (!confirm('تصفير كل تقدّم هذا المتدرب والعودة للمستوى الأول؟')) return;
@@ -654,6 +669,7 @@ function showPanel(name){
   if (name === 'page-visibility') loadPageVisibility();
   if (name === 'tv-alerts') loadTvAlerts();
   if (name === 'payouts') loadPayoutRuns();
+  if (name === 'prices') loadClockDisc();
   if (name === 'tickets') loadTickets();
   if (name === 'member-chats') loadMemberChats();
   if (name === 'settings') loadErrorLog();
@@ -823,6 +839,29 @@ function resetAllAmounts(){
       loadPayoutRuns(); if (typeof loadStats === 'function') loadStats();
     })
     .catch(function(){ el.textContent = '❌ تعذر الاتصال بالخادم'; el.style.color = '#ff9b9b'; });
+}
+var CLOCK_DISC_ON = null;
+function loadClockDisc(){
+  fetch('/api/admin-data?action=clock-discount').then(function(r){ return r.json(); }).then(function(res){
+    if (!res.ok) return;
+    CLOCK_DISC_ON = !!res.on;
+    renderClockDisc();
+  }).catch(function(){});
+}
+function renderClockDisc(){
+  var b = document.getElementById('clockDiscToggle'), s = document.getElementById('clockDiscState');
+  if (!b) return;
+  b.textContent = CLOCK_DISC_ON ? '🟢 الخصم مفعّل — السعر الآن $79' : '⚪ الخصم موقوف — السعر الآن $99';
+  s.textContent = CLOCK_DISC_ON ? 'اضغط للإيقاف والرجوع إلى $99' : 'اضغط لتفعيل خصم $79';
+}
+function toggleClockDisc(){
+  var next = !CLOCK_DISC_ON;
+  if (!confirm(next ? 'تفعيل خصم ساعة الجلسة — يظهر $79 فوراً لكل الزوار؟' : 'إيقاف الخصم — يرجع السعر $99 فوراً لكل الزوار؟')) return;
+  authFetch('/api/admin-data?action=set-clock-discount', { method:'POST', body: JSON.stringify({ on: next }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+      if (!res.ok) { alert(res.error || 'فشل التبديل'); return; }
+      CLOCK_DISC_ON = res.on; renderClockDisc();
+    }).catch(function(){ alert('تعذر الاتصال'); });
 }
 function loadPayoutRuns(){
   authFetch('/api/admin-data?action=payout-runs').then(function(r){return r.json();}).then(function(res){

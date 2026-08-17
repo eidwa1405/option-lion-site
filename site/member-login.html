@@ -253,7 +253,8 @@ function doMemberLogin(){
         openVerifyModal({ email: email, lang: LG, onSuccess: function(){
           try { localStorage.setItem('opnlio_returning','1'); } catch(e){}
           localStorage.setItem('member_token', res.token);
-          localStorage.setItem('member_data', JSON.stringify(res.student));
+          var _st = res.student; try { _st.clockDone = (res.clockProgress||[]).filter(function(p){return p.completed;}).length; } catch(e){ _st.clockDone = 0; }
+            localStorage.setItem('member_data', JSON.stringify(_st));
           try { localStorage.setItem('opnlio_academy_session', JSON.stringify({ token: res.token, student: res.student, progress: res.progress || [], freeProgress: res.freeProgress || [], expiresAt: Date.now() + 24*60*60*1000 })); } catch(e){}
           location.href = './member-dashboard.html';
         }, onCancel: function(){ msgEl.style.display='block'; msgEl.style.color='#ff9b9b'; msgEl.textContent=_L('لم يكتمل التحقق — لم يتم تسجيل الدخول'); } });

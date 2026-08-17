@@ -375,5 +375,28 @@ document.addEventListener('click', function(e){
   if (e.target && e.target.id === 'legalModalOverlay') e.target.style.display = 'none';
 });
 </script>
+<script>
+/* حالة خصم الساعة تُدار من لوحة التحكم */
+(function(){
+  fetch('/api/admin-data?action=clock-discount').then(function(r){ return r.json(); }).then(function(res){
+    if (!res || !res.ok || typeof CLOCK === 'undefined') return;
+    var on = !!res.on;
+    if (on === CLOCK.discountOn) return;
+    CLOCK.discountOn = on;
+    var now = on ? CLOCK.sale : CLOCK.base;
+    var el = document.getElementById('clockNow'); if (el) el.textContent = '
+</html>
+ + now;
+    var lc = document.getElementById('ledgerClock'); if (lc) lc.textContent = '
+</html>
+ + now;
+    var old = document.getElementById('clockOld'); if (old) { old.textContent = '
+</html>
+ + CLOCK.base; old.style.display = on ? 'block' : 'none'; }
+    var b = document.getElementById('clockBtn');
+    if (b && b.getAttribute('href')) b.href = './it-signup.html?price=' + CLOCK.priceIdFull + (on ? '&discount=' + CLOCK.discountId : '');
+  }).catch(function(){});
+})();
+</script>
 </body>
 </html>
