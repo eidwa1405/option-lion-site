@@ -185,6 +185,11 @@ function openCheckout(priceId){ location.href = './tr-signup.html?price=' + enco
         <div id="clockOld" style="font-size:15px; color:#6b7488; text-decoration:line-through; font-variant-numeric:tabular-nums;">$99</div>
         <div id="clockNow" style="font-size:38px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums; line-height:1.15; letter-spacing:-.5px;">$79</div>
         <div id="clockNote" style="font-size:11.5px; color:#8a93a8; margin-bottom:14px;">Tek ödeme</div>
+        <div id="clockTvWrap" style="display:none; margin-bottom:12px; text-align:start;">
+          <label for="clockTvUser" style="display:block; font-size:11px; font-weight:700; color:#79c0e8; margin-bottom:6px;">TradingView kullanıcı adı</label>
+          <input id="clockTvUser" type="text" placeholder="username" style="width:100%; box-sizing:border-box; padding:11px 13px; border-radius:8px; border:1px solid rgba(121,192,232,.35); background:rgba(0,0,0,.28); color:#fff; font-size:13.5px; direction:ltr; text-align:left; font-family:inherit;">
+          <div id="clockTvErr" style="display:none; font-size:11.5px; color:#ff5f5f; margin-top:6px;"></div>
+        </div>
         <a id="clockBtn" href="./tr-signup.html?price=pri_01m04rf4x0d06y0aeb4m74230v" style="display:block; font-weight:900; font-size:14.5px; color:#070d18; background:#8fcbea; padding:15px 26px; border-radius:10px; letter-spacing:.3px;">Şimdi al</a>
       </div>
     </div>
@@ -303,6 +308,8 @@ if (MEMBER) {
   document.getElementById('memberStrip').style.display = 'block';
   document.getElementById('memberWho').textContent = (MEMBER.name || '') + ' · ' + (MEMBER.email || '');
   document.getElementById('tvWrap').style.display = 'block';
+  var ctw = document.getElementById('clockTvWrap'); if (ctw) ctw.style.display = 'block';
+  var ctv = document.getElementById('clockTvUser'); if (ctv && (MEMBER.tradingview || MEMBER.tv_username)) ctv.value = MEMBER.tradingview || MEMBER.tv_username;
   var tvSaved = MEMBER.tradingview || MEMBER.tv_username || '';
   if (tvSaved) document.getElementById('tvUser').value = tvSaved;
   document.getElementById('payBtn').addEventListener('click', function(e){
@@ -313,14 +320,14 @@ if (MEMBER) {
   if (cb && cb.getAttribute('href')) {
     cb.addEventListener('click', function(e){
       e.preventDefault();
-      memberBuy(CLOCK.priceIdFull, 'Akıllı Seans Saati', CLOCK.discountOn ? CLOCK.discountId : '');
+      memberBuy(CLOCK.priceIdFull, 'Akıllı Seans Saati', CLOCK.discountOn ? CLOCK.discountId : '', 'clockTvUser', 'clockTvErr');
     });
   }
 }
 
-function memberBuy(priceId, planLabel, discountId){
-  var el = document.getElementById('tvUser');
-  var err = document.getElementById('tvErr');
+function memberBuy(priceId, planLabel, discountId, tvId, errId){
+  var el = document.getElementById(tvId || 'tvUser');
+  var err = document.getElementById(errId || 'tvErr');
   var tv = (el.value || '').trim().replace(/^@+/, '').toLowerCase();
   if (tv.length < 3) {
     err.textContent = 'TradingView kullanıcı adınızı girin — ödemeden sonra erişimi ona veriyoruz.';
@@ -383,15 +390,9 @@ document.addEventListener('click', function(e){
     if (on === CLOCK.discountOn) return;
     CLOCK.discountOn = on;
     var now = on ? CLOCK.sale : CLOCK.base;
-    var el = document.getElementById('clockNow'); if (el) el.textContent = '
-</html>
- + now;
-    var lc = document.getElementById('ledgerClock'); if (lc) lc.textContent = '
-</html>
- + now;
-    var old = document.getElementById('clockOld'); if (old) { old.textContent = '
-</html>
- + CLOCK.base; old.style.display = on ? 'block' : 'none'; }
+    var el = document.getElementById('clockNow'); if (el) el.textContent = '$' + now;
+    var lc = document.getElementById('ledgerClock'); if (lc) lc.textContent = '$' + now;
+    var old = document.getElementById('clockOld'); if (old) { old.textContent = '$' + CLOCK.base; old.style.display = on ? 'block' : 'none'; }
     var b = document.getElementById('clockBtn');
     if (b && b.getAttribute('href')) b.href = './tr-signup.html?price=' + CLOCK.priceIdFull + (on ? '&discount=' + CLOCK.discountId : '');
   }).catch(function(){});
