@@ -32,7 +32,7 @@ exports.handler = async (event) => {
     const sql = getSql();
     const action = event.queryStringParameters && event.queryStringParameters.action;
     // page-visibility تُقرأ علنياً (يحتاجها page-guard في كل الصفحات)
-    if (!(event.httpMethod === 'GET' && action === 'page-visibility')) {
+    if (!(event.httpMethod === 'GET' && (action === 'page-visibility' || action === 'clock-discount'))) {
       if (!(await checkTokenAsync(event, sql))) {
         return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح — سجّل الدخول مرة أخرى' }) };
       }
@@ -627,8 +627,8 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'POST' && action === 'set-clock-discount') {
       if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
       const { on } = JSON.parse(event.body || '{}');
-      await sql`INSERT INTO admin_settings (key, value) VALUES ('clock_discount_on', ${on ? '1' : '0'})
-        ON CONFLICT (key) DO UPDATE SET value = ${on ? '1' : '0'}`;
+      const _updD = await sql`UPDATE admin_settings SET value = ${on ? '1' : '0'} WHERE key = 'clock_discount_on' RETURNING key`;
+      if (!_updD.length) await sql`INSERT INTO admin_settings (key, value) VALUES ('clock_discount_on', ${on ? '1' : '0'})`;
       await sql`INSERT INTO audit_log (action, details) VALUES ('clock-discount', ${on ? 'تفعيل خصم ساعة الجلسة ($79)' : 'إيقاف الخصم — رجوع للسعر الأصلي ($99)'})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, on: !!on }) };
     }
