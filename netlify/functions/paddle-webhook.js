@@ -85,12 +85,41 @@ exports.handler = async (event) => {
         const upd = await sql`UPDATE academy_students SET clock_paid_at = now() WHERE lower(email) = ${clockEmail} RETURNING id`;
         if (upd.length) {
           await sql`INSERT INTO audit_log (action, details) VALUES ('clock-paid', ${'شراء ساعة الجلسة — الطالب #' + upd[0].id + ' (' + clockEmail + ')'})`;
+          // 💰 عمولة السفير عن بيعة الساعة: $4 ثابتة (kind = clock)
+          try {
+            const subMatch = await sql`SELECT ref_code, customer_name, self_ref_flagged FROM subscriptions WHERE lower(email) = ${clockEmail} AND ref_code IS NOT NULL AND ref_code <> '' ORDER BY created_at DESC LIMIT 1`;
+            if (subMatch.length && subMatch[0].ref_code) {
+              if (subMatch[0].self_ref_flagged) {
+                await sql`INSERT INTO audit_log (action, details) VALUES ('self-referral-commission-skipped', ${'بيعة ساعة بكود ' + subMatch[0].ref_code + ' بلا عمولة — إحالة ذاتية'})`;
+              } else {
+                const txClockId = data.id || null;
+                const dupe = txClockId ? await sql`SELECT 1 FROM commission_log WHERE paddle_transaction_id = ${txClockId} LIMIT 1` : [];
+                if (!dupe.length) {
+                  await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount, floor_amount, bonus_amount, paddle_transaction_id, kind)
+                    VALUES (${subMatch[0].ref_code}, ${subMatch[0].customer_name || clockEmail}, 'clock_99', 4, 4, 0, ${txClockId}, 'clock')`;
+                  await sql`INSERT INTO audit_log (action, details) VALUES ('clock-commission', ${'عمولة $4 للسفير ' + subMatch[0].ref_code + ' عن بيعة ساعة الجلسة (' + clockEmail + ')'})`;
+                }
+              }
+            }
+          } catch (e) {}
         } else {
           await sql`INSERT INTO paddle_unmatched (event_type, customer_email, customer_name, raw_payload) VALUES (${eventType || ''}, ${clockEmail || null}, ${acadCustom.customerName || null}, ${JSON.stringify(payload)})`;
         }
       } else if ((eventType === 'transaction.refunded' || eventType === 'adjustment.created') && clockEmail) {
         await sql`UPDATE academy_students SET clock_paid_at = NULL WHERE lower(email) = ${clockEmail}`;
         await sql`INSERT INTO audit_log (action, details) VALUES ('clock-refunded', ${'استرجاع ساعة الجلسة — ' + clockEmail})`;
+        // عكس عمولة الساعة إن وُجدت
+        try {
+          const cSub = await sql`SELECT ref_code, customer_name FROM subscriptions WHERE lower(email) = ${clockEmail} AND ref_code IS NOT NULL AND ref_code <> '' ORDER BY created_at DESC LIMIT 1`;
+          if (cSub.length && cSub[0].ref_code) {
+            const last = await sql`SELECT id, amount FROM commission_log WHERE ref_code = ${cSub[0].ref_code} AND kind = 'clock' AND amount > 0 ORDER BY created_at DESC LIMIT 1`;
+            if (last.length) {
+              await sql`INSERT INTO commission_log (ref_code, customer_name, plan, amount, floor_amount, bonus_amount, kind)
+                VALUES (${cSub[0].ref_code}, ${cSub[0].customer_name || clockEmail}, 'استرجاع ساعة', ${-last[0].amount}, ${-last[0].amount}, 0, 'clock')`;
+              await sql`INSERT INTO audit_log (action, details) VALUES ('clock-commission-clawback', ${'عكس عمولة $' + last[0].amount + ' للسفير ' + cSub[0].ref_code + ' — استرجاع ساعة الجلسة'})`;
+            }
+          }
+        } catch (e) {}
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, clock: true }) };
     }
