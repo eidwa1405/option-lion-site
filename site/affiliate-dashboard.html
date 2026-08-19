@@ -582,5 +582,200 @@ function downloadAgreement(){
   });
 }
 </script>
+
+  <!-- ═══ قائد السفراء 🦁 ═══ -->
+  <div id="leaderPanel" style="display:none;">
+    <div class="card" style="border:1px solid rgba(212,175,55,.45);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <h3 style="color:#D4AF37; margin:0;">🦁 قائد السفراء — فريقي</h3>
+        <button onclick="document.getElementById('permsModal').style.display='flex'" title="الصلاحيات الممنوحة" style="background:rgba(212,175,55,.15); border:1px solid rgba(212,175,55,.4); color:#D4AF37; border-radius:8px; padding:6px 14px; cursor:pointer; font-weight:800;">🛡 صلاحياتي</button>
+      </div>
+      <div id="ldrEarn" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin:12px 0;"></div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+          <thead><tr style="color:#8a93a8; text-align:right;">
+            <th style="padding:7px;">السفير</th><th style="padding:7px;">الحالة</th><th style="padding:7px;">عملاؤه</th><th style="padding:7px;">نشط منهم</th><th style="padding:7px;">تجديدات ٣٠ يوماً</th><th style="padding:7px;">آخر بيعة</th><th style="padding:7px;">إجراء</th>
+          </tr></thead>
+          <tbody id="ldrTeamBody"></tbody>
+        </table>
+      </div>
+      <div id="ldrReqBox" style="margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,.1);">
+        <h4 style="color:#D4AF37; margin:0 0 8px;">📤 رفع طلب للإدارة</h4>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <select id="ldrReqType" style="background:#10141f; color:#e9edf5; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:8px 10px;">
+            <option value="recruit">تعيين سفير جديد</option>
+            <option value="remove">حذف سفير من الفريق</option>
+            <option value="commission">تعديل عمولة سفير</option>
+            <option value="campaign">حملة تسويقية</option>
+          </select>
+          <input id="ldrReqDetails" placeholder="التفاصيل (الاسم/الكود/المبلغ…)" style="flex:1; min-width:180px; background:#10141f; color:#e9edf5; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:8px 10px;">
+          <button onclick="ldrSubmitReq()" class="btn" style="padding:8px 18px;">رفع للاعتماد</button>
+        </div>
+        <div id="ldrMyReqs" style="margin-top:10px; font-size:12.5px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:#D4AF37; margin:0 0 10px;">💬 محادثات الفريق</h3>
+      <select id="ldrChatWith" onchange="loadChat()" style="width:100%; background:#10141f; color:#e9edf5; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:9px 10px; margin-bottom:10px;"></select>
+      <div id="chatBox" style="max-height:280px; overflow-y:auto; background:rgba(0,0,0,.25); border-radius:10px; padding:12px; margin-bottom:10px; font-size:13px;"></div>
+      <div style="display:flex; gap:8px;">
+        <input id="chatInput" placeholder="اكتب رسالتك…" onkeydown="if(event.key==='Enter')sendChat()" style="flex:1; background:#10141f; color:#e9edf5; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;">
+        <button onclick="sendChat()" class="btn" style="padding:10px 20px;">إرسال</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- محادثة السفير مع قائده -->
+  <div id="memberChatCard" class="card" style="display:none;">
+    <h3 style="color:#D4AF37; margin:0 0 10px;">💬 التواصل مع قائد السفراء <span id="chatUnread" style="display:none; background:#ff5f5f; color:#fff; border-radius:10px; padding:1px 8px; font-size:11px;"></span></h3>
+    <div id="chatBoxM" style="max-height:280px; overflow-y:auto; background:rgba(0,0,0,.25); border-radius:10px; padding:12px; margin-bottom:10px; font-size:13px;"></div>
+    <div style="display:flex; gap:8px;">
+      <input id="chatInputM" placeholder="اكتب رسالتك…" onkeydown="if(event.key==='Enter')sendChatM()" style="flex:1; background:#10141f; color:#e9edf5; border:1px solid rgba(212,175,55,.25); border-radius:8px; padding:10px;">
+      <button onclick="sendChatM()" class="btn" style="padding:10px 20px;">إرسال</button>
+    </div>
+  </div>
+
+  <!-- نافذة الصلاحيات -->
+  <div id="permsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:999; align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#0d1322; border:1px solid rgba(212,175,55,.4); border-radius:16px; max-width:560px; width:100%; max-height:85vh; overflow-y:auto; padding:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="color:#D4AF37; margin:0;">🛡 صلاحيات قائد السفراء</h3>
+        <button onclick="document.getElementById('permsModal').style.display='none'" style="background:none; border:none; color:#8a93a8; font-size:20px; cursor:pointer;">✕</button>
+      </div>
+      <div style="font-size:13.5px; line-height:2; color:#c9d2e3;">
+        <div style="color:#39FF14; font-weight:900; margin-bottom:4px;">✅ تنفذها مباشرة (فورية):</div>
+        <ul style="margin:0 0 14px; padding-right:18px;">
+          <li>متابعة إحصائيات فريقك: العملاء، التجديدات، النشاط، آخر ظهور — <b>بدون مبالغ، فالأمور المالية سرية لدى الإدارة</b>.</li>
+          <li>محادثة أي سفير في فريقك من هذه اللوحة — تحفيز، توجيه، متابعة.</li>
+          <li>تجميد سفير مؤقتاً وفك تجميده (يتوقف رابطه، وعمولاته السابقة محفوظة).</li>
+        </ul>
+        <div style="color:#D4AF37; font-weight:900; margin-bottom:4px;">📤 ترفعها والإدارة تعتمدها (خلال يوم عادةً):</div>
+        <ul style="margin:0 0 14px; padding-right:18px;">
+          <li>تعيين سفير جديد — جهّز اسمه وبياناته وارفع الطلب.</li>
+          <li>حذف سفير نهائياً من الفريق.</li>
+          <li>تعديل عمولة سفير.</li>
+          <li>إطلاق حملة تسويقية لفريقك.</li>
+        </ul>
+        <div style="color:#ff9b9b; font-weight:900; margin-bottom:4px;">🔒 خارج صلاحياتك:</div>
+        <ul style="margin:0 0 14px; padding-right:18px;">
+          <li>المبالغ والعمولات المالية للسفراء والتقارير المالية.</li>
+          <li>أعضاء وسفراء خارج فريقك، وإعدادات الموقع.</li>
+        </ul>
+        <div style="background:rgba(212,175,55,.08); border:1px solid rgba(212,175,55,.25); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+          <b style="color:#D4AF37;">💵 أجرك كقائد</b> (فوق عمولاتك كسفير — تُحسب آلياً من تاريخ ترقيتك):<br>
+          · $1 عن كل تجديد يجيبه فريقك (حتى 100 شهرياً) · $1.5 (101-200) · $2 (فوق 200)<br>
+          · $10 عن كل سفير تعيّنه <b>بعد أن يجلب أول 3 عملاء مدفوعين</b> · $2 عن كل بيعة ساعة الجلسة من فريقك.
+        </div>
+        <div style="background:rgba(57,255,20,.06); border:1px solid rgba(57,255,20,.2); border-radius:10px; padding:12px 14px;">
+          <b style="color:#39FF14;">💡 مقترحات تنجح بها:</b><br>
+          · تفقّد «تجديدات ٣٠ يوماً» أسبوعياً — من انخفض راسله قبل أن ينطفئ.<br>
+          · اجعل هدفك سفراء نشطين قلة خيراً من كثرة خاملة — المكافأة مربوطة بعملاء حقيقيين.<br>
+          · شارك فريقك ما ينجح معك أنت كسفير: أفضل أوقات النشر وأفضل صيغ الدعوة.<br>
+          · أي سؤال يتجاوز صلاحياتك ارفعه طلباً للإدارة — لا تعد أحداً بشيء قبل الاعتماد.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  var LDR_ROLE = null, LDR_TEAM = [];
+  function ldrInit(){
+    authFetch('/api/affiliate-data?action=profile').then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) return;
+      LDR_ROLE = res.affiliate.role;
+      if (LDR_ROLE === 'leader') {
+        document.getElementById('leaderPanel').style.display = 'block';
+        var pt = document.getElementById('profileTitle'); if (pt) pt.textContent = '🦁 ملف قائد السفراء';
+        loadTeam(); loadMyReqs();
+      } else if (res.affiliate.leader_code) {
+        document.getElementById('memberChatCard').style.display = 'block';
+        loadChatM(); setInterval(loadChatM, 30000);
+      }
+    });
+  }
+  function loadTeam(){
+    authFetch('/api/affiliate-data?action=team').then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) return;
+      LDR_TEAM = res.team;
+      var e = res.earnings || {};
+      document.getElementById('ldrEarn').innerHTML =
+        '<div style="background:rgba(255,255,255,.04); border-radius:10px; padding:10px;"><div style="color:#8a93a8; font-size:11.5px;">فريقي</div><div style="font-weight:900; font-size:18px; color:#D4AF37;">'+res.team.length+' سفراء</div></div>'+
+        '<div style="background:rgba(255,255,255,.04); border-radius:10px; padding:10px;"><div style="color:#8a93a8; font-size:11.5px;">تجديدات الفريق (منذ ترقيتك)</div><div style="font-weight:900; font-size:18px; color:#c9d2e3;">'+(e.renewals||0)+'</div></div>'+
+        '<div style="background:rgba(255,255,255,.04); border-radius:10px; padding:10px;"><div style="color:#8a93a8; font-size:11.5px;">أجر الإشراف المتراكم</div><div style="font-weight:900; font-size:18px; color:#39FF14;">$'+(e.supervision||0)+'</div></div>';
+      document.getElementById('ldrTeamBody').innerHTML = res.team.map(function(t){
+        var dot = t.online ? '<span style="color:#39FF14;">● متصل</span>' : '<span style="color:#6b7488;">○ غير متصل</span>';
+        var st = t.active ? dot : '<span style="color:#ff9b9b;">🔒 مجمّد</span>';
+        return '<tr style="border-top:1px solid rgba(255,255,255,.06);">'+
+          '<td style="padding:7px;">'+(t.name||t.code)+'</td><td style="padding:7px;">'+st+'</td>'+
+          '<td style="padding:7px;">'+t.customers+'</td><td style="padding:7px;">'+t.active_customers+'</td>'+
+          '<td style="padding:7px; font-weight:800; color:'+(t.renewals_30d>0?'#39FF14':'#ff9b9b')+';">'+t.renewals_30d+'</td>'+
+          '<td style="padding:7px; color:#8a93a8;">'+(t.last_sale_at?String(t.last_sale_at).slice(0,10):'—')+'</td>'+
+          '<td style="padding:7px;"><button onclick="ldrFreeze(\''+t.code+'\','+(t.active?'true':'false')+')" style="background:none; border:1px solid rgba(255,255,255,.2); color:'+(t.active?'#ff9b9b':'#39FF14')+'; border-radius:6px; padding:3px 10px; cursor:pointer; font-size:11.5px;">'+(t.active?'تجميد':'فك التجميد')+'</button></td></tr>';
+      }).join('') || '<tr><td colspan="7" style="padding:12px; color:#6b7488;">لم يُسند لك فريق بعد — تواصل مع الإدارة</td></tr>';
+      var sel = document.getElementById('ldrChatWith');
+      sel.innerHTML = '<option value="">— اختر سفيراً للمحادثة —</option>' + res.team.map(function(t){ return '<option value="'+t.code+'">'+(t.name||t.code)+'</option>'; }).join('');
+    });
+  }
+  function ldrFreeze(code, freeze){
+    if (!confirm((freeze?'تجميد':'فك تجميد')+' السفير '+code+'؟')) return;
+    authFetch('/api/affiliate-data?action=team-freeze', { method:'POST', body: JSON.stringify({ code: code, freeze: freeze }) }).then(function(r){return r.json();}).then(function(res){ if(res.ok) loadTeam(); else alert(res.error||'خطأ'); });
+  }
+  function ldrSubmitReq(){
+    var type = document.getElementById('ldrReqType').value;
+    var details = document.getElementById('ldrReqDetails').value.trim();
+    if (!details) { alert('اكتب التفاصيل'); return; }
+    authFetch('/api/affiliate-data?action=leader-request', { method:'POST', body: JSON.stringify({ type: type, payload: { details: details } }) }).then(function(r){return r.json();}).then(function(res){
+      if (res.ok) { document.getElementById('ldrReqDetails').value=''; loadMyReqs(); alert('✅ رُفع الطلب للإدارة'); } else alert(res.error||'خطأ');
+    });
+  }
+  function loadMyReqs(){
+    authFetch('/api/affiliate-data?action=my-requests').then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) return;
+      var ST = { pending:'<span style="color:#D4AF37;">⏳ معلق</span>', approved:'<span style="color:#39FF14;">✅ معتمد</span>', rejected:'<span style="color:#ff9b9b;">❌ مرفوض</span>' };
+      var TYPES = { freeze:'تجميد', unfreeze:'فك تجميد', remove:'حذف سفير', recruit:'تعيين سفير', commission:'تعديل عمولة', campaign:'حملة' };
+      document.getElementById('ldrMyReqs').innerHTML = res.items.slice(0,8).map(function(q){
+        var d = (q.payload && q.payload.details) ? q.payload.details : '';
+        return '<div style="padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05);">'+(TYPES[q.type]||q.type)+' — '+d+' · '+(ST[q.status]||q.status)+(q.decision_note?' <span style="color:#8a93a8;">('+q.decision_note+')</span>':'')+'</div>';
+      }).join('');
+    });
+  }
+  function renderMsgs(el, items, me){
+    el.innerHTML = items.map(function(m){
+      var mine = m.from_code === me;
+      return '<div style="text-align:'+(mine?'left':'right')+'; margin-bottom:8px;"><span style="display:inline-block; background:'+(mine?'rgba(212,175,55,.18)':'rgba(255,255,255,.07)')+'; border-radius:10px; padding:7px 12px; max-width:80%;">'+m.body+'<div style="font-size:10px; color:#8a93a8; margin-top:3px;">'+String(m.created_at).slice(5,16).replace('T',' ')+'</div></span></div>';
+    }).join('') || '<div style="color:#6b7488; text-align:center;">ابدأ المحادثة 👋</div>';
+    el.scrollTop = el.scrollHeight;
+  }
+  function loadChat(){
+    var w = document.getElementById('ldrChatWith').value;
+    if (!w) return;
+    authFetch('/api/affiliate-data?action=messages&with='+w).then(function(r){return r.json();}).then(function(res){
+      if (res.ok) renderMsgs(document.getElementById('chatBox'), res.items, res.me);
+    });
+  }
+  function sendChat(){
+    var w = document.getElementById('ldrChatWith').value;
+    var b = document.getElementById('chatInput').value.trim();
+    if (!w) { alert('اختر سفيراً'); return; }
+    if (!b) return;
+    authFetch('/api/affiliate-data?action=send-message', { method:'POST', body: JSON.stringify({ to: w, body: b }) }).then(function(r){return r.json();}).then(function(res){
+      if (res.ok) { document.getElementById('chatInput').value=''; loadChat(); } else alert(res.error||'خطأ');
+    });
+  }
+  function loadChatM(){
+    authFetch('/api/affiliate-data?action=messages').then(function(r){return r.json();}).then(function(res){
+      if (res.ok && !res.noLeader) renderMsgs(document.getElementById('chatBoxM'), res.items, res.me);
+    });
+  }
+  function sendChatM(){
+    var b = document.getElementById('chatInputM').value.trim();
+    if (!b) return;
+    authFetch('/api/affiliate-data?action=send-message', { method:'POST', body: JSON.stringify({ body: b }) }).then(function(r){return r.json();}).then(function(res){
+      if (res.ok) { document.getElementById('chatInputM').value=''; loadChatM(); } else alert(res.error||'خطأ');
+    });
+  }
+  setTimeout(ldrInit, 600);
+  </script>
+
 </body>
 </html>
