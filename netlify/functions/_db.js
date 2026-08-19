@@ -204,6 +204,37 @@ async function ensureTables() {
     key TEXT PRIMARY KEY,
     value TEXT
   )`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'affiliate'`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS leader_code TEXT`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS leader_since TIMESTAMPTZ`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS leader_until TIMESTAMPTZ`;
+  await sql`ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS recruited_by TEXT`;
+  await sql`CREATE TABLE IF NOT EXISTS team_messages (
+    id SERIAL PRIMARY KEY,
+    from_code TEXT NOT NULL,
+    to_code TEXT NOT NULL,
+    body TEXT NOT NULL,
+    read_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS leader_requests (
+    id SERIAL PRIMARY KEY,
+    leader_code TEXT NOT NULL,
+    type TEXT NOT NULL,
+    payload JSONB,
+    status TEXT NOT NULL DEFAULT 'pending',
+    decision_note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    decided_at TIMESTAMPTZ
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS ad_spend (
+    id SERIAL PRIMARY KEY,
+    platform TEXT,
+    label TEXT,
+    amount NUMERIC NOT NULL,
+    spent_at DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
   const passRow = await sql`SELECT value FROM admin_settings WHERE key = 'admin_password'`;
   if (passRow.length === 0) {
     const { hashPassword } = require('./_auth');

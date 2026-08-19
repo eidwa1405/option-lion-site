@@ -77,7 +77,8 @@ exports.handler = async (event) => {
         name: affiliate.name, legal_name: affiliate.legal_name, country: affiliate.country, city: affiliate.city,
         email: affiliate.email, phone: affiliate.phone, telegram: affiliate.telegram, code: affiliate.code,
         bank_account: affiliate.bank_account, agreement_accepted_at: affiliate.agreement_accepted_at, signature_data: affiliate.signature_data,
-        login_username: affiliate.login_username || affiliate.code, active: affiliate.active
+        login_username: affiliate.login_username || affiliate.code, active: affiliate.active,
+        role: affiliate.role || 'affiliate', leader_code: affiliate.leader_code || null, leader_since: affiliate.leader_since || null
       };
       const activeCampaign = await sql`SELECT name, boost_amount, cap_override, ends_at FROM boost_campaigns
         WHERE now() BETWEEN starts_at AND ends_at AND (target = 'all' OR ${affiliate.code} = ANY(target_codes))
@@ -141,6 +142,106 @@ exports.handler = async (event) => {
         await sql`UPDATE affiliates SET password = ${hashPassword(newPassword)} WHERE code = ${affiliate.code}`;
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    // ═══ أدوات قائد السفراء 🦁 ═══
+    const isLeader = affiliate.role === 'leader';
+
+    if (event.httpMethod === 'GET' && action === 'team') {
+      if (!isLeader) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const team = await sql`SELECT a.code, a.name, a.active, a.last_seen_at, a.created_at,
+          (SELECT COUNT(*) FROM subscriptions s WHERE s.ref_code = a.code)::int AS customers,
+          (SELECT COUNT(*) FROM subscriptions s WHERE s.ref_code = a.code AND s.status != 'canceled')::int AS active_customers,
+          (SELECT COUNT(*) FROM commission_log c WHERE c.ref_code = a.code AND c.created_at > now() - interval '30 days')::int AS renewals_30d,
+          (SELECT MAX(c.created_at) FROM commission_log c WHERE c.ref_code = a.code) AS last_sale_at
+        FROM affiliates a WHERE a.leader_code = ${affiliate.code} ORDER BY renewals_30d DESC`;
+      const teamOut = team.map(function(t){
+        const online = t.last_seen_at && (Date.now() - new Date(t.last_seen_at).getTime()) < 5*60000;
+        return { code: t.code, name: t.name, active: t.active, online: online, customers: t.customers,
+          active_customers: t.active_customers, renewals_30d: t.renewals_30d, last_sale_at: t.last_sale_at, last_seen_at: t.last_seen_at };
+      });
+      // أجر القائد الحالي (شفاف له)
+      const fromTs = affiliate.leader_since;
+      const codes = team.map(function(t){ return t.code; });
+      let supervision = 0, renewals = 0;
+      if (codes.length && fromTs) {
+        const ren = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COUNT(*)::int AS n FROM commission_log
+          WHERE ref_code = ANY(${codes}) AND created_at >= ${fromTs} AND (kind IS NULL OR kind != 'clock') GROUP BY month`;
+        ren.forEach(function(m){ renewals += m.n; supervision += Math.min(m.n,100)*1 + Math.min(Math.max(m.n-100,0),100)*1.5 + Math.max(m.n-200,0)*2; });
+        const clk = await sql`SELECT COUNT(*)::int AS n FROM commission_log WHERE ref_code = ANY(${codes}) AND created_at >= ${fromTs} AND kind = 'clock'`;
+        supervision += clk[0].n * 2;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, team: teamOut, leaderSince: affiliate.leader_since,
+        earnings: { renewals: renewals, supervision: Math.round(supervision*100)/100 } }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'team-freeze') {
+      if (!isLeader) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { code, freeze } = JSON.parse(event.body || '{}');
+      const c = String(code||'').trim().toUpperCase();
+      const ok = await sql`SELECT code FROM affiliates WHERE code = ${c} AND leader_code = ${affiliate.code}`;
+      if (!ok.length) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'ليس ضمن فريقك' }) };
+      await sql`UPDATE affiliates SET active = ${!freeze} WHERE code = ${c}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('leader-team-freeze', ${'القائد ' + affiliate.code + (freeze ? ' جمّد ' : ' فكّ تجميد ') + c})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'leader-request') {
+      if (!isLeader) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const { type, payload } = JSON.parse(event.body || '{}');
+      const allowed = ['freeze','unfreeze','remove','recruit','commission','campaign'];
+      if (allowed.indexOf(type) < 0) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'نوع طلب غير معروف' }) };
+      await sql`INSERT INTO leader_requests (leader_code, type, payload) VALUES (${affiliate.code}, ${type}, ${JSON.stringify(payload||{})})`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('leader-request', ${'طلب من قائد السفراء ' + affiliate.code + ': ' + type})`;
+      try { await sendMail('info@opnlio.com', 'طلب جديد من قائد السفراء 🦁 ' + affiliate.code, 'طلب معلق بانتظار اعتمادك',
+        'القائد <b>' + affiliate.name + '</b> رفع طلب <b>' + type + '</b>.<br>التفاصيل: ' + JSON.stringify(payload||{}) + '<br><br>اعتمده أو ارفضه من لوحة الإدارة — قسم طلبات القائد.', 'ar'); } catch(e) {}
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'my-requests') {
+      if (!isLeader) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
+      const rows = await sql`SELECT id, type, payload, status, decision_note, created_at, decided_at FROM leader_requests WHERE leader_code = ${affiliate.code} ORDER BY created_at DESC LIMIT 50`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: rows }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'messages') {
+      // القائد: مع أي فرد من فريقه · السفير: مع قائده فقط
+      const withCode = (event.queryStringParameters.with || '').trim().toUpperCase();
+      let peer = null;
+      if (isLeader) {
+        const ok = await sql`SELECT code FROM affiliates WHERE code = ${withCode} AND leader_code = ${affiliate.code}`;
+        if (!ok.length) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'ليس ضمن فريقك' }) };
+        peer = withCode;
+      } else {
+        if (!affiliate.leader_code) return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: [], noLeader: true }) };
+        peer = affiliate.leader_code;
+      }
+      const rows = await sql`SELECT * FROM team_messages WHERE (from_code = ${affiliate.code} AND to_code = ${peer}) OR (from_code = ${peer} AND to_code = ${affiliate.code}) ORDER BY created_at ASC LIMIT 200`;
+      await sql`UPDATE team_messages SET read_at = now() WHERE to_code = ${affiliate.code} AND from_code = ${peer} AND read_at IS NULL`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: rows, peer: peer, me: affiliate.code }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'send-message') {
+      const { to, body } = JSON.parse(event.body || '{}');
+      const text = String(body||'').trim().slice(0, 2000);
+      if (!text) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الرسالة فارغة' }) };
+      let target = null;
+      if (isLeader) {
+        const c = String(to||'').trim().toUpperCase();
+        const ok = await sql`SELECT code FROM affiliates WHERE code = ${c} AND leader_code = ${affiliate.code}`;
+        if (!ok.length) return { statusCode: 403, headers, body: JSON.stringify({ ok: false, error: 'ليس ضمن فريقك' }) };
+        target = c;
+      } else {
+        if (!affiliate.leader_code) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'لا يوجد قائد مرتبط بك' }) };
+        target = affiliate.leader_code;
+      }
+      await sql`INSERT INTO team_messages (from_code, to_code, body) VALUES (${affiliate.code}, ${target}, ${text})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'unread-count') {
+      const n = await sql`SELECT COUNT(*)::int AS n FROM team_messages WHERE to_code = ${affiliate.code} AND read_at IS NULL`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, unread: n[0].n }) };
     }
 
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };
