@@ -582,6 +582,49 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, revenue: rev, commissions: com, plans, academy: acad, payouts, totals: { revenue: totRev[0].t, commissions: totCom[0].t, academyPaid: paidAcad[0].c } }) };
     }
 
+    if (event.httpMethod === 'GET' && action === 'pnl') {
+      const rev = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS gross, COUNT(*)::int AS tx
+        FROM revenue_log WHERE created_at > now() - interval '12 months' GROUP BY month`;
+      const com = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS total
+        FROM commission_log WHERE created_at > now() - interval '12 months' GROUP BY month`;
+      const ads = await sql`SELECT to_char(spent_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS total
+        FROM ad_spend WHERE spent_at > now() - interval '12 months' GROUP BY month`;
+      const months = {};
+      function M(m){ if(!months[m]) months[m] = { month:m, gross:0, tx:0, paddle:0, net:0, commissions:0, ads:0, profit:0 }; return months[m]; }
+      rev.forEach(function(r){ const o=M(r.month); o.gross=parseFloat(r.gross); o.tx=r.tx; });
+      com.forEach(function(r){ M(r.month).commissions=parseFloat(r.total); });
+      ads.forEach(function(r){ M(r.month).ads=parseFloat(r.total); });
+      const list = Object.values(months).sort(function(a,b){ return a.month<b.month?-1:1; });
+      list.forEach(function(o){
+        o.paddle = Math.round((o.gross*0.05 + o.tx*0.5)*100)/100;
+        o.net = Math.round((o.gross - o.paddle)*100)/100;
+        o.profit = Math.round((o.net - o.commissions - o.ads)*100)/100;
+      });
+      const totals = { gross:0, paddle:0, net:0, commissions:0, ads:0, profit:0 };
+      list.forEach(function(o){ totals.gross+=o.gross; totals.paddle+=o.paddle; totals.net+=o.net; totals.commissions+=o.commissions; totals.ads+=o.ads; totals.profit+=o.profit; });
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, months: list, totals }) };
+    }
+
+    if (event.httpMethod === 'GET' && action === 'ad-spend') {
+      const rows = await sql`SELECT * FROM ad_spend ORDER BY spent_at DESC, id DESC LIMIT 100`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: rows }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'add-ad-spend') {
+      const { platform, label, amount, spent_at } = JSON.parse(event.body || '{}');
+      const amt = parseFloat(amount);
+      if (!amt || amt <= 0) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'المبلغ مطلوب' }) };
+      await sql`INSERT INTO ad_spend (platform, label, amount, spent_at) VALUES (${platform||''}, ${label||''}, ${amt}, ${spent_at || new Date().toISOString().slice(0,10)})`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('add-ad-spend', ${'مصروف إعلاني: ' + amt + ' — ' + (platform||'') + ' ' + (label||'')})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'delete-ad-spend') {
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`DELETE FROM ad_spend WHERE id = ${parseInt(id,10)}`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'POST' && action === 'promote-leader') {
       const { code } = JSON.parse(event.body || '{}');
       const c = String(code||'').trim().toUpperCase();
@@ -595,7 +638,7 @@ exports.handler = async (event) => {
       const c = String(code||'').trim().toUpperCase();
       await sql`UPDATE affiliates SET role = 'affiliate', leader_until = now() WHERE code = ${c}`;
       await sql`UPDATE affiliates SET leader_code = NULL WHERE leader_code = ${c}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('demote-leader', ${'سحب صلاحية قائد السفراء من ' + c + ' — توقفت عمولات الإشراف من هذه اللحظة'})`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('demote-leader', ${'سحب صلاحية القيادة من ' + c})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
@@ -627,12 +670,11 @@ exports.handler = async (event) => {
         if (r.type === 'unfreeze' && p.code) await sql`UPDATE affiliates SET active = true WHERE code = ${String(p.code).toUpperCase()} AND leader_code = ${r.leader_code}`;
         if (r.type === 'remove' && p.code) await sql`UPDATE affiliates SET active = false, leader_code = NULL WHERE code = ${String(p.code).toUpperCase()}`;
       }
-      await sql`INSERT INTO audit_log (action, details) VALUES ('decide-leader-request', ${(approve?'موافقة':'رفض') + ' طلب قائد السفراء #' + r.id + ' (' + r.type + ')'})`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('decide-leader-request', ${(approve?'موافقة':'رفض') + ' طلب قائد #' + r.id + ' (' + r.type + ')'})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (event.httpMethod === 'GET' && action === 'leader-pay') {
-      // حسبة أجر قائد السفراء — من تاريخ الترقية حتى السحب (أو الآن)
       const leaders = await sql`SELECT code, name, leader_since, leader_until, role FROM affiliates WHERE leader_since IS NOT NULL`;
       const out = [];
       for (const L of leaders) {
@@ -643,20 +685,20 @@ exports.handler = async (event) => {
         let supervision = 0, renewals = 0, clockSales = 0, recruitBonus = 0;
         if (codes.length) {
           const ren = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COUNT(*)::int AS n FROM commission_log
-            WHERE ref_code = ANY(${codes}) AND created_at >= ${fromTs} AND created_at <= ${toTs} AND (kind IS NULL OR kind != 'clock') GROUP BY month`;
+            WHERE ref_code = ANY(${codes}) AND created_at >= ${fromTs} AND created_at <= ${toTs} AND (kind IS NULL OR kind != 'clock') AND amount > 0 GROUP BY month`;
           ren.forEach(function(m){
             renewals += m.n;
             const n = m.n;
             supervision += Math.min(n,100)*1 + Math.min(Math.max(n-100,0),100)*1.5 + Math.max(n-200,0)*2;
           });
-          const clk = await sql`SELECT COUNT(*)::int AS n FROM commission_log WHERE ref_code = ANY(${codes}) AND created_at >= ${fromTs} AND created_at <= ${toTs} AND kind = 'clock'`;
+          const clk = await sql`SELECT COUNT(*)::int AS n FROM commission_log WHERE ref_code = ANY(${codes}) AND created_at >= ${fromTs} AND created_at <= ${toTs} AND kind = 'clock' AND amount > 0`;
           clockSales = clk[0].n; supervision += clockSales * 2;
         }
         const recruits = await sql`SELECT a.code, (SELECT COUNT(*) FROM subscriptions s WHERE s.ref_code = a.code AND s.status != 'canceled')::int AS paid
           FROM affiliates a WHERE a.recruited_by = ${L.code} AND a.created_at >= ${fromTs} AND a.created_at <= ${toTs}`;
         recruits.forEach(function(rc){ if (rc.paid >= 3) recruitBonus += 10; });
         out.push({ code: L.code, name: L.name, active: L.role === 'leader', leader_since: L.leader_since, leader_until: L.leader_until,
-          teamSize: codes.length, renewals, clockSales, supervision: Math.round(supervision*100)/100, recruitBonus, total: Math.round((supervision+recruitBonus)*100)/100 });
+          teamSize: codes.length, renewals: renewals, clockSales: clockSales, supervision: Math.round(supervision*100)/100, recruitBonus: recruitBonus, total: Math.round((supervision+recruitBonus)*100)/100 });
       }
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, leaders: out }) };
     }
@@ -666,282 +708,6 @@ exports.handler = async (event) => {
         LEFT JOIN affiliates f ON f.code = m.from_code LEFT JOIN affiliates t ON t.code = m.to_code
         ORDER BY m.created_at DESC LIMIT 200`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: rows }) };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'pnl') {
-      // قائمة الدخل الشهرية: إجمالي → رسوم بادل (تقديرية 5% + $0.50/عملية) → صافي → عمولات → إعلانات → ربح
-      const rev = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS gross, COUNT(*)::int AS tx
-        FROM revenue_log WHERE created_at > now() - interval '12 months' GROUP BY month`;
-      const com = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS total
-        FROM commission_log WHERE created_at > now() - interval '12 months' GROUP BY month`;
-      const ads = await sql`SELECT to_char(spent_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS total
-        FROM ad_spend WHERE spent_at > now() - interval '12 months' GROUP BY month`;
-      const months = {};
-      function M(m){ if(!months[m]) months[m] = { month:m, gross:0, tx:0, paddle:0, net:0, commissions:0, ads:0, profit:0 }; return months[m]; }
-      rev.forEach(function(r){ const o=M(r.month); o.gross=parseFloat(r.gross); o.tx=r.tx; });
-      com.forEach(function(r){ M(r.month).commissions=parseFloat(r.total); });
-      ads.forEach(function(r){ M(r.month).ads=parseFloat(r.total); });
-      const list = Object.values(months).sort(function(a,b){ return a.month<b.month?-1:1; });
-      list.forEach(function(o){
-        o.paddle = Math.round((o.gross*0.05 + o.tx*0.5)*100)/100;
-        o.net = Math.round((o.gross - o.paddle)*100)/100;
-        o.profit = Math.round((o.net - o.commissions - o.ads)*100)/100;
-      });
-      const totals = { gross:0, paddle:0, net:0, commissions:0, ads:0, profit:0 };
-      list.forEach(function(o){ totals.gross+=o.gross; totals.paddle+=o.paddle; totals.net+=o.net; totals.commissions+=o.commissions; totals.ads+=o.ads; totals.profit+=o.profit; });
-      const adsAll = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS t FROM ad_spend`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, months: list, totals, adsAllTime: adsAll[0].t }) };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'ad-spend') {
-      const rows = await sql`SELECT * FROM ad_spend ORDER BY spent_at DESC, id DESC LIMIT 100`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: rows }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'add-ad-spend') {
-      const { platform, label, amount, spent_at } = JSON.parse(event.body || '{}');
-      const amt = parseFloat(amount);
-      if (!amt || amt <= 0) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'المبلغ مطلوب' }) };
-      await sql`INSERT INTO ad_spend (platform, label, amount, spent_at) VALUES (${platform||''}, ${label||''}, ${amt}, ${spent_at || new Date().toISOString().slice(0,10)})`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('add-ad-spend', ${'مصروف إعلاني: 
-      const rows = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, SUM(amount)::numeric AS total
-        FROM revenue_log WHERE created_at > now() - interval '12 months'
-        GROUP BY month ORDER BY month ASC`;
-      const totalAll = await sql`SELECT COALESCE(SUM(amount),0)::numeric AS total FROM revenue_log`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, monthly: rows, totalAll: totalAll[0].total }) };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'academy-students') {
-      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
-      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS phone text`;
-      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS last_seen_at timestamptz`;
-      const rows = await sql`SELECT s.id, s.name, s.email, s.phone, s.paid_at, s.lang, s.points, s.current_level, s.rank, s.graduated_at, s.last_seen_at, s.clock_paid_at,
-        s.discount_code, s.email_verified, s.created_at, s.last_login_at,
-        (SELECT COUNT(*)::int FROM academy_progress p WHERE p.student_id = s.id AND p.completed = true) AS levels_done
-        FROM academy_students s ORDER BY s.created_at DESC LIMIT 300`;
-      const stats = await sql`SELECT COUNT(*)::int AS total,
-        COUNT(CASE WHEN graduated_at IS NOT NULL THEN 1 END)::int AS graduates,
-        COUNT(CASE WHEN email_verified = true THEN 1 END)::int AS verified,
-        COALESCE(AVG(current_level),0)::numeric(10,1) AS avg_level FROM academy_students`;
-      const levelDist = await sql`SELECT current_level AS lvl, COUNT(*)::int AS c FROM academy_students GROUP BY current_level ORDER BY current_level`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, students: rows, stats: stats[0], levelDist }) };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'academy-student-detail') {
-      const id = parseInt((event.queryStringParameters && event.queryStringParameters.id) || '0', 10);
-      const rows = await sql`SELECT * FROM academy_students WHERE id = ${id}`;
-      if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'غير موجود' }) };
-      const progress = await sql`SELECT level_num, completed, score, completed_at FROM academy_progress WHERE student_id = ${id} ORDER BY level_num`;
-      const st = rows[0]; delete st.password_hash; delete st.verify_token;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, student: st, progress }) };
-    }
-
-    // ⏱ تفعيل/إلغاء ساعة الجلسة يدوياً من الإدارة
-    // ⏱ حالة خصم ساعة الجلسة — قراءة عامة (تستهلكها صفحات الأسعار بلا توكن)
-    if (event.httpMethod === 'GET' && action === 'clock-discount') {
-      const rows = await sql`SELECT value FROM admin_settings WHERE key = 'clock_discount_on'`;
-      const on = rows.length ? rows[0].value === '1' : true; // الافتراضي: الخصم مفعّل
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, on }) };
-    }
-
-    // تفعيل/إيقاف خصم الساعة من الإدارة
-    if (event.httpMethod === 'POST' && action === 'set-clock-discount') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { on } = JSON.parse(event.body || '{}');
-      const _updD = await sql`UPDATE admin_settings SET value = ${on ? '1' : '0'} WHERE key = 'clock_discount_on' RETURNING key`;
-      if (!_updD.length) await sql`INSERT INTO admin_settings (key, value) VALUES ('clock_discount_on', ${on ? '1' : '0'})`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('clock-discount', ${on ? 'تفعيل خصم ساعة الجلسة ($79)' : 'إيقاف الخصم — رجوع للسعر الأصلي ($99)'})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, on: !!on }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'academy-set-clock') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { id, paid } = JSON.parse(event.body || '{}');
-      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS clock_paid_at timestamptz`;
-      if (paid) await sql`UPDATE academy_students SET clock_paid_at = now() WHERE id = ${id}`;
-      else await sql`UPDATE academy_students SET clock_paid_at = NULL WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-set-clock', ${(paid ? 'تفعيل يدوي لساعة الجلسة' : 'إلغاء تفعيل ساعة الجلسة') + ' — الطالب #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'academy-set-paid') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { id, paid } = JSON.parse(event.body || '{}');
-      await sql`ALTER TABLE academy_students ADD COLUMN IF NOT EXISTS paid_at timestamptz`;
-      if (paid) await sql`UPDATE academy_students SET paid_at = now() WHERE id = ${id}`;
-      else await sql`UPDATE academy_students SET paid_at = NULL WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-set-paid', ${(paid ? 'تفعيل يدوي لدفع البرنامج التدريبي' : 'إلغاء تفعيل دفع البرنامج التدريبي') + ' — متدرب #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'academy-verify-student') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { id } = JSON.parse(event.body || '{}');
-      await sql`UPDATE academy_students SET email_verified = true, verify_token = NULL WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-verify', ${'تفعيل يدوي لمتدرب #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'academy-update-student') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { id, name, email, current_level, points, rank } = JSON.parse(event.body || '{}');
-      await sql`UPDATE academy_students SET name = ${name||''}, email = ${String(email||'').toLowerCase()},
-        current_level = ${parseInt(current_level||1,10)}, points = ${parseInt(points||0,10)}, rank = ${rank||'مبتدئ'} WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-update', ${'تعديل بيانات متدرب #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'academy-delete-student') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { id } = JSON.parse(event.body || '{}');
-      await sql`DELETE FROM academy_progress WHERE student_id = ${id}`;
-      await sql`DELETE FROM academy_students WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-delete', ${'حذف متدرب #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'academy-reset-progress') {
-      if (!(await checkTokenAsync(event, sql))) return { statusCode: 401, headers, body: JSON.stringify({ ok: false, error: 'غير مصرح' }) };
-      const { id } = JSON.parse(event.body || '{}');
-      await sql`DELETE FROM academy_progress WHERE student_id = ${id}`;
-      await sql`INSERT INTO academy_progress (student_id, level_num) VALUES (${id}, 1)`;
-      await sql`UPDATE academy_students SET current_level = 1, points = 0, rank = 'مبتدئ', graduated_at = NULL, discount_code = NULL WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('academy-reset', ${'تصفير تقدّم متدرب #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'export-academy') {
-      const rows = await sql`SELECT name, email, lang, points, current_level, rank, graduated_at, discount_code, created_at FROM academy_students ORDER BY created_at DESC`;
-      let csv = 'الاسم,البريد,اللغة,النقاط,المستوى,الرتبة,تاريخ التخرج,كود الخصم,تاريخ التسجيل\n';
-      rows.forEach(r => { csv += [r.name, r.email, r.lang, r.points, r.current_level, r.rank, r.graduated_at||'', r.discount_code||'', r.created_at].map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',') + '\n'; });
-      return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv; charset=utf-8' }, body: '\uFEFF' + csv };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'pending-reviews') {
-      const rows = await sql`SELECT * FROM pending_reviews WHERE status = 'pending' ORDER BY created_at ASC`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, reviews: rows }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'approve-review') {
-      const { id } = JSON.parse(event.body || '{}');
-      await sql`UPDATE pending_reviews SET status = 'approved' WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('approve-review', ${'اعتماد رأي #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'reject-review') {
-      const { id } = JSON.parse(event.body || '{}');
-      await sql`UPDATE pending_reviews SET status = 'rejected' WHERE id = ${id}`;
-      await sql`INSERT INTO audit_log (action, details) VALUES ('reject-review', ${'رفض رأي #' + id})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'GET' && action === 'ambassador-requests') {
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS signature text`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS agreement_at timestamptz`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_name text`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_iban text`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_bank text`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_swift text`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS bank_addr text`;
-      const rows = await sql`SELECT r.id, r.student_id, r.status, r.created_at, r.signature, r.agreement_at, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang, s.created_at AS joined_at FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.status = 'pending' ORDER BY r.created_at ASC`;
-      for (const r of rows) {
-        const sc = await sql`SELECT level_num, score FROM academy_free_progress WHERE student_id = ${r.student_id} AND completed = true ORDER BY level_num ASC`;
-        r.freeScores = sc;
-        const vals = sc.map(function(x){ return Number(x.score) || 0; });
-        r.avgScore = vals.length ? Math.round(vals.reduce(function(a, b){ return a + b; }, 0) / vals.length) : 0;
-        r.minScore = vals.length ? Math.min.apply(null, vals) : 0;
-        r.doneLevels = vals.length;
-        r.daysMember = r.joined_at ? Math.floor((Date.now() - new Date(r.joined_at).getTime()) / 86400000) : 0;
-      }
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, requests: rows }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'approve-ambassador-request') {
-      const { id } = JSON.parse(event.body || '{}');
-      const rows = await sql`SELECT r.id, r.student_id, r.bank_name, r.bank_iban, r.bank_bank, r.bank_swift, r.bank_addr, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.id = ${id}`;
-      if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'الطلب غير موجود' }) };
-      const r = rows[0];
-      let code = String(r.name || 'LION').replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '').slice(0, 8).toUpperCase() + Math.floor(100 + Math.random() * 900);
-      code = code.replace(/[\u0600-\u06FF]/g, '') || ('AMB' + Math.floor(1000 + Math.random() * 9000));
-      const dup = await sql`SELECT code FROM ref_codes WHERE code = ${code}`;
-      if (dup.length) code = code + Math.floor(Math.random() * 9);
-      await sql`INSERT INTO affiliates (name, email, code, active, approved_at, created_at) VALUES (${r.name}, ${r.email}, ${code}, true, now(), now()) ON CONFLICT DO NOTHING`;
-      await sql`INSERT INTO ref_codes (code, owner_name) VALUES (${code}, ${r.name}) ON CONFLICT (code) DO NOTHING`;
-      await sql`UPDATE ambassador_requests SET status = 'approved', code = ${code}, decided_at = now() WHERE id = ${id}`;
-      const refLink = 'https://opnlio.com/?ref=' + code;
-      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${r.student_id}, '🎉 تمت الموافقة على طلبك كسفير', ${'مبروك! كودك الخاص: <b>' + code + '</b><br>رابطك الجاهز: <b dir="ltr">' + refLink + '</b><br>شاركه وابدأ كسب العمولات فوراً.'})`;
-      if (r.email) {
-        const _agr = getAgreement(r.lang || 'ar');
-        await sendMail(r.email, '🎉 تمت الموافقة على طلبك كسفير O P N LIO — نسخة اتفاقيتك بالداخل', 'مبروك!', `<div dir="rtl">مرحباً <b>${r.name}</b> 👋<br><br>تمت الموافقة على طلبك رسمياً كسفير O P N LIO ⚜<br><br>كودك الخاص: <b style="color:#D4AF37; font-size:18px;">${code}</b><br><br>رابطك الجاهز للمشاركة (يُسجَّل كودك تلقائياً عند فتحه):<br><b style="color:#D4AF37; direction:ltr; display:inline-block;">${refLink}</b><br><br>وأي عميل يشترك عبره تُحسب عمولتك تلقائياً عن كل تجديد فعلي.<br><br>يمكنك تنزيل نسخة PDF من اتفاقيتك في أي وقت: <a href="https://opnlio.com/ambassador-agreement.html" style="color:#D4AF37;">صفحة الاتفاقية — زر تنزيل PDF</a><br><br><hr style="border:none; border-top:1px solid #ddd; margin:18px 0;"><b style="color:#8a6d1f;">🏦 بيانات حساب استلام العمولات المسجّلة باتفاقيتك:</b><br><div style="font-size:12.5px; line-height:1.9; background:#faf7ec; border:1px solid #e6d9a8; border-radius:8px; padding:12px; margin:8px 0 18px;">صاحب الحساب: <b>${r.bank_name || '—'}</b><br>رقم الحساب / IBAN: <b style="direction:ltr; display:inline-block;">${r.bank_iban || '—'}</b><br>البنك والدولة: <b>${r.bank_bank || '—'}</b><br>SWIFT / BIC: <b style="direction:ltr; display:inline-block;">${r.bank_swift || '—'}</b><br>العنوان: <b>${r.bank_addr || '—'}</b><br><span style="color:#a33;">أقررتَ بصحة هذه البيانات وتتحمل وحدك مسؤولية أي خطأ فيها. لتعديلها لاحقاً راسل الإدارة.</span></div><b style="color:#8a6d1f;">📄 نسختك من الاتفاقية الموقّعة إلكترونياً بتاريخ ${new Date().toISOString().slice(0,10)}:</b><br><br><div style="font-size:12px; line-height:1.9;">${_agr.html}</div></div>`, 'ar').catch(()=>{});
-      }
-      try { await sql`UPDATE affiliates SET bank_name = ${r.bank_name || null}, bank_iban = ${r.bank_iban || null}, bank_swift = ${r.bank_swift || null}, bank_address = ${r.bank_addr || null} WHERE code = ${code}`; } catch(e){}
-      await sql`INSERT INTO audit_log (action, details) VALUES ('approve-ambassador-request', ${'موافقة طلب سفير #' + id + ' كود ' + code})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'reject-ambassador-request') {
-      const { id, reason, kind } = JSON.parse(event.body || '{}');
-      const rows = await sql`SELECT r.id, r.student_id, s.name, s.email, s.lang FROM ambassador_requests r JOIN academy_students s ON s.id = r.student_id WHERE r.id = ${id}`;
-      if (!rows.length) return { statusCode: 404, headers, body: JSON.stringify({ ok: false, error: 'الطلب غير موجود' }) };
-      const r = rows[0];
-      const isFix = kind === 'fix';
-      const newStatus = isFix ? 'needs_fix' : 'rejected';
-      const why = reason ? String(reason).slice(0, 600) : '';
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS reject_kind text`;
-      await sql`ALTER TABLE ambassador_requests ADD COLUMN IF NOT EXISTS reject_reason text`;
-      await sql`UPDATE ambassador_requests SET status = ${newStatus}, decided_at = now(), reject_kind = ${isFix ? 'fix' : 'nofit'}, reject_reason = ${why} WHERE id = ${id}`;
-      const L = {
-        ar: { fixT: '📝 طلبك يحتاج تصحيح بيانات', fixB: 'راجع الملاحظات أدناه وأعد إرسال طلبك مباشرة — لا انتظار.', noT: 'نعتذر — لم تتم الموافقة على طلب السفارة', noB: 'نعتذر، لم تتم الموافقة على طلبك في هذه المرحلة.', s: 'بخصوص طلبك كسفير O P N LIO', h: 'مرحباً', again: 'أعد الإرسال من لوحة العضو بعد التصحيح ←', dir: 'rtl' },
-        en: { fixT: '📝 Your request needs corrections', fixB: 'Review the notes below and resubmit right away — no waiting period.', noT: 'Your ambassador request was not approved', noB: 'We are sorry, your request was not approved at this stage.', s: 'About your O P N LIO ambassador request', h: 'Hello', again: 'Resubmit from your member dashboard after correcting ←', dir: 'ltr' },
-        de: { fixT: '📝 Dein Antrag braucht Korrekturen', fixB: 'Prüfe die Hinweise unten und sende den Antrag direkt erneut — keine Wartezeit.', noT: 'Dein Botschafter-Antrag wurde nicht genehmigt', noB: 'Leider wurde dein Antrag derzeit nicht genehmigt.', s: 'Zu deinem O P N LIO Botschafter-Antrag', h: 'Hallo', again: 'Nach der Korrektur erneut im Dashboard einreichen ←', dir: 'ltr' },
-        fr: { fixT: '📝 Votre demande nécessite des corrections', fixB: 'Consultez les notes ci-dessous et renvoyez votre demande immédiatement — sans délai d\u2019attente.', noT: 'Votre demande d\u2019ambassadeur n\u2019a pas été approuvée', noB: 'Nous sommes désolés, votre demande n\u2019a pas été approuvée à ce stade.', s: 'À propos de votre demande d\u2019ambassadeur O P N LIO', h: 'Bonjour', again: 'Renvoyez depuis votre tableau de bord après correction ←', dir: 'ltr' },
-        es: { fixT: '📝 Tu solicitud necesita correcciones', fixB: 'Revisa las notas de abajo y reenvía tu solicitud de inmediato — sin espera.', noT: 'Tu solicitud de embajador no fue aprobada', noB: 'Lo sentimos, tu solicitud no fue aprobada en esta etapa.', s: 'Sobre tu solicitud de embajador O P N LIO', h: 'Hola', again: 'Reenvía desde tu panel tras corregir ←', dir: 'ltr' },
-        tr: { fixT: '📝 Başvurun düzeltme gerektiriyor', fixB: 'Aşağıdaki notları incele ve başvurunu hemen tekrar gönder — bekleme yok.', noT: 'Elçi başvurun onaylanmadı', noB: 'Üzgünüz, başvurun bu aşamada onaylanmadı.', s: 'O P N LIO elçi başvurun hakkında', h: 'Merhaba', again: 'Düzelttikten sonra panelinden tekrar gönder ←', dir: 'ltr' },
-        pt: { fixT: '📝 Sua solicitação precisa de correções', fixB: 'Revise as observações abaixo e reenvie sua solicitação imediatamente — sem espera.', noT: 'Sua solicitação de embaixador não foi aprovada', noB: 'Lamentamos, sua solicitação não foi aprovada nesta etapa.', s: 'Sobre sua solicitação de embaixador O P N LIO', h: 'Olá', again: 'Reenvie pelo seu painel após corrigir ←', dir: 'ltr' },
-        it: { fixT: '📝 La tua richiesta necessita correzioni', fixB: 'Controlla le note qui sotto e reinvia subito la richiesta — nessuna attesa.', noT: 'La tua richiesta da ambasciatore non è stata approvata', noB: 'Siamo spiacenti, la richiesta non è stata approvata in questa fase.', s: 'Riguardo alla tua richiesta da ambasciatore O P N LIO', h: 'Ciao', again: 'Reinvia dalla tua dashboard dopo la correzione ←', dir: 'ltr' }
-      };
-      const t = L[r.lang] || L.ar;
-      const title = isFix ? t.fixT : t.noT;
-      const bodyTxt = (isFix ? t.fixB : t.noB) + (why ? '\n\n' + why : '');
-      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (${r.student_id}, ${title}, ${bodyTxt.slice(0, 600)})`;
-      if (r.email) {
-        const html = '<div dir="' + t.dir + '">' + t.h + ' <b>' + r.name + '</b> 👋<br><br>' + (isFix ? t.fixB : t.noB) +
-          (why ? '<br><br><div style="background:#fdf6e3;border-inline-start:3px solid #D4AF37;padding:12px 14px;border-radius:8px;white-space:pre-wrap;">' + why.replace(/</g, '&lt;') + '</div>' : '') +
-          (isFix ? '<br><br><a href="https://opnlio.com/member-dashboard.html" style="color:#D4AF37;font-weight:800;">' + t.again + '</a>' : '') + '</div>';
-        await sendMail(r.email, t.s, title, html, r.lang || 'ar').catch(()=>{});
-      }
-      await sql`INSERT INTO audit_log (action, details) VALUES ('reject-ambassador-request', ${(isFix ? 'طلب تصحيح لطلب سفير #' : 'رفض طلب سفير #') + id + (why ? ' — ' + why.slice(0, 120) : '')})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, kind: isFix ? 'fix' : 'nofit' }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'broadcast-notification') {
-      const { title, body: msgBody, sendEmail } = JSON.parse(event.body || '{}');
-      if (!title || !msgBody) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'العنوان والنص مطلوبان' }) };
-      await sql`INSERT INTO member_notifications (student_id, title, body) VALUES (NULL, ${title}, ${msgBody})`;
-      let emailCount = 0;
-      if (sendEmail) {
-        const students = await sql`SELECT email, name FROM academy_students WHERE email IS NOT NULL`;
-        for (const s of students) { await sendMail(s.email, title, title, `<div dir="rtl">مرحباً <b>${s.name || ''}</b>،<br><br>${msgBody}</div>`, 'ar').catch(()=>{}); emailCount++; }
-      }
-      await sql`INSERT INTO audit_log (action, details) VALUES ('broadcast-notification', ${'إشعار عام: ' + title + (sendEmail ? ' + بريد لـ' + emailCount : '')})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, emailCount }) };
-    }
-
-    return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'إجراء غير معروف' }) };
-  } catch (e) {
-    try { const sql2 = getSql(); await sql2`INSERT INTO audit_log (action, details) VALUES ('error-admin-data', ${String(e).slice(0,500)})`; } catch(e2){}
-    return { statusCode: 500, headers, body: JSON.stringify({ ok: false, error: String(e) }) };
-  }
-};
- + amt + ' — ' + (platform||'') + ' ' + (label||'')})`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
-    }
-
-    if (event.httpMethod === 'POST' && action === 'delete-ad-spend') {
-      const { id } = JSON.parse(event.body || '{}');
-      await sql`DELETE FROM ad_spend WHERE id = ${parseInt(id,10)}`;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
     if (event.httpMethod === 'GET' && action === 'revenue') {
