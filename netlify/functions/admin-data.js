@@ -582,6 +582,38 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, revenue: rev, commissions: com, plans, academy: acad, payouts, totals: { revenue: totRev[0].t, commissions: totCom[0].t, academyPaid: paidAcad[0].c } }) };
     }
 
+    if (event.httpMethod === 'GET' && action === 'tweet-config') {
+      const row = await sql`SELECT value FROM admin_settings WHERE key = 'tweet_config'`;
+      const cfg = row.length ? JSON.parse(row[0].value) : { enabled: false, slots: [7, 12, 16, 20, 23] };
+      const log = await sql`SELECT * FROM tweet_log ORDER BY id DESC LIMIT 30`;
+      const queue = await sql`SELECT * FROM tweet_queue WHERE posted = false ORDER BY id ASC`;
+      const hasKeys = !!process.env.X_API_KEY;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, config: cfg, log: log, queue: queue, hasKeys: hasKeys }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'tweet-config') {
+      const { enabled, slots } = JSON.parse(event.body || '{}');
+      const clean = Array.isArray(slots) ? slots.map(function(s){ return parseInt(s,10); }).filter(function(s){ return s >= 0 && s <= 23; }).slice(0, 8) : [7, 12, 16, 20, 23];
+      const cfg = JSON.stringify({ enabled: !!enabled, slots: clean });
+      await sql`INSERT INTO admin_settings (key, value) VALUES ('tweet_config', ${cfg}) ON CONFLICT (key) DO UPDATE SET value = ${cfg}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('tweet-config', ${'تحديث إعدادات التغريد: ' + cfg})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'tweet-queue-add') {
+      const { body: tbody } = JSON.parse(event.body || '{}');
+      const text = String(tbody||'').trim().slice(0, 275);
+      if (!text) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'نص فارغ' }) };
+      await sql`INSERT INTO tweet_queue (body) VALUES (${text})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'tweet-queue-delete') {
+      const { id } = JSON.parse(event.body || '{}');
+      await sql`DELETE FROM tweet_queue WHERE id = ${parseInt(id,10)} AND posted = false`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'pnl') {
       const rev = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS gross, COUNT(*)::int AS tx
         FROM revenue_log WHERE created_at > now() - interval '12 months' GROUP BY month`;

@@ -227,6 +227,22 @@ async function ensureTables() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     decided_at TIMESTAMPTZ
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS tweet_log (
+    id SERIAL PRIMARY KEY,
+    bank_id TEXT,
+    body TEXT,
+    slot_date DATE,
+    slot_hour INT,
+    tweet_id TEXT,
+    error TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS tweet_queue (
+    id SERIAL PRIMARY KEY,
+    body TEXT NOT NULL,
+    posted BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
   await sql`CREATE TABLE IF NOT EXISTS ad_spend (
     id SERIAL PRIMARY KEY,
     platform TEXT,
