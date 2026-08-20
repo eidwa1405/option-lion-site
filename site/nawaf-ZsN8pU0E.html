@@ -161,6 +161,25 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <h4 style="margin:16px 0 8px; color:#D4AF37;">💬 محادثات الفرق (إشراف)</h4>
     <div id="ldrChats" style="font-size:12.5px; max-height:260px; overflow-y:auto;"></div>
   </div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 6px; color:#D4AF37;">🐦 نظام التغريد الآلي</h3>
+    <div id="twKeysWarn" style="display:none; background:rgba(255,95,95,.1); border:1px solid rgba(255,95,95,.3); border-radius:8px; padding:10px 14px; color:#ff9b9b; font-size:12.5px; margin-bottom:12px;">⚠️ مفاتيح X API غير مضبوطة في Netlify — النظام لن ينشر حتى تضيفها (X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET)</div>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px;">
+      <label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="twEnabled" style="width:18px; height:18px;"> <b>التغريد مفعّل</b></label>
+      <input id="twSlots" placeholder="ساعات النشر (الرياض): 7,12,16,20,23" style="flex:1; min-width:220px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
+      <button onclick="saveTweetCfg()" style="background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border:none; border-radius:8px; padding:8px 18px; font-weight:900; cursor:pointer;">حفظ</button>
+    </div>
+    <div style="color:#8a93a8; font-size:12px; margin-bottom:14px;">تغريدة واحدة في كل ساعة محددة — تناوب عربي/إنجليزي، آخر خانة يومياً تسويقية (نسبة 4:1)، هاشتاقان كحد أقصى، ولا تكرار خلال 90 يوماً.</div>
+    <h4 style="margin:0 0 8px; color:#D4AF37;">✍️ إضافة تغريدة للطابور (أولوية على المخزون)</h4>
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <textarea id="twNew" maxlength="275" placeholder="نص التغريدة…" style="flex:1; min-height:60px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px; resize:vertical;"></textarea>
+      <button onclick="addTweetQ()" style="background:rgba(212,175,55,.15); color:#D4AF37; border:1px solid rgba(212,175,55,.4); border-radius:8px; padding:8px 16px; font-weight:800; cursor:pointer; align-self:flex-start;">أضف</button>
+    </div>
+    <div id="twQueue" style="font-size:12.5px; margin-bottom:14px;"></div>
+    <h4 style="margin:0 0 8px; color:#D4AF37;">📜 سجل آخر التغريدات</h4>
+    <div id="twLog" style="font-size:12.5px; max-height:260px; overflow-y:auto;"></div>
+  </div>
   </section>
 
   <section class="panel" data-panel="prices">
@@ -1140,6 +1159,7 @@ function loadOverview(){
   loadRevenue();
   loadPnL();
   loadLeaderSection();
+  loadTweetCfg();
 }
 
 function loadRevenue(){
@@ -2682,6 +2702,35 @@ function loadAnalytics(){
 
 <script>
 var LDR_AFFS = [];
+function loadTweetCfg(){
+  if (!TOKEN) return;
+  authFetch('/api/admin-data?action=tweet-config').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    document.getElementById('twEnabled').checked = !!res.config.enabled;
+    document.getElementById('twSlots').value = (res.config.slots||[]).join(',');
+    document.getElementById('twKeysWarn').style.display = res.hasKeys ? 'none' : 'block';
+    document.getElementById('twQueue').innerHTML = (res.queue||[]).map(function(q){
+      return '<div style="display:flex; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05);"><span style="white-space:pre-wrap;">'+q.body+'</span><button onclick="delTweetQ('+q.id+')" style="background:none; border:none; color:#ff5f5f; cursor:pointer;">✕</button></div>';
+    }).join('') || '<div style="color:#6b7488;">الطابور فارغ — سيُنشر من المخزون</div>';
+    document.getElementById('twLog').innerHTML = (res.log||[]).map(function(l){
+      var st = l.error ? '<span style="color:#ff9b9b;">✕ فشل: '+l.error.slice(0,80)+'</span>' : '<span style="color:#39FF14;">✓ نُشرت</span>';
+      return '<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05);"><span style="color:#8a93a8;">'+String(l.created_at).slice(0,16).replace('T',' ')+'</span> '+st+'<div style="white-space:pre-wrap; color:#c9d2e3; margin-top:3px;">'+l.body+'</div></div>';
+    }).join('') || '<div style="color:#6b7488;">لا تغريدات بعد</div>';
+  });
+}
+function saveTweetCfg(){
+  var slots = document.getElementById('twSlots').value.split(',').map(function(s){ return parseInt(s.trim(),10); }).filter(function(n){ return !isNaN(n); });
+  authFetch('/api/admin-data?action=tweet-config', { method:'POST', body: JSON.stringify({ enabled: document.getElementById('twEnabled').checked, slots: slots }) }).then(function(r){return r.json();}).then(function(res){ if(res.ok){ alert('✅ حُفظ'); loadTweetCfg(); } else alert(res.error||'خطأ'); });
+}
+function addTweetQ(){
+  var t = document.getElementById('twNew').value.trim();
+  if (!t) return;
+  authFetch('/api/admin-data?action=tweet-queue-add', { method:'POST', body: JSON.stringify({ body: t }) }).then(function(r){return r.json();}).then(function(res){ if(res.ok){ document.getElementById('twNew').value=''; loadTweetCfg(); } else alert(res.error||'خطأ'); });
+}
+function delTweetQ(id){
+  authFetch('/api/admin-data?action=tweet-queue-delete', { method:'POST', body: JSON.stringify({ id:id }) }).then(function(){ loadTweetCfg(); });
+}
+
 function loadLeaderSection(){
   if (!TOKEN) return;
   authFetch('/api/admin-data?action=affiliates').then(function(r){return r.json();}).then(function(res){
