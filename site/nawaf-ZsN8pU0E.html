@@ -168,6 +168,7 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
     <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; margin-bottom:14px;" id="twPlatforms"></div>
     <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px;">
       <label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="twEnabled" style="width:18px; height:18px;"> <b>التغريد مفعّل</b></label>
+      <div id="twState" style="width:100%; order:9; font-size:12.5px;"></div>
       <input id="twSlots" placeholder="ساعات النشر (الرياض): 7,12,16,20,23" style="flex:1; min-width:220px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
       <button onclick="saveTweetCfg()" style="background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border:none; border-radius:8px; padding:8px 18px; font-weight:900; cursor:pointer;">حفظ</button>
     </div>
@@ -2706,8 +2707,17 @@ var LDR_AFFS = [];
 function loadTweetCfg(){
   if (!TOKEN) return;
   authFetch('/api/admin-data?action=tweet-config').then(function(r){return r.json();}).then(function(res){
-    if (!res.ok) return;
+    if (!res.ok) {
+      var w = document.getElementById('twKeysWarn');
+      w.style.display = 'block';
+      w.innerHTML = '⚠️ تعذّر قراءة إعدادات النشر من الخادم — تأكد من رفع مجلد netlify/functions كاملاً ثم أعد نشر الموقع.';
+      return;
+    }
     document.getElementById('twEnabled').checked = !!res.config.enabled;
+    var st = document.getElementById('twState');
+    if (st) st.innerHTML = res.config.enabled
+      ? '<span style="color:#39FF14; font-weight:900;">● النشر الآلي يعمل</span> <span style="color:#8a93a8;">— ساعات: ' + (res.config.slots||[]).join('، ') + ' (الرياض)</span>'
+      : '<span style="color:#ff5f5f; font-weight:900;">● النشر الآلي متوقف</span>';
     document.getElementById('twSlots').value = (res.config.slots||[]).join(',');
     var P = res.platforms || { x: res.hasKeys };
     var chCfg = res.config.channels || { x:true, telegram:true, facebook:true, instagram:true };
