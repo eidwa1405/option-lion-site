@@ -6,8 +6,7 @@ const { BANK, HASHTAGS } = require('./_tweets');
 
 function pct(s){ return encodeURIComponent(s).replace(/[!*'()]/g, function(c){ return '%' + c.charCodeAt(0).toString(16).toUpperCase(); }); }
 
-async function postTweet(text) {
-  const url = 'https://api.x.com/2/tweets';
+function oauthHeader(method, url) {
   const oauth = {
     oauth_consumer_key: process.env.X_API_KEY,
     oauth_nonce: crypto.randomBytes(16).toString('hex'),
@@ -17,14 +16,38 @@ async function postTweet(text) {
     oauth_version: '1.0'
   };
   const paramStr = Object.keys(oauth).sort().map(function(k){ return pct(k) + '=' + pct(oauth[k]); }).join('&');
-  const base = 'POST&' + pct(url) + '&' + pct(paramStr);
+  const base = method + '&' + pct(url) + '&' + pct(paramStr);
   const signKey = pct(process.env.X_API_SECRET) + '&' + pct(process.env.X_ACCESS_SECRET);
   oauth.oauth_signature = crypto.createHmac('sha1', signKey).update(base).digest('base64');
-  const authHeader = 'OAuth ' + Object.keys(oauth).sort().map(function(k){ return pct(k) + '="' + pct(oauth[k]) + '"'; }).join(', ');
+  return 'OAuth ' + Object.keys(oauth).sort().map(function(k){ return pct(k) + '="' + pct(oauth[k]) + '"'; }).join(', ');
+}
+
+// يرفع بطاقة التغريدة من الموقع إلى X ويعيد media_id (null عند أي فشل — التغريدة تنشر نصية)
+async function uploadCard(imgKey) {
+  try {
+    if (!imgKey) return null;
+    const imgRes = await fetch('https://opnlio.com/tweet-cards/' + imgKey + '.png');
+    if (!imgRes.ok) return null;
+    const buf = Buffer.from(await imgRes.arrayBuffer());
+    if (buf.length > 4900000) return null;
+    const url = 'https://upload.twitter.com/1.1/media/upload.json';
+    // multipart: لا تدخل حقول الجسم في توقيع OAuth
+    const form = new FormData();
+    form.append('media', new Blob([buf], { type: 'image/png' }), 'card.png');
+    const res = await fetch(url, { method: 'POST', headers: { 'Authorization': oauthHeader('POST', url) }, body: form });
+    const j = await res.json().catch(function(){ return {}; });
+    return res.ok ? (j.media_id_string || null) : null;
+  } catch (e) { return null; }
+}
+
+async function postTweet(text, mediaId) {
+  const url = 'https://api.x.com/2/tweets';
+  const payload = { text: text };
+  if (mediaId) payload.media = { media_ids: [mediaId] };
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: text })
+    headers: { 'Authorization': oauthHeader('POST', url), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
   });
   const j = await res.json().catch(function(){ return {}; });
   if (!res.ok) throw new Error('X API ' + res.status + ': ' + JSON.stringify(j));
@@ -58,7 +81,7 @@ exports.handler = async () => {
     const done = await sql`SELECT 1 FROM tweet_log WHERE slot_date = ${today} AND slot_hour = ${hour} AND error IS NULL LIMIT 1`;
     if (done.length) return { statusCode: 200, body: 'already posted this slot' };
     // أولوية ١: طابور التغريدات اليدوية
-    let text = null, bankId = null;
+    let text = null, bankId = null, imgKey = null;
     const q = await sql`SELECT id, body FROM tweet_queue WHERE posted = false ORDER BY id ASC LIMIT 1`;
     if (q.length) {
       text = q[0].body;
@@ -77,13 +100,15 @@ exports.handler = async () => {
       if (!pool.length) return { statusCode: 200, body: 'empty pool' };
       const pick = pool[Math.floor(Math.random() * pool.length)];
       bankId = pick.id;
+      imgKey = pick.img || null;
       const tags = pickHashtags(lang, pick.t);
       text = pick.t + '\n\n' + tags;
       if (pick.cat !== 'promo') text += lang === 'ar' ? '\n\nمحتوى تعليمي — ليس توصية' : '\n\nEducational — not advice';
     }
-    if (text.length > 275) text = text.slice(0, 272) + '…';
+    if (text.length > 3800) text = text.slice(0, 3797) + '…'; // بريميوم: تغريدات طويلة، X يطويها بعد ~280 حرفاً بزر «إظهار المزيد»
     let tweetId = null, err = null;
-    try { tweetId = await postTweet(text); } catch (e) { err = String(e.message || e).slice(0, 500); }
+    const mediaId = await uploadCard(imgKey); // فشل الصورة لا يوقف التغريدة
+    try { tweetId = await postTweet(text, mediaId); } catch (e) { err = String(e.message || e).slice(0, 500); }
     await sql`INSERT INTO tweet_log (bank_id, body, slot_date, slot_hour, tweet_id, error) VALUES (${bankId}, ${text}, ${today}, ${hour}, ${tweetId}, ${err})`;
     return { statusCode: 200, body: err ? 'error: ' + err : 'posted ' + tweetId };
   } catch (e) {
