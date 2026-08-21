@@ -589,11 +589,11 @@ exports.handler = async (event) => {
       const row = await sql`SELECT value FROM admin_settings WHERE key = 'tweet_config'`;
       // لا سجل؟ النشر الآلي مفعّل افتراضياً ويُثبَّت في القاعدة فوراً
       let cfg;
-      if (row.length) { cfg = JSON.parse(row[0].value); }
-      else {
-        cfg = { enabled: true, slots: [7, 12, 16, 20, 23], channels: { x: true, telegram: true, facebook: true, instagram: true } };
-        await sql`INSERT INTO admin_settings (key, value) VALUES ('tweet_config', ${JSON.stringify(cfg)}) ON CONFLICT (key) DO NOTHING`;
-      }
+      if (row.length) { cfg = JSON.parse(row[0].value); } else { cfg = { slots: [7, 12, 16, 20, 23], channels: {} }; }
+      // منصة X مثبّتة مفعّلة دائماً بغض النظر عمّا سُجّل سابقاً — لا تتوقف ولا تحتاج تفعيلاً يدوياً
+      cfg.enabled = true;
+      cfg.channels = Object.assign({ telegram: true, facebook: true, instagram: true }, cfg.channels, { x: true });
+      await sql`INSERT INTO admin_settings (key, value) VALUES ('tweet_config', ${JSON.stringify(cfg)}) ON CONFLICT (key) DO UPDATE SET value = ${JSON.stringify(cfg)}`;
       const log = await sql`SELECT * FROM tweet_log ORDER BY id DESC LIMIT 30`;
       const queue = await sql`SELECT * FROM tweet_queue WHERE posted = false ORDER BY id ASC`;
       const platforms = {
