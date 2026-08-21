@@ -129,8 +129,28 @@ function pickHashtags(lang, seedText) {
   return shuffled.slice(0, n).join(' ');
 }
 
-exports.handler = async () => {
+exports.handler = async (event) => {
   try {
+    // تشخيص: ?diag=1 يفحص المفاتيح ويجرب مصادقة القراءة بلا نشر
+    const qp = (event && event.queryStringParameters) || {};
+    if (qp.diag) {
+      function info(v){ if (!v) return 'مفقود'; const t = String(v); return 'طول ' + t.length + (t !== t.trim() ? ' ⚠️ فيه مسافات زائدة' : '') + ' · يبدأ بـ' + t.slice(0,4) + '…'; }
+      const out = {
+        X_API_KEY: info(process.env.X_API_KEY),
+        X_API_SECRET: info(process.env.X_API_SECRET),
+        X_ACCESS_TOKEN: info(process.env.X_ACCESS_TOKEN),
+        X_ACCESS_SECRET: info(process.env.X_ACCESS_SECRET),
+        ملاحظات: 'الأطوال المتوقعة: API_KEY=25 · API_SECRET=50 · ACCESS_TOKEN=50 · ACCESS_SECRET=45'
+      };
+      // اختبار مصادقة على نقطة قراءة (يكشف صحة المفاتيح دون نشر)
+      try {
+        const u = 'https://api.x.com/2/users/me';
+        const r = await fetch(u, { headers: { 'Authorization': oauthHeader('GET', u) } });
+        const j = await r.json().catch(function(){ return {}; });
+        out.اختبار_الهوية = r.status + ' ' + JSON.stringify(j).slice(0, 300);
+      } catch (e) { out.اختبار_الهوية = 'فشل: ' + String(e.message || e); }
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(out, null, 2) };
+    }
     const sql = getSql();
     await ensureTables(sql);
     // الإعدادات
