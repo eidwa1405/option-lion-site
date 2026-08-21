@@ -24,3 +24,6 @@
 
 [functions."academy-sync-cron"]
   schedule = "*/5 * * * *"
+
+[functions."tweet-cron"]
+  schedule = "@hourly"
