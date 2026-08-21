@@ -2705,8 +2705,13 @@ function loadAnalytics(){
 <script>
 var LDR_AFFS = [];
 function loadTweetCfg(){
-  if (!TOKEN) return;
-  authFetch('/api/admin-data?action=tweet-config').then(function(r){return r.json();}).then(function(res){
+  var st0 = document.getElementById('twState');
+  if (!TOKEN) { if (st0) st0.innerHTML = '<span style="color:#ff9b9b;">⚠️ لا توجد جلسة دخول — أعد تسجيل الدخول</span>'; return; }
+  if (st0) st0.innerHTML = '<span style="color:#8a93a8;">… جاري قراءة حالة النشر</span>';
+  authFetch('/api/admin-data?action=tweet-config').then(function(r){
+    if (!r.ok) throw new Error('HTTP ' + r.status + (r.status === 404 ? ' — دوال الخادم netlify/functions غير منشورة' : ''));
+    return r.json();
+  }).then(function(res){
     if (!res.ok) {
       var w = document.getElementById('twKeysWarn');
       w.style.display = 'block';
@@ -2747,6 +2752,12 @@ function loadTweetCfg(){
       var st = l.error ? '<span style="color:#ff9b9b;">✕ فشل: '+l.error.slice(0,80)+'</span>' : '<span style="color:#39FF14;">✓ نُشرت</span>';
       return '<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05);"><span style="color:#8a93a8;">'+String(l.created_at).slice(0,16).replace('T',' ')+'</span> '+st+'<div style="white-space:pre-wrap; color:#c9d2e3; margin-top:3px;">'+l.body+'</div></div>';
     }).join('') || '<div style="color:#6b7488;">لا تغريدات بعد</div>';
+  }).catch(function(e){
+    var msg = String(e.message || e);
+    var w = document.getElementById('twKeysWarn');
+    if (w) { w.style.display = 'block'; w.innerHTML = '⚠️ تعذّرت قراءة حالة النشر من الخادم — <b style="direction:ltr; display:inline-block;">' + msg + '</b>'; }
+    var st = document.getElementById('twState');
+    if (st) st.innerHTML = '<span style="color:#ff5f5f; font-weight:900;">● السبب: ' + msg + '</span>';
   });
 }
 function saveTweetCfg(){
