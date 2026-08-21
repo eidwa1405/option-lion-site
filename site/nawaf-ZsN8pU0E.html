@@ -163,14 +163,15 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
 
   <div class="card" style="margin-bottom:24px;">
-    <h3 style="margin:0 0 6px; color:#D4AF37;">🐦 نظام التغريد الآلي</h3>
-    <div id="twKeysWarn" style="display:none; background:rgba(255,95,95,.1); border:1px solid rgba(255,95,95,.3); border-radius:8px; padding:10px 14px; color:#ff9b9b; font-size:12.5px; margin-bottom:12px;">⚠️ مفاتيح X API غير مضبوطة في Netlify — النظام لن ينشر حتى تضيفها (X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET)</div>
+    <h3 style="margin:0 0 6px; color:#D4AF37;">📡 نظام النشر الآلي</h3>
+    <div id="twKeysWarn" style="display:none; background:rgba(255,95,95,.1); border:1px solid rgba(255,95,95,.3); border-radius:8px; padding:10px 14px; color:#ff9b9b; font-size:12.5px; margin-bottom:12px;">⚠️ لا توجد أي منصة مضبوطة في Netlify — أضف مفاتيح منصة واحدة على الأقل</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; margin-bottom:14px;" id="twPlatforms"></div>
     <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px;">
       <label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="twEnabled" style="width:18px; height:18px;"> <b>التغريد مفعّل</b></label>
       <input id="twSlots" placeholder="ساعات النشر (الرياض): 7,12,16,20,23" style="flex:1; min-width:220px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
       <button onclick="saveTweetCfg()" style="background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border:none; border-radius:8px; padding:8px 18px; font-weight:900; cursor:pointer;">حفظ</button>
     </div>
-    <div style="color:#8a93a8; font-size:12px; margin-bottom:14px;">تغريدة واحدة في كل ساعة محددة — تناوب عربي/إنجليزي، آخر خانة يومياً تسويقية (نسبة 4:1)، هاشتاقان كحد أقصى، ولا تكرار خلال 90 يوماً.</div>
+    <div style="color:#8a93a8; font-size:12px; margin-bottom:14px;">منشور واحد في كل ساعة محددة على كل المنصات المفعّلة — تناوب عربي/إنجليزي، آخر خانة يومياً تسويقية (نسبة 4:1)، بطاقة صورة مناسبة للموضوع، ولا تكرار خلال 90 يوماً. فشل منصة لا يوقف الباقي.</div>
     <h4 style="margin:0 0 8px; color:#D4AF37;">✍️ إضافة تغريدة للطابور (أولوية على المخزون)</h4>
     <div style="display:flex; gap:8px; margin-bottom:10px;">
       <textarea id="twNew" maxlength="275" placeholder="نص التغريدة…" style="flex:1; min-height:60px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px; resize:vertical;"></textarea>
@@ -2708,7 +2709,27 @@ function loadTweetCfg(){
     if (!res.ok) return;
     document.getElementById('twEnabled').checked = !!res.config.enabled;
     document.getElementById('twSlots').value = (res.config.slots||[]).join(',');
-    document.getElementById('twKeysWarn').style.display = res.hasKeys ? 'none' : 'block';
+    var P = res.platforms || { x: res.hasKeys };
+    var chCfg = res.config.channels || { x:true, telegram:true, facebook:true, instagram:true };
+    var anyP = P.x || P.telegram || P.facebook || P.instagram;
+    document.getElementById('twKeysWarn').style.display = anyP ? 'none' : 'block';
+    var meta = [
+      ['x','𝕏','X (تويتر)','X_API_KEY + SECRET + ACCESS_TOKEN + SECRET'],
+      ['telegram','✈️','تلجرام','TELEGRAM_BOT_TOKEN + TELEGRAM_CHANNEL'],
+      ['facebook','📘','فيسبوك','FB_PAGE_ID + FB_PAGE_TOKEN'],
+      ['instagram','📸','إنستقرام','IG_USER_ID (+ FB_PAGE_TOKEN)']
+    ];
+    document.getElementById('twPlatforms').innerHTML = meta.map(function(m){
+      var ready = !!P[m[0]];
+      var on = chCfg[m[0]] !== false;
+      return '<div style="background:rgba(255,255,255,.03); border:1px solid '+(ready?'rgba(57,255,20,.25)':'rgba(255,255,255,.08)')+'; border-radius:10px; padding:10px 12px;">'+
+        '<label style="display:flex; align-items:center; gap:8px; cursor:'+(ready?'pointer':'not-allowed')+'; opacity:'+(ready?1:.55)+';">'+
+        '<input type="checkbox" class="twCh" data-k="'+m[0]+'" '+(on?'checked':'')+' '+(ready?'':'disabled')+' style="width:17px;height:17px;">'+
+        '<span style="font-size:17px;">'+m[1]+'</span><b style="font-size:13px;">'+m[2]+'</b>'+
+        '<span style="margin-inline-start:auto; font-size:11px; color:'+(ready?'#39FF14':'#8a93a8')+';">'+(ready?'جاهزة':'غير مضبوطة')+'</span></label>'+
+        (ready?'':'<div style="color:#6b7488; font-size:10.5px; margin-top:6px; direction:ltr; text-align:left;">'+m[3]+'</div>')+
+      '</div>';
+    }).join('');
     document.getElementById('twQueue').innerHTML = (res.queue||[]).map(function(q){
       return '<div style="display:flex; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05);"><span style="white-space:pre-wrap;">'+q.body+'</span><button onclick="delTweetQ('+q.id+')" style="background:none; border:none; color:#ff5f5f; cursor:pointer;">✕</button></div>';
     }).join('') || '<div style="color:#6b7488;">الطابور فارغ — سيُنشر من المخزون</div>';
@@ -2720,7 +2741,9 @@ function loadTweetCfg(){
 }
 function saveTweetCfg(){
   var slots = document.getElementById('twSlots').value.split(',').map(function(s){ return parseInt(s.trim(),10); }).filter(function(n){ return !isNaN(n); });
-  authFetch('/api/admin-data?action=tweet-config', { method:'POST', body: JSON.stringify({ enabled: document.getElementById('twEnabled').checked, slots: slots }) }).then(function(r){return r.json();}).then(function(res){ if(res.ok){ alert('✅ حُفظ'); loadTweetCfg(); } else alert(res.error||'خطأ'); });
+  var chans = {};
+  Array.prototype.forEach.call(document.querySelectorAll('.twCh'), function(el){ chans[el.getAttribute('data-k')] = el.checked; });
+  authFetch('/api/admin-data?action=tweet-config', { method:'POST', body: JSON.stringify({ enabled: document.getElementById('twEnabled').checked, slots: slots, channels: chans }) }).then(function(r){return r.json();}).then(function(res){ if(res.ok){ alert('✅ حُفظ'); loadTweetCfg(); } else alert(res.error||'خطأ'); });
 }
 function addTweetQ(){
   var t = document.getElementById('twNew').value.trim();
