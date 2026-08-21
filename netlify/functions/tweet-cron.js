@@ -154,9 +154,12 @@ exports.handler = async (event) => {
     const sql = getSql();
     await ensureTables(sql);
     // الإعدادات
+    // النشر الآلي مفعّل دائماً — لا يعتمد على أي مربع أو سجل.
+    // للإيقاف (إن لزم يوماً): أضف متغير البيئة TWEET_PAUSE=1 في Netlify.
     const cfgRow = await sql`SELECT value FROM admin_settings WHERE key = 'tweet_config'`;
-    const cfg = cfgRow.length ? JSON.parse(cfgRow[0].value) : { enabled: true, slots: [7, 12, 16, 20, 23] };
-    if (!cfg.enabled) return { statusCode: 200, body: 'paused' };
+    const stored = cfgRow.length ? JSON.parse(cfgRow[0].value) : {};
+    const cfg = { enabled: true, slots: (stored.slots && stored.slots.length ? stored.slots : [7, 12, 16, 20, 23]), channels: stored.channels };
+    if (process.env.TWEET_PAUSE === '1') return { statusCode: 200, body: 'paused by env' };
     const anyPlatform = !!process.env.X_API_KEY || !!process.env.TELEGRAM_BOT_TOKEN || !!process.env.FB_PAGE_TOKEN;
     if (!anyPlatform) return { statusCode: 200, body: 'no keys' };
     const ch = cfg.channels || { x: true, telegram: true, facebook: true, instagram: true };
@@ -165,11 +168,16 @@ exports.handler = async (event) => {
     const hour = now.getUTCHours();
     const today = now.toISOString().slice(0,10);
     const slots = cfg.slots || [7, 12, 16, 20, 23];
-    const slotIdx = slots.indexOf(hour);
-    if (slotIdx < 0) return { statusCode: 200, body: 'not a slot hour' };
-    // هل غردنا لهذه الخانة اليوم؟
-    const done = await sql`SELECT 1 FROM tweet_log WHERE slot_date = ${today} AND slot_hour = ${hour} AND error IS NULL LIMIT 1`;
-    if (done.length) return { statusCode: 200, body: 'already posted this slot' };
+    const FORCE = !!(event && event.queryStringParameters && event.queryStringParameters.force === 'opnlio2026');
+    let slotIdx = slots.indexOf(hour);
+    if (slotIdx < 0) {
+      if (!FORCE) return { statusCode: 200, body: 'not a slot hour' };
+      slotIdx = 0; // نشر فوري للاختبار
+    }
+    if (!FORCE) {
+      const done = await sql`SELECT 1 FROM tweet_log WHERE slot_date = ${today} AND slot_hour = ${hour} AND error IS NULL LIMIT 1`;
+      if (done.length) return { statusCode: 200, body: 'already posted this slot' };
+    }
     // أولوية ١: طابور التغريدات اليدوية
     let text = null, bankId = null, imgKey = null;
     const q = await sql`SELECT id, body FROM tweet_queue WHERE posted = false ORDER BY id ASC LIMIT 1`;
@@ -223,6 +231,17 @@ exports.handler = async (event) => {
     const note = okList.length ? '✅ ' + okList.join(' · ') + (errs.length ? '  ⚠️ ' + errs.join(' | ').slice(0, 200) : '') : '';
     const logBody = (note ? note + '\n— — —\n' : '') + text;
     await sql`INSERT INTO tweet_log (bank_id, body, slot_date, slot_hour, tweet_id, error) VALUES (${bankId}, ${logBody}, ${today}, ${hour}, ${tweetId}, ${err})`;
+    if (FORCE) {
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify({
+        نُشر_على: okList.length ? okList : 'لا شيء',
+        الأخطاء: errs.length ? errs : 'لا أخطاء',
+        المفاتيح_الموجودة: {
+          X: !!process.env.X_API_KEY, تلجرام: !!process.env.TELEGRAM_BOT_TOKEN,
+          فيسبوك: !!process.env.FB_PAGE_TOKEN, إنستقرام: !!process.env.IG_USER_ID
+        },
+        نص_المنشور: text.slice(0, 300)
+      }, null, 2) };
+    }
     return { statusCode: 200, body: err ? 'error: ' + err : 'posted → ' + okList.join(',') };
   } catch (e) {
     return { statusCode: 500, body: String(e.message || e) };
