@@ -155,7 +155,7 @@ exports.handler = async (event) => {
     await ensureTables(sql);
     // الإعدادات
     const cfgRow = await sql`SELECT value FROM admin_settings WHERE key = 'tweet_config'`;
-    const cfg = cfgRow.length ? JSON.parse(cfgRow[0].value) : { enabled: false, slots: [7, 12, 16, 20, 23] };
+    const cfg = cfgRow.length ? JSON.parse(cfgRow[0].value) : { enabled: true, slots: [7, 12, 16, 20, 23] };
     if (!cfg.enabled) return { statusCode: 200, body: 'paused' };
     const anyPlatform = !!process.env.X_API_KEY || !!process.env.TELEGRAM_BOT_TOKEN || !!process.env.FB_PAGE_TOKEN;
     if (!anyPlatform) return { statusCode: 200, body: 'no keys' };

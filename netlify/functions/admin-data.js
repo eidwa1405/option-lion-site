@@ -583,8 +583,17 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'GET' && action === 'tweet-config') {
+      // ضمان وجود جدولي التغريد (قواعد قديمة قد لا تحتويهما)
+      await sql`CREATE TABLE IF NOT EXISTS tweet_log (id SERIAL PRIMARY KEY, bank_id TEXT, body TEXT, slot_date DATE, slot_hour INT, tweet_id TEXT, error TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now())`;
+      await sql`CREATE TABLE IF NOT EXISTS tweet_queue (id SERIAL PRIMARY KEY, body TEXT NOT NULL, posted BOOLEAN NOT NULL DEFAULT false, created_at TIMESTAMPTZ NOT NULL DEFAULT now())`;
       const row = await sql`SELECT value FROM admin_settings WHERE key = 'tweet_config'`;
-      const cfg = row.length ? JSON.parse(row[0].value) : { enabled: false, slots: [7, 12, 16, 20, 23] };
+      // لا سجل؟ النشر الآلي مفعّل افتراضياً ويُثبَّت في القاعدة فوراً
+      let cfg;
+      if (row.length) { cfg = JSON.parse(row[0].value); }
+      else {
+        cfg = { enabled: true, slots: [7, 12, 16, 20, 23], channels: { x: true, telegram: true, facebook: true, instagram: true } };
+        await sql`INSERT INTO admin_settings (key, value) VALUES ('tweet_config', ${JSON.stringify(cfg)}) ON CONFLICT (key) DO NOTHING`;
+      }
       const log = await sql`SELECT * FROM tweet_log ORDER BY id DESC LIMIT 30`;
       const queue = await sql`SELECT * FROM tweet_queue WHERE posted = false ORDER BY id ASC`;
       const platforms = {
