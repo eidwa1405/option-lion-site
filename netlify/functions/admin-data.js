@@ -587,14 +587,23 @@ exports.handler = async (event) => {
       const cfg = row.length ? JSON.parse(row[0].value) : { enabled: false, slots: [7, 12, 16, 20, 23] };
       const log = await sql`SELECT * FROM tweet_log ORDER BY id DESC LIMIT 30`;
       const queue = await sql`SELECT * FROM tweet_queue WHERE posted = false ORDER BY id ASC`;
-      const hasKeys = !!process.env.X_API_KEY;
-      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, config: cfg, log: log, queue: queue, hasKeys: hasKeys }) };
+      const platforms = {
+        x: !!process.env.X_API_KEY,
+        telegram: !!(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHANNEL),
+        facebook: !!(process.env.FB_PAGE_ID && process.env.FB_PAGE_TOKEN),
+        instagram: !!(process.env.IG_USER_ID && process.env.FB_PAGE_TOKEN)
+      };
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, config: cfg, log: log, queue: queue, hasKeys: platforms.x, platforms: platforms }) };
     }
 
     if (event.httpMethod === 'POST' && action === 'tweet-config') {
-      const { enabled, slots } = JSON.parse(event.body || '{}');
+      const { enabled, slots, channels } = JSON.parse(event.body || '{}');
       const clean = Array.isArray(slots) ? slots.map(function(s){ return parseInt(s,10); }).filter(function(s){ return s >= 0 && s <= 23; }).slice(0, 8) : [7, 12, 16, 20, 23];
-      const cfg = JSON.stringify({ enabled: !!enabled, slots: clean });
+      const ch = channels && typeof channels === 'object' ? {
+        x: channels.x !== false, telegram: channels.telegram !== false,
+        facebook: channels.facebook !== false, instagram: channels.instagram !== false
+      } : { x: true, telegram: true, facebook: true, instagram: true };
+      const cfg = JSON.stringify({ enabled: !!enabled, slots: clean, channels: ch });
       await sql`INSERT INTO admin_settings (key, value) VALUES ('tweet_config', ${cfg}) ON CONFLICT (key) DO UPDATE SET value = ${cfg}`;
       await sql`INSERT INTO audit_log (action, details) VALUES ('tweet-config', ${'تحديث إعدادات التغريد: ' + cfg})`;
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
