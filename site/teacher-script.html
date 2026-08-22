@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أداة التحضير التلقائي — OPN LIO</title>
+<meta name="description" content="أداة تحضير الدروس التلقائية لمنصة مدرستي — تحميل وتفعيل">
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#070d18">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; }
+a { color:#D4AF37; text-decoration:none; }
+a:hover { color:#f0cf6c; }
+.wrap { max-width:860px; margin:0 auto; padding:34px 20px 80px; }
+.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:26px 24px; margin-bottom:20px; }
+.step { display:flex; gap:14px; align-items:flex-start; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+.step:last-child { border-bottom:0; }
+.num { flex-shrink:0; width:32px; height:32px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; display:flex; align-items:center; justify-content:center; font-size:15px; }
+.btn { display:inline-block; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border-radius:12px; padding:14px 30px; font-weight:900; font-size:16px; }
+.warn { background:rgba(255,140,0,.1); border:1px solid rgba(255,140,0,.35); border-radius:12px; padding:14px 16px; color:#ffc07a; font-size:13.5px; line-height:1.9; }
+h1 { font-size:30px; margin:0 0 8px; }
+h2 { font-size:19px; color:#D4AF37; margin:0 0 14px; }
+.muted { color:#8a93a8; font-size:13.5px; line-height:1.9; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="text-align:center; margin-bottom:26px;">
+    <img src="assets/lion-logo.jpg" alt="OPN LIO" style="width:64px; height:64px; border-radius:14px; margin-bottom:12px;">
+    <h1>أداة التحضير التلقائي</h1>
+    <div class="muted">تحضّر جدولك الأسبوعي كاملاً في منصة مدرستي — تحدّد النمط لكل حصة، والباقي عليها.</div>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <a class="btn" href="opn-lio.min.user.js">⬇ تحميل الأداة</a>
+    <div class="muted" style="margin-top:12px;">الإصدار 7.5.0 · يعمل على كروم، إيدج، فايرفوكس، وسفاري</div>
+    <div style="margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,.08);">
+      <div class="muted" style="margin-bottom:10px;">ليس لديك رمز تفعيل بعد؟</div>
+      <a href="teacher-script-buy.html" style="display:inline-block; background:rgba(212,175,55,.14); border:1px solid rgba(212,175,55,.45); color:#D4AF37; border-radius:12px; padding:12px 26px; font-weight:900;">اشترك الآن — $8 سنوياً</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>خطوات التثبيت</h2>
+    <div class="step"><div class="num">1</div><div>ثبّت إضافة <b>Tampermonkey</b> من متجر متصفحك (مجانية).<div class="muted">كروم/إيدج: ابحث عن Tampermonkey في متجر الإضافات. آيفون: تطبيق Userscripts من App Store.</div></div></div>
+    <div class="step"><div class="num">2</div><div>اضغط زر <b>تحميل الأداة</b> أعلاه — ستفتح الإضافة نافذة التثبيت، اضغط «تثبيت».</div></div>
+    <div class="step"><div class="num">3</div><div>افتح <b>جدولك الأسبوعي</b> في منصة مدرستي — ستظهر لوحة OPN LIO أسفل الشاشة.</div></div>
+    <div class="step"><div class="num">4</div><div>من اللوحة اضغط <b>«إعداداتي»</b> ← الصق <b>رمز التفعيل</b> الذي وصلك على بريدك ← اضغط <b>«تحقق»</b>.</div></div>
+    <div class="step"><div class="num">5</div><div>حدّد نمط كل حصة (متزامن / غير متزامن / بلا تحضير) ثم اضغط <b>«ابدأ التحضير»</b>.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ مهم قبل البدء</h2>
+    <div class="warn">
+      <b>احتفظ برمز التفعيل في مكان آمن.</b> تحتاجه إن مسحت بيانات المتصفح، أو غيّرت جهازك، أو أعدت تثبيت الإضافة.<br><br>
+      <b>الرمز مرتبط بحساب مدرستي الخاص بك فقط</b> — لن يعمل على حساب معلم آخر، ولا يمكن مشاركته.<br><br>
+      اترك جدول مدرستي مفتوحاً أثناء عمل الأداة، ولا تغلق المتصفح حتى تنتهي.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>أسئلة شائعة</h2>
+    <div class="muted">
+      <p><b>هل تعمل على الجوال؟</b> نعم على آيفون عبر تطبيق Userscripts، وعلى أندرويد عبر متصفح Firefox. كروم أندرويد لا يدعم الإضافات.</p>
+      <p><b>ماذا لو انتهى اشتراكي؟</b> تتوقف الأداة عن التحضير وتطلب التجديد — بياناتك وإعداداتك تبقى محفوظة.</p>
+      <p><b>هل تغيّر شيئاً في حسابي؟</b> لا. تعبّي حقول التحضير التي تعبّيها يدوياً، بنفس صلاحياتك ولا شيء غيرها.</p>
+      <p><b>واجهتني مشكلة؟</b> من لوحة OPN LIO اضغط زر <b>«تقرير»</b> ثم أرسل ما نُسخ إلى <a href="mailto:info@opnlio.com">info@opnlio.com</a>.</p>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:30px;">
+    <a href="member-dashboard.html" class="muted">↩ العودة للوحة عضويتي</a>
+  </div>
+
+</div>
+</body>
+</html>

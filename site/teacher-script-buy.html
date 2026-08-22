@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اشترك في أداة التحضير التلقائي — OPN LIO</title>
+<meta name="description" content="أداة تحضير الدروس التلقائية لمنصة مدرستي — اشتراك سنوي 8 دولار">
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<meta name="theme-color" content="#070d18">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; }
+a { color:#D4AF37; text-decoration:none; }
+a:hover { color:#f0cf6c; }
+.wrap { max-width:760px; margin:0 auto; padding:34px 20px 80px; }
+.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:26px 24px; margin-bottom:20px; }
+label { display:block; font-size:13.5px; font-weight:700; margin:14px 0 6px; }
+input { width:100%; box-sizing:border-box; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.16); border-radius:10px; padding:12px 14px; font:600 14px 'Tajawal',sans-serif; }
+input:focus { outline:none; border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,.15); }
+input.ltr { direction:ltr; text-align:center; }
+.hint { color:#8a93a8; font-size:12.5px; margin-top:5px; line-height:1.8; }
+.warn { background:rgba(255,140,0,.1); border:1px solid rgba(255,140,0,.35); border-radius:12px; padding:14px 16px; color:#ffc07a; font-size:13.5px; line-height:1.9; margin-top:16px; }
+.btn { width:100%; margin-top:20px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border:0; border-radius:12px; padding:16px; font:900 17px 'Tajawal',sans-serif; cursor:pointer; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.feat { display:flex; gap:10px; align-items:flex-start; padding:9px 0; font-size:14px; }
+.feat b { color:#39FF14; flex-shrink:0; }
+h1 { font-size:28px; margin:0 0 6px; }
+h2 { font-size:18px; color:#D4AF37; margin:0 0 12px; }
+.price { font-size:38px; font-weight:900; color:#D4AF37; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="text-align:center; margin-bottom:24px;">
+    <img src="assets/lion-logo.jpg" alt="OPN LIO" style="width:60px; height:60px; border-radius:14px; margin-bottom:10px;">
+    <h1>أداة التحضير التلقائي</h1>
+    <div class="hint">تحضّر جدولك الأسبوعي كاملاً في منصة مدرستي — أنت تحدّد النمط، وهي تنفّذ.</div>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <div class="price">$8</div>
+    <div class="hint">اشتراك سنوي كامل · تفعيل فوري بعد الدفع</div>
+  </div>
+
+  <div class="card">
+    <h2>ماذا تفعل؟</h2>
+    <div class="feat"><b>✓</b><span>تعبّي التهيئة، مفردات الدرس، مهارات التفكير، إغلاق الدرس، وتعليمات المعلم — بنصوص مناسبة لمادتك</span></div>
+    <div class="feat"><b>✓</b><span>تختار استراتيجيات التدريس والوسائل التعليمية حسب نمط الحصة</span></div>
+    <div class="feat"><b>✓</b><span>تضيف الواجب وتُسنده بمهلة تسليم تلقائياً</span></div>
+    <div class="feat"><b>✓</b><span>تتقدّم بالدروس درساً درساً عبر حصص الأسبوع</span></div>
+    <div class="feat"><b>✓</b><span>تتخطّى الحصص المحضّرة مسبقاً ولا يكررها</span></div>
+  </div>
+
+  <div class="card">
+    <h2>بيانات التفعيل</h2>
+    <form id="buyForm">
+      <label for="fName">الاسم</label>
+      <input id="fName" required placeholder="اسمك الثلاثي">
+
+      <label for="fEmail">بريدك الإلكتروني (يصلك عليه رمز التفعيل)</label>
+      <input id="fEmail" type="email" required class="ltr" placeholder="you@example.com">
+
+      <label for="fUser">اسم المستخدم في منصة مدرستي</label>
+      <input id="fUser" required class="ltr" placeholder="t123456@hb.moe.gov.sa">
+      <div class="hint">تجده في مدرستي: اضغط اسمك أعلى الصفحة ← <b>تعديل بياناتي</b> ← حقل «اسم المستخدم».</div>
+
+      <div class="warn">
+        ⚠️ <b>تأكّد من اسم المستخدم قبل الدفع.</b><br>
+        رمز التفعيل يعمل <b>فقط</b> مع هذا الحساب، ولن يعمل على أي حساب معلم آخر.
+      </div>
+
+      <button class="btn" type="submit" id="payBtn">الاشتراك الآن — $8</button>
+      <div class="hint" style="text-align:center; margin-top:10px;">الدفع عبر Paddle · بطاقة أو Apple Pay</div>
+    </form>
+  </div>
+
+  <div style="text-align:center;">
+    <a href="teacher-script.html" class="hint">تفاصيل الأداة وخطوات التثبيت ←</a>
+  </div>
+
+</div>
+
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+Paddle.Environment.set('production');
+Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
+var SCRIPT_PRICE = 'pri_01m0ktck9j286xssq9s4dzjfca';
+
+document.getElementById('buyForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var name = document.getElementById('fName').value.trim();
+  var email = document.getElementById('fEmail').value.trim().toLowerCase();
+  var user = document.getElementById('fUser').value.trim().toLowerCase();
+  if (!name || !email || !user) return;
+  if (user.indexOf('@') < 0) { alert('اسم المستخدم في مدرستي يشبه: t123456@hb.moe.gov.sa'); return; }
+  document.getElementById('payBtn').disabled = true;
+  Paddle.Checkout.open({
+    items: [{ priceId: SCRIPT_PRICE, quantity: 1 }],
+    customer: { email: email },
+    customData: { product: 'script', email: email, name: name, madrasatiUser: user },
+    settings: { locale: 'ar', successUrl: location.origin + '/teacher-script.html' }
+  });
+  setTimeout(function () { document.getElementById('payBtn').disabled = false; }, 4000);
+});
+</script>
+</body>
+</html>

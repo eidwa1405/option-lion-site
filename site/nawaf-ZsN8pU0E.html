@@ -163,6 +163,21 @@ tbody tr:hover{background:rgba(212,175,55,.06);}
   </div>
 
   <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin:0 0 6px; color:#D4AF37;">🎓 تراخيص أداة التحضير</h3>
+    <div style="color:#8a93a8; font-size:12px; margin-bottom:14px;">حدّد تاريخ الانتهاء ثم أصدر رمزاً — يُرسل للمعلم على بريده تلقائياً، ويُربط بحسابه في مدرستي عند أول استخدام فلا يعمل على حساب آخر.</div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px;">
+      <input id="licName" placeholder="اسم المعلم" style="flex:1; min-width:130px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
+      <input id="licEmail" type="email" placeholder="بريد المعلم في موقعنا" style="flex:1.4; min-width:170px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
+      <input id="licMdrUser" placeholder="اسم المستخدم بمدرستي (t123456@…)" style="flex:1.6; min-width:200px; background:#0f1524; color:#ffc07a; border:1px solid rgba(255,140,0,.35); border-radius:8px; padding:8px 10px; direction:ltr; text-align:center;">
+      <input id="licMdr" type="email" placeholder="بريد مدرستي (اختياري)" style="flex:1.2; min-width:150px; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
+      <input id="licUntil" type="date" style="background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 10px;">
+      <button onclick="issueLicense()" style="background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border:none; border-radius:8px; padding:8px 18px; font-weight:900; cursor:pointer;">إصدار رمز</button>
+    </div>
+    <div id="licOut" style="font-size:13px; margin-bottom:12px;"></div>
+    <div id="licList" style="font-size:12.5px; max-height:340px; overflow-y:auto;"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;">
     <h3 style="margin:0 0 6px; color:#D4AF37;">📡 نظام النشر الآلي</h3>
     <div id="twKeysWarn" style="display:none; background:rgba(255,95,95,.1); border:1px solid rgba(255,95,95,.3); border-radius:8px; padding:10px 14px; color:#ff9b9b; font-size:12.5px; margin-bottom:12px;">⚠️ لا توجد أي منصة مضبوطة في Netlify — أضف مفاتيح منصة واحدة على الأقل</div>
     <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; margin-bottom:14px;" id="twPlatforms"></div>
@@ -1162,6 +1177,7 @@ function loadOverview(){
   loadPnL();
   loadLeaderSection();
   loadTweetCfg();
+  loadLicenses();
 }
 
 function loadRevenue(){
@@ -2704,6 +2720,49 @@ function loadAnalytics(){
 
 <script>
 var LDR_AFFS = [];
+function loadLicenses(){
+  if (!TOKEN) return;
+  authFetch('/api/admin-data?action=licenses').then(function(r){return r.json();}).then(function(res){
+    if (!res.ok) return;
+    var today = new Date().toISOString().slice(0,10);
+    document.getElementById('licList').innerHTML = (res.items||[]).map(function(l){
+      var exp = String(l.valid_until).slice(0,10) < today;
+      var st = !l.active ? '<span style="color:#ff9b9b;">موقوف</span>' : (exp ? '<span style="color:#FF8C00;">منتهٍ</span>' : '<span style="color:#39FF14;">ساري</span>');
+      var bound = (l.madrasati_user || l.madrasati_email) ? '<span style="color:#ffc07a; direction:ltr;">📧 '+(l.madrasati_user || l.madrasati_email)+'</span>' : (l.bound_account ? '<span style="color:#8a93a8;">🔗 مرتبط</span>' : '<span style="color:#5a6478;">غير مستخدم</span>');
+      return '<div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06);">'+
+        '<b style="color:#D4AF37; direction:ltr; min-width:130px;">'+l.code+'</b>'+
+        '<span style="flex:1; min-width:150px;">'+(l.name||'-')+' · <span style="color:#8a93a8;">'+(l.email||'-')+'</span></span>'+
+        st+bound+'<span style="color:#5a6478;">'+(l.hits||0)+' فحص</span>'+
+        '<input type="date" value="'+String(l.valid_until).slice(0,10)+'" onchange="updLic(\''+l.code+'\',{valid_until:this.value})" style="background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.15); border-radius:6px; padding:4px 6px;">'+
+        '<button onclick="updLic(\''+l.code+'\',{active:'+(!l.active)+'})" style="background:none; border:1px solid rgba(255,255,255,.2); color:#e9edf5; border-radius:6px; padding:4px 10px; cursor:pointer;">'+(l.active?'إيقاف':'تفعيل')+'</button>'+
+        (l.bound_account ? '<button onclick="updLic(\''+l.code+'\',{unbind:true})" style="background:none; border:1px solid rgba(212,175,55,.4); color:#D4AF37; border-radius:6px; padding:4px 10px; cursor:pointer;">فكّ الارتباط</button>' : '')+
+        '<button onclick="if(confirm(\'حذف الترخيص؟\'))updLic(\''+l.code+'\',{remove:true})" style="background:none; border:none; color:#ff5f5f; cursor:pointer;">✕</button>'+
+      '</div>';
+    }).join('') || '<div style="color:#6b7488;">لا تراخيص بعد</div>';
+  });
+}
+function issueLicense(){
+  var name = document.getElementById('licName').value.trim();
+  var email = document.getElementById('licEmail').value.trim();
+  var until = document.getElementById('licUntil').value;
+  if (!until) { alert('حدّد تاريخ الانتهاء'); return; }
+  var mdr = document.getElementById('licMdr').value.trim();
+  var mdrU = document.getElementById('licMdrUser').value.trim();
+  authFetch('/api/admin-data?action=issue-license', { method:'POST', body: JSON.stringify({ name:name, email:email, valid_until:until, madrasati_email:mdr, madrasati_user:mdrU }) })
+    .then(function(r){return r.json();}).then(function(res){
+      if (!res.ok) { alert(res.error||'خطأ'); return; }
+      document.getElementById('licOut').innerHTML = '✅ الرمز: <b style="color:#D4AF37; direction:ltr; font-size:16px;">'+res.code+'</b>'+
+        (res.mailed ? ' <span style="color:#39FF14;">· أُرسل للبريد</span>' : ' <span style="color:#FF8C00;">· لم يُرسل بريد — انسخه يدوياً</span>');
+      document.getElementById('licName').value=''; document.getElementById('licEmail').value=''; document.getElementById('licMdr').value=''; document.getElementById('licMdrUser').value='';
+      loadLicenses();
+    });
+}
+function updLic(code, patch){
+  patch.code = code;
+  authFetch('/api/admin-data?action=update-license', { method:'POST', body: JSON.stringify(patch) })
+    .then(function(r){return r.json();}).then(function(){ loadLicenses(); });
+}
+
 function loadTweetCfg(){
   if (!TOKEN) return;
   authFetch('/api/admin-data?action=tweet-config').then(function(r){return r.json();}).then(function(res){
