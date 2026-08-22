@@ -676,6 +676,27 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code, mailed }) };
     }
 
+    if (event.httpMethod === 'POST' && action === 'resend-license') {
+      const { code } = JSON.parse(event.body || '{}');
+      const c = String(code || '').trim().toUpperCase();
+      const r = await sql`SELECT code, name, email, valid_until, madrasati_user, madrasati_email FROM script_licenses WHERE code = ${c}`;
+      if (!r.length || !r[0].email) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'لا يوجد بريد لهذا الترخيص' }) };
+      const L = r[0];
+      const until = String(L.valid_until).slice(0, 10);
+      const who = L.madrasati_user || L.madrasati_email || '';
+      const html = '<div dir="rtl" style="font-family:Tahoma,Arial;background:#070d18;color:#e9edf5;padding:24px;border-radius:14px">' +
+        '<h2 style="color:#D4AF37;margin:0 0 12px">رمز تفعيل أداة التحضير</h2>' +
+        '<p>مرحباً ' + (L.name || '') + '،</p>' +
+        '<div style="background:#0f1830;border:1px solid rgba(212,175,55,.5);border-radius:10px;padding:14px;text-align:center;font-size:22px;font-weight:900;letter-spacing:2px;color:#D4AF37;direction:ltr">' + L.code + '</div>' +
+        '<p style="margin-top:14px">صالح حتى: <b>' + until + '</b></p>' +
+        (who ? '<p style="background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.35);border-radius:8px;padding:10px;color:#ffc07a;font-size:13px">⚠️ يعمل <b>فقط</b> مع حساب مدرستي: <b style="direction:ltr">' + who + '</b></p>' : '') +
+        '<p style="margin-top:16px"><a href="https://opnlio.com/teacher-script.html" style="background:#D4AF37;color:#070d18;padding:12px 24px;border-radius:10px;font-weight:900;text-decoration:none">تحميل الأداة وخطوات التثبيت</a></p></div>';
+      try { await sendMail(L.email, 'رمز تفعيل أداة التحضير — OPN LIO', 'رمز التفعيل: ' + L.code, html, 'ar'); }
+      catch (e) { return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: 'فشل الإرسال' }) }; }
+      await sql`INSERT INTO audit_log (action, details) VALUES ('resend-license', ${'إعادة إرسال ترخيص ' + c + ' إلى ' + L.email})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'POST' && action === 'update-license') {
       const { code, valid_until, active, unbind, remove } = JSON.parse(event.body || '{}');
       const c = String(code || '').trim().toUpperCase();

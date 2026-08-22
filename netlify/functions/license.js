@@ -22,10 +22,17 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
   try {
-    const code = String((event.queryStringParameters || {}).code || '').trim().toUpperCase();
-    if (!code) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'رمز مفقود' }) };
+    const q = event.queryStringParameters || {};
+    const byEmail = String(q.byEmail || '').trim().toLowerCase();
+    const code = String(q.code || '').trim().toUpperCase();
     const sql = getSql();
     await ensureTables(sql);
+    // استعلام لوحة العضو: هل له ترخيص؟
+    if (byEmail) {
+      const r = await sql`SELECT code, valid_until, active FROM script_licenses WHERE lower(email) = ${byEmail} ORDER BY valid_until DESC LIMIT 1`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, license: r.length ? r[0] : null }) };
+    }
+    if (!code) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'رمز مفقود' }) };
     const acct = String((event.queryStringParameters || {}).acct || '').trim().slice(0, 120);
     const mail = String((event.queryStringParameters || {}).mail || '').trim().toLowerCase().slice(0, 120);
     const user = String((event.queryStringParameters || {}).user || '').trim().toLowerCase().slice(0, 120);
