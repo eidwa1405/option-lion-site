@@ -2744,7 +2744,10 @@ function loadLicenses(){
     document.getElementById('licList').innerHTML = items.map(function(l){
       var exp = String(l.valid_until).slice(0,10) < today;
       var st = !l.active ? '<span style="color:#ff9b9b;">موقوف</span>' : (exp ? '<span style="color:#FF8C00;">منتهٍ</span>' : '<span style="color:#39FF14;">ساري</span>');
-      var bound = (l.madrasati_user || l.madrasati_email) ? '<span style="color:#ffc07a; direction:ltr;">📧 '+(l.madrasati_user || l.madrasati_email)+'</span>' : (l.bound_account ? '<span style="color:#8a93a8;">🔗 مرتبط</span>' : '<span style="color:#5a6478;">غير مستخدم</span>');
+      var real = l.madrasati_user || l.madrasati_email;
+      var mismatch = real && l.claimed_user && String(real).toLowerCase() !== String(l.claimed_user).toLowerCase();
+      var bound = real ? '<span style="color:'+(mismatch?'#ff8f8f':'#39FF14')+'; direction:ltr;" title="'+(mismatch?('صرّح بـ '+l.claimed_user):'مطابق لما صرّح به')+'">'+(mismatch?'⚠ ':'🔒 ')+real+'</span>'
+        : (l.claimed_user ? '<span style="color:#8a93a8; direction:ltr;">صرّح: '+l.claimed_user+'</span>' : '<span style="color:#5a6478;">لم يُفعّل بعد</span>');
       return '<div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06);">'+
         '<b style="color:#D4AF37; direction:ltr; min-width:130px;">'+l.code+'</b>'+
         '<span style="flex:1; min-width:150px;">'+(l.name||'-')+' · <span style="color:#8a93a8;">'+(l.email||'-')+'</span></span>'+

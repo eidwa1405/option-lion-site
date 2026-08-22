@@ -58,16 +58,17 @@ h2 { font-size:18px; color:#D4AF37; margin:0 0 12px; }
       <label for="fName">الاسم</label>
       <input id="fName" required placeholder="اسمك الثلاثي">
 
-      <label for="fEmail">بريدك الإلكتروني (يصلك عليه رمز التفعيل)</label>
-      <input id="fEmail" type="email" required class="ltr" placeholder="you@example.com">
+      <input id="fEmail" type="hidden">
+      <div id="emailNote" style="margin:14px 0 4px;"></div>
+
+
 
       <label for="fUser">اسم المستخدم في منصة مدرستي</label>
       <input id="fUser" required class="ltr" placeholder="t123456@hb.moe.gov.sa">
-      <div class="hint">تجده في مدرستي: اضغط اسمك أعلى الصفحة ← <b>تعديل بياناتي</b> ← حقل «اسم المستخدم».</div>
+      <div class="hint">تجده في مدرستي: اضغط اسمك أعلى الصفحة ← <b>تعديل بياناتي</b> ← حقل «اسم المستخدم». (للتوثيق لدينا — الأداة تقرأه بنفسها عند التفعيل)</div>
 
       <div class="warn">
-        ⚠️ <b>تأكّد من اسم المستخدم قبل الدفع.</b><br>
-        رمز التفعيل يعمل <b>فقط</b> مع هذا الحساب، ولن يعمل على أي حساب معلم آخر.
+        🔒 <b>الرمز يرتبط بحسابك في مدرستي تلقائياً</b> عند أول تفعيل — ولن يعمل على أي حساب معلم آخر بعدها.
       </div>
 
       <button class="btn" type="submit" id="payBtn">الاشتراك الآن — $8</button>
@@ -87,6 +88,33 @@ h2 { font-size:18px; color:#D4AF37; margin:0 0 12px; }
 Paddle.Environment.set('production');
 Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
 var SCRIPT_PRICE = 'pri_01m0ktck9j286xssq9s4dzjfca';
+
+// ملء آلي من عضوية الموقع — يمنع الخطأ في البريد
+(function () {
+  var md = null;
+  try { md = JSON.parse(localStorage.getItem('member_data') || 'null'); } catch (e) {}
+  if (md && md.email) {
+    var f = document.getElementById('fEmail');
+    f.value = md.email;
+    f.readOnly = true;
+    f.style.background = 'rgba(57,255,20,.06)';
+    f.style.borderColor = 'rgba(57,255,20,.35)';
+    document.getElementById('emailNote').innerHTML =
+      '<div style="background:rgba(57,255,20,.07); border:1px solid rgba(57,255,20,.3); border-radius:12px; padding:13px 16px;">' +
+      '<div style="font-size:12.5px; color:#8a93a8;">رمز التفعيل يصلك على بريد عضويتك</div>' +
+      '<div style="font-weight:900; color:#39FF14; direction:ltr; text-align:right; margin-top:3px;">' + md.email + '</div></div>';
+    if (md.name && !document.getElementById('fName').value) document.getElementById('fName').value = md.name;
+  } else {
+    // غير مسجّل دخول — لا شراء بلا عضوية
+    document.getElementById('emailNote').innerHTML =
+      '<div style="background:rgba(255,140,0,.1); border:1px solid rgba(255,140,0,.35); border-radius:12px; padding:14px 16px; color:#ffc07a; font-size:13.5px;">' +
+      'الاشتراك متاح لأعضاء الموقع فقط — رمز التفعيل يُرسل على بريد عضويتك.<br>' +
+      '<a href="./member-login.html" style="display:inline-block; margin-top:10px; background:#D4AF37; color:#070d18; padding:9px 20px; border-radius:20px; font-weight:900;">سجّل دخولك أو أنشئ عضوية ←</a></div>';
+    document.getElementById('payBtn').disabled = true;
+    document.getElementById('payBtn').textContent = 'سجّل دخولك للاشتراك';
+  }
+})();
+
 
 document.getElementById('buyForm').addEventListener('submit', function (e) {
   e.preventDefault();
