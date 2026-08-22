@@ -4,100 +4,202 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>اشترك في أداة التحضير التلقائي — OPN LIO</title>
-<meta name="description" content="أداة تحضير الدروس التلقائية لمنصة مدرستي — اشتراك سنوي 8 دولار">
+<meta name="description" content="أداة تحضير الدروس التلقائية لمنصة مدرستي — اشتراك سنوي">
 <link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
-<meta name="theme-color" content="#070d18">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#060a12">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; }
-a { color:#D4AF37; text-decoration:none; }
-a:hover { color:#f0cf6c; }
-.wrap { max-width:760px; margin:0 auto; padding:34px 20px 80px; }
-.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:26px 24px; margin-bottom:20px; }
-label { display:block; font-size:13.5px; font-weight:700; margin:14px 0 6px; }
-input { width:100%; box-sizing:border-box; background:#0f1524; color:#e9edf5; border:1px solid rgba(255,255,255,.16); border-radius:10px; padding:12px 14px; font:600 14px 'Tajawal',sans-serif; }
-input:focus { outline:none; border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,.15); }
-input.ltr { direction:ltr; text-align:center; }
-.hint { color:#8a93a8; font-size:12.5px; margin-top:5px; line-height:1.8; }
-.warn { background:rgba(255,140,0,.1); border:1px solid rgba(255,140,0,.35); border-radius:12px; padding:14px 16px; color:#ffc07a; font-size:13.5px; line-height:1.9; margin-top:16px; }
-.btn { width:100%; margin-top:20px; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border:0; border-radius:12px; padding:16px; font:900 17px 'Tajawal',sans-serif; cursor:pointer; }
-.btn:disabled { opacity:.5; cursor:not-allowed; }
-.feat { display:flex; gap:10px; align-items:flex-start; padding:9px 0; font-size:14px; }
-.feat b { color:#39FF14; flex-shrink:0; }
-h1 { font-size:28px; margin:0 0 6px; }
-h2 { font-size:18px; color:#D4AF37; margin:0 0 12px; }
-.price { font-size:38px; font-weight:900; color:#D4AF37; }
-
-@media (max-width:560px) {
-  .wrap { padding:20px 14px 60px !important; }
-  h1 { font-size:22px !important; line-height:1.5; }
-  h2 { font-size:16px !important; }
-  .card { padding:18px 15px !important; border-radius:16px !important; }
-  .btn, .btn2, .go, .go2 { display:block !important; width:100% !important; box-sizing:border-box; text-align:center; padding:15px 16px !important; font-size:15px !important; }
-  .step, .stp { gap:10px !important; font-size:13.5px !important; }
-  .num, .n { width:26px !important; height:26px !important; font-size:13px !important; }
-  .code { font-size:19px !important; letter-spacing:1.5px !important; padding:15px 8px !important; word-break:break-all; }
-  input { font-size:16px !important; padding:13px 12px !important; }
-  .price { font-size:32px !important; }
-  .tabs { grid-template-columns:1fr 1fr 1fr !important; gap:6px !important; }
-  .tab { padding:11px 4px !important; font-size:13px !important; }
-  .muted, .hint, .note { font-size:12.5px !important; }
-  .feat { font-size:13.5px !important; }
-  img { max-width:100%; height:auto; }
+:root{
+  --bg:#060a12; --ink:#eef2f8; --dim:#7c869c; --line:rgba(255,255,255,.09);
+  --gold:#D4AF37; --green:#39FF14; --red:#ff6b6b;
+  --panel:rgba(255,255,255,.035);
 }
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--ink);
+  background-image:
+    radial-gradient(1100px 700px at 82% -18%, rgba(57,255,20,.045), transparent 58%),
+    radial-gradient(800px 560px at 8% 12%, rgba(212,175,55,.04), transparent 60%);
+  background-attachment:fixed;
+}
+a{color:var(--gold); text-decoration:none}
+.wrap{max-width:1040px; margin:0 auto; padding:26px clamp(16px,4vw,32px) 120px}
+
+/* ── شريط علوي ── */
+.top{display:flex; align-items:center; justify-content:space-between; margin-bottom:clamp(30px,6vw,54px)}
+.brand{display:flex; align-items:center; gap:10px; font-weight:900; font-size:15px; letter-spacing:.5px}
+.brand img{width:34px; height:34px; border-radius:9px}
+.back{font-size:13px; color:var(--dim); font-weight:700}
+.back:hover{color:var(--gold)}
+
+/* ── البطل ── */
+.hero{text-align:center; margin-bottom:clamp(34px,6vw,60px)}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:900; letter-spacing:1px;
+  color:var(--green); background:rgba(57,255,20,.09); border:1px solid rgba(57,255,20,.3);
+  padding:7px 16px; border-radius:99px; margin-bottom:20px; white-space:nowrap;
+}
+.eyebrow i{width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1; transform:scale(1)}50%{opacity:.35; transform:scale(.8)}}
+h1{
+  font-size:clamp(30px,6.4vw,54px); font-weight:900; line-height:1.24; margin:0 0 16px;
+  letter-spacing:-.5px; text-wrap:balance;
+}
+h1 .hl{color:var(--green)}
+.lede{font-size:clamp(15px,2.4vw,18px); color:#b3bccd; line-height:1.85; max-width:620px; margin:0 auto; text-wrap:pretty}
+
+/* ── شريط الأرقام ── */
+.stats{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); border-radius:18px; overflow:hidden; margin:clamp(30px,5vw,44px) 0;
+}
+.stat{background:#080d16; padding:clamp(16px,3vw,24px) 12px; text-align:center}
+.stat b{display:block; font-size:clamp(24px,5vw,36px); font-weight:900; line-height:1; margin-bottom:7px}
+.stat span{font-size:clamp(11px,2vw,13px); color:var(--dim); font-weight:700}
+
+/* ── الشبكة ── */
+.grid{display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(16px,2.6vw,24px); align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+.panel{
+  background:linear-gradient(165deg, var(--panel), rgba(255,255,255,.012));
+  border:1px solid var(--line); border-radius:22px; padding:clamp(20px,3.4vw,30px);
+}
+.panel h2{font-size:17px; font-weight:900; margin:0 0 18px; display:flex; align-items:center; gap:9px}
+.panel h2::before{content:''; width:4px; height:17px; border-radius:3px; background:var(--gold)}
+
+/* ── المميزات ── */
+.feat{display:flex; gap:13px; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14.5px; line-height:1.75}
+.feat:last-child{border-bottom:0; padding-bottom:0}
+.feat .tick{
+  flex-shrink:0; width:22px; height:22px; border-radius:7px; background:rgba(57,255,20,.13);
+  border:1px solid rgba(57,255,20,.3); color:var(--green); font-size:12px; font-weight:900;
+  display:flex; align-items:center; justify-content:center; margin-top:2px;
+}
+
+/* ── السعر ── */
+.pricebox{text-align:center; padding-bottom:6px}
+.launch{
+  display:inline-block; font-size:11.5px; font-weight:900; letter-spacing:.5px; color:#ffb3b3;
+  background:rgba(255,107,107,.13); border:1px solid rgba(255,107,107,.35);
+  padding:6px 15px; border-radius:99px; margin-bottom:16px;
+}
+.pricerow{display:flex; align-items:baseline; justify-content:center; gap:12px; margin-bottom:4px}
+.old{font-size:clamp(20px,4vw,26px); font-weight:800; color:#4d566b; text-decoration:line-through}
+.now{font-size:clamp(46px,10vw,64px); font-weight:900; line-height:1; color:var(--green); letter-spacing:-2px}
+.per{font-size:13.5px; color:var(--dim); font-weight:700}
+.pricenote{font-size:12.5px; color:var(--dim); margin-top:10px; line-height:1.8}
+
+/* ── النموذج ── */
+label{display:block; font-size:13px; font-weight:800; margin:18px 0 7px; color:#cfd7e5}
+input{
+  width:100%; background:#0a1019; color:var(--ink); border:1px solid rgba(255,255,255,.13);
+  border-radius:13px; padding:14px 16px; font:700 14.5px 'Tajawal',sans-serif; transition:.18s;
+}
+input::placeholder{color:#4d566b; font-weight:500}
+input:focus{outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(57,255,20,.11)}
+input.ltr{direction:ltr; text-align:center; letter-spacing:.3px}
+.hint{font-size:12.5px; color:var(--dim); margin-top:7px; line-height:1.8}
+.hint b{color:#a9b3c6}
+
+.notice{
+  background:rgba(255,140,0,.075); border:1px solid rgba(255,140,0,.3); border-radius:14px;
+  padding:14px 16px; color:#ffc98a; font-size:13px; line-height:1.85; margin-top:16px;
+}
+.notice b{color:#ffd9a8}
+
+.paybtn{
+  width:100%; margin-top:22px; background:linear-gradient(120deg,#39FF14,#a4ff8a);
+  color:#050a10; border:0; border-radius:15px; padding:18px;
+  font:900 17px 'Tajawal',sans-serif; cursor:pointer; transition:.18s;
+  box-shadow:0 10px 34px rgba(57,255,20,.2);
+}
+.paybtn:hover:not(:disabled){transform:translateY(-2px); box-shadow:0 14px 42px rgba(57,255,20,.3)}
+.paybtn:disabled{background:rgba(255,255,255,.07); color:var(--dim); box-shadow:none; cursor:not-allowed}
+
+.trust{display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:16px; font-size:12px; color:var(--dim)}
+.trust span{display:flex; align-items:center; gap:5px}
+
+/* ── تذييل ── */
+.foot{text-align:center; margin-top:clamp(32px,5vw,48px); font-size:13.5px}
+.foot a{margin:0 10px; color:var(--dim); font-weight:700}
+.foot a:hover{color:var(--gold)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div style="text-align:center; margin-bottom:24px;">
-    <img src="assets/lion-logo.jpg" alt="OPN LIO" style="width:60px; height:60px; border-radius:14px; margin-bottom:10px;">
-    <h1>أداة التحضير التلقائي</h1>
-    <div class="hint">تحضّر جدولك الأسبوعي كاملاً في منصة مدرستي — أنت تحدّد النمط، وهي تنفّذ.</div>
+  <div class="top">
+    <a href="index.html" class="brand"><img src="assets/lion-logo.jpg" alt=""><span>OPN LIO</span></a>
+    <a href="member-dashboard.html" class="back">لوحة التحكم ←</a>
   </div>
 
-  <div class="card" style="text-align:center;">
-    <div class="price">$8</div>
-    <div class="hint">اشتراك سنوي كامل · تفعيل فوري بعد الدفع</div>
+  <div class="hero">
+    <div class="eyebrow"><i></i>&nbsp;أداة&nbsp;معلّم&nbsp;·&nbsp;منصة&nbsp;مدرستي</div>
+    <h1>حضّر أسبوعك كاملاً<br><span class="hl">في ثلاث دقائق</span></h1>
+    <p class="lede">تفتح جدولك، تحدّد نمط كل حصة، وتضغط زراً واحداً. الأداة تعبّي التهيئة والمفردات والاستراتيجيات والوسائل، وتضيف الواجب وتُسنده — حصة بعد حصة حتى نهاية الأسبوع.</p>
   </div>
 
-  <div class="card">
-    <h2>ماذا تفعل؟</h2>
-    <div class="feat"><b>✓</b><span>تعبّي التهيئة، مفردات الدرس، مهارات التفكير، إغلاق الدرس، وتعليمات المعلم — بنصوص مناسبة لمادتك</span></div>
-    <div class="feat"><b>✓</b><span>تختار استراتيجيات التدريس والوسائل التعليمية حسب نمط الحصة</span></div>
-    <div class="feat"><b>✓</b><span>تضيف الواجب وتُسنده بمهلة تسليم تلقائياً</span></div>
-    <div class="feat"><b>✓</b><span>تتقدّم بالدروس درساً درساً عبر حصص الأسبوع</span></div>
-    <div class="feat"><b>✓</b><span>تتخطّى الحصص المحضّرة مسبقاً ولا يكررها</span></div>
-    <div class="feat"><b>✓</b><span>تعمل على <b>الجوال</b> والكمبيوتر — <a href="tahdeer-mobile.html" style="color:#39FF14;">طريقة التثبيت على الجوال</a></span></div>
+  <div class="stats">
+    <div class="stat"><b style="color:var(--gold)">٢٥</b><span>حصة أسبوعياً</span></div>
+    <div class="stat"><b style="color:var(--green)">٣ د</b><span>بدل ٥ ساعات</span></div>
+    <div class="stat"><b style="color:#7aa2ff">٨</b><span>حقول لكل حصة</span></div>
   </div>
 
-  <div class="card">
-    <h2>بيانات التفعيل</h2>
-    <form id="buyForm">
-      <label for="fName">الاسم</label>
-      <input id="fName" required placeholder="اسمك الثلاثي">
+  <div class="grid">
 
-      <input id="fEmail" type="hidden">
-      <div id="emailNote" style="margin:14px 0 4px;"></div>
+    <div class="panel">
+      <h2>ماذا تفعل الأداة؟</h2>
+      <div class="feat"><span class="tick">✓</span><span>تعبّي <b>التهيئة، مفردات الدرس، مهارات التفكير، إغلاق الدرس، وتعليمات المعلم</b> بنصوص مناسبة لمادتك</span></div>
+      <div class="feat"><span class="tick">✓</span><span>تختار <b>استراتيجيات التدريس والوسائل التعليمية</b> حسب نمط الحصة — متزامن أو غير متزامن</span></div>
+      <div class="feat"><span class="tick">✓</span><span>تضيف <b>الواجب وتُسنده</b> مع مهلة تسليم تلقائية</span></div>
+      <div class="feat"><span class="tick">✓</span><span>تتقدّم <b>بالدروس درساً درساً</b> عبر حصص الأسبوع بالترتيب</span></div>
+      <div class="feat"><span class="tick">✓</span><span>تتخطّى <b>الحصص المحضّرة مسبقاً</b> ولا تكررها</span></div>
+      <div class="feat"><span class="tick">✓</span><span>تعمل على <b>الكمبيوتر والجوال</b> — أندرويد وآيفون</span></div>
+    </div>
 
-
-
-      <label for="fUser">اسم المستخدم في منصة مدرستي</label>
-      <input id="fUser" required class="ltr" placeholder="t123456@hb.moe.gov.sa">
-      <div class="hint">تجده في مدرستي: اضغط اسمك أعلى الصفحة ← <b>تعديل بياناتي</b> ← حقل «اسم المستخدم». (للتوثيق لدينا — الأداة تقرأه بنفسها عند التفعيل)</div>
-
-      <div class="warn">
-        🔒 <b>الرمز يرتبط بحسابك في مدرستي تلقائياً</b> عند أول تفعيل — ولن يعمل على أي حساب معلم آخر بعدها.
+    <div class="panel" style="border-color:rgba(57,255,20,.22)">
+      <div class="pricebox">
+        <div id="launchBadge" class="launch" style="display:none"></div>
+        <div class="pricerow" id="priceRow">
+          <span class="now">$8</span>
+          <span class="per">سنوياً</span>
+        </div>
+        <div class="pricenote" id="priceNote">اشتراك سنوي كامل · تفعيل فوري بعد الدفع</div>
       </div>
 
-      <button class="btn" type="submit" id="payBtn">الاشتراك الآن — $8</button>
-      <div class="hint" style="text-align:center; margin-top:10px;">الدفع عبر Paddle · بطاقة أو Apple Pay</div>
-    </form>
+      <form id="buyForm" style="margin-top:6px">
+        <input id="fEmail" type="hidden">
+        <div id="emailNote" style="margin:18px 0 2px"></div>
+
+        <label for="fName">الاسم</label>
+        <input id="fName" required placeholder="اسمك الثلاثي">
+
+        <label for="fUser">اسم المستخدم في منصة مدرستي</label>
+        <input id="fUser" required class="ltr" placeholder="t123456@hb.moe.gov.sa">
+        <div class="hint">تجده في مدرستي: اضغط اسمك أعلى الصفحة ← <b>تعديل بياناتي</b> ← حقل «اسم المستخدم».</div>
+
+        <div class="notice">
+          <b>تأكّد من اسم المستخدم قبل الدفع.</b><br>
+          رمز التفعيل يعمل مع هذا الحساب فقط، ولن يعمل على حساب معلم آخر.
+        </div>
+
+        <button class="paybtn" type="submit" id="payBtn">الاشتراك الآن</button>
+
+        <div class="trust">
+          <span>🔒 دفع آمن عبر Paddle</span>
+          <span>⚡ تفعيل فوري</span>
+          <span>📧 الرمز على بريدك</span>
+        </div>
+      </form>
+    </div>
+
   </div>
 
-  <div style="text-align:center; margin-top:22px;">
-    <a href="member-dashboard.html" style="display:inline-block; background:transparent; border:1.5px solid rgba(212,175,55,.45); color:#D4AF37; border-radius:12px; padding:12px 26px; font-weight:900; font-size:14px;">↩ العودة للوحة التحكم</a>
-    <div style="margin-top:14px;"><a href="teacher-script.html" class="hint">تفاصيل الأداة وخطوات التثبيت ←</a></div>
+  <div class="foot">
+    <a href="teacher-script.html">التفاصيل وخطوات التثبيت</a>·
+    <a href="tahdeer-mobile.html">التثبيت على الجوال</a>·
+    <a href="member-dashboard.html">لوحة التحكم</a>
   </div>
 
 </div>
@@ -106,34 +208,48 @@ h2 { font-size:18px; color:#D4AF37; margin:0 0 12px; }
 <script>
 Paddle.Environment.set('production');
 Paddle.Initialize({ token: 'live_27e72c4c8fd9d78b7752c0eaba7' });
-var SCRIPT_PRICE = 'pri_01m0ktck9j286xssq9s4dzjfca';
 
-// ملء آلي من عضوية الموقع — يمنع الخطأ في البريد
+var SCRIPT_PRICE = 'pri_01m0ktck9j286xssq9s4dzjfca';
+var LAUNCH_DISCOUNT = 'dsc_01m0n8rp5b6bmxhq7cs6rmm3vr';
+var LAUNCH_END = new Date('2026-08-29T23:59:59+03:00');
+var launchOn = Date.now() < LAUNCH_END.getTime();
+
+if (launchOn) {
+  var days = Math.max(1, Math.ceil((LAUNCH_END - Date.now()) / 86400000));
+  var badge = document.getElementById('launchBadge');
+  badge.textContent = '🔥 عرض الإطلاق — ' + (days === 1 ? 'آخر يوم' : 'باقٍ ' + days + ' أيام');
+  badge.style.display = 'inline-block';
+  document.getElementById('priceRow').innerHTML =
+    '<span class="old">$8</span><span class="now">$5</span><span class="per">سنوياً</span>';
+  document.getElementById('priceNote').innerHTML =
+    'اشتراك سنوي كامل · تفعيل فوري بعد الدفع<br><span style="color:#ffb3b3">ينتهي العرض ٢٩ أغسطس — بعدها $8</span>';
+}
+
+// بيانات العضوية — لا شراء بلا تسجيل دخول
 (function () {
   var md = null;
   try { md = JSON.parse(localStorage.getItem('member_data') || 'null'); } catch (e) {}
+  var note = document.getElementById('emailNote');
+  var btn = document.getElementById('payBtn');
   if (md && md.email) {
-    var f = document.getElementById('fEmail');
-    f.value = md.email;
-    f.readOnly = true;
-    f.style.background = 'rgba(57,255,20,.06)';
-    f.style.borderColor = 'rgba(57,255,20,.35)';
-    document.getElementById('emailNote').innerHTML =
-      '<div style="background:rgba(57,255,20,.07); border:1px solid rgba(57,255,20,.3); border-radius:12px; padding:13px 16px;">' +
-      '<div style="font-size:12.5px; color:#8a93a8;">رمز التفعيل يصلك على بريد عضويتك</div>' +
-      '<div style="font-weight:900; color:#39FF14; direction:ltr; text-align:right; margin-top:3px;">' + md.email + '</div></div>';
+    document.getElementById('fEmail').value = md.email;
+    note.innerHTML =
+      '<div style="background:rgba(57,255,20,.06); border:1px solid rgba(57,255,20,.26); border-radius:13px; padding:13px 15px;">' +
+        '<div style="font-size:12px; color:#7c869c; font-weight:700;">رمز التفعيل يصلك على بريد عضويتك</div>' +
+        '<div style="font-weight:900; color:#39FF14; direction:ltr; text-align:right; margin-top:3px; font-size:14px;">' + md.email + '</div>' +
+      '</div>';
     if (md.name && !document.getElementById('fName').value) document.getElementById('fName').value = md.name;
+    btn.textContent = launchOn ? 'الاشتراك الآن — $5 بدل $8' : 'الاشتراك الآن — $8';
   } else {
-    // غير مسجّل دخول — لا شراء بلا عضوية
-    document.getElementById('emailNote').innerHTML =
-      '<div style="background:rgba(255,140,0,.1); border:1px solid rgba(255,140,0,.35); border-radius:12px; padding:14px 16px; color:#ffc07a; font-size:13.5px;">' +
-      'الاشتراك متاح لأعضاء الموقع فقط — رمز التفعيل يُرسل على بريد عضويتك.<br>' +
-      '<a href="./member-login.html" style="display:inline-block; margin-top:10px; background:#D4AF37; color:#070d18; padding:9px 20px; border-radius:20px; font-weight:900;">سجّل دخولك أو أنشئ عضوية ←</a></div>';
-    document.getElementById('payBtn').disabled = true;
-    document.getElementById('payBtn').textContent = 'سجّل دخولك للاشتراك';
+    note.innerHTML =
+      '<div style="background:rgba(255,140,0,.08); border:1px solid rgba(255,140,0,.3); border-radius:13px; padding:15px 16px; color:#ffc98a; font-size:13px; line-height:1.85;">' +
+        'الاشتراك متاح لأعضاء الموقع فقط — رمز التفعيل يُرسل على بريد عضويتك.' +
+        '<a href="./member-login.html" style="display:block; text-align:center; margin-top:12px; background:#D4AF37; color:#060a12; padding:11px; border-radius:11px; font-weight:900;">سجّل دخولك أو أنشئ عضوية ←</a>' +
+      '</div>';
+    btn.disabled = true;
+    btn.textContent = 'سجّل دخولك للاشتراك';
   }
 })();
-
 
 document.getElementById('buyForm').addEventListener('submit', function (e) {
   e.preventDefault();
@@ -142,14 +258,16 @@ document.getElementById('buyForm').addEventListener('submit', function (e) {
   var user = document.getElementById('fUser').value.trim().toLowerCase();
   if (!name || !email || !user) return;
   if (user.indexOf('@') < 0) { alert('اسم المستخدم في مدرستي يشبه: t123456@hb.moe.gov.sa'); return; }
-  document.getElementById('payBtn').disabled = true;
+  var btn = document.getElementById('payBtn');
+  btn.disabled = true;
   Paddle.Checkout.open({
     items: [{ priceId: SCRIPT_PRICE, quantity: 1 }],
+    discountId: launchOn ? LAUNCH_DISCOUNT : undefined,
     customer: { email: email },
     customData: { product: 'script', email: email, name: name, madrasatiUser: user },
     settings: { locale: 'ar', successUrl: location.origin + '/teacher-script-done.html?e=' + encodeURIComponent(email) }
   });
-  setTimeout(function () { document.getElementById('payBtn').disabled = false; }, 4000);
+  setTimeout(function () { btn.disabled = false; }, 4000);
 });
 </script>
 </body>

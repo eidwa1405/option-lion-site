@@ -61,7 +61,7 @@ h2 { font-size:19px; color:#D4AF37; margin:0 0 14px; }
     </div>
     <div style="margin-top:0; padding-top:0;">
       <div class="muted" style="margin-bottom:10px;">ليس لديك رمز تفعيل بعد؟</div>
-      <a href="teacher-script-buy.html" style="display:inline-block; background:rgba(212,175,55,.14); border:1px solid rgba(212,175,55,.45); color:#D4AF37; border-radius:12px; padding:12px 26px; font-weight:900;">اشترك الآن — $8 سنوياً</a>
+      <a href="teacher-script-buy.html" style="display:inline-block; background:rgba(212,175,55,.14); border:1px solid rgba(212,175,55,.45); color:#D4AF37; border-radius:12px; padding:12px 26px; font-weight:900;">اشترك الآن — <span data-launch-price>$8</span> سنوياً</a>
     </div>
   </div>
 
@@ -99,5 +99,19 @@ h2 { font-size:19px; color:#D4AF37; margin:0 0 14px; }
   </div>
 
 </div>
+<script>
+(function(){
+  var END = new Date('2026-08-29T23:59:59+03:00');
+  if (Date.now() >= END.getTime()) return;
+  document.querySelectorAll('[data-launch-price]').forEach(function(el){
+    el.innerHTML = '<span style="color:#5a6478; text-decoration:line-through;">$8</span> <span style="color:#39FF14; font-weight:900;">$5</span>';
+  });
+  document.querySelectorAll('[data-launch-note]').forEach(function(el){
+    var d = Math.max(1, Math.ceil((END - Date.now())/86400000));
+    el.textContent = '🔥 عرض الإطلاق — ' + (d === 1 ? 'آخر يوم' : 'باقٍ ' + d + ' أيام');
+    el.style.display = 'inline-block';
+  });
+})();
+</script>
 </body>
 </html>

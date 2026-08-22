@@ -1,19 +1,3 @@
-// ==UserScript==
-// @name         OPN LIO — تحضير مدرستي التلقائي
-// @name:en      OPN LIO — Madrasati Auto Lesson Prep
-// @namespace    opnlio
-// @version      7.5.0
-// @description  حدّد لكل حصة: غير متزامن أو متزامن أو بلا تحضير، اضغط ابدأ التحضير — وOPN LIO يحضّر الأسبوع كاملًا
-// @author       OPN LIO
-// @homepageURL  https://opnlio.com
-// @supportURL   https://opnlio.com/support
-// @updateURL    https://opnlio.com/opn-lio.min.user.js
-// @downloadURL  https://opnlio.com/opn-lio.min.user.js
-// @match        https://schools.madrasati.sa/*
-// @run-at       document-idle
-// @grant        none
-// ==/UserScript==
-
 (function () {
   'use strict';
   if (!/(^|\.)madrasati\.sa$/i.test(location.hostname)) return;

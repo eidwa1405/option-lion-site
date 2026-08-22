@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "تحضير OPN LIO",
+  "short_name": "تحضير OPN LIO",
+  "version": "7.5.1",
+  "description": "تحضير الجدول الأسبوعي تلقائياً في منصة مدرستي — OPN LIO",
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "تحضير OPN LIO",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://schools.madrasati.sa/*",
+        "https://*.madrasati.sa/*"
+      ],
+      "js": [
+        "tool.js"
+      ],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ],
+  "host_permissions": [
+    "https://*.madrasati.sa/*",
+    "https://opnlio.com/*"
+  ]
+}

@@ -656,8 +656,8 @@ function renderMember(){
            : 'صالح حتى ' + until);
         if (days < 0) { btn.textContent = 'جدّد الآن ←'; btn.style.background = 'linear-gradient(120deg,#ff5f5f,#ff9b9b)'; bn.href = './teacher-script-buy.html'; }
       } else {
-        sub.textContent = 'حضّر جدولك الأسبوعي كاملاً بضغطة — اشتراك سنوي $8';
-        btn.textContent = 'اشترك — $8 ←';
+        sub.textContent = 'حضّر جدولك الأسبوعي كاملاً بضغطة — اشتراك سنوي <span data-launch-price>$8</span>';
+        btn.textContent = 'اشترك — $5 ←';
         bn.href = './teacher-script-buy.html';
       }
     }).catch(function () {});
@@ -1099,6 +1099,20 @@ function downloadMarketingKit(){
   logo.src = 'assets/lion-logo.jpg';
 }
 }
+</script>
+<script>
+(function(){
+  var END = new Date('2026-08-29T23:59:59+03:00');
+  if (Date.now() >= END.getTime()) return;
+  document.querySelectorAll('[data-launch-price]').forEach(function(el){
+    el.innerHTML = '<span style="color:#5a6478; text-decoration:line-through;">$8</span> <span style="color:#39FF14; font-weight:900;">$5</span>';
+  });
+  document.querySelectorAll('[data-launch-note]').forEach(function(el){
+    var d = Math.max(1, Math.ceil((END - Date.now())/86400000));
+    el.textContent = '🔥 عرض الإطلاق — ' + (d === 1 ? 'آخر يوم' : 'باقٍ ' + d + ' أيام');
+    el.style.display = 'inline-block';
+  });
+})();
 </script>
 </body>
 </html>
