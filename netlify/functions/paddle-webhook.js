@@ -107,7 +107,9 @@ exports.handler = async (event) => {
             if (!dup.length) break;
           }
           const until = new Date(Date.now() + 365 * 86400000).toISOString().slice(0, 10);
-          await sql`INSERT INTO script_licenses (code, email, name, valid_until, madrasati_user) VALUES (${code}, ${sEmail}, ${sName}, ${until}, ${sUser || null})`;
+          await sql`ALTER TABLE script_licenses ADD COLUMN IF NOT EXISTS claimed_user TEXT`;
+          // ما كتبه المعلم عند الشراء استرشادي — الربط الفعلي يتم من قراءة الأداة لصفحة «بياناتي»
+          await sql`INSERT INTO script_licenses (code, email, name, valid_until, claimed_user) VALUES (${code}, ${sEmail}, ${sName}, ${until}, ${sUser || null})`;
           await sql`INSERT INTO audit_log (action, details) VALUES ('script-purchased', ${'شراء ترخيص ' + code + ' لـ' + sEmail + ' حتى ' + until})`;
           await sendMail(sEmail, 'رمز تفعيل أداة التحضير — OPN LIO', 'رمز التفعيل: ' + code,
             '<div dir="rtl" style="font-family:Tahoma,Arial;background:#070d18;color:#e9edf5;padding:24px;border-radius:14px">' +

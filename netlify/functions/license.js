@@ -59,6 +59,7 @@ exports.handler = async (event) => {
         return { statusCode: 200, headers, body: JSON.stringify({ ok: false, reason: 'mailmismatch', msg: 'هذا الرمز مسجَّل لحساب مدرستي آخر (' + (savedUser || savedMail) + ')' }) };
       }
     } else {
+      // أول تفعيل: نثبّت الهوية الحقيقية كما قرأتها الأداة
       if (user) await sql`UPDATE script_licenses SET madrasati_user = ${user} WHERE code = ${code}`;
       if (mail) await sql`UPDATE script_licenses SET madrasati_email = ${mail} WHERE code = ${code}`;
     }
