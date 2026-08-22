@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحضير من جوالك — أداة تحضير مدرستي</title>
+<meta name="description" content="ثبّت أداة التحضير على جوالك مرة واحدة — ثم افتح مدرستي وحضّر أسبوعك بضغطة">
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<meta name="theme-color" content="#070d18">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; -webkit-text-size-adjust:100%; }
+a { color:#D4AF37; text-decoration:none; }
+.wrap { max-width:620px; margin:0 auto; padding:26px 16px 70px; }
+.hero { text-align:center; margin-bottom:26px; }
+.hero img { width:62px; height:62px; border-radius:15px; }
+h1 { font-size:25px; margin:12px 0 8px; line-height:1.4; }
+.sub { color:#8a93a8; font-size:14.5px; line-height:1.9; }
+.tabs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:22px; }
+.tab { padding:15px 10px; border-radius:14px; border:1.5px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03); text-align:center; font-weight:900; font-size:15px; cursor:pointer; color:#8a93a8; }
+.tab.on { border-color:#D4AF37; background:rgba(212,175,55,.12); color:#D4AF37; }
+.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:20px 18px; margin-bottom:16px; }
+.stp { display:flex; gap:14px; align-items:flex-start; padding:16px 0; border-bottom:1px solid rgba(255,255,255,.07); }
+.stp:last-child { border-bottom:0; padding-bottom:4px; }
+.n { flex-shrink:0; width:34px; height:34px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.stp b { display:block; font-size:15.5px; margin-bottom:5px; }
+.stp span { font-size:13.5px; color:#8a93a8; line-height:1.9; display:block; }
+.go { display:block; text-align:center; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border-radius:14px; padding:15px; font-weight:900; font-size:15.5px; margin-top:12px; }
+.go2 { display:block; text-align:center; background:rgba(255,255,255,.05); border:1.5px solid rgba(212,175,55,.4); color:#D4AF37; border-radius:14px; padding:14px; font-weight:900; font-size:14.5px; margin-top:10px; }
+.done { background:rgba(57,255,20,.08); border:1px solid rgba(57,255,20,.3); border-radius:16px; padding:18px; text-align:center; margin-top:18px; }
+.done b { color:#39FF14; font-size:16px; display:block; margin-bottom:6px; }
+.done span { font-size:13.5px; color:#8a93a8; line-height:1.9; }
+.hide { display:none; }
+h2 { font-size:17px; color:#D4AF37; margin:0 0 6px; }
+.note { font-size:12.5px; color:#6b7488; line-height:1.9; margin-top:10px; }
+
+@media (max-width:560px) {
+  .wrap { padding:20px 14px 60px !important; }
+  h1 { font-size:22px !important; line-height:1.5; }
+  h2 { font-size:16px !important; }
+  .card { padding:18px 15px !important; border-radius:16px !important; }
+  .btn, .btn2, .go, .go2 { display:block !important; width:100% !important; box-sizing:border-box; text-align:center; padding:15px 16px !important; font-size:15px !important; }
+  .step, .stp { gap:10px !important; font-size:13.5px !important; }
+  .num, .n { width:26px !important; height:26px !important; font-size:13px !important; }
+  .code { font-size:19px !important; letter-spacing:1.5px !important; padding:15px 8px !important; word-break:break-all; }
+  input { font-size:16px !important; padding:13px 12px !important; }
+  .price { font-size:32px !important; }
+  .tabs { grid-template-columns:1fr 1fr 1fr !important; gap:6px !important; }
+  .tab { padding:11px 4px !important; font-size:13px !important; }
+  .muted, .hint, .note { font-size:12.5px !important; }
+  .feat { font-size:13.5px !important; }
+  img { max-width:100%; height:auto; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <img src="assets/lion-logo.jpg" alt="OPN LIO">
+    <h1>حضّر أسبوعك من جوالك</h1>
+    <div class="sub">ثبّت مرة واحدة… ثم افتح مدرستي وتشتغل الأداة وحدها في كل مرة.</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" id="tabA" onclick="pick('a')">أندرويد</div>
+    <div class="tab" id="tabI" onclick="pick('i')">آيفون</div>
+    <div class="tab" id="tabP" onclick="pick('p')">كمبيوتر</div>
+  </div>
+
+  <!-- أندرويد -->
+  <div id="pa">
+    <div class="card">
+      <h2>ثلاث خطوات — خمس دقائق مرة واحدة</h2>
+      <div class="stp">
+        <div class="n">1</div>
+        <div>
+          <b>ثبّت متصفح Kiwi</b>
+          <span>متصفح مجاني يشبه كروم تماماً، لكنه يقبل الإضافات. تستخدمه لمدرستي فقط إن أحببت.</span>
+          <a class="go" href="https://play.google.com/store/apps/details?id=com.kiwibrowser.browser" target="_blank" rel="noopener">تحميل Kiwi من جوجل بلاي</a>
+        </div>
+      </div>
+      <div class="stp">
+        <div class="n">2</div>
+        <div>
+          <b>ثبّت أداة التحضير داخل Kiwi</b>
+          <span>افتح هذه الصفحة <b>داخل متصفح Kiwi</b> ← حمّل ملف الأداة ← من قائمة Kiwi اختر «Extensions» ← فعّل «وضع المطور» ← «‎+ (from .zip/.crx/.user.js)» ← اختر الملف.</span>
+          <a class="go2" href="opn-lio-extension.zip" download>تحميل ملف الأداة</a>
+        </div>
+      </div>
+      <div class="stp">
+        <div class="n">3</div>
+        <div>
+          <b>افتح جدولك وفعّل رمزك</b>
+          <span>افتح مدرستي في Kiwi ← جدولك الأسبوعي ← تظهر لوحة الأداة أسفل الشاشة ← «إعداداتي» ← الصق رمز التفعيل ← «تحقق».</span>
+          <a class="go2" href="https://schools.madrasati.sa/SchoolSchedule/Schedule/TeacherSchedule" target="_blank" rel="noopener">افتح جدولي في مدرستي</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- آيفون -->
+  <div id="pi" class="hide">
+    <div class="card">
+      <h2>ثلاث خطوات — خمس دقائق مرة واحدة</h2>
+      <div class="stp">
+        <div class="n">1</div>
+        <div>
+          <b>ثبّت تطبيق Userscripts</b>
+          <span>تطبيق مجاني من آب ستور، يشغّل الأدوات داخل سفاري.</span>
+          <a class="go" href="https://apps.apple.com/app/userscripts/id1463298887" target="_blank" rel="noopener">تحميل Userscripts من آب ستور</a>
+        </div>
+      </div>
+      <div class="stp">
+        <div class="n">2</div>
+        <div>
+          <b>فعّله في سفاري</b>
+          <span>الإعدادات ← سفاري ← الإضافات ← فعّل <b>Userscripts</b> ← اضغطه واختر «السماح في كل المواقع».</span>
+        </div>
+      </div>
+      <div class="stp">
+        <div class="n">3</div>
+        <div>
+          <b>أضف الأداة وفعّل رمزك</b>
+          <span>افتح ملف الأداة أدناه ← يسألك Userscripts «تثبيت؟» ← وافق. ثم افتح جدولك في مدرستي ← «إعداداتي» ← الصق الرمز ← «تحقق».</span>
+          <a class="go2" href="opn-lio.min.user.js">تحميل ملف الأداة</a>
+          <a class="go2" href="https://schools.madrasati.sa/SchoolSchedule/Schedule/TeacherSchedule" target="_blank" rel="noopener">افتح جدولي في مدرستي</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- كمبيوتر ويندوز -->
+  <div id="pp" class="hide">
+    <div class="card">
+      <h2>خطوتان — على كروم أو إيدج</h2>
+      <div class="stp">
+        <div class="n">1</div>
+        <div>
+          <b>ثبّت الأداة في متصفحك</b>
+          <span>حمّل ملف الأداة ← افتح <b>chrome://extensions</b> (أو <b>edge://extensions</b>) ← فعّل «وضع المطور» أعلى اليمين ← اسحب الملف إلى الصفحة، أو «تحميل غير مضغوط» بعد فكّ الضغط.</span>
+          <a class="go2" href="opn-lio-extension.zip" download>تحميل ملف الأداة</a>
+        </div>
+      </div>
+      <div class="stp">
+        <div class="n">2</div>
+        <div>
+          <b>افتح جدولك وفعّل رمزك</b>
+          <span>افتح مدرستي ← جدولك الأسبوعي ← تظهر لوحة الأداة أسفل الشاشة ← «إعداداتي» ← الصق رمز التفعيل ← «تحقق».</span>
+          <a class="go2" href="https://schools.madrasati.sa/SchoolSchedule/Schedule/TeacherSchedule" target="_blank" rel="noopener">افتح جدولي في مدرستي</a>
+        </div>
+      </div>
+      <div class="note">على فايرفوكس: افتح ملف الأداة (‎.user.js) بعد تثبيت إضافة Tampermonkey.</div>
+    </div>
+  </div>
+
+  <div class="done">
+    <b>بعد التثبيت — لا شيء بعدها</b>
+    <span>في كل مرة تفتح جدولك من جوالك، تظهر اللوحة تلقائياً. تحدّد النمط، وتضغط «ابدأ التحضير».</span>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <h2>واجهتك مشكلة؟</h2>
+    <div class="sub" style="font-size:13.5px;">صوّر الشاشة وأرسلها على <a href="mailto:info@opnlio.com">info@opnlio.com</a> — نساعدك خطوة بخطوة.</div>
+    <div class="note">تعمل الأداة أيضاً على الكمبيوتر (كروم، إيدج، فايرفوكس) — وإعداداتك ورمزك مستقلان لكل جهاز.</div>
+  </div>
+
+  <div style="text-align:center; margin-top:24px;">
+    <a href="teacher-script.html" class="sub">كل التفاصيل والأسئلة الشائعة ←</a>
+  </div>
+
+</div>
+
+<script>
+function pick(k) {
+  document.getElementById('pa').className = k === 'a' ? '' : 'hide';
+  document.getElementById('pi').className = k === 'i' ? '' : 'hide';
+  document.getElementById('pp').className = k === 'p' ? '' : 'hide';
+  document.getElementById('tabA').className = k === 'a' ? 'tab on' : 'tab';
+  document.getElementById('tabI').className = k === 'i' ? 'tab on' : 'tab';
+  document.getElementById('tabP').className = k === 'p' ? 'tab on' : 'tab';
+}
+if (/iphone|ipad|ipod/i.test(navigator.userAgent)) pick('i');
+else if (!/android|mobile/i.test(navigator.userAgent)) pick('p');
+</script>
+</body>
+</html>
