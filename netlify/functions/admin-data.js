@@ -632,6 +632,66 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
     }
 
+    if (event.httpMethod === 'GET' && action === 'licenses') {
+      await sql`ALTER TABLE script_licenses ADD COLUMN IF NOT EXISTS bound_account TEXT`;
+      const rows = await sql`SELECT * FROM script_licenses ORDER BY created_at DESC LIMIT 300`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, items: rows }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'issue-license') {
+      const { name, email, valid_until, notify, madrasati_email, madrasati_user } = JSON.parse(event.body || '{}');
+      const mEm = String(madrasati_email || '').trim().toLowerCase();
+      const mUs = String(madrasati_user || '').trim().toLowerCase();
+      const em = String(email || '').trim().toLowerCase();
+      const until = String(valid_until || '').slice(0, 10);
+      if (!until) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'تاريخ الانتهاء مطلوب' }) };
+      const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      const seg = () => Array.from({ length: 4 }, () => A[Math.floor(Math.random() * A.length)]).join('');
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code = 'OPN-' + seg() + '-' + seg();
+        const dup = await sql`SELECT 1 FROM script_licenses WHERE code = ${code}`;
+        if (!dup.length) break;
+      }
+      await sql`ALTER TABLE script_licenses ADD COLUMN IF NOT EXISTS madrasati_email TEXT`;
+      await sql`ALTER TABLE script_licenses ADD COLUMN IF NOT EXISTS madrasati_user TEXT`;
+      await sql`INSERT INTO script_licenses (code, email, name, valid_until, madrasati_email, madrasati_user) VALUES (${code}, ${em}, ${name || ''}, ${until}, ${mEm || null}, ${mUs || null})`;
+      let mailed = false;
+      if (notify !== false && em) {
+        const html = '<div dir="rtl" style="font-family:Tahoma,Arial;background:#070d18;color:#e9edf5;padding:24px;border-radius:14px">' +
+          '<h2 style="color:#D4AF37;margin:0 0 12px">رمز تفعيل أداة التحضير</h2>' +
+          '<p>مرحباً ' + (name || '') + '،</p>' +
+          '<p>رمز التفعيل الخاص بك:</p>' +
+          '<div style="background:#0f1830;border:1px solid rgba(212,175,55,.5);border-radius:10px;padding:14px;text-align:center;font-size:22px;font-weight:900;letter-spacing:2px;color:#D4AF37;direction:ltr">' + code + '</div>' +
+          '<p style="margin-top:14px">صالح حتى: <b>' + until + '</b></p>' +
+          '<ol style="line-height:1.9"><li>ثبّت الإضافة ثم السكربت من صفحة التحميل.</li>' +
+          '<li>افتح جدولك في مدرستي.</li>' +
+          '<li>من لوحة OPN LIO → «إعداداتي» → الصق الرمز → «تحقق».</li></ol>' +
+          ((mUs || mEm) ? '<p style="background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.35);border-radius:8px;padding:10px;color:#ffc07a;font-size:13px">⚠️ هذا الرمز يعمل <b>فقط</b> مع حساب مدرستي: <b style="direction:ltr">' + (mUs || mEm) + '</b><br>ولن يعمل على أي حساب آخر.</p>' : '') +
+          '<p style="background:rgba(212,175,55,.08);border-radius:8px;padding:10px;font-size:12.5px">💾 احتفظ بهذا الرمز — تحتاجه إن مسحت بيانات المتصفح أو غيّرت جهازك.</p>' +
+          '<p style="color:#8a93a8;font-size:12.5px">أدخل بريد مدرستي في «إعداداتي» بلوحة السكربت مع الرمز.</p></div>';
+        try { await sendMail(em, 'رمز تفعيل أداة التحضير — OPN LIO', 'رمز التفعيل: ' + code + ' — صالح حتى ' + until, html, 'ar'); mailed = true; } catch (e) {}
+      }
+      await sql`INSERT INTO audit_log (action, details) VALUES ('issue-license', ${'إصدار ترخيص ' + code + ' لـ' + (em || name || '-') + ' حتى ' + until + ((mUs || mEm) ? ' · مدرستي: ' + (mUs || mEm) : '')})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, code, mailed }) };
+    }
+
+    if (event.httpMethod === 'POST' && action === 'update-license') {
+      const { code, valid_until, active, unbind, remove } = JSON.parse(event.body || '{}');
+      const c = String(code || '').trim().toUpperCase();
+      if (!c) return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'الرمز مطلوب' }) };
+      if (remove) {
+        await sql`DELETE FROM script_licenses WHERE code = ${c}`;
+        await sql`INSERT INTO audit_log (action, details) VALUES ('delete-license', ${'حذف ترخيص ' + c})`;
+        return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+      }
+      if (valid_until) await sql`UPDATE script_licenses SET valid_until = ${String(valid_until).slice(0,10)} WHERE code = ${c}`;
+      if (typeof active === 'boolean') await sql`UPDATE script_licenses SET active = ${active} WHERE code = ${c}`;
+      if (unbind) await sql`UPDATE script_licenses SET bound_account = NULL WHERE code = ${c}`;
+      await sql`INSERT INTO audit_log (action, details) VALUES ('update-license', ${'تعديل ترخيص ' + c + (unbind ? ' (فكّ ارتباط)' : '') + (valid_until ? ' حتى ' + valid_until : '') + (typeof active === 'boolean' ? (active ? ' تفعيل' : ' إيقاف') : '')})`;
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+    }
+
     if (event.httpMethod === 'GET' && action === 'pnl') {
       const rev = await sql`SELECT to_char(created_at,'YYYY-MM') AS month, COALESCE(SUM(amount),0)::numeric AS gross, COUNT(*)::int AS tx
         FROM revenue_log WHERE created_at > now() - interval '12 months' GROUP BY month`;

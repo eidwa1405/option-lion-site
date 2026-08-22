@@ -227,6 +227,17 @@ async function ensureTables() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     decided_at TIMESTAMPTZ
   )`;
+  await sql`CREATE TABLE IF NOT EXISTS script_licenses (
+    id SERIAL PRIMARY KEY,
+    code TEXT UNIQUE NOT NULL,
+    email TEXT,
+    name TEXT,
+    valid_until DATE NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    last_seen TIMESTAMPTZ,
+    hits INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
   await sql`CREATE TABLE IF NOT EXISTS tweet_log (
     id SERIAL PRIMARY KEY,
     bank_id TEXT,

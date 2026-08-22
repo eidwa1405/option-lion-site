@@ -71,6 +71,61 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify({ ok: true, academy: true }) };
     }
 
+    // 🎓 أداة التحضير التلقائي — شراء سنوي يولّد رمز ترخيص ويرسله
+    const SCRIPT_PRICE_ID = process.env.PADDLE_SCRIPT_PRICE_ID || 'pri_01m0ktck9j286xssq9s4dzjfca';
+    const _hasScriptPrice = SCRIPT_PRICE_ID && _items.some(function (it) {
+      const p = it && (it.price || it.price_id || (it.product && it.product.id));
+      const pid = typeof p === 'string' ? p : (p && p.id);
+      return pid === SCRIPT_PRICE_ID;
+    });
+    if (acadCustom.product === 'script' || _hasScriptPrice) {
+      const sEmail = String(acadCustom.email || acadCustom.customerEmail || (data.customer && data.customer.email) || '').trim().toLowerCase();
+      const sUser = String(acadCustom.madrasatiUser || acadCustom.madrasati_user || '').trim().toLowerCase();
+      const sName = String(acadCustom.name || '').trim();
+      if (eventType === 'transaction.completed' && sEmail) {
+        await sql`ALTER TABLE script_licenses ADD COLUMN IF NOT EXISTS madrasati_user TEXT`;
+        await sql`ALTER TABLE script_licenses ADD COLUMN IF NOT EXISTS madrasati_email TEXT`;
+        // تجديد لمشترك قائم؟ نمدّد سنة بدل إصدار رمز جديد
+        const prev = await sql`SELECT code, valid_until FROM script_licenses WHERE lower(email) = ${sEmail} ORDER BY valid_until DESC LIMIT 1`;
+        if (prev.length) {
+          const base = new Date(prev[0].valid_until) > new Date() ? new Date(prev[0].valid_until) : new Date();
+          const until = new Date(base.getTime() + 365 * 86400000).toISOString().slice(0, 10);
+          await sql`UPDATE script_licenses SET valid_until = ${until}, active = true, reminded_at = NULL WHERE code = ${prev[0].code}`;
+          await sql`INSERT INTO audit_log (action, details) VALUES ('script-renewed', ${'تجديد ترخيص ' + prev[0].code + ' حتى ' + until})`;
+          await sendMail(sEmail, 'تم تجديد اشتراكك — OPN LIO', 'تجديد حتى ' + until,
+            '<div dir="rtl" style="font-family:Tahoma,Arial;background:#070d18;color:#e9edf5;padding:24px;border-radius:14px">' +
+            '<h2 style="color:#D4AF37;margin:0 0 12px">تم تجديد اشتراكك ✅</h2>' +
+            '<p>رمزك كما هو: <b style="direction:ltr;color:#D4AF37">' + prev[0].code + '</b></p>' +
+            '<p>صالح حتى: <b>' + until + '</b></p></div>', 'ar').catch(function () {});
+        } else {
+          const AL = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+          const seg = function () { return Array.from({ length: 4 }, function () { return AL[Math.floor(Math.random() * AL.length)]; }).join(''); };
+          let code = '';
+          for (let i = 0; i < 6; i++) {
+            code = 'OPN-' + seg() + '-' + seg();
+            const dup = await sql`SELECT 1 FROM script_licenses WHERE code = ${code}`;
+            if (!dup.length) break;
+          }
+          const until = new Date(Date.now() + 365 * 86400000).toISOString().slice(0, 10);
+          await sql`INSERT INTO script_licenses (code, email, name, valid_until, madrasati_user) VALUES (${code}, ${sEmail}, ${sName}, ${until}, ${sUser || null})`;
+          await sql`INSERT INTO audit_log (action, details) VALUES ('script-purchased', ${'شراء ترخيص ' + code + ' لـ' + sEmail + ' حتى ' + until})`;
+          await sendMail(sEmail, 'رمز تفعيل أداة التحضير — OPN LIO', 'رمز التفعيل: ' + code,
+            '<div dir="rtl" style="font-family:Tahoma,Arial;background:#070d18;color:#e9edf5;padding:24px;border-radius:14px">' +
+            '<h2 style="color:#D4AF37;margin:0 0 12px">رمز تفعيل أداة التحضير</h2>' +
+            '<p>شكراً لاشتراكك' + (sName ? ' يا ' + sName : '') + '،</p>' +
+            '<div style="background:#0f1830;border:1px solid rgba(212,175,55,.5);border-radius:10px;padding:14px;text-align:center;font-size:22px;font-weight:900;letter-spacing:2px;color:#D4AF37;direction:ltr">' + code + '</div>' +
+            '<p style="margin-top:14px">صالح حتى: <b>' + until + '</b></p>' +
+            (sUser ? '<p style="background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.35);border-radius:8px;padding:10px;color:#ffc07a;font-size:13px">⚠️ يعمل <b>فقط</b> مع حساب مدرستي: <b style="direction:ltr">' + sUser + '</b></p>' : '') +
+            '<p style="background:rgba(212,175,55,.08);border-radius:8px;padding:10px;font-size:12.5px">💾 احتفظ بالرمز — تحتاجه عند تغيير الجهاز أو مسح بيانات المتصفح.</p>' +
+            '<p style="margin-top:16px"><a href="https://opnlio.com/teacher-script.html" style="background:#D4AF37;color:#070d18;padding:12px 24px;border-radius:10px;font-weight:900;text-decoration:none">تحميل الأداة وخطوات التثبيت</a></p></div>', 'ar').catch(function () {});
+        }
+      } else if ((eventType === 'transaction.refunded' || eventType === 'adjustment.created') && sEmail) {
+        await sql`UPDATE script_licenses SET active = false WHERE lower(email) = ${sEmail}`;
+        await sql`INSERT INTO audit_log (action, details) VALUES ('script-refunded', ${'استرجاع ترخيص أداة — ' + sEmail})`;
+      }
+      return { statusCode: 200, headers, body: JSON.stringify({ ok: true, script: true }) };
+    }
+
     // ⏱ ساعة الجلسة الذكية — شراء لمرة واحدة يفتح المؤشر ومسار الأكاديمية
     const CLOCK_PRICE_ID = process.env.PADDLE_CLOCK_PRICE_ID || 'pri_01m04rf4x0d06y0aeb4m74230v';
     const _hasClockPrice = _items.some(function (it) {
