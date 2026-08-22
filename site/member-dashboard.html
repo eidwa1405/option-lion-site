@@ -74,6 +74,15 @@ input:focus { outline:none; border-color:#D4AF37 !important; }
   </div>
   </div>
   <div id="colMain" style="min-width:0;">
+  <a href="./teacher-script.html" id="toolBanner" style="display:flex; align-items:center; gap:16px; margin-bottom:20px; padding:16px 22px; border-radius:18px; background:linear-gradient(120deg,rgba(57,255,20,.10),rgba(212,175,55,.10)); border:1.5px solid rgba(57,255,20,.35); text-decoration:none;">
+    <div style="font-size:30px; flex-shrink:0;">🎓</div>
+    <div style="flex:1; min-width:0;">
+      <div style="font-weight:900; font-size:15px; color:#e9edf5;">أداة تحضير مدرستي التلقائي</div>
+      <div id="toolBannerSub" style="font-size:12.5px; color:#8a93a8; margin-top:3px;">حضّر جدولك الأسبوعي كاملاً بضغطة — تحميل وتفعيل</div>
+    </div>
+    <span id="toolBannerBtn" style="flex-shrink:0; background:linear-gradient(120deg,#39FF14,#8ff77a); color:#070d18; font-weight:900; font-size:13px; padding:10px 20px; border-radius:20px;">افتح الأداة ←</span>
+  </a>
+
   <div class="card" style="margin-bottom:24px; padding:18px 24px;">
     <div style="display:flex; align-items:center; gap:clamp(14px,3vw,26px); flex-wrap:wrap;">
       <span style="font-size:12px; font-weight:800; letter-spacing:2px; color:#D4AF37;">خطواتك:</span>
@@ -632,6 +641,27 @@ function renderMember(){
   document.getElementById('statDone').textContent = completedLevels + ' / 11';
   document.getElementById('proProgTxt').textContent = completedLevels + ' / 11';
   document.getElementById('progressBar').style.width = Math.min(100, Math.round((completedLevels / 11) * 100)) + '%';
+
+  // أداة تحضير مدرستي — حالة الترخيص بالبانر العلوي
+  (function () {
+    var sub = document.getElementById('toolBannerSub'), btn = document.getElementById('toolBannerBtn'), bn = document.getElementById('toolBanner');
+    if (!sub || !memberData.email) return;
+    fetch('/.netlify/functions/license?byEmail=' + encodeURIComponent(memberData.email)).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.license) {
+        var until = String(j.license.valid_until).slice(0, 10);
+        var days = Math.round((new Date(until) - Date.now()) / 86400000);
+        sub.innerHTML = 'رمزك: <b style="color:#D4AF37; direction:ltr;">' + j.license.code + '</b> · ' +
+          (days < 0 ? '<b style="color:#ff5f5f;">منتهٍ منذ ' + Math.abs(days) + ' يوم</b>'
+           : days <= 7 ? '<b style="color:#FF8C00;">ينتهي خلال ' + days + ' يوم</b>'
+           : 'صالح حتى ' + until);
+        if (days < 0) { btn.textContent = 'جدّد الآن ←'; btn.style.background = 'linear-gradient(120deg,#ff5f5f,#ff9b9b)'; bn.href = './teacher-script-buy.html'; }
+      } else {
+        sub.textContent = 'حضّر جدولك الأسبوعي كاملاً بضغطة — اشتراك سنوي $8';
+        btn.textContent = 'اشترك — $8 ←';
+        bn.href = './teacher-script-buy.html';
+      }
+    }).catch(function () {});
+  })();
 
   var clockPaid = !!(memberData.clockPaid || memberData.clock_paid_at);
   var clockDone = Math.min(10, memberData.clockDone || 0);

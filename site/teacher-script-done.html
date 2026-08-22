@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تم الاشتراك — أداة التحضير التلقائي</title>
+<link rel="icon" type="image/jpeg" href="assets/lion-logo.jpg">
+<meta name="theme-color" content="#070d18">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body { margin:0; font-family:'Tajawal',sans-serif; background:#070d18; color:#e9edf5; }
+a { color:#D4AF37; text-decoration:none; }
+a:hover { color:#f0cf6c; }
+.wrap { max-width:720px; margin:0 auto; padding:40px 20px 80px; }
+.card { background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(255,255,255,.03)); border:1px solid rgba(212,175,55,.25); border-radius:20px; padding:26px 24px; margin-bottom:20px; }
+.code { background:#0f1830; border:1.5px solid rgba(212,175,55,.5); border-radius:14px; padding:20px; text-align:center; font-size:28px; font-weight:900; letter-spacing:3px; color:#D4AF37; direction:ltr; }
+.btn { display:inline-block; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; border-radius:12px; padding:15px 32px; font-weight:900; font-size:16px; border:0; cursor:pointer; font-family:inherit; }
+.btn2 { display:inline-block; background:transparent; border:1.5px solid rgba(212,175,55,.45); color:#D4AF37; border-radius:12px; padding:13px 26px; font-weight:900; font-size:14px; cursor:pointer; font-family:inherit; }
+.warn { background:rgba(255,140,0,.1); border:1px solid rgba(255,140,0,.35); border-radius:12px; padding:14px 16px; color:#ffc07a; font-size:13.5px; line-height:1.9; }
+.muted { color:#8a93a8; font-size:13.5px; line-height:1.9; }
+.step { display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:14px; }
+.step:last-child { border-bottom:0; }
+.num { flex-shrink:0; width:28px; height:28px; border-radius:50%; background:linear-gradient(120deg,#D4AF37,#f0cf6c); color:#070d18; font-weight:900; display:flex; align-items:center; justify-content:center; font-size:14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { display:inline-block; width:18px; height:18px; border:2px solid rgba(212,175,55,.3); border-top-color:#D4AF37; border-radius:50%; animation:spin .8s linear infinite; vertical-align:-3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div style="text-align:center; margin-bottom:24px;">
+    <div style="font-size:58px; line-height:1;">✅</div>
+    <h1 style="font-size:27px; margin:10px 0 6px;">تم الاشتراك بنجاح</h1>
+    <div class="muted">شكراً لثقتك — أداة التحضير جاهزة لك الآن.</div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:0 0 14px; color:#D4AF37; font-size:18px;">🔑 رمز التفعيل</h2>
+    <div id="codeBox" class="code"><span class="spin"></span> جارٍ إصدار رمزك…</div>
+    <div id="codeMeta" class="muted" style="text-align:center; margin-top:10px;">قد يستغرق بضع ثوانٍ</div>
+    <div style="text-align:center; margin-top:14px;">
+      <button id="copyBtn" class="btn2" style="display:none;" onclick="copyCode()">📋 نسخ الرمز</button>
+    </div>
+    <div class="warn" style="margin-top:16px;">
+      💾 <b>احفظ هذا الرمز.</b> تحتاجه إن غيّرت جهازك أو مسحت بيانات المتصفح.<br>
+      أرسلناه أيضاً إلى بريدك — تحقق من صندوق الوارد (وإن لم تجده فمن مجلد الرسائل غير المرغوبة).
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <h2 style="margin:0 0 14px; color:#D4AF37; font-size:18px;">⬇ تحميل الأداة</h2>
+    <a class="btn" href="opn-lio.min.user.js">تحميل الأداة الآن</a>
+    <div class="muted" style="margin-top:12px;">ثبّت إضافة Tampermonkey أولاً إن لم تكن مثبّتة</div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:0 0 10px; color:#D4AF37; font-size:18px;">خطوات التفعيل</h2>
+    <div class="step"><div class="num">1</div><div>ثبّت إضافة <b>Tampermonkey</b> من متجر متصفحك (مجانية).</div></div>
+    <div class="step"><div class="num">2</div><div>اضغط <b>تحميل الأداة</b> أعلاه ← اضغط «تثبيت» في نافذة الإضافة.</div></div>
+    <div class="step"><div class="num">3</div><div>افتح <b>جدولك الأسبوعي</b> في منصة مدرستي — تظهر لوحة OPN LIO أسفل الشاشة.</div></div>
+    <div class="step"><div class="num">4</div><div>من اللوحة: <b>«إعداداتي»</b> ← الصق الرمز أعلاه ← <b>«تحقق»</b>.</div></div>
+    <div class="step"><div class="num">5</div><div>حدّد نمط كل حصة ثم اضغط <b>«ابدأ التحضير»</b>.</div></div>
+  </div>
+
+  <div style="text-align:center; margin-top:26px;">
+    <a href="member-dashboard.html" class="btn" style="text-decoration:none;">↩ العودة للوحة التحكم</a>
+    <div style="margin-top:16px;">
+      <a href="teacher-script.html" class="muted">التعليمات الكاملة والأسئلة الشائعة ←</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var email = new URLSearchParams(location.search).get('e') || '';
+var tries = 0, foundCode = '';
+
+function copyCode() {
+  if (!foundCode) return;
+  navigator.clipboard.writeText(foundCode).then(function () {
+    var b = document.getElementById('copyBtn');
+    b.textContent = '✓ نُسخ';
+    setTimeout(function () { b.textContent = '📋 نسخ الرمز'; }, 2000);
+  });
+}
+
+function poll() {
+  if (!email) {
+    document.getElementById('codeBox').innerHTML = '📧 تحقق من بريدك';
+    document.getElementById('codeMeta').textContent = 'أرسلنا الرمز إلى بريدك المسجَّل عند الشراء';
+    return;
+  }
+  tries++;
+  fetch('/.netlify/functions/license?byEmail=' + encodeURIComponent(email))
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (j && j.license && j.license.code) {
+        foundCode = j.license.code;
+        document.getElementById('codeBox').textContent = foundCode;
+        document.getElementById('codeMeta').textContent = 'صالح حتى ' + String(j.license.valid_until).slice(0, 10);
+        document.getElementById('copyBtn').style.display = 'inline-block';
+        return;
+      }
+      if (tries < 20) { setTimeout(poll, 3000); }
+      else {
+        document.getElementById('codeBox').innerHTML = '📧 تحقق من بريدك';
+        document.getElementById('codeMeta').innerHTML = 'تأخر ظهور الرمز هنا — وصلك على البريد بالتأكيد. لأي مساعدة: <a href="mailto:info@opnlio.com">info@opnlio.com</a>';
+      }
+    })
+    .catch(function () { if (tries < 20) setTimeout(poll, 3000); });
+}
+poll();
+</script>
+</body>
+</html>
